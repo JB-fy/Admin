@@ -20,14 +20,14 @@ type UsersInfo struct {
 	Account        *string     `json:"account,omitempty" dc:"账号"`
 	WxOpenid       *string     `json:"wx_openid,omitempty" dc:"微信openid"`
 	WxUnionid      *string     `json:"wx_unionid,omitempty" dc:"微信unionid"`
-	IsStop         *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt      *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt      *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 	IdCardNo       *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
 	IdCardName     *string     `json:"id_card_name,omitempty" dc:"身份证姓名"`
 	IdCardGender   *uint       `json:"id_card_gender,omitempty" dc:"身份证性别：0未设置 1男 2女"`
 	IdCardBirthday *string     `json:"id_card_birthday,omitempty" dc:"身份证生日"`
 	IdCardAddress  *string     `json:"id_card_address,omitempty" dc:"身份证地址"`
+	IsStop         *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt      *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt      *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
 type UsersFilter struct {
@@ -47,11 +47,11 @@ type UsersFilter struct {
 	Account        string      `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	WxOpenid       string      `json:"wx_openid,omitempty" v:"max-length:128" dc:"微信openid"`
 	WxUnionid      string      `json:"wx_unionid,omitempty" v:"max-length:64" dc:"微信unionid"`
-	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 	IdCardNo       string      `json:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"`
 	IdCardName     string      `json:"id_card_name,omitempty" v:"max-length:30" dc:"身份证姓名"`
 	IdCardGender   *uint       `json:"id_card_gender,omitempty" v:"in:0,1,2" dc:"身份证性别：0未设置 1男 2女"`
 	IdCardBirthday *gtime.Time `json:"id_card_birthday,omitempty" v:"date-format:Y-m-d" dc:"身份证生日"`
+	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------列表 开始--------*/
@@ -97,14 +97,14 @@ type UsersUpdateReq struct {
 	Email          *string     `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
 	Account        *string     `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	WxOpenid       *string     `json:"wx_openid,omitempty" v:"max-length:128" dc:"微信openid"`
-	WxUnionid      *string     `json:"wx_unionid,omitempty" v:"max-length:64" dc:"微信unionid"` */
-	IsStop *uint `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
-	/* Password       *string     `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
+	WxUnionid      *string     `json:"wx_unionid,omitempty" v:"max-length:64" dc:"微信unionid"`
+	Password       *string     `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	IdCardNo       *string     `json:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"`
 	IdCardName     *string     `json:"id_card_name,omitempty" v:"max-length:30" dc:"身份证姓名"`
 	IdCardGender   *uint       `json:"id_card_gender,omitempty" v:"in:0,1,2" dc:"身份证性别：0未设置 1男 2女"`
 	IdCardBirthday *gtime.Time `json:"id_card_birthday,omitempty" v:"date-format:Y-m-d" dc:"身份证生日"`
 	IdCardAddress  *string     `json:"id_card_address,omitempty" v:"max-length:120" dc:"身份证地址"` */
+	IsStop *uint `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

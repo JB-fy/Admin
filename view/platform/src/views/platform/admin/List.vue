@@ -24,7 +24,7 @@ const table = reactive({
                             indeterminate={someChecked && !allChecked}
                             onChange={(val: boolean) => {
                                 table.data.forEach((item: any) => {
-                                    if(item.is_super == 1){
+                                    if (item.is_super == 1) {
                                         return
                                     }
                                     item.checked = val

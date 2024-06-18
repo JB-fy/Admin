@@ -10,13 +10,13 @@ export default {
         account: '账号',
         wx_openid: '微信openid',
         wx_unionid: '微信unionid',
-        is_stop: '停用',
         password: '密码',
         id_card_no: '身份证号码',
         id_card_name: '身份证姓名',
         id_card_gender: '身份证性别',
         id_card_birthday: '身份证生日',
         id_card_address: '身份证地址',
+        is_stop: '停用',
     },
     status: {
         gender: [
