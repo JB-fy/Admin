@@ -270,16 +270,16 @@ export const useAdminStore = defineStore('admin', {
         },
         /**
          * 登录
-         * @param {*} loginName 手机/邮箱/账号
+         * @param {*} login_name 手机/邮箱/账号
          * @param {*} password  密码
          * @returns
          */
-        async login(loginName: string, password: string) {
+        async login(login_name: string, password: string) {
             let res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/salt', {
-                loginName: loginName,
+                login_name: login_name,
             })
             res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/login', {
-                loginName: loginName,
+                login_name: login_name,
                 password: md5(md5(md5(password) + res.data.salt_static) + res.data.salt_dynamic),
             })
             this.$reset() //重置状态（可有效清理上一个登录用户的脏数据）

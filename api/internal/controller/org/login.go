@@ -23,6 +23,7 @@ func NewLogin() *Login {
 // 获取密码盐
 func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSaltReq) (res *api.CommonSaltRes, err error) {
 	filter := g.Map{}
+	filter[daoOrg.Admin.Columns().OrgId] = req.OrgId
 	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) == nil {
 		filter[daoOrg.Admin.Columns().Phone] = req.LoginName
 	} else if g.Validator().Rules(`email`).Data(req.LoginName).Run(ctx) == nil {
@@ -58,6 +59,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 // 登录
 func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLoginReq) (res *api.CommonTokenRes, err error) {
 	filter := g.Map{}
+	filter[daoOrg.Admin.Columns().OrgId] = req.OrgId
 	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) == nil {
 		filter[daoOrg.Admin.Columns().Phone] = req.LoginName
 	} else if g.Validator().Rules(`email`).Data(req.LoginName).Run(ctx) == nil {
