@@ -23,7 +23,7 @@
 2. 其内含有环境搭建，配置示例等文件。例如：[项目的nginx配置文件示例](./文档/配置示例/nginx/admin.conf)
 
 # 常用命令
-1. ### GO服务端（代码目录：[api](./api)）
+### GO服务端（代码目录：[api](./api)）
 ```bash
 # 服务启动（--gf.gcfg.file用于指定配置文件，默认config.yaml）
 gf run main.go -a "http --gf.gcfg.file=config.prod.yaml"
@@ -38,7 +38,7 @@ gf gen dao
 gf gen service
 ```
 
-2. ### VUE前端（代码目录：[view/platform](./view/platform)）
+### VUE前端（代码目录：[view/platform](./view/platform)）
 ```bash
 # 服务启动
 npm run dev
