@@ -9,6 +9,10 @@ import (
 )
 
 func Log(r *ghttp.Request) {
+	if !g.Cfg().MustGet(r.GetCtx(), `logger.http.isRecord`).Bool() {
+		return
+	}
+
 	startTime := gtime.Now().UnixMicro()
 
 	r.Middleware.Next()
@@ -19,9 +23,11 @@ func Log(r *ghttp.Request) {
 		`url`:        r.GetUrl(),
 		`header`:     r.Header,
 		`req_data`:   r.GetMap(),
-		`res_data`:   r.Response.BufferString(),
 		`res_status`: r.Response.Status,
 		`run_time`:   runTime,
+	}
+	if maxResBufferLength := g.Cfg().MustGet(r.GetCtx(), `logger.http.maxResBufferLength`).Int(); maxResBufferLength > 0 && maxResBufferLength > r.Response.BufferLength() {
+		data[`res_data`] = r.Response.BufferString()
 	}
 	data[`client_ip`] = r.GetClientIp()
 	data[`login_id`] = 0
