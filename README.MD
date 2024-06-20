@@ -132,13 +132,13 @@ npm run format
 2. 使用./main myGen命令自动生成代码（参数请参考[api/internal/cmd/my-gen/my_gen.go](./api/internal/cmd/my-gen/my_gen.go)内结构体myGenOption的字段注释）
 	- 未带参数执行，则需根据提示输入全部参数。示例：./main myGen
 	- 带全部参数执行，只会提示搭配Git使用。示例：
-	1. 只做dao生成示例（更多请参考[api/internal/cmd/my-gen/log/gen_dao.log](./api/internal/cmd/my-gen/log/gen_dao.log)）：
-		- ./main myGen -dbGroup=default -dbTable=platform_config -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
-	2. 平台后台生成示例（更多请参考[api/internal/cmd/my-gen/log/platform.log](./api/internal/cmd/my-gen/log/platform.log)）：
+		1. 只做dao生成示例（更多请参考[api/internal/cmd/my-gen/log/gen_dao.log](./api/internal/cmd/my-gen/log/gen_dao.log)）：
+		./main myGen -dbGroup=default -dbTable=platform_config -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
+		2. 平台后台生成示例（更多请参考[api/internal/cmd/my-gen/log/platform.log](./api/internal/cmd/my-gen/log/platform.log)）：
 		./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-	3. 机构后台生成示例（更多请参考[api/internal/cmd/my-gen/log/org.log](./api/internal/cmd/my-gen/log/org.log)）：
+		3. 机构后台生成示例（更多请参考[api/internal/cmd/my-gen/log/org.log](./api/internal/cmd/my-gen/log/org.log)）：
 		./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -isView=1 -sceneCode=org -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-	4. APP生成示例：
+		4. APP生成示例：
 		./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=用户 -isView=0 -sceneCode=app -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0
 
 ## 常见错误处理
