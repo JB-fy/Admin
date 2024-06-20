@@ -155,5 +155,4 @@ npm run format
 | <img width="150" src="./文档/zzwxjx.jpg"> 
 
 ## 商用注意事项
-
 如果您将此项目用于商业用途，请遵守[Apache2.0协议](./LICENSE)并保留作者技术支持声明。
