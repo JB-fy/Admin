@@ -147,6 +147,8 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 
 		internal.Command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
 	}
+
+	logMyGenCommand(option) // 记录myGen命令
 }
 
 // 创建命令选项
@@ -431,4 +433,47 @@ isViewEnd:
 		}
 	}
 	return
+}
+
+// 记录myGen命令
+func logMyGenCommand(option myGenOption) {
+	myGenCommandArr := []string{
+		`./main`,
+		`myGen`,
+		`-dbGroup=` + option.DbGroup,
+		`-dbTable=` + option.DbTable,
+		`-removePrefixCommon=` + option.RemovePrefixCommon,
+		`-removePrefixAlone=` + option.RemovePrefixAlone,
+		`-isApi=` + gconv.String(gconv.Uint(option.IsApi)),
+	}
+	if option.IsApi || option.IsView {
+		myGenCommandArr = append(myGenCommandArr,
+			`-isResetLogic=`+gconv.String(gconv.Uint(option.IsResetLogic)),
+			`-isAuthAction=`+gconv.String(gconv.Uint(option.IsAuthAction)),
+			`-commonName=`+option.CommonName,
+			`-isView=`+gconv.String(gconv.Uint(option.IsView)),
+			`-sceneCode=`+option.SceneCode,
+			`-isList=`+gconv.String(gconv.Uint(option.IsList)),
+			`-isCount=`+gconv.String(gconv.Uint(option.IsCount)),
+			`-isInfo=`+gconv.String(gconv.Uint(option.IsInfo)),
+			`-isCreate=`+gconv.String(gconv.Uint(option.IsCreate)),
+			`-isUpdate=`+gconv.String(gconv.Uint(option.IsUpdate)),
+			`-isDelete=`+gconv.String(gconv.Uint(option.IsDelete)))
+	} else {
+		myGenCommandArr = append(myGenCommandArr, `-isView=`+gconv.String(gconv.Uint(option.IsView)))
+	}
+	myGenCommand := gstr.Join(myGenCommandArr, ` `)
+
+	sceneCode := option.SceneCode
+	if sceneCode == `` {
+		sceneCode = `gen_dao`
+	}
+	saveFile := gfile.SelfDir() + `/internal/cmd/my-gen/log/` + sceneCode + `.log`
+	if gfile.IsFile(saveFile) {
+		if log := gfile.GetContents(saveFile); gstr.Pos(log, myGenCommand) == -1 { //相同命令不重复记录
+			gfile.PutContents(saveFile, log+"\r\n"+myGenCommand)
+		}
+	} else {
+		gfile.PutContents(saveFile, myGenCommand)
+	}
 }

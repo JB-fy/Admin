@@ -1,0 +1,2 @@
+./main myGen -dbGroup=default -dbTable=platform_config -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
+./main myGen -dbGroup=default -dbTable=platform_server -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
