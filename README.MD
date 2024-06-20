@@ -23,7 +23,7 @@
 2. 其内含有环境搭建，配置示例等文件。例如：[项目的nginx配置文件示例](./文档/配置示例/nginx/admin.conf)
 
 # 常用命令
-1. #### GO服务端（代码目录：[api](./api)）
+1. ### GO服务端（代码目录：[api](./api)）
 ```bash
 # 服务启动（--gf.gcfg.file用于指定配置文件，默认config.yaml）
 gf run main.go -a "http --gf.gcfg.file=config.prod.yaml"
@@ -38,7 +38,7 @@ gf gen dao
 gf gen service
 ```
 
-2. #### VUE前端（代码目录：[view/platform](./view/platform)）
+2. ### VUE前端（代码目录：[view/platform](./view/platform)）
 ```bash
 # 服务启动
 npm run dev
@@ -48,7 +48,7 @@ npm run build
 npm run format
 ```
 
-## 代码自动生成流程（注意：强烈建议搭配Git使用）
+# 代码自动生成流程（注意：强烈建议搭配Git使用）
 1. 新建数据库表（建表规范如下）。如：auth_test
 ```
 表名统一使用蛇形命名。不同功能表按以下表规则命名
@@ -135,20 +135,20 @@ npm run format
 		+ APP生成示例（更多请参考[api/internal/cmd/my-gen/log/app.log](./api/internal/cmd/my-gen/log/app.log)）：：
 			* ./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=用户 -isView=0 -sceneCode=app -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0
 
-## 常见错误处理
+# 常见错误处理
 1. 遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./api/internal/dao/users/allow/users.go)解决
 
-## 微信交流群
+# 微信交流群
 | 微信 |
 | :---: |
 | <img width="150" src="./文档/zzwx.jpg"> 
 
 添加微信，备注"加入JB Admin交流群"
 
-## 捐献
+# 捐献
 | 请作者喝饮料 |
 | :---: |
 | <img width="150" src="./文档/zzwxjx.jpg"> 
 
-## 商用注意事项
+# 商用注意事项
 如果您将此项目用于商业用途，请遵守[Apache2.0协议](./LICENSE)并保留作者技术支持声明。
