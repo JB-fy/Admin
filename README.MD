@@ -38,7 +38,7 @@ gf gen dao
 gf gen service
 ```
 
-#### VUE前端（代码目录：[view/platform](./view/platform)）
+2. #### VUE前端（代码目录：[view/platform](./view/platform)）
 ```bash
 # 服务启动
 npm run dev
