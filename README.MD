@@ -135,7 +135,7 @@ npm run format
 		./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -isView=1 -sceneCode=org -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
 		```
 		+ APP生成示例（更多请参考[api/internal/cmd/my-gen/log/app.log](./api/internal/cmd/my-gen/log/app.log)）：
-		+ ```bash
+		```bash
 		./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=用户 -isView=0 -sceneCode=app -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0
 		```
 
