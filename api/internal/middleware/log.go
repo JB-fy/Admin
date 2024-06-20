@@ -29,5 +29,5 @@ func Log(r *ghttp.Request) {
 	if !loginInfo.IsEmpty() {
 		data[`login_id`] = loginInfo[`login_id`]
 	}
-	g.Log(`loggerHttp`).Info(r.GetCtx(), data)
+	g.Log(`http`).Info(r.GetCtx(), data)
 }

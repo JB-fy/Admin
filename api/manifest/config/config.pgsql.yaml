@@ -12,7 +12,7 @@ logger:
   # level: "prod" # 日志输出级别。默认all
   # stdout: false # 日志是否同时输出到终端。默认true
   # file: "{Y-m-d}.log" # 日志文件格式。默认为"{Y-m-d}.log"
-  loggerHttp:
+  http:
     path: "log/http/"
     stdout: false # 日志是否同时输出到终端。默认true
 
