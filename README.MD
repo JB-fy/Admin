@@ -127,11 +127,17 @@ npm run format
 		./main myGen -dbGroup=default -dbTable=platform_config -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
 		```
 		+ 平台后台生成示例（更多请参考[api/internal/cmd/my-gen/log/platform.log](./api/internal/cmd/my-gen/log/platform.log)）：
-			* ./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+		```bash
+		./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+		```
 		+ 机构后台生成示例（更多请参考[api/internal/cmd/my-gen/log/org.log](./api/internal/cmd/my-gen/log/org.log)）：
-			* ./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -isView=1 -sceneCode=org -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-		+ APP生成示例（更多请参考[api/internal/cmd/my-gen/log/app.log](./api/internal/cmd/my-gen/log/app.log)）：：
-			* ./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=用户 -isView=0 -sceneCode=app -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0
+		```bash
+		./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -isView=1 -sceneCode=org -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+		```
+		+ APP生成示例（更多请参考[api/internal/cmd/my-gen/log/app.log](./api/internal/cmd/my-gen/log/app.log)）：
+			```bash
+			./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=用户 -isView=0 -sceneCode=app -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0
+			```
 
 # 常见错误处理
 1. 遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./api/internal/dao/users/allow/users.go)解决
