@@ -15,6 +15,7 @@
 
 # 重要提示
 如果您将此项目用于商业用途，请遵守[Apache2.0协议](./LICENSE)并保留作者技术支持声明。您需保留如下版权声明信息，其它功能不做任何限制。如需剔除请联系作者购买授权（往下翻有作者微信）
+
 <img src="./文档/bqsm.png" width="1000">
 
 # [文档目录](./文档)说明
@@ -22,7 +23,7 @@
 2. 其内含有环境搭建，配置示例等文件。例如：[项目的nginx配置文件示例](./文档/配置示例/nginx/admin.conf)
 
 # 常用命令
-#### GO服务端（代码目录：[api](./api)）
+1. #### GO服务端（代码目录：[api](./api)）
 ```bash
 # 服务启动（--gf.gcfg.file用于指定配置文件，默认config.yaml）
 gf run main.go -a "http --gf.gcfg.file=config.prod.yaml"
