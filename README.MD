@@ -128,7 +128,6 @@ npm run format
 			文件			命名：file,file_list,fileList,file_arr,fileArr等后缀；			类型：单文件varchar，多文件json或text
 			数组			命名：list,arr等后缀；											类型：json或text；
 ```
-
 2. 使用./main myGen命令自动生成代码（参数请参考[api/internal/cmd/my-gen/my_gen.go](./api/internal/cmd/my-gen/my_gen.go)内结构体myGenOption的字段注释）
 	- 未带参数执行，则需根据提示输入全部参数。示例：./main myGen
 	- 带全部参数执行，只会提示搭配Git使用。示例：
