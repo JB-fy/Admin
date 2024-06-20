@@ -140,7 +140,7 @@ npm run format
 		```
 
 # 常见错误处理
-1. 遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./api/internal/dao/users/allow/users.go)解决
+1. 遇到dao层互相引用错误import cycle not allowed时，参考文件[users.go](./api/internal/dao/users/allow/users.go)解决
 
 # [文档目录](./文档)说明
 1. 项目内[文档目录](./文档)含有本人记录的学习资料，提供给有兴趣的同学学习使用。
