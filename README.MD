@@ -140,8 +140,7 @@ npm run format
 			* ./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=用户 -isView=0 -sceneCode=app -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0
 
 ## 常见错误处理
-
-1.遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./api/internal/dao/users/allow/users.go)解决
+1. 遇到dao层互相引用错误import cycle not allowed时，参考文件[allow.go](./api/internal/dao/users/allow/users.go)解决
 
 ## 微信交流群
 | 微信 |
