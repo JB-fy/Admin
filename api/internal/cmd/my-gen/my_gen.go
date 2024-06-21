@@ -455,7 +455,7 @@ func logMyGenCommand(option myGenOption) {
 			`-commonName=`+option.CommonName)
 	}
 	myGenCommandArr = append(myGenCommandArr, `-isView=`+gconv.String(gconv.Uint(option.IsView)))
-	if option.IsView {
+	if option.IsApi || option.IsView {
 		myGenCommandArr = append(myGenCommandArr,
 			`-sceneCode=`+option.SceneCode,
 			`-isList=`+gconv.String(gconv.Uint(option.IsList)),
