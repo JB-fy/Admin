@@ -630,8 +630,8 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 
 			viewSaveField.formContent.Method = internal.ReturnTypeName
 			viewSaveField.formContent.DataTypeName = `<!-- 根据个人喜好选择组件<el-select-v2>或<el-transfer> -->
-                    <el-select-v2 v-model="saveForm.data.` + tplEM.FieldVar + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :multiple="true" :collapse-tags="true" :collapse-tags-tooltip="true" style="width: ` + gconv.String(170+(v.FieldShowLenMax-3)*14) + `px" />
-                    <!-- <el-transfer v-model="saveForm.data.` + tplEM.FieldVar + `" :data="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :filterable="true" :props="{ key: 'value', label: 'label' }" /> -->`
+                    <el-transfer v-model="saveForm.data.` + tplEM.FieldVar + `" :data="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :props="{ key: 'value', label: 'label' }" />
+                    <!-- <el-select-v2 v-model="saveForm.data.` + tplEM.FieldVar + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :multiple="true" :collapse-tags="true" :collapse-tags-tooltip="true" style="width: ` + gconv.String(170+(v.FieldShowLenMax-3)*14) + `px" /> -->`
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			isReturn = true
 
