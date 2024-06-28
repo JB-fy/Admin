@@ -87,7 +87,7 @@ func (payThis *PayOfAli) H5(payData PayData) (orderInfo PayInfo, err error) {
 	return
 }
 
-func (payThis *PayOfAli) Code(payData PayData) (orderInfo PayInfo, err error) {
+func (payThis *PayOfAli) QRCode(payData PayData) (orderInfo PayInfo, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return

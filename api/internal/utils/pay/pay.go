@@ -37,7 +37,7 @@ type NotifyInfo struct {
 type Pay interface {
 	App(payData PayData) (orderInfo PayInfo, err error)         // App支付
 	H5(payData PayData) (orderInfo PayInfo, err error)          // H5支付
-	Code(payData PayData) (orderInfo PayInfo, err error)        // 扫码支付
+	QRCode(payData PayData) (orderInfo PayInfo, err error)      // 二维码支付
 	Jsapi(payData PayData) (orderInfo PayInfo, err error)       // JSAPI支付
 	Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) // 回调
 	NotifyRes(r *ghttp.Request, failMsg string)                 // 回调响应处理

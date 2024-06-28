@@ -135,7 +135,7 @@ func (payThis *PayOfWx) H5(payData PayData) (orderInfo PayInfo, err error) {
 	return
 }
 
-func (payThis *PayOfWx) Code(payData PayData) (orderInfo PayInfo, err error) {
+func (payThis *PayOfWx) QRCode(payData PayData) (orderInfo PayInfo, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
