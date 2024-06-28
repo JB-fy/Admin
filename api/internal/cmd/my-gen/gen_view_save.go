@@ -629,7 +629,9 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'enum', enum: (tm('`+i18nPath+`.status.`+i18nFieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
 
 			viewSaveField.formContent.Method = internal.ReturnTypeName
-			viewSaveField.formContent.DataTypeName = `<el-select-v2 v-model="saveForm.data.` + tplEM.FieldVar + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :multiple="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
+			viewSaveField.formContent.DataTypeName = `<!-- 根据个人喜好选择组件<el-select-v2>或<el-transfer> -->
+                    <el-select-v2 v-model="saveForm.data.` + tplEM.FieldVar + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :multiple="true" :collapse-tags="true" :collapse-tags-tooltip="true" style="width: ` + gconv.String(170+(v.FieldShowLenMax-3)*14) + `px" />
+                    <!-- <el-transfer v-model="saveForm.data.` + tplEM.FieldVar + `" :data="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :filterable="true" :props="{ key: 'value', label: 'label' }" /> -->`
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			isReturn = true
 

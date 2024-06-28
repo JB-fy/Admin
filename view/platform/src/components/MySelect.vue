@@ -51,6 +51,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    multipleLimit: {
+        type: Number,
+        default: 0,
+    },
     collapseTags: {
         type: Boolean,
         default: true,
@@ -58,10 +62,6 @@ const props = defineProps({
     collapseTagsTooltip: {
         type: Boolean,
         default: true,
-    },
-    multipleLimit: {
-        type: Number,
-        default: 0,
     },
 })
 
