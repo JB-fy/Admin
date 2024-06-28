@@ -87,6 +87,34 @@ func (payThis *PayOfAli) H5(payData PayData) (orderInfo PayInfo, err error) {
 	return
 }
 
+func (payThis *PayOfAli) Code(payData PayData) (orderInfo PayInfo, err error) {
+	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
+	if err != nil {
+		return
+	}
+
+	param := alipay.TradePreCreate{
+		Trade: alipay.Trade{
+			Subject:     payData.Desc,
+			OutTradeNo:  payData.OrderNo,
+			TotalAmount: gconv.String(payData.Amount),
+			ProductCode: `FACE_TO_FACE_PAYMENT`,
+			NotifyURL:   payThis.NotifyUrl,
+		},
+	}
+	result, err := client.TradePreCreate(param)
+	if err != nil {
+		return
+	}
+	if result.Code != alipay.CodeSuccess {
+		err = errors.New(result.Msg)
+		return
+	}
+
+	orderInfo.PayStr = result.QRCode
+	return
+}
+
 func (payThis *PayOfAli) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {

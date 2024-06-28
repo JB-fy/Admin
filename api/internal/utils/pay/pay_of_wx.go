@@ -17,6 +17,7 @@ import (
 	"github.com/wechatpay-apiv3/wechatpay-go/services/payments/app"
 	"github.com/wechatpay-apiv3/wechatpay-go/services/payments/h5"
 	"github.com/wechatpay-apiv3/wechatpay-go/services/payments/jsapi"
+	"github.com/wechatpay-apiv3/wechatpay-go/services/payments/native"
 	"github.com/wechatpay-apiv3/wechatpay-go/utils"
 )
 
@@ -53,10 +54,7 @@ func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	opts := []core.ClientOption{
-		option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key),
-	}
-	client, err := core.NewClient(payThis.Ctx, opts...)
+	client, err := core.NewClient(payThis.Ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
@@ -93,22 +91,19 @@ func (payThis *PayOfWx) H5(payData PayData) (orderInfo PayInfo, err error) {
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	opts := []core.ClientOption{
-		option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key),
-	}
-	client, err := core.NewClient(payThis.Ctx, opts...)
+	client, err := core.NewClient(payThis.Ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
 
-	// 发送请求
-	svc := h5.H5ApiService{Client: client}
 	if payData.ClientIp == `` {
 		payData.ClientIp = `127.0.0.1`
 	}
 	/* if payData.Device == `` {
 		payData.Device = DeviceUnknown
 	} */
+	// 发送请求
+	svc := h5.H5ApiService{Client: client}
 	resp, result, err := svc.Prepay(payThis.Ctx,
 		h5.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
@@ -140,16 +135,50 @@ func (payThis *PayOfWx) H5(payData PayData) (orderInfo PayInfo, err error) {
 	return
 }
 
+func (payThis *PayOfWx) Code(payData PayData) (orderInfo PayInfo, err error) {
+	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
+	if err != nil {
+		return
+	}
+	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
+	client, err := core.NewClient(payThis.Ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
+	if err != nil {
+		return
+	}
+
+	// 发送请求
+	svc := native.NativeApiService{Client: client}
+	resp, result, err := svc.Prepay(payThis.Ctx,
+		native.PrepayRequest{
+			Appid:       core.String(payThis.AppId),
+			Mchid:       core.String(payThis.Mchid),
+			Description: core.String(payData.Desc),
+			OutTradeNo:  core.String(payData.OrderNo),
+			NotifyUrl:   core.String(payThis.NotifyUrl),
+			Amount: &native.Amount{
+				// Total: core.Int64(gconv.Int64(math.Ceil(payData.Amount * 100))),
+				Total: core.Int64(gconv.Int64(payData.Amount * 100)),
+			},
+		},
+	)
+	if err != nil {
+		return
+	}
+	if result.Response.StatusCode != 200 {
+		err = errors.New(`响应错误`)
+		return
+	}
+	orderInfo.PayStr = *resp.CodeUrl
+	return
+}
+
 func (payThis *PayOfWx) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	opts := []core.ClientOption{
-		option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key),
-	}
-	client, err := core.NewClient(payThis.Ctx, opts...)
+	client, err := core.NewClient(payThis.Ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
