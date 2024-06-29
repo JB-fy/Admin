@@ -6,6 +6,7 @@ import (
 	controllerAuth "api/internal/controller/platform/auth"
 	controllerMy "api/internal/controller/platform/my"
 	controllerOrg "api/internal/controller/platform/org"
+	controllerPay "api/internal/controller/platform/pay"
 	controllerPlatform "api/internal/controller/platform/platform"
 	controllerUsers "api/internal/controller/platform/users"
 	"api/internal/middleware"
@@ -67,6 +68,10 @@ func InitRouterPlatform(s *ghttp.Server) {
 			group.Group(`/org`, func(group *ghttp.RouterGroup) {
 				group.Bind(controllerOrg.NewAdmin())
 				group.Bind(controllerOrg.NewOrg())
+			})
+
+			group.Group(`/pay`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerPay.NewPay())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/

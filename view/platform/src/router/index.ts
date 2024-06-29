@@ -140,6 +140,15 @@ const initRouteList = [
                 },
                 meta: { isAuth: true, keepAlive: true, componentName: '/org/admin' },
             },
+            {
+                path: '/pay/pay',
+                component: async () => {
+                    const component = await import('@/views/pay/pay/Index.vue')
+                    component.default.name = '/pay/pay'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/pay/pay' },
+            },
             /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
             {
                 path: '/profile',

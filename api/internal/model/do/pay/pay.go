@@ -1,0 +1,27 @@
+// =================================================================================
+// Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
+// =================================================================================
+
+package do
+
+import (
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
+)
+
+// Pay is the golang structure of table pay for DAO operations like Where/Data.
+type Pay struct {
+	g.Meta      `orm:"table:pay, do:true"`
+	CreatedAt   *gtime.Time // 创建时间
+	UpdatedAt   *gtime.Time // 更新时间
+	IsStop      interface{} // 停用：0否 1是
+	PayId       interface{} // 支付ID
+	PayName     interface{} // 名称
+	PayIcon     interface{} // 图标
+	PayType     interface{} // 类型：0支付宝 1微信
+	PayConfig   interface{} // 配置。根据pay_type类型设置
+	PayRate     interface{} // 费率
+	TotalAmount interface{} // 总额
+	Balance     interface{} // 余额
+	Sort        interface{} // 排序值。从大到小排序
+}
