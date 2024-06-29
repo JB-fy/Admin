@@ -49,19 +49,6 @@ type Config struct {
 	UploadOfAliyunOssEndpoint        *string `json:"uploadOfAliyunOssEndpoint,omitempty" dc:"阿里云OSS-Endpoint"`
 	UploadOfAliyunOssRoleArn         *string `json:"uploadOfAliyunOssRoleArn,omitempty" dc:"阿里云OSS-RoleArn"`
 
-	PayOfAliAppId      *string `json:"payOfAliAppId,omitempty" dc:"AppId"`
-	PayOfAliPrivateKey *string `json:"payOfAliPrivateKey,omitempty" dc:"私钥"`
-	PayOfAliPublicKey  *string `json:"payOfAliPublicKey,omitempty" dc:"公钥"`
-	PayOfAliNotifyUrl  *string `json:"payOfAliNotifyUrl,omitempty" dc:"异步回调地址"`
-	PayOfAliOpAppId    *string `json:"payOfAliOpAppId,omitempty" dc:"小程序AppId"`
-
-	PayOfWxAppId      *string `json:"payOfWxAppId,omitempty" dc:"AppId"`
-	PayOfWxMchid      *string `json:"payOfWxMchid,omitempty" dc:"商户ID"`
-	PayOfWxSerialNo   *string `json:"payOfWxSerialNo,omitempty" dc:"证书序列号"`
-	PayOfWxApiV3Key   *string `json:"payOfWxApiV3Key,omitempty" dc:"APIV3密钥"`
-	PayOfWxPrivateKey *string `json:"payOfWxPrivateKey,omitempty" dc:"私钥"`
-	PayOfWxNotifyUrl  *string `json:"payOfWxNotifyUrl,omitempty" dc:"异步回调地址"`
-
 	SmsType                    *string `json:"smsType,omitempty" dc:"短信方式"`
 	SmsOfAliyunAccessKeyId     *string `json:"smsOfAliyunAccessKeyId,omitempty" dc:"阿里云SMS-AccessKeyId"`
 	SmsOfAliyunAccessKeySecret *string `json:"smsOfAliyunAccessKeySecret,omitempty" dc:"阿里云SMS-AccessKeySecret"`
@@ -150,19 +137,6 @@ type ConfigSaveReq struct {
 	UploadOfAliyunOssCallbackUrl     *string `json:"uploadOfAliyunOssCallbackUrl,omitempty" v:"url" dc:"阿里云OSS-回调地址"`
 	UploadOfAliyunOssEndpoint        *string `json:"uploadOfAliyunOssEndpoint,omitempty" v:"" dc:"阿里云OSS-Endpoint"`
 	UploadOfAliyunOssRoleArn         *string `json:"uploadOfAliyunOssRoleArn,omitempty" v:"" dc:"阿里云OSS-RoleArn"`
-
-	PayOfAliAppId      *string `json:"payOfAliAppId,omitempty" v:"" dc:"AppId"`
-	PayOfAliPrivateKey *string `json:"payOfAliPrivateKey,omitempty" v:"" dc:"私钥"`
-	PayOfAliPublicKey  *string `json:"payOfAliPublicKey,omitempty" v:"" dc:"公钥"`
-	PayOfAliNotifyUrl  *string `json:"payOfAliNotifyUrl,omitempty" v:"url" dc:"异步回调地址"`
-	PayOfAliOpAppId    *string `json:"payOfAliOpAppId,omitempty" v:"" dc:"小程序AppId"`
-
-	PayOfWxAppId      *string `json:"payOfWxAppId,omitempty" v:"" dc:"AppId"`
-	PayOfWxMchid      *string `json:"payOfWxMchid,omitempty" v:"" dc:"商户ID"`
-	PayOfWxSerialNo   *string `json:"payOfWxSerialNo,omitempty" v:"" dc:"证书序列号"`
-	PayOfWxApiV3Key   *string `json:"payOfWxApiV3Key,omitempty" v:"" dc:"APIV3密钥"`
-	PayOfWxPrivateKey *string `json:"payOfWxPrivateKey,omitempty" v:"" dc:"私钥"`
-	PayOfWxNotifyUrl  *string `json:"payOfWxNotifyUrl,omitempty" v:"url" dc:"异步回调地址"`
 
 	SmsType                    *string `json:"smsType,omitempty" v:"in:smsOfAliyun" dc:"短信方式"`
 	SmsOfAliyunAccessKeyId     *string `json:"smsOfAliyunAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeyId"`

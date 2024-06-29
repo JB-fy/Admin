@@ -10,9 +10,6 @@ export default {
         vod: '视频点播',
         wx: '微信',
 
-        payOfAli: '支付宝',
-        payOfWx: '微信',
-
         oneClickOfWx: '微信',
         oneClickOfYidun: '易盾',
 
@@ -31,19 +28,6 @@ export default {
         uploadOfAliyunOssCallbackUrl: '阿里云OSS-回调地址',
         uploadOfAliyunOssEndpoint: '阿里云OSS-Endpoint',
         uploadOfAliyunOssRoleArn: '阿里云OSS-RoleArn',
-
-        payOfAliAppId: 'AppID',
-        payOfAliPrivateKey: '私钥',
-        payOfAliPublicKey: '公钥',
-        payOfAliNotifyUrl: '异步回调地址',
-        payOfAliOpAppId: '小程序AppID',
-
-        payOfWxAppId: 'AppID',
-        payOfWxMchid: '商户ID',
-        payOfWxSerialNo: '证书序列号',
-        payOfWxApiV3Key: 'APIV3密钥',
-        payOfWxPrivateKey: '私钥',
-        payOfWxNotifyUrl: '异步回调地址',
 
         smsType: '短信方式',
         smsOfAliyunAccessKeyId: '阿里云SMS-AccessKeyId',
@@ -112,8 +96,6 @@ export default {
         uploadOfAliyunOssCallbackUrl: '设置后开启回调，否则关闭回调',
         uploadOfAliyunOssEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
         uploadOfAliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
-
-        payOfAliOpAppId: 'JSAPI支付需设置',
 
         emailOfCommonPassword: '注意：如果使用的是QQ邮箱，则此处应填写QQ邮箱的授权码，而不是密码',
         emailCodeTemplate: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
