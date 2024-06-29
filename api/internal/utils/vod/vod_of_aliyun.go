@@ -1,7 +1,6 @@
 package vod
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils/common"
 	"context"
 
@@ -19,15 +18,7 @@ type VodOfAliyun struct {
 	RoleArn         string `json:"vodOfAliyunRoleArn"`
 }
 
-func NewVodOfAliyun(ctx context.Context, configOpt ...map[string]any) *VodOfAliyun {
-	var config map[string]any
-	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
-		config = configOpt[0]
-	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`vodOfAliyunAccessKeyId`, `vodOfAliyunAccessKeySecret`, `vodOfAliyunEndpoint`, `vodOfAliyunRoleArn`})
-		config = configTmp.Map()
-	}
-
+func NewVodOfAliyun(ctx context.Context, config map[string]any) *VodOfAliyun {
 	vodObj := VodOfAliyun{Ctx: ctx}
 	gconv.Struct(config, &vodObj)
 	if vodObj.AccessKeyId == `` || vodObj.AccessKeySecret == `` || vodObj.Endpoint == `` || vodObj.RoleArn == `` {

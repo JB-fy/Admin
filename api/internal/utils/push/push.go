@@ -65,6 +65,31 @@ func NewPush(ctx context.Context, deviceType uint, pushTypeOpt ...string) Push {
 	switch pushType {
 	// case `pushOfTx`:	//腾讯移动推送
 	default:
-		return NewPushOfTx(ctx, deviceType)
+		var config map[string]any
+		switch deviceType {
+		case 1: //IOS
+			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxIosAccessID`, `pushOfTxIosSecretKey`})
+			config = map[string]any{
+				`pushOfTxHost`:      configTmp[`pushOfTxHost`],
+				`pushOfTxAccessID`:  configTmp[`pushOfTxIosAccessID`],
+				`pushOfTxSecretKey`: configTmp[`pushOfTxIosSecretKey`],
+			}
+		case 2: //MacOS
+			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxMacOSAccessID`, `pushOfTxMacOSSecretKey`})
+			config = map[string]any{
+				`pushOfTxHost`:      configTmp[`pushOfTxHost`],
+				`pushOfTxAccessID`:  configTmp[`pushOfTxMacOSAccessID`],
+				`pushOfTxSecretKey`: configTmp[`pushOfTxMacOSSecretKey`],
+			}
+		// case 0: //安卓
+		default:
+			configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTxHost`, `pushOfTxAndroidAccessID`, `pushOfTxAndroidSecretKey`})
+			config = map[string]any{
+				`pushOfTxHost`:      configTmp[`pushOfTxHost`],
+				`pushOfTxAccessID`:  configTmp[`pushOfTxAndroidAccessID`],
+				`pushOfTxSecretKey`: configTmp[`pushOfTxAndroidSecretKey`],
+			}
+		}
+		return NewPushOfTx(ctx, config)
 	}
 }

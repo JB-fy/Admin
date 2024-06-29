@@ -27,6 +27,7 @@ func NewIdCard(ctx context.Context, idCardTypeOpt ...string) IdCard {
 	switch idCardType {
 	// case `idCardOfAliyun`:
 	default:
-		return NewIdCardOfAliyun(ctx)
+		config, _ := daoPlatform.Config.Get(ctx, []string{`idCardOfAliyunHost`, `idCardOfAliyunPath`, `idCardOfAliyunAppcode`})
+		return NewIdCardOfAliyun(ctx, config.Map())
 	}
 }

@@ -1,7 +1,6 @@
 package upload
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils/common"
 	"context"
 	"crypto"
@@ -39,15 +38,7 @@ type UploadOfAliyunOss struct {
 	RoleArn         string `json:"uploadOfAliyunOssRoleArn"`
 }
 
-func NewUploadOfAliyunOss(ctx context.Context, configOpt ...map[string]any) *UploadOfAliyunOss {
-	var config map[string]any
-	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
-		config = configOpt[0]
-	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`uploadOfAliyunOssHost`, `uploadOfAliyunOssBucket`, `uploadOfAliyunOssAccessKeyId`, `uploadOfAliyunOssAccessKeySecret`, `uploadOfAliyunOssCallbackUrl`, `uploadOfAliyunOssEndpoint`, `uploadOfAliyunOssRoleArn`})
-		config = configTmp.Map()
-	}
-
+func NewUploadOfAliyunOss(ctx context.Context, config map[string]any) *UploadOfAliyunOss {
 	uploadObj := UploadOfAliyunOss{Ctx: ctx}
 	gconv.Struct(config, &uploadObj)
 	if uploadObj.Host == `` || uploadObj.Bucket == `` || uploadObj.AccessKeyId == `` || uploadObj.AccessKeySecret == `` || uploadObj.CallbackUrl == `` || uploadObj.Endpoint == `` || uploadObj.RoleArn == `` {

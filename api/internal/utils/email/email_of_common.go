@@ -1,7 +1,6 @@
 package email
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
 	"crypto/tls"
 	"errors"
@@ -21,15 +20,7 @@ type EmailOfCommon struct {
 	CodeTemplate string `json:"emailCodeTemplate"`
 }
 
-func NewEmailOfCommon(ctx context.Context, configOpt ...map[string]any) *EmailOfCommon {
-	var config map[string]any
-	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
-		config = configOpt[0]
-	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`emailOfCommonSmtpHost`, `emailOfCommonSmtpPort`, `emailOfCommonFromEmail`, `emailOfCommonPassword`, `emailCodeSubject`, `emailCodeTemplate`})
-		config = configTmp.Map()
-	}
-
+func NewEmailOfCommon(ctx context.Context, config map[string]any) *EmailOfCommon {
 	emailObj := EmailOfCommon{Ctx: ctx}
 	gconv.Struct(config, &emailObj)
 	if emailObj.SmtpHost == `` || emailObj.SmtpPort == `` || emailObj.FromEmail == `` || emailObj.Password == `` {

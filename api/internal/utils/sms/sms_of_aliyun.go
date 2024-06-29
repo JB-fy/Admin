@@ -1,7 +1,6 @@
 package sms
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
 	"errors"
 	"strings"
@@ -22,15 +21,7 @@ type SmsOfAliyun struct {
 	TemplateCode    string `json:"smsOfAliyunTemplateCode"`
 }
 
-func NewSmsOfAliyun(ctx context.Context, configOpt ...map[string]any) *SmsOfAliyun {
-	var config map[string]any
-	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
-		config = configOpt[0]
-	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`smsOfAliyunAccessKeyId`, `smsOfAliyunAccessKeySecret`, `smsOfAliyunEndpoint`, `smsOfAliyunSignName`, `smsOfAliyunTemplateCode`})
-		config = configTmp.Map()
-	}
-
+func NewSmsOfAliyun(ctx context.Context, config map[string]any) *SmsOfAliyun {
 	smsObj := SmsOfAliyun{Ctx: ctx}
 	gconv.Struct(config, &smsObj)
 	if smsObj.AccessKeyId == `` || smsObj.AccessKeySecret == `` || smsObj.Endpoint == `` {

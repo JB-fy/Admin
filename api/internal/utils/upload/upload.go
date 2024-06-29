@@ -41,17 +41,6 @@ type Upload interface {
 	Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error)  // 回调
 }
 
-func CreateUploadParam(fileType string) (param UploadParam) {
-	param = UploadParam{
-		Dir:        `common/` + gtime.Now().Format(`Ymd`) + `/`,
-		Expire:     gtime.Now().Unix() + 15*60,
-		ExpireTime: 15 * 60,
-		MinSize:    0,
-		MaxSize:    1024 * 1024 * 1024,
-	}
-	return
-}
-
 func NewUpload(ctx context.Context, uploadTypeOpt ...string) Upload {
 	uploadType := ``
 	if len(uploadTypeOpt) > 0 {
@@ -62,9 +51,22 @@ func NewUpload(ctx context.Context, uploadTypeOpt ...string) Upload {
 
 	switch uploadType {
 	case `uploadOfAliyunOss`:
-		return NewUploadOfAliyunOss(ctx)
+		config, _ := daoPlatform.Config.Get(ctx, []string{`uploadOfAliyunOssHost`, `uploadOfAliyunOssBucket`, `uploadOfAliyunOssAccessKeyId`, `uploadOfAliyunOssAccessKeySecret`, `uploadOfAliyunOssCallbackUrl`, `uploadOfAliyunOssEndpoint`, `uploadOfAliyunOssRoleArn`})
+		return NewUploadOfAliyunOss(ctx, config.Map())
 	// case `uploadOfLocal`:
 	default:
-		return NewUploadOfLocal(ctx)
+		config, _ := daoPlatform.Config.Get(ctx, []string{`uploadOfLocalUrl`, `uploadOfLocalSignKey`, `uploadOfLocalFileSaveDir`, `uploadOfLocalFileUrlPrefix`})
+		return NewUploadOfLocal(ctx, config.Map())
 	}
+}
+
+func CreateUploadParam(fileType string) (param UploadParam) {
+	param = UploadParam{
+		Dir:        `common/` + gtime.Now().Format(`Ymd`) + `/`,
+		Expire:     gtime.Now().Unix() + 15*60,
+		ExpireTime: 15 * 60,
+		MinSize:    0,
+		MaxSize:    1024 * 1024 * 1024,
+	}
+	return
 }

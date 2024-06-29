@@ -13,13 +13,6 @@ type Vod interface {
 	Sts(param VodParam) (stsInfo map[string]any, err error) // 获取Sts Token
 }
 
-func CreateVodParam() (param VodParam) {
-	param = VodParam{
-		ExpireTime: 50 * 60,
-	}
-	return
-}
-
 func NewVod(ctx context.Context, vodTypeOpt ...string) Vod {
 	vodType := ``
 	if len(vodTypeOpt) > 0 {
@@ -31,6 +24,14 @@ func NewVod(ctx context.Context, vodTypeOpt ...string) Vod {
 	switch vodType {
 	// case `vodOfAliyun`:
 	default:
-		return NewVodOfAliyun(ctx)
+		config, _ := daoPlatform.Config.Get(ctx, []string{`vodOfAliyunAccessKeyId`, `vodOfAliyunAccessKeySecret`, `vodOfAliyunEndpoint`, `vodOfAliyunRoleArn`})
+		return NewVodOfAliyun(ctx, config.Map())
 	}
+}
+
+func CreateVodParam() (param VodParam) {
+	param = VodParam{
+		ExpireTime: 50 * 60,
+	}
+	return
 }
