@@ -124,14 +124,15 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 		return
 	}
 
-	// 订单回调处理
 	gutil.Dump(notifyInfo)
-	/* payAddAmountFunc := func(ctx context.Context, orderAmount float64, payRate float64) { //payRate以订单支付时的费率为准
+	/* // 支付数据累积方法。作用：方便不同订单调用
+	payAddFunc := func(ctx context.Context, orderAmount float64, payRate float64) { //payRate以订单支付时的费率为准
 		daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, req.PayId).HookUpdate(g.Map{
 			daoPay.Pay.Columns().TotalAmount: gdb.Raw(daoPay.Pay.Columns().TotalAmount + ` + ` + gconv.String(orderAmount)),
 			daoPay.Pay.Columns().Balance:     gdb.Raw(daoPay.Pay.Columns().Balance + ` + ` + gconv.String(orderAmount*(1-payRate))),
 		}).Update()
 	}
+	// 订单回调处理
 	xxxxOrderHandler := daoXxxx.Order.CtxDaoModel(ctx)
 	err = xxxxOrderHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		row, err := tx.Model(xxxxOrderHandler.DbTable).Where(g.Map{
@@ -155,7 +156,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 
 		// 支付数据累积
 		payRate, _ := tx.Model(xxxxOrderHandler.DbTable).Where(daoXxxx.Order.Columns().OrderNo, notifyInfo.OrderNo).Value(daoXxxx.Order.Columns().PayRate)
-		payAddAmountFunc(ctx, notifyInfo.Amount, payRate.Float64())
+		payAddFunc(ctx, notifyInfo.Amount, payRate.Float64())
 		return
 	})
 	if err != nil {
