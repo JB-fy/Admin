@@ -37,20 +37,18 @@ const notReadAll = !(authAction.isUploadRead || authAction.isSmsRead || authActi
 
 <template>
     <div v-if="notReadAll" style="text-align: center; font-size: 60px; color: #f56c6c">{{ t('common.tip.notAuthActionRead') }}</div>
-    <template v-else>
-        <el-container class="common-container">
-            <el-main>
-                <el-tabs type="border-card" tab-position="top">
-                    <el-tab-pane v-if="authAction.isUploadRead" :label="t('platform.config.plugin.label.upload')" :lazy="true"><upload /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isSmsRead" :label="t('platform.config.plugin.label.sms')" :lazy="true"><sms /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isEmailRead" :label="t('platform.config.plugin.label.email')" :lazy="true"><email /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isIdCardRead" :label="t('platform.config.plugin.label.idCard')" :lazy="true"><id-card /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isOneClickRead" :label="t('platform.config.plugin.label.oneClick')" :lazy="true"><one-click /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isPushRead" :label="t('platform.config.plugin.label.push')" :lazy="true"><push /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isVodRead" :label="t('platform.config.plugin.label.vod')" :lazy="true"><vod /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isWxRead" :label="t('platform.config.plugin.label.wx')" :lazy="true"><wx /></el-tab-pane>
-                </el-tabs>
-            </el-main>
-        </el-container>
-    </template>
+    <el-container v-else class="common-container">
+        <el-main>
+            <el-tabs type="border-card" tab-position="top">
+                <el-tab-pane v-if="authAction.isUploadRead" :label="t('platform.config.plugin.label.upload')" :lazy="true"><upload /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isSmsRead" :label="t('platform.config.plugin.label.sms')" :lazy="true"><sms /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isEmailRead" :label="t('platform.config.plugin.label.email')" :lazy="true"><email /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isIdCardRead" :label="t('platform.config.plugin.label.idCard')" :lazy="true"><id-card /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isOneClickRead" :label="t('platform.config.plugin.label.oneClick')" :lazy="true"><one-click /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isPushRead" :label="t('platform.config.plugin.label.push')" :lazy="true"><push /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isVodRead" :label="t('platform.config.plugin.label.vod')" :lazy="true"><vod /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isWxRead" :label="t('platform.config.plugin.label.wx')" :lazy="true"><wx /></el-tab-pane>
+            </el-tabs>
+        </el-main>
+    </el-container>
 </template>

@@ -94,7 +94,7 @@ saveForm.initData()
             </el-form-item>
         </template>
 
-        <template v-if="saveForm.data.uploadType == 'uploadOfAliyunOss'">
+        <template v-else-if="saveForm.data.uploadType == 'uploadOfAliyunOss'">
             <el-form-item :label="t('platform.config.plugin.name.uploadOfAliyunOssHost')" prop="uploadOfAliyunOssHost">
                 <el-input v-model="saveForm.data.uploadOfAliyunOssHost" :placeholder="t('platform.config.plugin.name.uploadOfAliyunOssHost')" :clearable="true" style="max-width: 500px" />
                 <el-alert :title="t('platform.config.plugin.tip.uploadOfAliyunOssHost')" type="info" :show-icon="true" :closable="false" />

@@ -29,14 +29,12 @@ const notReadAll = !(authAction.isWebsiteRead || authAction.isAppRead)
 
 <template>
     <div v-if="notReadAll" style="text-align: center; font-size: 60px; color: #f56c6c">{{ t('common.tip.notAuthActionRead') }}</div>
-    <template v-else>
-        <el-container class="common-container">
-            <el-main>
-                <el-tabs type="border-card" tab-position="top">
-                    <el-tab-pane v-if="authAction.isWebsiteRead" :label="t('platform.config.platform.label.website')" :lazy="true"><website /></el-tab-pane>
-                    <el-tab-pane v-if="authAction.isAppRead" :label="t('platform.config.platform.label.app')" :lazy="true"><app /></el-tab-pane>
-                </el-tabs>
-            </el-main>
-        </el-container>
-    </template>
+    <el-container v-else class="common-container">
+        <el-main>
+            <el-tabs type="border-card" tab-position="top">
+                <el-tab-pane v-if="authAction.isWebsiteRead" :label="t('platform.config.platform.label.website')" :lazy="true"><website /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isAppRead" :label="t('platform.config.platform.label.app')" :lazy="true"><app /></el-tab-pane>
+            </el-tabs>
+        </el-main>
+    </el-container>
 </template>
