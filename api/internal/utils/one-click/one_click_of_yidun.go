@@ -1,7 +1,6 @@
 package one_click
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
 	"errors"
 
@@ -16,15 +15,7 @@ type OneClickOfYidun struct {
 	BusinessId string `json:"oneClickOfYidunBusinessId"`
 }
 
-func NewOneClickOfYidun(ctx context.Context, configOpt ...map[string]any) *OneClickOfYidun {
-	var config map[string]any
-	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
-		config = configOpt[0]
-	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`oneClickOfYidunSecretId`, `oneClickOfYidunSecretKey`, `oneClickOfYidunBusinessId`})
-		config = configTmp.Map()
-	}
-
+func NewOneClickOfYidun(ctx context.Context, config map[string]any) *OneClickOfYidun {
 	oneClickObj := OneClickOfYidun{Ctx: ctx}
 	gconv.Struct(config, &oneClickObj)
 	if oneClickObj.SecretId == `` || oneClickObj.SecretKey == `` || oneClickObj.BusinessId == `` {

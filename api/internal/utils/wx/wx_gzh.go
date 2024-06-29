@@ -1,7 +1,6 @@
 package wx
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"bytes"
 	"context"
 	"crypto/aes"
@@ -34,15 +33,7 @@ type WxGzh struct {
 	AESKey         []byte
 }
 
-func NewWxGzh(ctx context.Context, configOpt ...map[string]any) *WxGzh {
-	var config map[string]any
-	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
-		config = configOpt[0]
-	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`wxGzhHost`, `wxGzhAppId`, `wxGzhSecret`, `wxGzhToken`, `wxGzhEncodingAESKey`})
-		config = configTmp.Map()
-	}
-
+func NewWxGzh(ctx context.Context, config map[string]any) *WxGzh {
 	wxGzhObj := WxGzh{Ctx: ctx}
 	gconv.Struct(config, &wxGzhObj)
 	if wxGzhObj.AppId == `` || wxGzhObj.Secret == `` || wxGzhObj.Token == `` || wxGzhObj.EncodingAESKey == `` {

@@ -1,7 +1,6 @@
 package one_click
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
 	"errors"
 	"net/url"
@@ -18,15 +17,7 @@ type OneClickOfWx struct {
 	Secret string `json:"oneClickOfWxSecret"`
 }
 
-func NewOneClickOfWx(ctx context.Context, configOpt ...map[string]any) *OneClickOfWx {
-	var config map[string]any
-	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
-		config = configOpt[0]
-	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`oneClickOfWxHost`, `oneClickOfWxAppId`, `oneClickOfWxSecret`})
-		config = configTmp.Map()
-	}
-
+func NewOneClickOfWx(ctx context.Context, config map[string]any) *OneClickOfWx {
 	oneClickObj := OneClickOfWx{Ctx: ctx}
 	gconv.Struct(config, &oneClickObj)
 	if oneClickObj.Host == `` || oneClickObj.AppId == `` || oneClickObj.Secret == `` {
