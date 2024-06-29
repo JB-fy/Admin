@@ -47,6 +47,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayListReq) (res *
 func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *api.PayPayRes, err error) {
 	/**--------确定支付场景 开始--------**/
 	var payScene uint
+	var openId string //小程序场景，需确定微信openId 或 支付宝openId
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	switch sceneCode {
@@ -64,7 +65,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	/**--------确定支付场景 结束--------**/
 
 	/**--------确定支付数据 开始--------**/
-	var payData pay.PayData
+	var payReqData pay.PayReqData
 	/* //订单查询
 	orderInfo, _ := daoXxxx.Order.CtxDaoModel(ctx).Filters(g.Map{
 		daoXxxx.Order.Columns().OrderNo:   req.OrderNo,
@@ -76,44 +77,48 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		return
 	}
 
-	payData.OrderNo = orderInfo[daoXxxx.Order.Columns().OrderNo].String()
-	payData.Amount = orderInfo[daoXxxx.Order.Columns().Price].Float64()
-	payData.Desc = `订单描述` */
+	payReqData.OrderNo = orderInfo[daoXxxx.Order.Columns().OrderNo].String()
+	payReqData.Amount = orderInfo[daoXxxx.Order.Columns().Price].Float64()
+	payReqData.Desc = `订单描述` */
 	/**--------确定支付数据 开始--------**/
 
-	payObj, err := pay.NewPay(ctx, req.PayId)
-	if err != nil {
+	payInfo, _ := daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, req.PayId).One()
+	if payInfo.IsEmpty() {
+		err = utils.NewErrorCode(ctx, 30010000, ``)
 		return
 	}
+	payObj := pay.NewPay(ctx, payInfo)
 
-	var payResult pay.PayInfo
+	var payResData pay.PayResData
 	switch payScene {
 	case 0: //APP
-		payResult, err = payObj.App(payData)
+		payResData, err = payObj.App(payReqData)
 	case 1: //H5
-		payResult, err = payObj.H5(payData)
+		payResData, err = payObj.H5(payReqData)
 	case 2: //扫码
-		payResult, err = payObj.QRCode(payData)
+		payResData, err = payObj.QRCode(payReqData)
 	case 10, 11, 20: //微信小程序	微信公众号	支付宝小程序
-		payData.Openid = ``
-		payResult, err = payObj.Jsapi(payData)
+		payReqData.Openid = openId
+		payResData, err = payObj.Jsapi(payReqData)
 	}
 	if err != nil {
 		return
 	}
 
 	res = &api.PayPayRes{
-		PayStr: payResult.PayStr,
+		PayStr: payResData.PayStr,
 	}
 	return
 }
 
 // 回调
 func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (res *api.CommonNoDataRes, err error) {
-	payObj, err := pay.NewPay(ctx, req.PayId)
-	if err != nil {
+	payInfo, _ := daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, req.PayId).One()
+	if payInfo.IsEmpty() {
+		err = utils.NewErrorCode(ctx, 30010000, ``)
 		return
 	}
+	payObj := pay.NewPay(ctx, payInfo)
 
 	r := g.RequestFromCtx(ctx)
 	notifyInfo, err := payObj.Notify(r)

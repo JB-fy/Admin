@@ -39,7 +39,7 @@ func NewPayOfWx(ctx context.Context, config map[string]any) *PayOfWx {
 	return &payObj
 }
 
-func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {
+func (payThis *PayOfWx) App(payReqData PayReqData) (payResData PayResData, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
@@ -56,12 +56,12 @@ func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {
 		app.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
-			Description: core.String(payData.Desc),
-			OutTradeNo:  core.String(payData.OrderNo),
+			Description: core.String(payReqData.Desc),
+			OutTradeNo:  core.String(payReqData.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
 			Amount: &app.Amount{
-				// Total: core.Int64(gconv.Int64(math.Ceil(payData.Amount * 100))),
-				Total: core.Int64(gconv.Int64(payData.Amount * 100)),
+				// Total: core.Int64(gconv.Int64(math.Ceil(payReqData.Amount * 100))),
+				Total: core.Int64(gconv.Int64(payReqData.Amount * 100)),
 			},
 		},
 	)
@@ -72,11 +72,11 @@ func (payThis *PayOfWx) App(payData PayData) (orderInfo PayInfo, err error) {
 		err = errors.New(`响应错误`)
 		return
 	}
-	orderInfo.PayStr = *resp.PrepayId
+	payResData.PayStr = *resp.PrepayId
 	return
 }
 
-func (payThis *PayOfWx) H5(payData PayData) (orderInfo PayInfo, err error) {
+func (payThis *PayOfWx) H5(payReqData PayReqData) (payResData PayResData, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
@@ -87,11 +87,11 @@ func (payThis *PayOfWx) H5(payData PayData) (orderInfo PayInfo, err error) {
 		return
 	}
 
-	if payData.ClientIp == `` {
-		payData.ClientIp = `127.0.0.1`
+	if payReqData.ClientIp == `` {
+		payReqData.ClientIp = `127.0.0.1`
 	}
-	/* if payData.Device == `` {
-		payData.Device = DeviceUnknown
+	/* if payReqData.Device == `` {
+		payReqData.Device = DeviceUnknown
 	} */
 	// 发送请求
 	svc := h5.H5ApiService{Client: client}
@@ -99,17 +99,17 @@ func (payThis *PayOfWx) H5(payData PayData) (orderInfo PayInfo, err error) {
 		h5.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
-			Description: core.String(payData.Desc),
-			OutTradeNo:  core.String(payData.OrderNo),
+			Description: core.String(payReqData.Desc),
+			OutTradeNo:  core.String(payReqData.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
 			Amount: &h5.Amount{
-				// Total: core.Int64(gconv.Int64(math.Ceil(payData.Amount * 100))),
-				Total: core.Int64(gconv.Int64(payData.Amount * 100)),
+				// Total: core.Int64(gconv.Int64(math.Ceil(payReqData.Amount * 100))),
+				Total: core.Int64(gconv.Int64(payReqData.Amount * 100)),
 			},
 			SceneInfo: &h5.SceneInfo{
-				PayerClientIp: core.String(payData.ClientIp),
+				PayerClientIp: core.String(payReqData.ClientIp),
 				H5Info: &h5.H5Info{
-					// Type: core.String(string(payData.Device)),
+					// Type: core.String(string(payReqData.Device)),
 					Type: core.String(`H5`),
 				},
 			},
@@ -122,11 +122,11 @@ func (payThis *PayOfWx) H5(payData PayData) (orderInfo PayInfo, err error) {
 		err = errors.New(`响应错误`)
 		return
 	}
-	orderInfo.PayStr = *resp.H5Url
+	payResData.PayStr = *resp.H5Url
 	return
 }
 
-func (payThis *PayOfWx) QRCode(payData PayData) (orderInfo PayInfo, err error) {
+func (payThis *PayOfWx) QRCode(payReqData PayReqData) (payResData PayResData, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
@@ -143,12 +143,12 @@ func (payThis *PayOfWx) QRCode(payData PayData) (orderInfo PayInfo, err error) {
 		native.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
-			Description: core.String(payData.Desc),
-			OutTradeNo:  core.String(payData.OrderNo),
+			Description: core.String(payReqData.Desc),
+			OutTradeNo:  core.String(payReqData.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
 			Amount: &native.Amount{
-				// Total: core.Int64(gconv.Int64(math.Ceil(payData.Amount * 100))),
-				Total: core.Int64(gconv.Int64(payData.Amount * 100)),
+				// Total: core.Int64(gconv.Int64(math.Ceil(payReqData.Amount * 100))),
+				Total: core.Int64(gconv.Int64(payReqData.Amount * 100)),
 			},
 		},
 	)
@@ -159,11 +159,11 @@ func (payThis *PayOfWx) QRCode(payData PayData) (orderInfo PayInfo, err error) {
 		err = errors.New(`响应错误`)
 		return
 	}
-	orderInfo.PayStr = *resp.CodeUrl
+	payResData.PayStr = *resp.CodeUrl
 	return
 }
 
-func (payThis *PayOfWx) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
+func (payThis *PayOfWx) Jsapi(payReqData PayReqData) (payResData PayResData, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
@@ -180,15 +180,15 @@ func (payThis *PayOfWx) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
 		jsapi.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
-			Description: core.String(payData.Desc),
-			OutTradeNo:  core.String(payData.OrderNo),
+			Description: core.String(payReqData.Desc),
+			OutTradeNo:  core.String(payReqData.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
 			Amount: &jsapi.Amount{
-				// Total: core.Int64(gconv.Int64(math.Ceil(payData.Amount * 100))),
-				Total: core.Int64(gconv.Int64(payData.Amount * 100)),
+				// Total: core.Int64(gconv.Int64(math.Ceil(payReqData.Amount * 100))),
+				Total: core.Int64(gconv.Int64(payReqData.Amount * 100)),
 			},
 			Payer: &jsapi.Payer{
-				Openid: core.String(payData.Openid),
+				Openid: core.String(payReqData.Openid),
 			},
 		},
 	)
@@ -199,7 +199,7 @@ func (payThis *PayOfWx) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
 		err = errors.New(`响应错误`)
 		return
 	}
-	orderInfo.PayStr = *resp.PrepayId
+	payResData.PayStr = *resp.PrepayId
 	return
 }
 

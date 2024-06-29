@@ -27,7 +27,7 @@ func NewPayOfAli(ctx context.Context, config map[string]any) *PayOfAli {
 	return &payObj
 }
 
-func (payThis *PayOfAli) App(payData PayData) (orderInfo PayInfo, err error) {
+func (payThis *PayOfAli) App(payReqData PayReqData) (payResData PayResData, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -35,9 +35,9 @@ func (payThis *PayOfAli) App(payData PayData) (orderInfo PayInfo, err error) {
 
 	param := alipay.TradeAppPay{
 		Trade: alipay.Trade{
-			Subject:     payData.Desc,
-			OutTradeNo:  payData.OrderNo,
-			TotalAmount: gconv.String(payData.Amount),
+			Subject:     payReqData.Desc,
+			OutTradeNo:  payReqData.OrderNo,
+			TotalAmount: gconv.String(payReqData.Amount),
 			ProductCode: `QUICK_MSECURITY_PAY`,
 			NotifyURL:   payThis.NotifyUrl,
 		},
@@ -47,11 +47,11 @@ func (payThis *PayOfAli) App(payData PayData) (orderInfo PayInfo, err error) {
 		return
 	}
 
-	orderInfo.PayStr = result
+	payResData.PayStr = result
 	return
 }
 
-func (payThis *PayOfAli) H5(payData PayData) (orderInfo PayInfo, err error) {
+func (payThis *PayOfAli) H5(payReqData PayReqData) (payResData PayResData, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -59,26 +59,26 @@ func (payThis *PayOfAli) H5(payData PayData) (orderInfo PayInfo, err error) {
 
 	param := alipay.TradeWapPay{
 		Trade: alipay.Trade{
-			Subject:     payData.Desc,
-			OutTradeNo:  payData.OrderNo,
-			TotalAmount: gconv.String(payData.Amount),
+			Subject:     payReqData.Desc,
+			OutTradeNo:  payReqData.OrderNo,
+			TotalAmount: gconv.String(payReqData.Amount),
 			ProductCode: `QUICK_WAP_WAY`,
 			NotifyURL:   payThis.NotifyUrl,
 		},
 	}
-	if payData.ReturnUrl != `` {
-		param.ReturnURL = payData.ReturnUrl
+	if payReqData.ReturnUrl != `` {
+		param.ReturnURL = payReqData.ReturnUrl
 	}
 	result, err := client.TradeWapPay(param)
 	if err != nil {
 		return
 	}
 
-	orderInfo.PayStr = result.String()
+	payResData.PayStr = result.String()
 	return
 }
 
-func (payThis *PayOfAli) QRCode(payData PayData) (orderInfo PayInfo, err error) {
+func (payThis *PayOfAli) QRCode(payReqData PayReqData) (payResData PayResData, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -86,9 +86,9 @@ func (payThis *PayOfAli) QRCode(payData PayData) (orderInfo PayInfo, err error) 
 
 	param := alipay.TradePreCreate{
 		Trade: alipay.Trade{
-			Subject:     payData.Desc,
-			OutTradeNo:  payData.OrderNo,
-			TotalAmount: gconv.String(payData.Amount),
+			Subject:     payReqData.Desc,
+			OutTradeNo:  payReqData.OrderNo,
+			TotalAmount: gconv.String(payReqData.Amount),
 			ProductCode: `FACE_TO_FACE_PAYMENT`,
 			NotifyURL:   payThis.NotifyUrl,
 		},
@@ -102,11 +102,11 @@ func (payThis *PayOfAli) QRCode(payData PayData) (orderInfo PayInfo, err error) 
 		return
 	}
 
-	orderInfo.PayStr = result.QRCode
+	payResData.PayStr = result.QRCode
 	return
 }
 
-func (payThis *PayOfAli) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
+func (payThis *PayOfAli) Jsapi(payReqData PayReqData) (payResData PayResData, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -114,15 +114,15 @@ func (payThis *PayOfAli) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
 
 	param := alipay.TradeCreate{
 		Trade: alipay.Trade{
-			Subject:     payData.Desc,
-			OutTradeNo:  payData.OrderNo,
-			TotalAmount: gconv.String(payData.Amount),
+			Subject:     payReqData.Desc,
+			OutTradeNo:  payReqData.OrderNo,
+			TotalAmount: gconv.String(payReqData.Amount),
 			ProductCode: `JSAPI_PAY`,
 			NotifyURL:   payThis.NotifyUrl,
 		},
 		// BuyerId:     ``, //买家支付宝用户ID（未来将被废弃）。BuyerId和BuyerOpenId二选一
-		BuyerOpenId: payData.Openid,  //买家支付宝用户OpenId（推荐）。BuyerId和BuyerOpenId二选一
-		OpAppId:     payThis.OpAppId, //小程序应用ID
+		BuyerOpenId: payReqData.Openid, //买家支付宝用户OpenId（推荐）。BuyerId和BuyerOpenId二选一
+		OpAppId:     payThis.OpAppId,   //小程序应用ID
 	}
 
 	result, err := client.TradeCreate(param)
@@ -134,7 +134,7 @@ func (payThis *PayOfAli) Jsapi(payData PayData) (orderInfo PayInfo, err error) {
 		return
 	}
 
-	orderInfo.PayStr = result.TradeNo
+	payResData.PayStr = result.TradeNo
 	return
 }
 
