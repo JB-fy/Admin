@@ -13,8 +13,8 @@ type PayInfo struct {
 
 /*--------列表 开始--------*/
 type PayListReq struct {
-	g.Meta `path:"/list" method:"post" tags:"支付" sm:"列表"`
-	// PayScene uint `json:"pay_scene,omitempty" v:"required|in:0,1,2,10,11,20" dc:"支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序"`
+	g.Meta   `path:"/list" method:"post" tags:"支付" sm:"列表"`
+	PayScene uint `json:"pay_scene,omitempty" v:"required|in:0,1,2,10,11,20" dc:"支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序"`
 }
 
 type PayListRes struct {
@@ -25,10 +25,10 @@ type PayListRes struct {
 
 /*--------支付 开始--------*/
 type PayPayReq struct {
-	g.Meta `path:"/pay" method:"post" tags:"支付" sm:"支付"`
-	// PayScene uint `json:"pay_scene,omitempty" v:"required|in:0,1,2,10,11,20" dc:"支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序"`
-	PayId   uint   `json:"pay_id" v:"required|between:1,4294967295" dc:"支付ID"`
-	OrderNo string `json:"order_no" v:"required|max-length:60" dc:"订单号"`
+	g.Meta   `path:"/pay" method:"post" tags:"支付" sm:"支付"`
+	PayScene uint   `json:"pay_scene,omitempty" v:"required|in:0,1,2,10,11,20" dc:"支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序"`
+	PayId    uint   `json:"pay_id" v:"required|between:1,4294967295" dc:"支付ID"`
+	OrderNo  string `json:"order_no" v:"required|max-length:60" dc:"订单号"`
 }
 
 type PayPayRes struct {
