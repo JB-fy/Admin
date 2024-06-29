@@ -51,13 +51,15 @@ func NewPay(ctx context.Context, payId uint) (payObj Pay, err error) {
 		err = utils.NewErrorCode(ctx, 30010000, ``)
 		return
 	}
+	config := payInfo[daoPay.Pay.Columns().PayConfig].Map()
+	config[`notifyUrl`] = utils.GetRequestUrl(ctx, 0) + `/pay/notify/` + payInfo[daoPay.Pay.Columns().PayId].String()
 
 	switch payInfo[daoPay.Pay.Columns().PayType].Uint() {
 	case 1: //微信
-		payObj = NewPayOfWx(ctx, payInfo[daoPay.Pay.Columns().PayConfig].Map())
+		payObj = NewPayOfWx(ctx, config)
 	// case 0: //支付宝
 	default:
-		payObj = NewPayOfAli(ctx, payInfo[daoPay.Pay.Columns().PayConfig].Map())
+		payObj = NewPayOfAli(ctx, config)
 	}
 	return
 }

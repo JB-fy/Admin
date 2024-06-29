@@ -27,14 +27,14 @@ type PayOfWx struct {
 	SerialNo   string `json:"payOfWxSerialNo"`
 	APIv3Key   string `json:"payOfWxApiV3Key"`
 	PrivateKey string `json:"payOfWxPrivateKey"`
-	NotifyUrl  string `json:"payOfWxNotifyUrl"`
+	NotifyUrl  string `json:"notifyUrl"`
 }
 
 func NewPayOfWx(ctx context.Context, config map[string]any) *PayOfWx {
 	payObj := PayOfWx{Ctx: ctx}
 	gconv.Struct(config, &payObj)
 	if payObj.AppId == `` || payObj.Mchid == `` || payObj.SerialNo == `` || payObj.APIv3Key == `` || payObj.PrivateKey == `` || payObj.NotifyUrl == `` {
-		panic(`缺少配置参数：微信支付`)
+		panic(`缺少配置：支付-微信`)
 	}
 	return &payObj
 }

@@ -1,7 +1,6 @@
 package pay
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
 	"errors"
 
@@ -15,23 +14,15 @@ type PayOfAli struct {
 	AppId      string `json:"payOfAliAppId"`
 	PrivateKey string `json:"payOfAliPrivateKey"`
 	PublicKey  string `json:"payOfAliPublicKey"`
-	NotifyUrl  string `json:"payOfAliNotifyUrl"`
 	OpAppId    string `json:"payOfAliOpAppId"`
+	NotifyUrl  string `json:"notifyUrl"`
 }
 
-func NewPayOfAli(ctx context.Context, configOpt ...map[string]any) *PayOfAli {
-	var config map[string]any
-	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
-		config = configOpt[0]
-	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`payOfAliAppId`, `payOfAliPrivateKey`, `payOfAliPublicKey`, `payOfAliNotifyUrl`, `payOfAliOpAppId`})
-		config = configTmp.Map()
-	}
-
+func NewPayOfAli(ctx context.Context, config map[string]any) *PayOfAli {
 	payObj := PayOfAli{Ctx: ctx}
 	gconv.Struct(config, &payObj)
 	if payObj.AppId == `` || payObj.PrivateKey == `` || payObj.PublicKey == `` || payObj.NotifyUrl == `` || payObj.OpAppId == `` {
-		panic(`缺少插件配置：支付-支付宝`)
+		panic(`缺少配置：支付-支付宝`)
 	}
 	return &payObj
 }
