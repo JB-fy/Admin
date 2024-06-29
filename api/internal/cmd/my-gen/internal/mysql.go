@@ -184,7 +184,11 @@ func (dbHandler mysql) GetFieldLimitFloat(ctx context.Context, field MyGenField,
 	fieldLimitFloat.Size = gconv.Int(fieldLimitFloatTmp[1])
 	fieldLimitFloat.Precision = gconv.Int(fieldLimitFloatTmp[2])
 	if gstr.Pos(field.FieldTypeRaw, `decimal`) != -1 /* || gstr.Pos(field.FieldTypeRaw, `float`) != -1 || gstr.Pos(field.FieldTypeRaw, `double`) != -1 */ {
-		fieldLimitFloat.Max = gstr.Repeat(`9`, fieldLimitFloat.Size-fieldLimitFloat.Precision) + `.` + gstr.Repeat(`9`, fieldLimitFloat.Precision)
+		maxInt := `0`
+		if fieldLimitFloat.Size-fieldLimitFloat.Precision > 0 {
+			maxInt = gstr.Repeat(`9`, fieldLimitFloat.Size-fieldLimitFloat.Precision)
+		}
+		fieldLimitFloat.Max = maxInt + `.` + gstr.Repeat(`9`, fieldLimitFloat.Precision)
 		fieldLimitFloat.Min = `-` + fieldLimitFloat.Max
 	}
 	if gstr.Pos(field.FieldTypeRaw, `unsigned`) != -1 {

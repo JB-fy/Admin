@@ -169,7 +169,11 @@ func (dbHandler pgsql) GetFieldLimitFloat(ctx context.Context, field MyGenField,
 	case `numeric`:
 		fieldLimitFloat.Size = fieldInfo[`numeric_precision`].Int()
 		fieldLimitFloat.Precision = fieldInfo[`numeric_scale`].Int()
-		fieldLimitFloat.Max = gstr.Repeat(`9`, fieldLimitFloat.Size-fieldLimitFloat.Precision) + `.` + gstr.Repeat(`9`, fieldLimitFloat.Precision)
+		maxInt := `0`
+		if fieldLimitFloat.Size-fieldLimitFloat.Precision > 0 {
+			maxInt = gstr.Repeat(`9`, fieldLimitFloat.Size-fieldLimitFloat.Precision)
+		}
+		fieldLimitFloat.Max = maxInt + `.` + gstr.Repeat(`9`, fieldLimitFloat.Precision)
 		fieldLimitFloat.Min = `-` + fieldLimitFloat.Max
 	case `float4`, `float8`:
 		fieldLimitFloat.Size = 10
