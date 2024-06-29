@@ -1,7 +1,6 @@
 package pay
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
 	"errors"
 
@@ -31,19 +30,11 @@ type PayOfWx struct {
 	NotifyUrl  string `json:"payOfWxNotifyUrl"`
 }
 
-func NewPayOfWx(ctx context.Context, configOpt ...map[string]any) *PayOfWx {
-	var config map[string]any
-	if len(configOpt) > 0 && len(configOpt[0]) > 0 {
-		config = configOpt[0]
-	} else {
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`payOfWxAppId`, `payOfWxMchid`, `payOfWxSerialNo`, `payOfWxApiV3Key`, `payOfWxPrivateKey`, `payOfWxNotifyUrl`})
-		config = configTmp.Map()
-	}
-
+func NewPayOfWx(ctx context.Context, config map[string]any) *PayOfWx {
 	payObj := PayOfWx{Ctx: ctx}
 	gconv.Struct(config, &payObj)
 	if payObj.AppId == `` || payObj.Mchid == `` || payObj.SerialNo == `` || payObj.APIv3Key == `` || payObj.PrivateKey == `` || payObj.NotifyUrl == `` {
-		panic(`缺少插件配置：支付-微信`)
+		panic(`缺少配置参数：微信支付`)
 	}
 	return &payObj
 }

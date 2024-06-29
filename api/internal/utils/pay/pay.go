@@ -1,6 +1,8 @@
 package pay
 
 import (
+	daoPay "api/internal/dao/pay"
+	"api/internal/utils"
 	"context"
 
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -43,17 +45,19 @@ type Pay interface {
 	NotifyRes(r *ghttp.Request, failMsg string)                 // 回调响应处理
 }
 
-func NewPay(ctx context.Context, payTypeOpt ...string) Pay {
-	payType := ``
-	if len(payTypeOpt) > 0 {
-		payType = payTypeOpt[0]
+func NewPay(ctx context.Context, payId uint) (payObj Pay, err error) {
+	payInfo, _ := daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, payId).One()
+	if payInfo.IsEmpty() {
+		err = utils.NewErrorCode(ctx, 30010000, ``)
+		return
 	}
 
-	switch payType {
-	case `payOfWx`: //微信
-		return NewPayOfWx(ctx)
-	// case `payOfAli`: //支付宝
+	switch payInfo[daoPay.Pay.Columns().PayType].Uint() {
+	case 1: //微信
+		payObj = NewPayOfWx(ctx, payInfo[daoPay.Pay.Columns().PayConfig].Map())
+	// case 0: //支付宝
 	default:
-		return NewPayOfAli(ctx)
+		payObj = NewPayOfAli(ctx, payInfo[daoPay.Pay.Columns().PayConfig].Map())
 	}
+	return
 }
