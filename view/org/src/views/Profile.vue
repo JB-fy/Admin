@@ -88,8 +88,9 @@ const saveForm = reactive({
                         adminStore.info[k] = param[k]
                     }
                 }
-            } catch (error) {}
-            saveForm.loading = false
+            } finally {
+                saveForm.loading = false
+            }
         })
     },
 })

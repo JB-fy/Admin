@@ -68,8 +68,9 @@ const saveForm = reactive({
                 }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
-            } catch (error) {}
-            saveForm.loading = false
+            } finally {
+                saveForm.loading = false
+            }
         })
     },
 })
