@@ -52,10 +52,10 @@ func GetHandlePasswordMapKey(passwordOrsalt string) (passwordMapKey string) {
 func GetStatusList(comment string, isStr bool) (statusList [][2]string) {
 	var tmp [][]string
 	if isStr {
-		tmp, _ = gregex.MatchAllString(`([A-Za-z0-9]+)[-=:：]?([^\s,，;；.。]+)`, comment)
+		tmp, _ = gregex.MatchAllString(`([A-Za-z0-9]+)[-=:：]?([^\s,，.。;；]+)`, comment)
 	} else {
-		// tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\d\s,，;；]+)`, comment)
-		tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\s,，;；.。]+)`, comment)
+		// tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\d\s,，.。;；]+)`, comment)
+		tmp, _ = gregex.MatchAllString(`(-?\d+)[-=:：]?([^\s,，.。;；]+)`, comment)
 	}
 
 	if len(tmp) == 0 {

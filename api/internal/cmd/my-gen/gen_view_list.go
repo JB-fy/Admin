@@ -621,7 +621,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 ]
             }`
 		}
-	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
@@ -629,7 +629,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 let index = obj.findIndex((item) => { return item.value == props.rowData.` + v.FieldRaw + ` })
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
             }`
-	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
 		viewListField.width.Method = internal.ReturnTypeName
 		viewListField.width.DataTypeName = `100`
 		cellRendererStr := `disabled={true}`
@@ -828,7 +828,7 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                     </el-scrollbar>,
                 ]
             }`
-		case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			return myGenViewList{}
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
 			return myGenViewList{}

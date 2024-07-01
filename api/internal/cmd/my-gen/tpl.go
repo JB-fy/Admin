@@ -82,7 +82,7 @@ type myGenField struct {
 	FieldName            string                         // 字段名称。由注释解析出来，前端显示用。符号[\n\r.。:：(（]之前的部分或整个注释，将作为字段名称使用）
 	FieldDesc            string                         // 字段说明。由注释解析出来，API文档用。符号[\n\r]换成` `，"增加转义换成\"
 	FieldTip             string                         // 字段提示。由注释解析出来，前端提示用。
-	StatusList           [][2]string                    // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+	StatusList           [][2]string                    // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 	FieldLimitStr        string                         // 字符串字段限制。varchar表示最大长度；char表示长度；
 	FieldLimitInt        internal.MyGenFieldLimitInt    // 整数字段限制
 	FieldLimitFloat      internal.MyGenFieldLimitFloat  // 浮点数字段限制

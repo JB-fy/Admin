@@ -63,8 +63,8 @@
 			关联ID			命名：id后缀；													类型：int等类型；
 			排序|数量|权重	命名：sort,num,number,weight等后缀；							类型：int等类型；
 			编号|层级|等级	命名：no,level,rank等后缀；										类型：int等类型；
-			状态|类型|场景	命名：status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-			是否			命名：is_前缀；													类型：int等类型；注释：多状态之间用[\s,，;；]等字符分隔。示例（停用：0否 1是）
+			状态|类型|场景	命名：status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			是否			命名：is_前缀；													类型：int等类型；注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
 			开始时间		命名：start_前缀；												类型：datetime或date或timestamp或time；
 			结束时间		命名：end_前缀；												类型：datetime或date或timestamp或time；
 			(富)文本		命名：remark,desc,msg,message,intro,content后缀；				类型：varchar或text；	前端对应组件：varchar文本输入框，text富文本编辑器
