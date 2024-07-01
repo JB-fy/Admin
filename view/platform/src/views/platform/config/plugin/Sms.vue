@@ -25,13 +25,11 @@ const saveForm = reactive({
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }
-        try {
-            const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
-            saveForm.data = {
-                ...saveForm.data,
-                ...res.data.config,
-            }
-        } catch (error) {}
+        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
+        saveForm.data = {
+            ...saveForm.data,
+            ...res.data.config,
+        }
     },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
