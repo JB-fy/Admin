@@ -270,12 +270,8 @@ const pagination = reactive({
     size: settingStore.pagination.size,
     sizeList: settingStore.pagination.sizeList,
     layout: settingStore.pagination.layout,
-    sizeChange: (val: number) => {
-        getList()
-    },
-    pageChange: (val: number) => {
-        getList()
-    },
+    sizeChange: () => getList(),
+    pageChange: () => getList(),
 })
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
