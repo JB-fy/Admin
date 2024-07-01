@@ -30,7 +30,7 @@ const saveForm = reactive({
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
             if (!valid) {
-                return false
+                return
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)

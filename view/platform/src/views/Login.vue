@@ -20,7 +20,7 @@ const loginForm = reactive({
     submit: () => {
         loginForm.ref.validate(async (valid: boolean) => {
             if (!valid) {
-                return false
+                return
             }
             loginForm.loading = true
             try {
