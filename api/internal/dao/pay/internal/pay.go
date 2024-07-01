@@ -35,6 +35,7 @@ type PayColumns struct {
 	TotalAmount string // 总额
 	Balance     string // 余额
 	Sort        string // 排序值。从大到小排序
+	Remark      string // 备注
 }
 
 // payColumns holds the columns for table pay.
@@ -51,6 +52,7 @@ var payColumns = PayColumns{
 	TotalAmount: "total_amount",
 	Balance:     "balance",
 	Sort:        "sort",
+	Remark:      "remark",
 }
 
 // NewPayDao creates and returns a new DAO object for table data access.

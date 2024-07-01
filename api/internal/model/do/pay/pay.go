@@ -24,4 +24,5 @@ type Pay struct {
 	TotalAmount interface{} // 总额
 	Balance     interface{} // 余额
 	Sort        interface{} // 排序值。从大到小排序
+	Remark      interface{} // 备注
 }

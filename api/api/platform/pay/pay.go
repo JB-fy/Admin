@@ -18,6 +18,7 @@ type PayInfo struct {
 	TotalAmount *float64    `json:"total_amount,omitempty" dc:"总额"`
 	Balance     *float64    `json:"balance,omitempty" dc:"余额"`
 	Sort        *uint       `json:"sort,omitempty" dc:"排序值。从大到小排序"`
+	Remark      *string     `json:"remark,omitempty" dc:"备注"`
 	PaySceneArr []uint      `json:"pay_scene_arr,omitempty" dc:"支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序"`
 	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
@@ -80,6 +81,7 @@ type PayCreateReq struct {
 	// TotalAmount *float64 `json:"total_amount,omitempty" v:"between:0,999999999999.99" dc:"总额"`
 	// Balance     *float64 `json:"balance,omitempty" v:"between:0,999999999999.999999" dc:"余额"`
 	Sort        *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序"`
+	Remark      *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	PaySceneArr *[]uint `json:"pay_scene_arr,omitempty" v:"required|distinct|foreach|in:0,1,2,10,11,20" dc:"支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序"`
 	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
@@ -98,6 +100,7 @@ type PayUpdateReq struct {
 	// TotalAmount *float64 `json:"total_amount,omitempty" v:"between:0,999999999999.99" dc:"总额"`
 	// Balance     *float64 `json:"balance,omitempty" v:"between:0,999999999999.999999" dc:"余额"`
 	Sort        *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序"`
+	Remark      *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	PaySceneArr *[]uint `json:"pay_scene_arr,omitempty" v:"distinct|foreach|in:0,1,2,10,11,20" dc:"支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序"`
 	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }

@@ -22,4 +22,5 @@ type Pay struct {
 	TotalAmount float64     `json:"totalAmount" orm:"total_amount" ` // 总额
 	Balance     float64     `json:"balance"     orm:"balance"      ` // 余额
 	Sort        uint        `json:"sort"        orm:"sort"         ` // 排序值。从大到小排序
+	Remark      string      `json:"remark"      orm:"remark"       ` // 备注
 }

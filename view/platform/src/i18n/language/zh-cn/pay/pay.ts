@@ -20,6 +20,7 @@ export default {
         total_amount: '总额',
         balance: '余额',
         sort: '排序值',
+        remark: '备注',
         pay_scene_arr: '支付场景',
         is_stop: '停用',
     },

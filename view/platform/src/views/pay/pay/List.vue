@@ -206,6 +206,14 @@ const table = reactive({
             },
         },
         {
+            dataKey: 'remark',
+            title: t('pay.pay.name.remark'),
+            key: 'remark',
+            align: 'center',
+            width: 200,
+            hidden: true,
+        },
+        {
             dataKey: 'is_stop',
             title: t('pay.pay.name.is_stop'),
             key: 'is_stop',
