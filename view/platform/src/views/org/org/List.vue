@@ -194,23 +194,21 @@ const handleBatchDelete = () => {
 }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-    request(t('config.VITE_HTTP_API_PREFIX') + '/org/org/info', { id: id })
-        .then((res) => {
-            saveCommon.data = { ...res.data.info }
-            switch (type) {
-                case 'edit':
-                    saveCommon.data.id_arr = [saveCommon.data.id]
-                    delete saveCommon.data.id
-                    saveCommon.title = t('common.edit')
-                    break
-                case 'copy':
-                    delete saveCommon.data.id
-                    saveCommon.title = t('common.copy')
-                    break
-            }
-            saveCommon.visible = true
-        })
-        .catch(() => {})
+    request(t('config.VITE_HTTP_API_PREFIX') + '/org/org/info', { id: id }).then((res) => {
+        saveCommon.data = { ...res.data.info }
+        switch (type) {
+            case 'edit':
+                saveCommon.data.id_arr = [saveCommon.data.id]
+                delete saveCommon.data.id
+                saveCommon.title = t('common.edit')
+                break
+            case 'copy':
+                delete saveCommon.data.id
+                saveCommon.title = t('common.copy')
+                break
+        }
+        saveCommon.visible = true
+    })
 }
 //删除
 const handleDelete = (idArr: number[]) => {
@@ -219,15 +217,9 @@ const handleDelete = (idArr: number[]) => {
         title: t('common.tip.configDelete'),
         center: true,
         showClose: false,
+    }).then(() => {
+        request(t('config.VITE_HTTP_API_PREFIX') + '/org/org/del', { id_arr: idArr }, true).then(() => getList())
     })
-        .then(() => {
-            request(t('config.VITE_HTTP_API_PREFIX') + '/org/org/del', { id_arr: idArr }, true)
-                .then((res) => {
-                    getList()
-                })
-                .catch(() => {})
-        })
-        .catch(() => {})
 }
 //更新
 const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {

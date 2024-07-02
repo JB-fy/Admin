@@ -240,23 +240,21 @@ const handleBatchDelete = () => {
 		tplView += `
 //编辑|复制
 const handleEditCopy = (id: ` + viewList.idType + `, type: string = 'edit') => {
-    request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/info', { id: id })
-        .then((res) => {
-            saveCommon.data = { ...res.data.info }
-            switch (type) {
-                case 'edit':
-                    saveCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + ` = [saveCommon.data.id]
-                    delete saveCommon.data.id
-                    saveCommon.title = t('common.edit')
-                    break
-                case 'copy':
-                    delete saveCommon.data.id
-                    saveCommon.title = t('common.copy')
-                    break
-            }
-            saveCommon.visible = true
-        })
-        .catch(() => {})
+    request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/info', { id: id }).then((res) => {
+        saveCommon.data = { ...res.data.info }
+        switch (type) {
+            case 'edit':
+                saveCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + ` = [saveCommon.data.id]
+                delete saveCommon.data.id
+                saveCommon.title = t('common.edit')
+                break
+            case 'copy':
+                delete saveCommon.data.id
+                saveCommon.title = t('common.copy')
+                break
+        }
+        saveCommon.visible = true
+    })
 }`
 	}
 	if option.IsDelete {
@@ -268,15 +266,9 @@ const handleDelete = (idArr: ` + viewList.idType + `[]) => {
         title: t('common.tip.configDelete'),
         center: true,
         showClose: false,
+    }).then(() => {
+        request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: idArr }, true).then(() => getList())
     })
-        .then(() => {
-            request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: idArr }, true)
-                .then((res) => {
-                    getList()
-                })
-                .catch(() => {})
-        })
-        .catch(() => {})
 }`
 	}
 	if option.IsUpdate {

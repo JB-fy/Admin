@@ -292,23 +292,21 @@ const table = reactive({
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-    request(t('config.VITE_HTTP_API_PREFIX') + '/users/users/info', { id: id })
-        .then((res) => {
-            saveCommon.data = { ...res.data.info }
-            switch (type) {
-                case 'edit':
-                    saveCommon.data.id_arr = [saveCommon.data.id]
-                    delete saveCommon.data.id
-                    saveCommon.title = t('common.edit')
-                    break
-                case 'copy':
-                    delete saveCommon.data.id
-                    saveCommon.title = t('common.copy')
-                    break
-            }
-            saveCommon.visible = true
-        })
-        .catch(() => {})
+    request(t('config.VITE_HTTP_API_PREFIX') + '/users/users/info', { id: id }).then((res) => {
+        saveCommon.data = { ...res.data.info }
+        switch (type) {
+            case 'edit':
+                saveCommon.data.id_arr = [saveCommon.data.id]
+                delete saveCommon.data.id
+                saveCommon.title = t('common.edit')
+                break
+            case 'copy':
+                delete saveCommon.data.id
+                saveCommon.title = t('common.copy')
+                break
+        }
+        saveCommon.visible = true
+    })
 }
 //更新
 const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {
