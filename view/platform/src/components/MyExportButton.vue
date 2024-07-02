@@ -91,10 +91,8 @@ const exportButton = reactive({
         }),
         getData: async () => {
             let data = []
-            try {
-                const res = await request(props.api.code, exportButton.api.param)
-                data = exportButton.api.transform(res)
-            } catch (error) {}
+            const res = await request(props.api.code, exportButton.api.param)
+            data = exportButton.api.transform(res)
             return data
         },
     },

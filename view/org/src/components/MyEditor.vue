@@ -117,8 +117,9 @@ const myEditor = reactive({
             try {
                 const res = await request(myEditor.api.code, myEditor.api.param)
                 signInfo = res.data
-            } catch (error) {}
-            myEditor.api.loading = false
+            } finally{
+                myEditor.api.loading = false
+            }
             return signInfo
         },
     },
