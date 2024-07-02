@@ -45,10 +45,14 @@ const saveForm = reactive({
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }
-        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
-        saveForm.data = {
-            ...saveForm.data,
-            ...res.data.config,
+        try {
+            const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
+            saveForm.data = {
+                ...saveForm.data,
+                ...res.data.config,
+            }
+        } catch (error) {
+            /* eslint-disable-next-line no-empty */
         }
     },
     submit: () => {
