@@ -82,7 +82,7 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
             break
         case 2:
             for (const key in keyList) {
-                const keyFinal = keyList[key].slice(start).reduce((keyFinalTmp, value, index) => {
+                const keyFinal = keyList[key].slice(start).reduce((keyFinalTmp, value) => {
                     return (keyFinalTmp += value.split(/[\s-_]/).reduce((keyFinalTmp, value) => {
                         return keyFinalTmp + value.slice(0, 1).toUpperCase() + value.slice(1)
                     }, ''))
@@ -130,7 +130,7 @@ export const batchImport = (rawImportList: any, level: number = 0, type: number 
         case 12:
             for (const key in keyList) {
                 keyList[key].slice(start).reduce((importTmp, value, index, arr) => {
-                    const keyFinal = value.split(/[\s-_]/).reduce((keyFinalTmp, value, index) => {
+                    const keyFinal = value.split(/[\s-_]/).reduce((keyFinalTmp, value) => {
                         return (keyFinalTmp += value.slice(0, 1).toUpperCase() + value.slice(1))
                     }, '')
 
