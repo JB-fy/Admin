@@ -88,9 +88,10 @@ const saveForm = reactive({
                         adminStore.info[k] = param[k]
                     }
                 }
-            } finally {
-                saveForm.loading = false
+            } catch (error) {
+                /* eslint-disable-next-line no-empty */
             }
+            saveForm.loading = false
         })
     },
 })
