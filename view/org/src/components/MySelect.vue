@@ -231,14 +231,14 @@ watch(() => select.loading, (newVal: any, oldVal: any) => {
     if (select.loading === false) { */
 watch(
     () => select.options,
-    (newVal: any, oldVal: any) => {
+    () => {
         if (select.options.length) {
             nextTick(() => {
                 /* const dropId = el.querySelector('.el-tooltip__trigger').getAttribute('aria-describedby')
-            if (!dropId) {
-                return
-            }
-            const scrollDom = document.getElementById(dropId).querySelector('.el-select-dropdown__list') */
+                if (!dropId) {
+                    return
+                }
+                const scrollDom = document.getElementById(dropId).querySelector('.el-select-dropdown__list') */
                 const scrollDom = select.ref.popperRef.querySelector('.el-select-dropdown__list')
                 if (scrollDom) {
                     scrollDom.removeEventListener('scroll', scrollFunc)
