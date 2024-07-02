@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 const route: any = useRoute()
 const router = useRouter()
-const { t, tm } = useI18n()
+const { t } = useI18n()
 const keepAliveStore = useKeepAliveStore()
 const languageStore = useLanguageStore()
 const settingStore = useSettingStore()

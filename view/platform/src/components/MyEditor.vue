@@ -52,7 +52,7 @@ const myEditor = reactive({
         plugins: 'lists link image table code wordcount fullscreen help', //autoresize
         toolbar: 'undo redo | styles formatselect | bold italic | alignleft aligncenter alignright outdent indent bullist numlist | image fullscreen help',
         branding: false, // 右下角Tiny技术支持信息是否显示
-        images_upload_handler: (blobInfo: any, progress: any) => {
+        images_upload_handler: (blobInfo: any) => {
             return new Promise((resolve, reject) => {
                 let data: { [propName: string]: any } = { ...myEditor.signInfo.upload_data }
                 const filename = blobInfo.filename()
