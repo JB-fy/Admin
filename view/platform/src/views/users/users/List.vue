@@ -289,7 +289,7 @@ const table = reactive({
     },
 })
 
-const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
+/* const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
     request(t('config.VITE_HTTP_API_PREFIX') + '/users/users/info', { id: id }).then((res) => {
@@ -307,7 +307,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
         }
         saveCommon.visible = true
     })
-}
+} */
 //更新
 const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {
     await request(t('config.VITE_HTTP_API_PREFIX') + '/users/users/update', param, true)

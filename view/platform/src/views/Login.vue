@@ -26,8 +26,9 @@ const loginForm = reactive({
             try {
                 await useAdminStore().login(loginForm.data.login_name, loginForm.data.password)
                 router.replace((route.query.redirect ? route.query.redirect : '/') as string)
-            } catch (error) {}
-            loginForm.loading = false
+            } finally {
+                loginForm.loading = false
+            }
         })
     },
 })
