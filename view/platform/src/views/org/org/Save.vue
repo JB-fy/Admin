@@ -32,10 +32,9 @@ const saveForm = reactive({
                 }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
-            } catch (error) {
-                /* eslint-disable-next-line no-empty */
+            } finally {
+                saveForm.loading = false
             }
-            saveForm.loading = false
         })
     },
 })

@@ -56,10 +56,9 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data)
             try {
                 await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/save', param, true)
-            } catch (error) {
-                /* eslint-disable-next-line no-empty */
+            } finally {
+                saveForm.loading = false
             }
-            saveForm.loading = false
         })
     },
     reset: () => {
