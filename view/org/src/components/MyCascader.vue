@@ -167,8 +167,9 @@ const cascader = reactive({
             try {
                 const res = await request(props.api.code, cascader.api.param)
                 options = cascader.api.transform(res)
-            } catch (error) {}
-            cascader.api.loading = false
+            } finally {
+                cascader.api.loading = false
+            }
             return options
         },
         addOptions: () => {
