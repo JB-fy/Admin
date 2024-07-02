@@ -4,7 +4,6 @@
 <my-editor v-model="saveForm.data.content" :api="{ param: { type: 'common' } }" :init="{width: '375px'}" :disabled="true" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
-import axios from 'axios'
 import editor from '@tinymce/tinymce-vue'
 
 const { t } = useI18n()
@@ -59,23 +58,15 @@ const myEditor = reactive({
                 const filename = blobInfo.filename()
                 data.key = myEditor.signInfo.dir + blobInfo.id() + '_' + randomInt(1000, 9999) + filename.slice(filename.lastIndexOf('.'))
                 data.file = blobInfo.blob()
-                axios
-                    .post(myEditor.signInfo.upload_url, data, { headers: { 'Content-Type': 'multipart/form-data' } })
+                request(myEditor.signInfo.upload_url, data, false, false, 'post', { 'Content-Type': 'multipart/form-data' })
                     .then((res) => {
                         let imgUrl = myEditor.signInfo.host + '/' + data.key
                         if (myEditor.signInfo?.is_res) {
-                            if (res.data.code !== 0) {
-                                reject(t('common.tip.uploadFail'))
-                                return
-                            }
-                            imgUrl = res.data.data.url
+                            imgUrl = res.data.url
                         }
                         resolve(imgUrl)
                     })
-                    .catch((error) => {
-                        reject(error.message)
-                    })
-                    .finally(() => {})
+                    .catch(() => reject(t('common.tip.uploadFail')))
             })
         },
         /* file_picker_callback: (callback: any, value: any, meta: any) => {

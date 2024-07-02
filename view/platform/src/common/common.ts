@@ -22,14 +22,16 @@ try {
  * 请求接口
  * @param apiCode   接口标识
  *      用法1：完整的http接口地址
- *      用法2：接口路径，必须以'/'开头。如果该路径在apiList内存在对应方法，则优先以该方法请求。一般在接口不是post请求、接口改动又不想修改之前的代码等情况下才需要在src/api内建立对应方法
+ *      用法2：接口路径，必须以'/'开头。如果apiList内存在对应方法（在src/api目录下创建），会直接调用返回结果。作用：一般在Mock模拟请求 或 接口改动又不想修改原代码等情况下使用
  * @param data  请求参数
  * @param isSuccessTip  成功弹出提示
  * @param isErrorHandle 失败错误处理
+ * @param headers 请求头。注意：src/common/utils/http中设置的请求头无法被覆盖
+ * @param method 请求方式
  * @returns
  */
 const apiList = batchImport(import.meta.glob('@/api/**/*.ts', { eager: true }), 0, 10) //放外面。这样每次调用都不要重新加载了
-export const request = async (apiCode: string, data: { [propName: string]: any } = {}, isSuccessTip: boolean = false, isErrorHandle: boolean = true): Promise<any> => {
+export const request = async (apiCode: string, data: { [propName: string]: any } = {}, isSuccessTip: boolean = false, isErrorHandle: boolean = true, method: string = 'post', headers: { [propName: string]: any } = {}): Promise<any> => {
     const apiCodeList: string[] = apiCode.split('/')
     if (apiCodeList[0] === '') {
         apiCodeList.shift()
@@ -47,7 +49,7 @@ export const request = async (apiCode: string, data: { [propName: string]: any }
         if (typeof apiMethod === 'function') {
             res = await apiMethod(data)
         } else {
-            res = await http({ url: apiCode, method: 'post', data: data })
+            res = await http({ url: apiCode, method: method, headers: headers, data: data })
         }
         if (isSuccessTip) {
             ElMessage.success(res.msg)
