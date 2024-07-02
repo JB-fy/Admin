@@ -11,12 +11,14 @@ import (
 
 type myGenViewList struct {
 	rowHeight uint
+	isI18nTm  bool
 	idType    string
 	columns   []string
 }
 
 type myGenViewListField struct {
 	rowHeight    uint
+	isI18nTm     bool
 	dataKey      internal.MyGenDataStrHandler
 	title        internal.MyGenDataStrHandler
 	key          internal.MyGenDataStrHandler
@@ -33,6 +35,9 @@ func (viewListThis *myGenViewList) Add(viewListField myGenViewListField) {
 	}
 	if viewListThis.rowHeight < viewListField.rowHeight {
 		viewListThis.rowHeight = viewListField.rowHeight
+	}
+	if viewListField.isI18nTm {
+		viewListThis.isI18nTm = true
 	}
 	columnAttrStr := []string{
 		`dataKey: ` + viewListField.dataKey.GetData() + `,`,
@@ -99,7 +104,11 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 	viewList.Unique()
 
 	tplView := `<script setup lang="tsx">
-const { t, tm } = useI18n()`
+const { t`
+	if viewList.isI18nTm {
+		tplView += `, tm`
+	}
+	tplView += ` } = useI18n()`
 	if option.IsCreate || option.IsUpdate || option.IsDelete {
 		tplView += `
 
@@ -611,6 +620,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
             }`
 		}
 	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		viewListField.isI18nTm = true
 		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
@@ -733,6 +743,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
             }`
 	case internal.TypeNameFileSuffix: // file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
 	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+		viewListField.isI18nTm = true
 		viewListField.hidden.Method = internal.ReturnEmpty
 		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
@@ -897,6 +908,7 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
 			return
 		}
 		/*--------部分命名类型直接处理后返回 结束--------*/
+		viewListField.isI18nTm = true
 		viewListField.hidden.Method = internal.ReturnEmpty
 		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {

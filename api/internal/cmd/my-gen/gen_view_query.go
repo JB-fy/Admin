@@ -9,25 +9,31 @@ import (
 )
 
 type myGenViewQuery struct {
+	isI18nTm bool
 	dataInit []string
 	form     []string
 }
 
 type myGenViewQueryField struct {
+	isI18nTm bool
 	dataInit internal.MyGenDataStrHandler
 	formProp internal.MyGenDataStrHandler
 	form     internal.MyGenDataStrHandler
 }
 
 func (viewQueryThis *myGenViewQuery) Add(viewQueryField myGenViewQueryField) {
+	if viewQueryField.form.GetData() == `` {
+		return
+	}
+	if viewQueryField.isI18nTm {
+		viewQueryThis.isI18nTm = true
+	}
 	if viewQueryField.dataInit.GetData() != `` {
 		viewQueryThis.dataInit = append(viewQueryThis.dataInit, viewQueryField.dataInit.GetData())
 	}
-	if viewQueryField.form.GetData() != `` {
-		viewQueryThis.form = append(viewQueryThis.form, `<el-form-item prop="`+viewQueryField.formProp.GetData()+`">
+	viewQueryThis.form = append(viewQueryThis.form, `<el-form-item prop="`+viewQueryField.formProp.GetData()+`">
             `+viewQueryField.form.GetData()+`
         </el-form-item>`)
-	}
 }
 
 func (viewQueryThis *myGenViewQuery) Merge(viewQueryOther myGenViewQuery) {
@@ -69,7 +75,11 @@ func genViewQuery(option myGenOption, tpl myGenTpl) {
 	tplView := `<script setup lang="tsx">
 import dayjs from 'dayjs'
 
-const { t, tm } = useI18n()
+const { t`
+	if viewQuery.isI18nTm {
+		tplView += `, tm`
+	}
+	tplView += ` } = useI18n()
 
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 queryCommon.data = {
@@ -256,9 +266,11 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	case internal.TypeNameNoSuffix: // no,level,rank等后缀；	类型：int等类型；
 		viewQueryField.form.Method = internal.ReturnType
 	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		viewQueryField.isI18nTm = true
 		viewQueryField.form.Method = internal.ReturnTypeName
 		viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
 	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
+		viewQueryField.isI18nTm = true
 		viewQueryField.form.Method = internal.ReturnTypeName
 		viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
 	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；

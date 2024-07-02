@@ -11,6 +11,7 @@ import (
 )
 
 type myGenViewSave struct {
+	isI18nTm       bool
 	importModule   []string
 	dataInitBefore []string
 	dataInitAfter  []string
@@ -22,6 +23,7 @@ type myGenViewSave struct {
 }
 
 type myGenViewSaveField struct {
+	isI18nTm       bool
 	importModule   []string
 	dataInitBefore internal.MyGenDataStrHandler
 	dataInitAfter  internal.MyGenDataStrHandler
@@ -37,6 +39,9 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 		return
 	}
 	viewSaveThis.importModule = append(viewSaveThis.importModule, viewSaveField.importModule...)
+	if viewSaveField.isI18nTm {
+		viewSaveThis.isI18nTm = true
+	}
 	if viewSaveField.dataInitBefore.GetData() != `` {
 		viewSaveThis.dataInitBefore = append(viewSaveThis.dataInitBefore, field+`: `+viewSaveField.dataInitBefore.GetData()+`,`)
 	}
@@ -154,7 +159,11 @@ func genViewSave(option myGenOption, tpl myGenTpl) {
 
 	tplView := `<script setup lang="tsx">` + gstr.Join(append([]string{``}, viewSave.importModule...), `
 `) + `
-const { t, tm } = useI18n()
+const { t`
+	if viewSave.isI18nTm {
+		tplView += `, tm`
+	}
+	tplView += ` } = useI18n()
 
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
@@ -455,6 +464,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
                     <el-alert :title="t('` + i18nPath + `.tip.` + i18nFieldPath + `')" type="info" :show-icon="true" :closable="false" />`
 		}
 	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		viewSaveField.isI18nTm = true
 		defaultVal := gconv.String(v.Default)
 		if defaultVal == `` {
 			defaultVal = v.StatusList[0][0]
@@ -476,6 +486,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 			viewSaveField.formContent.DataTypeName = `<el-select-v2 v-model="saveForm.data.` + dataFieldPath + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="false" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
 		}
 	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
+		viewSaveField.isI18nTm = true
 		viewSaveField.rule.Method = internal.ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
@@ -521,6 +532,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + dataFieldPath + `"` + attrOfAdd + ` />`
 	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+		viewSaveField.isI18nTm = true
 		viewSaveField.rule.Method = internal.ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'blur', message: t('validation.array'), defaultField: { type: 'string', message: t('validation.input') } },	// 限制数组数量时用：max: 10, message: t('validation.max.array', { max: 10 })`)
 		fieldHandle := gstr.CaseCamelLower(gstr.Replace(dataFieldPath, `.`, `_`)) + `Handle`
@@ -622,6 +634,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			isReturn = true
 
+			viewSaveField.isI18nTm = true
 			viewSaveField.rule.Method = internal.ReturnTypeName
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'enum', enum: (tm('`+i18nPath+`.status.`+i18nFieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
 
@@ -772,9 +785,11 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			/* viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.formContent.DataTypeName = `<el-input-number :precision="0" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :step="1" :step-strictly="true" controls-position="right" />` */
 		case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+			viewSaveFieldTmp.isI18nTm = true
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'enum', enum: (tm('`+i18nPath+`.status.`+i18nFieldPath+`') as any).map((item: any) => item.value), message: t('validation.select') },`)
 		case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
+			viewSaveFieldTmp.isI18nTm = true
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') },`)
 		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
@@ -803,6 +818,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			formContent = gstr.SubStr(formContent, 0, -2) + `size="small" style="width: 150px;" />`
 		}
 
+		viewSaveField.isI18nTm = true
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<el-tag v-for="(item, index) in saveForm.data.` + tplEM.FieldVar + `" :type="` + fieldHandle + `.tagType[index % ` + fieldHandle + `.tagType.length] as any" @close="` + fieldHandle + `.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
                         {{ item }}
