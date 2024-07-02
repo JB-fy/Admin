@@ -17,7 +17,7 @@ const { t } = useI18n()
                     <div style="font-size: 1.25rem; color: #1482f0; font-weight: bold">{{ t('404.oops') }}</div>
                     <div style="font-size: 1rem; font-weight: bold">{{ t('404.title') }}</div>
                     <div style="font-size: 0.65rem; color: grey">{{ t('404.tip') }}</div>
-                    <router-link to="/" :replace="true" :custom="true" v-slot="{ href, navigate, route }">
+                    <router-link to="/" :replace="true" :custom="true" v-slot="{ href, navigate }">
                         <el-link :href="href" :underline="false" @click="navigate">
                             <el-button type="primary" :round="true" size="small">{{ t('404.backHome') }}</el-button>
                         </el-link>
