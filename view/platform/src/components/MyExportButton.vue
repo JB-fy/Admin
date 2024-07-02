@@ -111,29 +111,21 @@ const exportButton = reactive({
             title: t('common.tip.configExport'),
             center: true,
             showClose: false,
-        })
-            .then(async () => {
-                exportButton.loading = true
-                while (true) {
-                    try {
-                        let data = await exportButton.api.getData()
-                        const length = data.length
-                        if (data.length == 0) {
-                            break
-                        }
-                        data = exportButton.dataHandle(data, exportButton.headerList)
-                        exportExcel([{ data: data }], exportButton.fileName)
-                        if (exportButton.api.param.limit === 0 || length < exportButton.api.param.limit) {
-                            break
-                        }
+        }).then(async () => {
+            exportButton.loading = true
+            while (exportButton.loading) {
+                let data = await exportButton.api.getData()
+                if (data.length > 0) {
+                    data = exportButton.dataHandle(data, exportButton.headerList)
+                    exportExcel([{ data: data }], exportButton.fileName)
+                    if (!(exportButton.api.param.limit === 0 || data.length < exportButton.api.param.limit)) {
                         exportButton.api.param.page++
-                    } catch (error) {
-                        break
+                        continue
                     }
                 }
                 exportButton.loading = false
-            })
-            .catch(() => {})
+            }
+        })
     },
 })
 </script>
