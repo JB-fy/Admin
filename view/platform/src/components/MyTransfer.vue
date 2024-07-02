@@ -34,7 +34,7 @@ const props = defineProps({
     },
     props: {
         type: Object,
-        default: {},
+        default: () => {},
     },
 })
 
@@ -96,8 +96,9 @@ const transfer = reactive({
             try {
                 const res = await request(props.api.code, transfer.api.param)
                 options = transfer.api.transform(res)
-            } catch (error) {}
-            transfer.api.loading = false
+            } finally {
+                transfer.api.loading = false
+            }
             return options
         },
         addOptions: () => {

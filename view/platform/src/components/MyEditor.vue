@@ -24,7 +24,7 @@ const props = defineProps({
     },
     init: {
         type: Object,
-        default: {},
+        default: () => {},
     },
     disabled: {
         type: Boolean,

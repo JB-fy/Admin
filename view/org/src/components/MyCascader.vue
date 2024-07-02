@@ -74,7 +74,7 @@ const props = defineProps({
     },
     props: {
         type: Object,
-        default: {},
+        default: () => {},
     },
 })
 
