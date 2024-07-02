@@ -14,7 +14,7 @@ const props = defineProps({
     defaultOptions: {
         //选项初始默认值。格式：[{ value: any, label: any },...]
         type: Array,
-        default: [],
+        default: () => [],
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function, selectedField: string, searchField: string }

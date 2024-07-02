@@ -27,7 +27,7 @@ const props = defineProps({
     defaultOptions: {
         //选项初始默认值。格式：[{ [cascader.props.value]: any, [cascader.props.label]: any },...]
         type: Array,
-        default: [],
+        default: () => [],
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function }

@@ -23,7 +23,7 @@ const props = defineProps({
     acceptType: {
         //需要严格限制文件格式时使用。示例：['image/png','image/jpg','image/jpeg','image/gif']
         type: Array,
-        default: [],
+        default: () => [],
     },
     maxSize: {
         //需要限制文件大小时使用，单位：字节。示例：100 * 1024 * 1024
