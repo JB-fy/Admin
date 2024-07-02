@@ -152,8 +152,9 @@ const upload = reactive({
             try {
                 const res = await request(upload.api.code, upload.api.param)
                 signInfo = res.data
-            } catch (error) {}
-            upload.api.loading = false
+            } finally {
+                upload.api.loading = false
+            }
             return signInfo
         },
     },
@@ -161,7 +162,7 @@ const upload = reactive({
         imageViewer.initialIndex = imageViewer.urlList.indexOf(uploadFile.url)
         imageViewer.visible = true
     },
-    onRemove: (file: any, fileList: any) => {
+    onRemove: (file: any) => {
         //上传前处理函数beforeUpload返回false时也会触发此函数。此时file内没有response，但是由于没上传也不会存在于props.modelValue中，故不影响删除逻辑
         let url: string = file?.response === undefined ? file.url : file.raw.saveInfo.url
         if (props.multiple) {

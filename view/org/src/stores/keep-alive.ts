@@ -13,7 +13,7 @@ export const useKeepAliveStore = defineStore('keepAlive', {
     },
     getters: {
         //用于组件缓存。打开的菜单标签才做缓存，好处：菜单标签关闭后，对应的组件缓存就会被删除，重新打开时就不需要刷新页面
-        appContainerInclude: (state): string[] => {
+        appContainerInclude: (): string[] => {
             const include: string[] = []
             useAdminStore().menuTabList.forEach((menuTab) => {
                 if (menuTab.keepAlive) {
