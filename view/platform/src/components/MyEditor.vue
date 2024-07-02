@@ -86,7 +86,6 @@ const myEditor = reactive({
         ...props.init,
     },
     signInfo: {} as { [propName: string]: any }, //缓存的签名信息。示例：{ upload_url: "https://xxxxx.com/upload", upload_data: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, is_res: 1 }
-    //生成保存在云服务器中的文件名及完成地址
     initSignInfo: async () => {
         const signInfo = await myEditor.api.getSignInfo()
         if (signInfo && Object.keys(signInfo).length) {
