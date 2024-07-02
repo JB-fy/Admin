@@ -158,7 +158,7 @@ const select = reactive({
                 if (select.api.param.limit === 0 || options.length < select.api.param.limit) {
                     select.api.isEnd = true
                 }
-            } finally{
+            } finally {
                 select.api.loading = false
             }
             return options

@@ -78,11 +78,7 @@ const saveDrawer = reactive({
                 title: t('common.tip.configExit'),
                 center: true,
                 showClose: false,
-            })
-                .then(() => {
-                    done()
-                })
-                .catch(() => {})
+            }).then(() => done())
         } else {
             done()
         }
