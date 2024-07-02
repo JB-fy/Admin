@@ -14,5 +14,17 @@ module.exports = {
   },
   /* globals: {
     ElMessage: 'readonly',
-  } */
+  }, */
+  ignorePatterns: ['public/**'],
+  /* rules: {
+    'vue/multi-word-component-names': 'off'
+  }, */
+  overrides: [
+    {
+      files: ['src/views/**/*.vue', 'src/layout/**/*.vue'],
+      rules: {
+        'vue/multi-word-component-names': 'off'
+      }
+    }
+  ]
 }
