@@ -291,9 +291,10 @@ const getList = async (resetPage: boolean = false) => {
         const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/org/admin/list', param)
         table.data = res.data.list?.length ? res.data.list : []
         pagination.total = res.data.count
-    } finally {
-        table.loading = false
+    } catch (error) {
+        /* eslint-disable-next-line no-empty */
     }
+    table.loading = false
 }
 getList()
 
