@@ -30,7 +30,7 @@ const props = defineProps({
         default: () => [],
     },
     /**
-     * 接口。格式：{ code: string, param: object, transform: function }
+     * 接口。格式：{ code: string, param: object, transform: function, pidField: string }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
      *      param：必须。接口函数所需参数。格式：{ filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number }。其中field内第0，1字段默认用于cascader.props的value，label属性，cascader.api的transform属性，使用时请注意。或直接在props.props中设置对应参数
      *      transform：非必须。接口返回数据转换方法
