@@ -84,7 +84,7 @@ const saveForm = reactive({
                 await request(t('config.VITE_HTTP_API_PREFIX') + '/my/profile/update', param, true)
                 //成功则更新用户信息
                 for (let k in param) {
-                    if (adminStore.info.hasOwnProperty(k)) {
+                    if (k in adminStore.info) {
                         adminStore.info[k] = param[k]
                     }
                 }
