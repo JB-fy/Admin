@@ -137,7 +137,7 @@ func genDao(tpl myGenTpl) {
 		dao.Add(getDaoField(tpl, v))
 	}
 	for _, v := range tpl.Handle.OtherRelTableList {
-		genDao(v.tpl)
+		v.tpl.gfGenDao(false)
 		dao.Merge(getDaoOtherRel(v))
 	}
 	dao.Unique()
