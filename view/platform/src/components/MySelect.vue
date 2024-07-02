@@ -163,14 +163,11 @@ const select = reactive({
             return options
         },
         addOptions: () => {
-            select.api
-                .getOptions()
-                .then((options) => {
-                    if (options?.length) {
-                        select.options = select.options.concat(options ?? [])
-                    }
-                })
-                .catch((error) => {})
+            select.api.getOptions().then((options) => {
+                if (options?.length) {
+                    select.options = select.options.concat(options ?? [])
+                }
+            })
         },
     },
     visibleChange: (val: boolean) => {

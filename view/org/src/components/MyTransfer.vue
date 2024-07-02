@@ -101,14 +101,11 @@ const transfer = reactive({
             return options
         },
         addOptions: () => {
-            transfer.api
-                .getOptions()
-                .then((options) => {
-                    if (options?.length) {
-                        transfer.options = transfer.options.concat(options ?? [])
-                    }
-                })
-                .catch((error) => {})
+            transfer.api.getOptions().then((options) => {
+                if (options?.length) {
+                    transfer.options = transfer.options.concat(options ?? [])
+                }
+            })
         },
     },
 })

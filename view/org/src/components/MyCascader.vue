@@ -101,15 +101,12 @@ const cascader = reactive({
             } else {
                 cascader.api.param.filter[cascader.api.pidField] = node.data.id
             }
-            cascader.api
-                .getOptions()
-                .then((options) => {
-                    if (options?.length === 0) {
-                        node.data.leaf = true
-                    }
-                    resolve(options)
-                })
-                .catch((error) => {})
+            cascader.api.getOptions().then((options) => {
+                if (options?.length === 0) {
+                    node.data.leaf = true
+                }
+                resolve(options)
+            })
             delete cascader.api.param.filter[cascader.api.pidField]
         },
         value: props.api?.param?.field?.[0] ?? 'id',
@@ -175,14 +172,11 @@ const cascader = reactive({
             return options
         },
         addOptions: () => {
-            cascader.api
-                .getOptions()
-                .then((options) => {
-                    if (options?.length) {
-                        cascader.options = cascader.options.concat(options ?? [])
-                    }
-                })
-                .catch((error) => {})
+            cascader.api.getOptions().then((options) => {
+                if (options?.length) {
+                    cascader.options = cascader.options.concat(options ?? [])
+                }
+            })
         },
     },
     visibleChange: (val: boolean) => {
