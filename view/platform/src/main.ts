@@ -34,9 +34,10 @@ for (const [key, component] of Object.entries(epIconList)) {
 //         console.log(1111)
 //     } else {
 //     } */
+//     let errMsg
 //     switch (err.name) {
 //         case 'ApiError':    //接口请求错误
-//             const errMsg = JSON.parse(err.message)
+//             errMsg = JSON.parse(err.message)
 //             switch (errMsg.code) {
 //                 case 39994000:
 //                 case 39994001:

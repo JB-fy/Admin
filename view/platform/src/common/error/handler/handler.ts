@@ -2,9 +2,10 @@ import router from '@/router'
 
 //错误处理
 export const errorHandle = async (err: Error) => {
+    let errMsg
     switch (err.name) {
         case 'ApiError': //接口请求错误
-            const errMsg = JSON.parse(err.message)
+            errMsg = JSON.parse(err.message)
             switch (errMsg.code) {
                 case 39994000:
                 case 39994001:
