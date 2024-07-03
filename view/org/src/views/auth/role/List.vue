@@ -279,7 +279,7 @@ defineExpose({
             </el-space>
         </el-col>
         <el-col :span="8" style="text-align: right">
-            <el-space :size="10" style="height: 100%">
+            <el-space :size="10" style="height: 100%; margin-right: 10px">
                 <my-export-button i18nPrefix="auth.role" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
                 <el-dropdown max-height="300" :hide-on-click="false">
                     <el-button type="info" :circle="true"><autoicon-ep-hide /></el-button>

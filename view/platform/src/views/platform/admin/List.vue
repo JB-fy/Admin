@@ -293,7 +293,7 @@ defineExpose({
             </el-space>
         </el-col>
         <el-col :span="8" style="text-align: right">
-            <el-space :size="10" style="height: 100%">
+            <el-space :size="10" style="height: 100%; margin-right: 10px">
                 <my-export-button
                     i18nPrefix="platform.admin"
                     :headerList="table.columns"
