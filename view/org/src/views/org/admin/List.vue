@@ -266,9 +266,7 @@ const pagination = reactive({
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 //列表
 const getList = async (resetPage: boolean = false) => {
-    if (resetPage) {
-        pagination.page = 1
-    }
+    resetPage && (pagination.page = 1)
     const param = {
         field: [],
         filter: removeEmptyOfObj(queryCommon.data, true, true),
