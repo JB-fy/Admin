@@ -140,12 +140,12 @@ const menuTab = reactive({
                                 </el-space>
                                 <template #dropdown>
                                     <el-dropdown-menu>
-                                        <el-dropdown-item @click="keepAliveStore.refreshMenuTab(item.componentName)"> <autoicon-ep-refresh />{{ t('common.refresh') }} </el-dropdown-item>
-                                        <el-dropdown-item @click="adminStore.closeSelfMenuTab(item.url)"> <autoicon-ep-close />{{ t('common.close') }} </el-dropdown-item>
-                                        <el-dropdown-item @click="adminStore.closeLeftMenuTab(item.url)"> <autoicon-ep-back />{{ t('common.closeLeft') }} </el-dropdown-item>
-                                        <el-dropdown-item @click="adminStore.closeRightMenuTab(item.url)"> <autoicon-ep-right />{{ t('common.closeRight') }} </el-dropdown-item>
-                                        <el-dropdown-item @click="adminStore.closeOtherMenuTab(item.url)"> <autoicon-ep-switch />{{ t('common.closeOther') }} </el-dropdown-item>
-                                        <el-dropdown-item @click="adminStore.closeAllMenuTab()"> <autoicon-ep-circle-close />{{ t('common.closeAll') }} </el-dropdown-item>
+                                        <el-dropdown-item @click="keepAliveStore.refreshMenuTab(item.componentName)"> <autoicon-ep-refresh />{{ t('common.refresh') }}</el-dropdown-item>
+                                        <el-dropdown-item @click="adminStore.closeSelfMenuTab(item.url)"> <autoicon-ep-close />{{ t('common.close') }}</el-dropdown-item>
+                                        <el-dropdown-item @click="adminStore.closeLeftMenuTab(item.url)"> <autoicon-ep-back />{{ t('common.closeLeft') }}</el-dropdown-item>
+                                        <el-dropdown-item @click="adminStore.closeRightMenuTab(item.url)"> <autoicon-ep-right />{{ t('common.closeRight') }}</el-dropdown-item>
+                                        <el-dropdown-item @click="adminStore.closeOtherMenuTab(item.url)"> <autoicon-ep-switch />{{ t('common.closeOther') }}</el-dropdown-item>
+                                        <el-dropdown-item @click="adminStore.closeAllMenuTab()"> <autoicon-ep-circle-close />{{ t('common.closeAll') }}</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
@@ -160,12 +160,12 @@ const menuTab = reactive({
                 </el-link>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item @click="keepAliveStore.refreshMenuTab(route.meta.componentName)"> <autoicon-ep-refresh />{{ t('common.refresh') }} </el-dropdown-item>
-                        <el-dropdown-item @click="adminStore.closeSelfMenuTab(route.fullPath)"> <autoicon-ep-close />{{ t('common.close') }} </el-dropdown-item>
-                        <el-dropdown-item @click="adminStore.closeLeftMenuTab(route.fullPath)"> <autoicon-ep-back />{{ t('common.closeLeft') }} </el-dropdown-item>
-                        <el-dropdown-item @click="adminStore.closeRightMenuTab(route.fullPath)"> <autoicon-ep-right />{{ t('common.closeRight') }} </el-dropdown-item>
-                        <el-dropdown-item @click="adminStore.closeOtherMenuTab(route.fullPath)"> <autoicon-ep-switch />{{ t('common.closeOther') }} </el-dropdown-item>
-                        <el-dropdown-item @click="adminStore.closeAllMenuTab()"> <autoicon-ep-circle-close />{{ t('common.closeAll') }} </el-dropdown-item>
+                        <el-dropdown-item @click="keepAliveStore.refreshMenuTab(route.meta.componentName)"> <autoicon-ep-refresh />{{ t('common.refresh') }}</el-dropdown-item>
+                        <el-dropdown-item @click="adminStore.closeSelfMenuTab(route.fullPath)"> <autoicon-ep-close />{{ t('common.close') }}</el-dropdown-item>
+                        <el-dropdown-item @click="adminStore.closeLeftMenuTab(route.fullPath)"> <autoicon-ep-back />{{ t('common.closeLeft') }}</el-dropdown-item>
+                        <el-dropdown-item @click="adminStore.closeRightMenuTab(route.fullPath)"> <autoicon-ep-right />{{ t('common.closeRight') }}</el-dropdown-item>
+                        <el-dropdown-item @click="adminStore.closeOtherMenuTab(route.fullPath)"> <autoicon-ep-switch />{{ t('common.closeOther') }}</el-dropdown-item>
+                        <el-dropdown-item @click="adminStore.closeAllMenuTab()"> <autoicon-ep-circle-close />{{ t('common.closeAll') }}</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
