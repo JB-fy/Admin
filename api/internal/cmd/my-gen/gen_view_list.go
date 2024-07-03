@@ -338,15 +338,11 @@ defineExpose({
             <el-space :size="10" style="height: 100%">
                 <my-export-button i18nPrefix="` + tpl.I18nPath + `" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
                 <el-dropdown max-height="300" :hide-on-click="false">
-                    <el-button type="info" :circle="true">
-                        <autoicon-ep-hide />
-                    </el-button>
+                    <el-button type="info" :circle="true"><autoicon-ep-hide /></el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item v-for="(item, index) in table.columns" :key="index">
-                                <el-checkbox v-model="item.hidden">
-                                    {{ item.title }}
-                                </el-checkbox>
+                                <el-checkbox v-model="item.hidden">{{ item.title }}</el-checkbox>
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -360,9 +356,7 @@ defineExpose({
             <template #default="{ height, width }">
                 <el-table-v2 class="main-table" :columns="table.columns" :data="table.data" :sort-by="table.sort" @column-sort="table.handleSort" :width="width" :height="height" :fixed="true" :row-height="` + gconv.String(viewList.rowHeight) + `">
                     <template v-if="table.loading" #overlay>
-                        <el-icon class="is-loading" color="var(--el-color-primary)" :size="25">
-                            <autoicon-ep-loading />
-                        </el-icon>
+                        <el-icon class="is-loading" color="var(--el-color-primary)" :size="25"><autoicon-ep-loading /></el-icon>
                     </template>
                 </el-table-v2>
             </template>
