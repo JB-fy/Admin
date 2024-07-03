@@ -33,11 +33,11 @@ const queryForm = reactive({
         <el-form-item prop="scene_id">
             <my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.menu.name.scene_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
         </el-form-item>
-        <el-form-item prop="pid">
+        <el-form-item v-if="queryCommon.data.scene_id" prop="pid">
             <my-cascader
                 v-model="queryCommon.data.pid"
                 :placeholder="t('auth.menu.name.pid')"
-                :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }"
+                :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { scene_id: queryCommon.data.scene_id } } }"
                 :defaultOptions="tm('common.status.pid')"
                 :props="{ checkStrictly: true, emitPath: false }"
             />
