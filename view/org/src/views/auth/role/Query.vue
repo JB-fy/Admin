@@ -6,14 +6,7 @@ const { t, tm } = useI18n()
 const queryCommon = inject('queryCommon') as { data: { [propName: string]: any } }
 queryCommon.data = {
     ...queryCommon.data,
-    time_range: (() => {
-        return undefined
-        /* const date = new Date()
-        return [
-            new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0),
-            new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
-        ] */
-    })(),
+    time_range: undefined, //[new Date().setHours(0, 0, 0), new Date().setHours(23, 59, 59)]
     time_range_start: computed(() => (queryCommon.data.time_range?.length ? dayjs(queryCommon.data.time_range[0]).format('YYYY-MM-DD HH:mm:ss') : undefined)),
     time_range_end: computed(() => (queryCommon.data.time_range?.length ? dayjs(queryCommon.data.time_range[1]).format('YYYY-MM-DD HH:mm:ss') : undefined)),
 }
@@ -25,10 +18,7 @@ const queryForm = reactive({
         queryForm.loading = true
         listCommon.ref.getList(true).finally(() => (queryForm.loading = false))
     },
-    reset: () => {
-        queryForm.ref.resetFields()
-        //queryForm.submit()
-    },
+    reset: () => queryForm.ref.resetFields(),
 })
 </script>
 
