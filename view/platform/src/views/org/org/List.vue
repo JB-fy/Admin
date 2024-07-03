@@ -217,9 +217,7 @@ const handleDelete = (idArr: number[]) => {
         title: t('common.tip.configDelete'),
         center: true,
         showClose: false,
-    }).then(() => {
-        request(t('config.VITE_HTTP_API_PREFIX') + '/org/org/del', { id_arr: idArr }, true).then(() => getList())
-    })
+    }).then(() => request(t('config.VITE_HTTP_API_PREFIX') + '/org/org/del', { id_arr: idArr }, true).then(() => getList()))
 }
 //更新
 const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {

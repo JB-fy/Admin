@@ -275,9 +275,7 @@ const handleDelete = (idArr: ` + viewList.idType + `[]) => {
         title: t('common.tip.configDelete'),
         center: true,
         showClose: false,
-    }).then(() => {
-        request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: idArr }, true).then(() => getList())
-    })
+    }).then(() => request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: idArr }, true).then(() => getList()))
 }`
 	}
 	if option.IsUpdate {
