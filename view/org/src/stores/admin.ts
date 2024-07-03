@@ -301,6 +301,8 @@ export const useAdminStore = defineStore('admin', {
          * 设置左侧菜单树（包含更新路由meta数据）
          */
         async setMenuTree() {
+            const res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/my/menu/tree')
+            const tree = import.meta.env.DEV ? [...res.data.tree, this.menuTreeOfDev] : res.data.tree
             const handleMenuTree = (menuTree: any, menuChain: any = []) => {
                 const menuTreeTmp: any = []
                 for (let i = 0; i < menuTree.length; i++) {
@@ -333,8 +335,6 @@ export const useAdminStore = defineStore('admin', {
                 }
                 return menuTreeTmp
             }
-            const res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/my/menu/tree')
-            const tree = import.meta.env.DEV ? [...res.data.tree, this.menuTreeOfDev] : res.data.tree
             this.menuTree = handleMenuTree(tree)
         },
         /**
