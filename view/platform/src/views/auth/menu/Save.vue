@@ -64,8 +64,8 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            param.scene_id === undefined ? (param.scene_id = 0) : null
-            param.pid === undefined ? (param.pid = 0) : null
+            param.scene_id === undefined && (param.scene_id = 0)
+            param.pid === undefined && (param.pid = 0)
             try {
                 if (param?.id_arr?.length > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/update', param, true)

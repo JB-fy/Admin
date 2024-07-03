@@ -41,7 +41,7 @@ const exportButton = reactive({
     headerList: computed(() => {
         if (Array.isArray(props.headerList)) {
             return props.headerList.reduce((headerListTmp: { [propName: string]: string }, item: any) => {
-                item.dataKey ? (headerListTmp[item.dataKey] = item.title) : null
+                item.dataKey && (headerListTmp[item.dataKey] = item.title)
                 return headerListTmp
             }, {})
         }
@@ -100,7 +100,7 @@ const exportButton = reactive({
         return data.map((item: any) => {
             const tmp: { [propName: string]: any } = {}
             for (const key in headerList) {
-                key in item ? (tmp[headerList[key]] = item[key]) : null
+                key in item && (tmp[headerList[key]] = item[key])
             }
             return tmp
         })

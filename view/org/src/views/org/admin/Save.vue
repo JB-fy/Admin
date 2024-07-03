@@ -51,7 +51,7 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            // param.org_id === undefined ? (param.org_id = 0) : null
+            // param.org_id === undefined && (param.org_id = 0)
             param.password ? (param.password = md5(param.password)) : delete param.password
             try {
                 if (param?.id_arr?.length > 0) {

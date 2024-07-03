@@ -198,11 +198,7 @@ const handleAdd = () => {
 //批量删除
 const handleBatchDelete = () => {
     const idArr: number[] = []
-    table.data.forEach((item: any) => {
-        if (item.checked) {
-            idArr.push(item.id)
-        }
-    })
+    table.data.forEach((item: any) => item.checked && idArr.push(item.id))
     if (idArr.length) {
         handleDelete(idArr)
     } else {

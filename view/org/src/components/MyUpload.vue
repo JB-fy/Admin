@@ -124,7 +124,7 @@ const upload = reactive({
                 //组件销毁后，倒计时还会继续执行。如果用户点击新增|编辑|复制等按钮多次，将会创建多个倒计时
                 //upload.initSignInfo()
                 //判断元素是否还存在，防止组件销毁后，倒计时却还在重复执行
-                document.getElementById(upload.id) ? upload.initSignInfo() : null
+                document.getElementById(upload.id) && upload.initSignInfo()
             }, timeout)
         }
     },
