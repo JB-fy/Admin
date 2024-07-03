@@ -314,12 +314,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
                 type: 'object',
                 trigger: 'blur',
                 message: t('validation.json'),
-                /* fields: {
-                    xxxx: [
-						{ type: 'string', message: 'xxxx' + t('validation.input') },
-						// { type: 'integer', min: 1, message: 'xxxx' + t('validation.min.number', { min: 1 }) },
-					],
-                }, */
+                // fields: { xxxx: [{ required: true, message: 'xxxx' + t('validation.required') }] }, //内部添加规则时，不再需要设置trigger属性
                 transform: (value: any) => {
                     if (value === '' || value === null || value === undefined) {
                         return undefined
