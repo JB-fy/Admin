@@ -197,11 +197,7 @@ const handleAdd = () => {
 const handleBatchDelete = () => {
     const idArr: number[] = []
     table.data.forEach((item: any) => item.checked && idArr.push(item.id))
-    if (idArr.length) {
-        handleDelete(idArr)
-    } else {
-        ElMessage.error(t('common.tip.selectDelete'))
-    }
+    idArr.length == 0 ? ElMessage.error(t('common.tip.selectDelete')) : handleDelete(idArr)
 }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
