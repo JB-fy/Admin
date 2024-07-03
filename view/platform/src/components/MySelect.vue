@@ -1,9 +1,7 @@
 <!-------- 使用示例 开始-------->
-<!-- <my-select v-model="saveForm.data.sceneId" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+<!-- <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 
-<my-select v-model="queryCommon.data.sceneId" :placeholder="t('auth.role.name.sceneId')"
-    :defaultOptions="[{ value: 0, label: t('common.name.allTopLevel') }]"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
+<my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.role.name.scene_id')" :defaultOptions="tm('common.status.whether')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'scene_name'] } }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 const slots = useSlots()

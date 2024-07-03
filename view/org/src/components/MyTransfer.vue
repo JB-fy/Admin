@@ -1,8 +1,8 @@
 <!-------- 使用示例 开始-------->
-<!-- <my-transfer v-model="saveForm.data.sceneIdArr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+<!-- <my-transfer v-model="saveForm.data.scene_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 
-<my-transfer v-model="saveForm.data.sceneIdArr"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'sceneName'] } }" /> -->
+<my-transfer v-model="saveForm.data.scene_id_arr"
+    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'scene_name'] } }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 const slots = useSlots()

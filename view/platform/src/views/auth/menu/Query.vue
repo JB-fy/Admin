@@ -38,7 +38,7 @@ const queryForm = reactive({
                 v-model="queryCommon.data.pid"
                 :placeholder="t('auth.menu.name.pid')"
                 :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }"
-                :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]"
+                :defaultOptions="tm('common.status.pid')"
                 :props="{ checkStrictly: true, emitPath: false }"
             />
         </el-form-item>

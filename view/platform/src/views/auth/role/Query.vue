@@ -30,11 +30,16 @@ const queryForm = reactive({
         <el-form-item prop="role_name">
             <el-input v-model="queryCommon.data.role_name" :placeholder="t('auth.role.name.role_name')" maxlength="30" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="scene_id">
-            <my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.role.name.scene_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => (queryCommon.data.rel_id = undefined)" />
+        <el-form-item prop="scene_code">
+            <my-select
+                v-model="queryCommon.data.scene_code"
+                :placeholder="t('auth.role.name.scene_code')"
+                :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['scene_code', 'scene_name'] } }"
+                @change="() => (queryCommon.data.rel_id = undefined)"
+            />
         </el-form-item>
-        <el-form-item v-if="queryCommon.data.scene_id == 2" prop="rel_id">
-            <my-select v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/org/org/list' }" :defaultOptions="[{ value: 0, label: t('auth.role.platform') }]" />
+        <el-form-item v-if="queryCommon.data.scene_code == 'org'" prop="rel_id">
+            <my-select v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/org/org/list' }" :defaultOptions="tm('auth.role.status.rel_id')" />
         </el-form-item>
         <el-form-item prop="action_id">
             <my-select v-model="queryCommon.data.action_id" :placeholder="t('auth.role.name.action_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list' }" />

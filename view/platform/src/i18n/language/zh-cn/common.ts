@@ -33,7 +33,6 @@ export default {
         createdAt: '创建时间',
 
         without: '无',
-        allTopLevel: '全部顶级',
         min: '最小值',
         max: '最大值',
         timeRange: '时间范围',
@@ -41,6 +40,10 @@ export default {
         timeRangeEnd: '结束时间',
     },
     status: {
+        pid: [
+            //注意：用于my-cascader组件，故第一个键名是id不是value
+            { id: 0, label: '全部顶级' },
+        ],
         whether: [
             { value: 0, label: '否' },
             { value: 1, label: '是' },

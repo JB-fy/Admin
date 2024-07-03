@@ -1,22 +1,12 @@
 <!-------- 使用示例 开始-------->
-<!-- <my-cascader v-model="saveForm.data.menuId" :placeholder="t('common.name.rel.menuId')"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { field: ['id', 'menuName'] } }"
-    :props="{ emitPath: false, value: 'id', label: 'menuName' }" />
+<!-- <my-cascader v-model="saveForm.data.menu_id" :placeholder="t('common.name.rel.menu_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { field: ['id', 'menu_name'] } }" :props="{ emitPath: false, value: 'id', label: 'menu_name' }" />
 
-<my-cascader v-model="saveForm.data.menuIdArr"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }" :isPanel="true"
-    :props="{ multiple: true }" />
+<my-cascader v-model="saveForm.data.menu_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { scene_id: saveForm.data.scene_id } } }" :isPanel="true" :props="{ multiple: true }" />
 
-<my-cascader v-model="saveForm.data.pid"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { sceneId: saveForm.data.sceneId } } }"
-    :props="{ checkStrictly: true, emitPath: false }" />
-<my-cascader v-model="saveForm.data.pid"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/list', param: { filter: { sceneId: saveForm.data.sceneId } } }"
-    :props="{ checkStrictly: true, emitPath: false, lazy: true }" />
+<my-cascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { scene_id: saveForm.data.scene_id } } }" :props="{ checkStrictly: true, emitPath: false }" />
+<my-cascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/list', param: { filter: { scene_id: saveForm.data.scene_id } } }" :props="{ checkStrictly: true, emitPath: false, lazy: true }" />
 
-<my-cascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')"
-    :defaultOptions="[{ id: 0, label: t('common.name.allTopLevel') }]" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }"
-    :props="{ checkStrictly: true, emitPath: false }" /> -->
+<my-cascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')" :defaultOptions="tm('common.status.pid')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }" :props="{ checkStrictly: true, emitPath: false }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 const slots = useSlots()
