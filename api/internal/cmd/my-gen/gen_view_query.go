@@ -92,9 +92,7 @@ const queryForm = reactive({
     loading: false,
     submit: () => {
         queryForm.loading = true
-        listCommon.ref.getList(true).finally(() => {
-            queryForm.loading = false
-        })
+        listCommon.ref.getList(true).finally(() => (queryForm.loading = false))
     },
     reset: () => {
         queryForm.ref.resetFields()
@@ -212,18 +210,8 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
             new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
         ] */
     })(),
-    ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_start`) + `: computed(() => {
-        if (queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `?.length) {
-            return dayjs(queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `[0]).format('YYYY-MM-DD HH:mm:ss')
-        }
-        return ''
-    }),
-    ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_end`) + `: computed(() => {
-        if (queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `?.length) {
-            return dayjs(queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `[1]).format('YYYY-MM-DD HH:mm:ss')
-        }
-        return ''
-    }),`
+    ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_start`) + `: computed(() => (queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `?.length ? dayjs(queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `[0]).format('YYYY-MM-DD HH:mm:ss') : undefined)),
+    ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_end`) + `: computed(() => (queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `?.length ? dayjs(queryCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`) + `[1]).format('YYYY-MM-DD HH:mm:ss') : undefined)),`
 
 		viewQueryField.formProp.Method = internal.ReturnTypeName
 		viewQueryField.formProp.DataTypeName = internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range`)
