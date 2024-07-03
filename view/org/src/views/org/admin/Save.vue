@@ -144,9 +144,7 @@ const saveDrawer = reactive({
         </el-scrollbar>
         <template #footer>
             <el-button @click="saveDrawer.buttonClose">{{ t('common.cancel') }}</el-button>
-            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading">
-                {{ t('common.save') }}
-            </el-button>
+            <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading">{{ t('common.save') }}</el-button>
         </template>
     </el-drawer>
 </template>
