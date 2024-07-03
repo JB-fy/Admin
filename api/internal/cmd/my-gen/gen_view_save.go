@@ -217,10 +217,7 @@ const saveDrawer = reactive({
             done()
         }
     },
-    buttonClose: () => {
-        //saveCommon.visible = false
-        saveDrawer.ref.handleClose() //会触发beforeClose
-    },
+    buttonClose: () => saveDrawer.ref.handleClose(), //saveCommon.visible = false //不会触发beforeClose
 })` + gstr.Join(append([]string{``}, viewSave.formHandle...), `
 
 `) + `
