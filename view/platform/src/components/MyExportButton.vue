@@ -131,5 +131,5 @@ const exportButton = reactive({
 </script>
 
 <template>
-    <el-button type="primary" :round="true" @click="exportButton.click" :loading="exportButton.loading"> <autoicon-ep-download />{{ t('common.export') }} </el-button>
+    <el-button type="primary" :round="true" @click="exportButton.click" :loading="exportButton.loading"> <autoicon-ep-download />{{ t('common.export') }}</el-button>
 </template>

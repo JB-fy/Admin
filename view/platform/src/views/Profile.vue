@@ -185,7 +185,7 @@ const emailCountdown = reactive({
                     <el-alert :title="t('profile.tip.email_code_to_bind_email')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }} </el-button>
+                    <el-button type="primary" @click="saveForm.submit" :loading="saveForm.loading"> <autoicon-ep-circle-check />{{ t('common.save') }}</el-button>
                 </el-form-item>
             </el-form>
         </el-main>
