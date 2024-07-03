@@ -387,8 +387,8 @@ defineExpose({
     <el-row class="main-table-tool">
         <el-col :span="16">
             <el-space :size="10" style="height: 100%; margin-left: 10px">
-                <el-button v-if="authAction.isCreate" type="primary" @click="handleAdd"> <autoicon-ep-edit-pen />{{ t('common.add') }}</el-button>
-                <el-button v-if="authAction.isDelete" type="danger" @click="handleBatchDelete"> <autoicon-ep-delete-filled />{{ t('common.batchDelete') }}</el-button>
+                <el-button v-if="authAction.isCreate" type="primary" @click="handleAdd"><autoicon-ep-edit-pen />{{ t('common.add') }}</el-button>
+                <el-button v-if="authAction.isDelete" type="danger" @click="handleBatchDelete"><autoicon-ep-delete-filled />{{ t('common.batchDelete') }}</el-button>
             </el-space>
         </el-col>
         <el-col :span="8" style="text-align: right">

@@ -356,7 +356,7 @@ defineExpose({
 <template>
     <el-row class="main-table-tool">
         <el-col :span="16">
-            <el-space :size="10" style="height: 100%; margin-left: 10px"> </el-space>
+            <el-space :size="10" style="height: 100%; margin-left: 10px"></el-space>
         </el-col>
         <el-col :span="8" style="text-align: right">
             <el-space :size="10" style="height: 100%; margin-right: 10px">

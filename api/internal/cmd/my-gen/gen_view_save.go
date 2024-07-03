@@ -906,13 +906,13 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
                     <template #label>
                         <span style="text-align: right">
                             <div>{{ t('`+tplEM.tplOfTop.I18nPath+`.name.`+internal.GetStrByFieldStyle(tplEM.tplOfTop.FieldStyle, tplEM.FieldVar, ``, `label`)+`') }}</div>
-                            <el-button type="primary" size="small" @click="() => saveForm.data.`+tplEM.FieldVar+`.push({})"> <autoicon-ep-plus />{{ t('common.add') }}</el-button>
+                            <el-button type="primary" size="small" @click="() => saveForm.data.`+tplEM.FieldVar+`.push({})"><autoicon-ep-plus />{{ t('common.add') }}</el-button>
                         </span>
                     </template>
 
                     <template v-for="(item, index) in saveForm.data.`+tplEM.FieldVar+`" :key="index">
                         <div style="width: 100%; margin: 2.5px 0; display: flex; align-items: center; gap: 10px">
-                            <el-button type="danger" size="small" @click="() => saveForm.data.`+tplEM.FieldVar+`.splice(index, 1)"> <autoicon-ep-close />{{ t('common.delete') }}</el-button>
+                            <el-button type="danger" size="small" @click="() => saveForm.data.`+tplEM.FieldVar+`.splice(index, 1)"><autoicon-ep-close />{{ t('common.delete') }}</el-button>
 							{{formContent}}
                         </div>
                     </template>
