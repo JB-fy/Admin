@@ -40,10 +40,7 @@ export default {
         timeRangeEnd: '结束时间',
     },
     status: {
-        pid: [
-            //注意：用于my-cascader组件，故第一个键名是id不是value
-            { id: 0, label: '全部顶级' },
-        ],
+        pid: [{ value: 0, label: '全部顶级', leaf: true }],
         whether: [
             { value: 0, label: '否' },
             { value: 1, label: '是' },

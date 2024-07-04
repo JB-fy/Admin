@@ -413,7 +413,11 @@ func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController)
 	case internal.TypeNameUpdated: // 更新时间字段
 	case internal.TypeNameCreated: // 创建时间字段
 	case internal.TypeNamePid: // pid；	类型：int等类型；
-		controller.list = append(controller.list, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+"`")
+		controller.list = append(controller.list,
+			"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+"`",
+			"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_has_child`)+"`",
+		)
+		controller.noAuth = append(controller.noAuth, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_has_child`)+"`")
 	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
 	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；

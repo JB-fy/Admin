@@ -15,7 +15,7 @@ const props = defineProps({
         type: [String, Number, Array],
     },
     defaultOptions: {
-        //选项初始默认值。格式：[{ [cascader.props.value]: any, [cascader.props.label]: any },...]
+        //选项初始默认值。格式：[{ value: any, label: any, leaf: boolean },...]。动态加载时leaf必须
         type: Array,
         default: () => [],
     },
@@ -89,18 +89,19 @@ const cascader = reactive({
             if (node.level == 0) {
                 cascader.api.param.filter[cascader.api.pidField] = 0
             } else {
-                cascader.api.param.filter[cascader.api.pidField] = node.data.id
+                cascader.api.param.filter[cascader.api.pidField] = node.data.value
             }
             cascader.api.getOptions().then((options) => {
-                if (options?.length === 0) {
+                if (!options?.length) {
                     node.data.leaf = true
+                }
+                if (node.level == 0) {
+                    options = [...props.defaultOptions, ...options]
                 }
                 resolve(options)
             })
             delete cascader.api.param.filter[cascader.api.pidField]
         },
-        value: props.api?.param?.field?.[0] ?? 'id',
-        label: props.api?.param?.field?.[1] ?? 'label',
         ...props.props,
     },
     initOptions: () => {
@@ -113,7 +114,7 @@ const cascader = reactive({
     api: {
         loading: false,
         param: computed((): { filter: { [propName: string]: any }; field: string[]; sort: string; page: number; limit: number } => {
-            return {
+            const param = {
                 filter: {} as { [propName: string]: any },
                 field: ['id', 'label'],
                 sort: 'id desc',
@@ -121,28 +122,37 @@ const cascader = reactive({
                 limit: 0,
                 ...(props.api?.param ?? {}),
             }
+            if (cascader.props.lazy /* && !cascader.props.checkStrictly */) {
+                // 当checkStrictly=true时，可在cascader.props.lazyLoad中动态改变leaf=true
+                // 当checkStrictly=false时，可在cascader.props.lazyLoad中动态改变leaf=true。但选项选中后值为null，故服务器必须返回是否有子级is_has_child字段，用于直接确定leaf
+                // 无子级设置leaf=true
+                param.field.push('is_has_child')
+            }
+            return param
         }),
         transform: computed(() => {
             return props.api.transform
                 ? props.api.transform
                 : (res: any) => {
-                      if (cascader.props.lazy) {
-                          if (!cascader.props.checkStrictly) {
-                              //这种情况暂时可以用非动态全部加载解决。等确实需要使用时在考虑修改。
-                              //动态加载，且当checkStrictly为false时，leaf字段必须有，否则选中后值为null
-                              /* const options: any = []
-                        res.data.list.forEach((item: any) => {
-                            options.push({
-                                [cascader.props.value]: item[cascader.api.param.field[0]],
-                                [cascader.props.label]: item[cascader.api.param.field[1]],
-                                //[cascader.props.leaf]: false    //后端接口还得返回一个是否有子集的字段，暂时不考虑
-                            })
-                        })
-                        return options */
+                      const handle = (tree: any) => {
+                          const treeTmp: any = []
+                          for (let i = 0; i < tree.length; i++) {
+                              treeTmp[i] = {
+                                  ...tree[i],
+                                  value: tree[i][cascader.api.param.field[0]],
+                                  label: tree[i][cascader.api.param.field[1]],
+                                  leaf: tree[i]?.['is_has_child'] === 0 ? true : false,
+                              }
+                              if (tree[i].children?.length) {
+                                  treeTmp[i].children = handle(tree[i].children)
+                              }
                           }
-                          return res.data.list
+                          return treeTmp
                       }
-                      return res.data.tree
+                      if (!cascader.props.lazy) {
+                          return handle(res.data.tree)
+                      }
+                      return handle(res.data.list)
                   }
         }),
         pidField: computed((): string => {

@@ -154,6 +154,9 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]any
 				tableP := `p_` + daoModel.DbTable
 				m = m.Fields(tableP + `.` + daoThis.Columns().MenuName + ` AS ` + v)
 				m = m.Handler(daoThis.ParseJoin(tableP, daoModel))
+			case `is_has_child`:
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
+				daoModel.AfterField.Add(v)
 			case `tree`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().Pid)
@@ -202,6 +205,12 @@ func (daoThis *menuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				defer wg.Done()
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
+					case `is_has_child`:
+						isHasChild := 0
+						if count, _ := daoModel.CloneNew().Filter(daoThis.Columns().Pid, record[daoThis.Columns().MenuId]).Count(); count > 0 {
+							isHasChild = 1
+						}
+						record[v] = gvar.New(isHasChild)
 					case `show_menu`:
 						extraDataJson := gjson.New(record[daoThis.Columns().ExtraData])
 						record[`i18n`] = extraDataJson.Get(`i18n`)
