@@ -331,8 +331,11 @@ defineExpose({
 		tplView += `
                 <el-button v-if="authAction.isDelete" type="danger" @click="handleBatchDelete"><autoicon-ep-delete-filled />{{ t('common.batchDelete') }}</el-button>`
 	}
-	tplView += `
-            </el-space>
+	if option.IsCreate || option.IsDelete {
+		tplView += `
+            `
+	}
+	tplView += `</el-space>
         </el-col>
         <el-col :span="8" style="text-align: right">
             <el-space :size="10" style="height: 100%; margin-right: 10px">
