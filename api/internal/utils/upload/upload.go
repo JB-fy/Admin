@@ -62,7 +62,7 @@ func NewUpload(ctx context.Context, uploadTypeOpt ...string) Upload {
 
 func CreateUploadParam(fileType string) (param UploadParam) {
 	param = UploadParam{
-		Dir:        `common/` + gtime.Now().Format(`Ymd`) + `/`,
+		Dir:        `upload/` + gtime.Now().Format(`Ymd`) + `/`,
 		Expire:     gtime.Now().Unix() + 15*60,
 		ExpireTime: 15 * 60,
 		MinSize:    0,
