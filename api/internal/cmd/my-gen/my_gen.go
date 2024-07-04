@@ -480,7 +480,8 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 		if gstr.Pos(log, myGenCommand) == -1 {
 			log = log + "\r\n" + logStr
 		} else {
-			log, _ = gregex.ReplaceString(gregex.Quote(myGenCommand)+`[^(\r\n\./main)|$]*`, logStr, log)
+			match, _ := gregex.MatchString(`(`+gregex.Quote(myGenCommand)+`[\s\S]*?)(((\r|\n)\./main)|$)`, log)
+			log = gstr.Replace(log, match[1], logStr)
 		}
 		gfile.PutContents(saveFile, log)
 	} else {
