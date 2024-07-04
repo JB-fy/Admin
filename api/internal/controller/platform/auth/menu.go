@@ -30,7 +30,7 @@ func NewMenu() *Menu {
 		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
 		defaultFieldOfTree: append(field, defaultFieldOfTree...),
 		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Merge(gset.NewStrSetFrom(defaultFieldOfTree)).Slice()...),
-		noAuthField:        []string{`id`, `label`},
+		noAuthField:        []string{`id`, `label`, `is_has_child`},
 	}
 }
 

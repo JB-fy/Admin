@@ -31,7 +31,7 @@ const queryForm = reactive({
             <el-input v-model="queryCommon.data.menu_name" :placeholder="t('auth.menu.name.menu_name')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="scene_id">
-            <my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.menu.name.scene_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
+            <my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.menu.name.scene_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => (queryCommon.data.pid = undefined)" />
         </el-form-item>
         <el-form-item v-if="queryCommon.data.scene_id" prop="pid">
             <my-cascader
