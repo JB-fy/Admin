@@ -66,6 +66,9 @@ type myGenTpl struct {
 		MiddleTableOneList  []handleExtendMiddle   //中间表（一对一）：表命名：主表名_rel_to_xxxx 或 xxxx_rel_of_主表名，同模块时，后面部分可省略独有前缀，并存在至少2个与关联表（主键 或 表名去掉前缀 + ID）同名的id后缀字段。主表的关联字段设为：非递增主键 或 唯一索引
 		MiddleTableManyList []handleExtendMiddle   //中间表（一对多）：表命名：主表名_rel_to_xxxx 或 xxxx_rel_of_主表名，同模块时，后面部分可省略独有前缀，并存在至少2个与关联表（主键 或 表名去掉前缀 + ID）同名的id后缀字段。所有表的关联字段设为：联合主键 或 联合唯一索引
 		OtherRelTableList   []handleOtherRel       //其它关联表（不含扩展表和中间表）：存在与主表主键（主键 或 表名去掉前缀 + ID）同名的id后缀字段。作用：logic层delete方法生成验证代码；dao层HookDelete方法生成关联删除代码
+		ExtendTableCmdLog   []string               //扩展表Cmd记录
+		MiddleTableCmdLog   []string               //中间表Cmd记录
+		OtherRelTableCmdLog []string               //其它关联表Cmd记录
 	}
 }
 
@@ -519,9 +522,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	}
 
 	if isTop {
-		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList = tpl.getExtendTable(ctx, tpl) //扩展表
-		tpl.Handle.MiddleTableOneList, tpl.Handle.MiddleTableManyList = tpl.getMiddleTable(ctx, tpl) //中间表
-		tpl.Handle.OtherRelTableList = tpl.getOtherRel(ctx, tpl)                                     //其它关联当前表主键的表（不含当前表的扩展表和中间表）
+		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList, tpl.Handle.ExtendTableCmdLog = tpl.getExtendTable(ctx, tpl) //扩展表
+		tpl.Handle.MiddleTableOneList, tpl.Handle.MiddleTableManyList, tpl.Handle.MiddleTableCmdLog = tpl.getMiddleTable(ctx, tpl) //中间表
+		tpl.Handle.OtherRelTableList, tpl.Handle.OtherRelTableCmdLog = tpl.getOtherRel(ctx, tpl)                                   //其它关联当前表主键的表（不含当前表的扩展表和中间表）
 	}
 	/*--------需特殊处理的字段解析 结束--------*/
 
@@ -753,7 +756,7 @@ func (myGenTplThis *myGenTpl) createExtendMiddleTpl(tplOfTop myGenTpl, extendMid
 }
 
 // 获取扩展表
-func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []handleExtendMiddle, extendTableManyList []handleExtendMiddle) {
+func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []handleExtendMiddle, extendTableManyList []handleExtendMiddle, extendTableCmdLog []string) {
 	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取扩展表
 		return
 	}
@@ -821,6 +824,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 				if isExtendOne {
 					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 				}
+				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%t`, `扩展表(一对一)`, extendTpl.Table, isExtendOne))
 			case internal.TableTypeExtendMany:
 				isExtendMany := true
 				fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
@@ -846,6 +850,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 					}
 					extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
 				}
+				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%t`, `扩展表(一对多)`, extendTpl.Table, isExtendMany))
 			}
 			break
 		}
@@ -854,7 +859,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 }
 
 // 获取中间表
-func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) (middleTableOneList []handleExtendMiddle, middleTableManyList []handleExtendMiddle) {
+func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) (middleTableOneList []handleExtendMiddle, middleTableManyList []handleExtendMiddle, middleTableCmdLog []string) {
 	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取中间表
 		return
 	}
@@ -965,7 +970,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 }
 
 // 其它关联表（不含扩展表和中间表）
-func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (otherRelTableList []handleOtherRel) {
+func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (otherRelTableList []handleOtherRel, otherRelTableCmdLog []string) {
 	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取其它关联表
 		return
 	}
@@ -1037,6 +1042,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 				}
 				otherRelTableList = append(otherRelTableList, handleOtherRelObj)
 			}
+			otherRelTableCmdLog = append(otherRelTableCmdLog, fmt.Sprintf(`%s:%s:%t`, `关联表`, otherRelTpl.Table, isOtherRel))
 			break
 		}
 	}

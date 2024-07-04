@@ -89,6 +89,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -150,7 +151,7 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 		internal.Command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
 	}
 
-	logMyGenCommand(option) // 记录myGen命令
+	logMyGenCommand(option, append(append(tpl.Handle.ExtendTableCmdLog, tpl.Handle.MiddleTableCmdLog...), tpl.Handle.OtherRelTableCmdLog...)) // 记录myGen命令
 }
 
 // 创建命令选项
@@ -438,7 +439,7 @@ isViewEnd:
 }
 
 // 记录myGen命令
-func logMyGenCommand(option myGenOption) {
+func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 	myGenCommandArr := []string{
 		`./main`,
 		`myGen`,
@@ -466,6 +467,8 @@ func logMyGenCommand(option myGenOption) {
 			`-isDelete=`+gconv.String(gconv.Uint(option.IsDelete)))
 	}
 	myGenCommand := gstr.Join(myGenCommandArr, ` `)
+	logStr := myGenCommand + gstr.Join(append([]string{``}, tableCmdLog...), `
+    `)
 
 	saveFileName := option.SceneCode
 	if !(option.IsApi || option.IsView) {
@@ -473,10 +476,14 @@ func logMyGenCommand(option myGenOption) {
 	}
 	saveFile := gfile.SelfDir() + `/internal/cmd/my-gen/log/` + saveFileName + `.log`
 	if gfile.IsFile(saveFile) {
-		if log := gfile.GetContents(saveFile); gstr.Pos(log, myGenCommand) == -1 { //相同命令不重复记录
-			gfile.PutContents(saveFile, log+"\r\n"+myGenCommand)
+		log := gfile.GetContents(saveFile)
+		if gstr.Pos(log, myGenCommand) == -1 {
+			log = log + "\r\n" + logStr
+		} else {
+			log, _ = gregex.ReplaceString(gregex.Quote(myGenCommand)+`[^(\r\n\./main)|$]*`, logStr, log)
 		}
+		gfile.PutContents(saveFile, log)
 	} else {
-		gfile.PutContents(saveFile, myGenCommand)
+		gfile.PutContents(saveFile, logStr)
 	}
 }
