@@ -5,6 +5,7 @@
 package logic
 
 import (
+	_ "api/internal/logic/app"
 	_ "api/internal/logic/auth"
 	_ "api/internal/logic/org"
 	_ "api/internal/logic/pay"

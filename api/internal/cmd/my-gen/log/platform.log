@@ -20,3 +20,4 @@
     扩展表(一对一):users_privacy:true
 ./main myGen -dbGroup=default -dbTable=pay -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/支付 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     扩展表(一对多):pay_scene:true
+./main myGen -dbGroup=default -dbTable=app -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/APP -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1

@@ -3,6 +3,7 @@ package router
 import (
 	"api/internal/controller"
 	controllerCurrent "api/internal/controller/platform"
+	controllerApp "api/internal/controller/platform/app"
 	controllerAuth "api/internal/controller/platform/auth"
 	controllerMy "api/internal/controller/platform/my"
 	controllerOrg "api/internal/controller/platform/org"
@@ -72,6 +73,10 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 			group.Group(`/pay`, func(group *ghttp.RouterGroup) {
 				group.Bind(controllerPay.NewPay())
+			})
+
+			group.Group(`/app`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerApp.NewApp())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
