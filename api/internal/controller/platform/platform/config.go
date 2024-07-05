@@ -27,7 +27,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 		for _, configKey := range *req.ConfigKeyArr {
 			switch configKey {
 			case `hotSearch`, `userAgreement`, `privacyAgreement`:
-				actionCodeSet.Add(`platformConfigWebsiteRead`)
+				actionCodeSet.Add(`platformConfigCommonRead`)
 			case `uploadType`, `uploadOfLocalUrl`, `uploadOfLocalSignKey`, `uploadOfLocalFileSaveDir`, `uploadOfLocalFileUrlPrefix`, `uploadOfAliyunOssHost`, `uploadOfAliyunOssBucket`, `uploadOfAliyunOssAccessKeyId`, `uploadOfAliyunOssAccessKeySecret`, `uploadOfAliyunOssCallbackUrl`, `uploadOfAliyunOssEndpoint`, `uploadOfAliyunOssRoleArn`:
 				actionCodeSet.Add(`platformConfigUploadRead`)
 			case `smsType`, `smsOfAliyunAccessKeyId`, `smsOfAliyunAccessKeySecret`, `smsOfAliyunEndpoint`, `smsOfAliyunSignName`, `smsOfAliyunTemplateCode`:
@@ -81,7 +81,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 		for configKey := range config {
 			switch configKey {
 			case `hotSearch`, `userAgreement`, `privacyAgreement`:
-				actionCodeSet.Add(`platformConfigWebsiteSave`)
+				actionCodeSet.Add(`platformConfigCommonSave`)
 			case `uploadType`, `uploadOfLocalUrl`, `uploadOfLocalSignKey`, `uploadOfLocalFileSaveDir`, `uploadOfLocalFileUrlPrefix`, `uploadOfAliyunOssHost`, `uploadOfAliyunOssBucket`, `uploadOfAliyunOssAccessKeyId`, `uploadOfAliyunOssAccessKeySecret`, `uploadOfAliyunOssCallbackUrl`, `uploadOfAliyunOssEndpoint`, `uploadOfAliyunOssRoleArn`:
 				actionCodeSet.Add(`platformConfigUploadSave`)
 			case `smsType`, `smsOfAliyunAccessKeyId`, `smsOfAliyunAccessKeySecret`, `smsOfAliyunEndpoint`, `smsOfAliyunSignName`, `smsOfAliyunTemplateCode`:

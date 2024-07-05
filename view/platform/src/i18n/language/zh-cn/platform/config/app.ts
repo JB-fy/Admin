@@ -1,6 +1,6 @@
 export default {
     label: {
-        website: '网站',
+        common: '常用',
     },
     name: {
         hotSearch: '热门搜索',
