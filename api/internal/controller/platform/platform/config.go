@@ -28,8 +28,6 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 			switch configKey {
 			case `hotSearch`, `userAgreement`, `privacyAgreement`:
 				actionCodeSet.Add(`platformConfigWebsiteRead`)
-			case `packageUrlOfAndroid`, `packageSizeOfAndroid`, `packageNameOfAndroid`, `isForceUpdateOfAndroid`, `versionNumberOfAndroid`, `versionNameOfAndroid`, `versionIntroOfAndroid`, `packageUrlOfIos`, `packageSizeOfIos`, `packageNameOfIos`, `isForceUpdateOfIos`, `versionNumberOfIos`, `versionNameOfIos`, `versionIntroOfIos`, `plistUrlOfIos`:
-				actionCodeSet.Add(`platformConfigAppRead`)
 			case `uploadType`, `uploadOfLocalUrl`, `uploadOfLocalSignKey`, `uploadOfLocalFileSaveDir`, `uploadOfLocalFileUrlPrefix`, `uploadOfAliyunOssHost`, `uploadOfAliyunOssBucket`, `uploadOfAliyunOssAccessKeyId`, `uploadOfAliyunOssAccessKeySecret`, `uploadOfAliyunOssCallbackUrl`, `uploadOfAliyunOssEndpoint`, `uploadOfAliyunOssRoleArn`:
 				actionCodeSet.Add(`platformConfigUploadRead`)
 			case `smsType`, `smsOfAliyunAccessKeyId`, `smsOfAliyunAccessKeySecret`, `smsOfAliyunEndpoint`, `smsOfAliyunSignName`, `smsOfAliyunTemplateCode`:
@@ -84,8 +82,6 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 			switch configKey {
 			case `hotSearch`, `userAgreement`, `privacyAgreement`:
 				actionCodeSet.Add(`platformConfigWebsiteSave`)
-			case `packageUrlOfAndroid`, `packageSizeOfAndroid`, `packageNameOfAndroid`, `isForceUpdateOfAndroid`, `versionNumberOfAndroid`, `versionNameOfAndroid`, `versionIntroOfAndroid`, `packageUrlOfIos`, `packageSizeOfIos`, `packageNameOfIos`, `isForceUpdateOfIos`, `versionNumberOfIos`, `versionNameOfIos`, `versionIntroOfIos`, `plistUrlOfIos`:
-				actionCodeSet.Add(`platformConfigAppSave`)
 			case `uploadType`, `uploadOfLocalUrl`, `uploadOfLocalSignKey`, `uploadOfLocalFileSaveDir`, `uploadOfLocalFileUrlPrefix`, `uploadOfAliyunOssHost`, `uploadOfAliyunOssBucket`, `uploadOfAliyunOssAccessKeyId`, `uploadOfAliyunOssAccessKeySecret`, `uploadOfAliyunOssCallbackUrl`, `uploadOfAliyunOssEndpoint`, `uploadOfAliyunOssRoleArn`:
 				actionCodeSet.Add(`platformConfigUploadSave`)
 			case `smsType`, `smsOfAliyunAccessKeyId`, `smsOfAliyunAccessKeySecret`, `smsOfAliyunEndpoint`, `smsOfAliyunSignName`, `smsOfAliyunTemplateCode`:
