@@ -94,6 +94,8 @@ func (daoThis *appDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Dao
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case `current_ver_no`:
+				m = m.WhereGT(daoModel.DbTable+`.`+daoThis.Columns().VerNo, v)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -160,12 +162,16 @@ func (daoThis *appDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 						record[v] = gvar.New(nil)
 					}
 				}
-				/* for k, v := range daoModel.AfterFieldWithParam {
+				for k, v := range daoModel.AfterFieldWithParam {
 					switch k {
-					case `xxxx`:
-						record[k] = gvar.New(v)
+					case `is_force`:
+						isForce := 0
+						if sum, _ := daoModel.CloneNew().Filter(daoThis.Columns().AppType, record[daoThis.Columns().AppType]).Filter(`current_ver_no`, v).Sum(daoThis.Columns().IsForcePrev); sum > 0 {
+							isForce = 1
+						}
+						record[k] = gvar.New(isForce)
 					}
-				} */
+				}
 			}
 			for _, record := range result {
 				go afterFieldHandleFunc(record)
