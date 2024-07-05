@@ -157,6 +157,7 @@ const saveDrawer = reactive({
                         :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
+                    <el-alert :title="t('app.app.tip.is_force_prev')" type="info" :show-icon="true" :closable="false" style="margin-left: 10px;" />
                 </el-form-item>
                 <el-form-item :label="t('app.app.name.is_stop')" prop="is_stop">
                     <el-switch

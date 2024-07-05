@@ -22,10 +22,10 @@ export default {
         ],
     },
     tip: {
-        ver_no: '',
         extra_config_obj: {
             marketUrl: '苹果应用市场地址',
             plistFile: '企业签必须',
         },
+        is_force_prev:'注意：只根据前一个版本来设置，与更早之前的版本无关',
     },
 }
