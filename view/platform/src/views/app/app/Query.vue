@@ -25,13 +25,13 @@ const queryForm = reactive({
 <template>
     <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
         <el-form-item prop="id">
-            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :controls="false" />
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :precision="0" :controls="false" />
         </el-form-item>
         <el-form-item prop="app_type">
             <el-select-v2 v-model="queryCommon.data.app_type" :options="tm('app.app.status.app_type')" :placeholder="t('app.app.name.app_type')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="ver_no">
-            <el-input-number v-model="queryCommon.data.ver_no" :placeholder="t('app.app.name.ver_no')" :min="0" :max="4294967295" :controls="false" />
+            <el-input-number v-model="queryCommon.data.ver_no" :placeholder="t('app.app.name.ver_no')" :min="0" :max="4294967295" :precision="0" :controls="false" />
         </el-form-item>
         <el-form-item prop="ver_name">
             <el-input v-model="queryCommon.data.ver_name" :placeholder="t('app.app.name.ver_name')" maxlength="30" :clearable="true" />

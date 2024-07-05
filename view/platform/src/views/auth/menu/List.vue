@@ -169,9 +169,9 @@ const table = reactive({
                         }}
                         v-model={props.rowData.sort}
                         placeholder={t('auth.menu.tip.sort')}
-                        precision={0}
                         min={0}
                         max={255}
+                        precision={0}
                         controls={false}
                         onBlur={() => {
                             props.rowData.editSort.isEdit = false

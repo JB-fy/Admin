@@ -25,7 +25,7 @@ const queryForm = reactive({
 <template>
     <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
         <el-form-item prop="id">
-            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :controls="false" />
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :precision="0" :controls="false" />
         </el-form-item>
         <el-form-item prop="pay_name">
             <el-input v-model="queryCommon.data.pay_name" :placeholder="t('pay.pay.name.pay_name')" maxlength="30" :clearable="true" />

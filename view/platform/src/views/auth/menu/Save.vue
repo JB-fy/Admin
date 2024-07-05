@@ -124,7 +124,7 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.extra_data" type="textarea" :autosize="{ minRows: 3 }" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.sort')" prop="sort">
-                    <el-input-number v-model="saveForm.data.sort" :precision="0" :min="0" :max="255" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="100" />
+                    <el-input-number v-model="saveForm.data.sort" :placeholder="t('auth.menu.name.sort')" :min="0" :max="255" :precision="0" :value-on-clear="100" />
                     <el-alert :title="t('auth.menu.tip.sort')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.is_stop')" prop="is_stop">

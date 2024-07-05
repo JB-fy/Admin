@@ -199,7 +199,7 @@ const saveDrawer = reactive({
                     <el-input-number v-model="saveForm.data.balance" :placeholder="t('pay.pay.name.balance')" :min="0" :max="999999999999.999999" :precision="6" :controls="false" :value-on-clear="0.0" />
                 </el-form-item> -->
                 <el-form-item :label="t('pay.pay.name.sort')" prop="sort">
-                    <el-input-number v-model="saveForm.data.sort" :precision="0" :min="0" :max="255" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="100" />
+                    <el-input-number v-model="saveForm.data.sort" :placeholder="t('pay.pay.name.sort')" :min="0" :max="255" :precision="0" :value-on-clear="100" />
                     <el-alert :title="t('pay.pay.tip.sort')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('pay.pay.name.remark')" prop="remark">

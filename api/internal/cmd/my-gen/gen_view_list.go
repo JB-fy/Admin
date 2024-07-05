@@ -578,9 +578,9 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                         }}
                         v-model={props.rowData.` + v.FieldRaw + `}
                         ` + attrOfAdd + `
-                        precision={0}
                         min={` + v.FieldLimitInt.Min + `}
                         max={` + v.FieldLimitInt.Max + `}
+                        precision={0}
                         controls={false}
                         onBlur={() => {
                             props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.isEdit = false

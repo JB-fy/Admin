@@ -118,7 +118,7 @@ func getViewQueryIdAndLabel(tpl myGenTpl) (viewQuery myGenViewQuery) {
 		switch tpl.Handle.Id.List[0].FieldType {
 		case internal.TypeInt, internal.TypeIntU:
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
-            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="`+tpl.Handle.Id.List[0].FieldLimitInt.Min+`" :max="`+tpl.Handle.Id.List[0].FieldLimitInt.Max+`" :controls="false" />
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="`+tpl.Handle.Id.List[0].FieldLimitInt.Min+`" :max="`+tpl.Handle.Id.List[0].FieldLimitInt.Max+`" :precision="0" :controls="false" />
         </el-form-item>`)
 		default:
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
@@ -141,7 +141,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	switch v.FieldType {
 	case internal.TypeInt, internal.TypeIntU: // `int等类型`	// `int等类型（unsigned）`
 		// viewQueryField.form.Method = internal.ReturnType
-		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :controls="false" />`
+		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :precision="0" :controls="false" />`
 	case internal.TypeFloat, internal.TypeFloatU: // `float等类型`	// `float等类型（unsigned）`
 		attrOfAdd := ``
 		if v.FieldLimitFloat.Min != `` {

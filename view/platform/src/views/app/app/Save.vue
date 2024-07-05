@@ -121,7 +121,7 @@ const saveDrawer = reactive({
                     <my-upload v-model="saveForm.data.package_file" :isImage="false" />
                 </el-form-item>
                 <el-form-item :label="t('app.app.name.ver_no')" prop="ver_no">
-                    <el-input-number v-model="saveForm.data.ver_no" :precision="0" :min="0" :max="4294967295" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="0" />
+                    <el-input-number v-model="saveForm.data.ver_no" :placeholder="t('app.app.name.ver_no')" :min="0" :max="4294967295" :precision="0" :value-on-clear="0" />
                 </el-form-item>
                 <el-form-item :label="t('app.app.name.ver_name')" prop="ver_name">
                     <el-input v-model="saveForm.data.ver_name" :placeholder="t('app.app.name.ver_name')" maxlength="30" :show-word-limit="true" :clearable="true" />

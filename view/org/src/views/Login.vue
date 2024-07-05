@@ -46,7 +46,7 @@ const loginForm = reactive({
         </el-divider>
         <el-form :ref="(el: any) => loginForm.ref = el" :model="loginForm.data" :rules="loginForm.rules" @keyup.enter="loginForm.submit">
             <el-form-item prop="org_id">
-                <!-- <el-input-number v-model="loginForm.data.org_id" :placeholder="t('login.name.org_id')" :min="1" :max="4294967295" :controls="false" style="width: 100%;" /> -->
+                <!-- <el-input-number v-model="loginForm.data.org_id" :placeholder="t('login.name.org_id')" :min="1" :max="4294967295" :precision="0" :controls="false" style="width: 100%;" /> -->
                 <el-input v-model="loginForm.data.org_id" :placeholder="t('login.name.org_id')">
                     <template #prefix>
                         <autoicon-ep-school />

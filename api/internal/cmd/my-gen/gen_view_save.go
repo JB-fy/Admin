@@ -257,7 +257,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.Method = internal.ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 		viewSaveField.formContent.Method = internal.ReturnType
-		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :controls="false" :value-on-clear="` + defaultVal + `" />`
+		viewSaveField.formContent.DataType = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :precision="0" :controls="false" :value-on-clear="` + defaultVal + `" />`
 	case internal.TypeFloat, internal.TypeFloatU: // `float等类型`	 // `float等类型（unsigned）`
 		defaultVal := gconv.Float64(v.Default)
 		if defaultVal != 0 {
@@ -448,7 +448,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.Method = internal.ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :precision="0" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :step="1" :step-strictly="true" controls-position="right" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />`
+		viewSaveField.formContent.DataTypeName = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :precision="0" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />`
 		if v.FieldTip != `` {
 			viewSaveField.formContent.DataTypeName += `
                     <el-alert :title="t('` + i18nPath + `.tip.` + i18nFieldPath + `')" type="info" :show-icon="true" :closable="false" />`
@@ -699,7 +699,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.rule.Method = internal.ReturnType
 			viewSaveFieldTmp.rule.DataType = append(viewSaveFieldTmp.rule.DataType, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 			viewSaveFieldTmp.formContent.Method = internal.ReturnType
-			viewSaveFieldTmp.formContent.DataType = `<el-input-number :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :controls="false" />`
+			viewSaveFieldTmp.formContent.DataType = `<el-input-number :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :precision="0" :controls="false" />`
 		case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
 			rule := `{ type: 'number', message: t('validation.input') },`
 			attrOfAdd := ``
@@ -773,7 +773,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
 			/* viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
-			viewSaveFieldTmp.formContent.DataTypeName = `<el-input-number :precision="0" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :step="1" :step-strictly="true" controls-position="right" />` */
+			viewSaveFieldTmp.formContent.DataTypeName = `<el-input-number :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :precision="0" />` */
 		case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			viewSaveFieldTmp.isI18nTm = true
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName

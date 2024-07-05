@@ -136,9 +136,9 @@ const table = reactive({
                         }}
                         v-model={props.rowData.ver_no}
                         placeholder={t('app.app.name.ver_no')}
-                        precision={0}
                         min={0}
                         max={4294967295}
+                        precision={0}
                         controls={false}
                         onBlur={() => {
                             props.rowData.editVerNo.isEdit = false
