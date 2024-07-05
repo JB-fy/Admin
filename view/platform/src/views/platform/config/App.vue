@@ -21,7 +21,7 @@ const authAction: { [propName: string]: boolean } = {
     isCommonSave: isSave || adminStore.IsAction('platformConfigCommonSave'),
 }
 provide('authAction', authAction)
-const notReadAll = !(authAction.isCommonRead)
+const notReadAll = !authAction.isCommonRead
 </script>
 
 <template>
