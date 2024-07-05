@@ -31,6 +31,8 @@ func (controllerThis *App) Info(ctx context.Context, req *apiApp.AppInfoReq) (re
 	filter[daoApp.App.Columns().IsStop] = 0
 
 	field := daoApp.App.ColumnArr().Slice()
+	field = append(field, `download_url_to_app`, `download_url_to_h5`)
+
 	fieldWithParam := g.Map{}
 	if req.CurrentVerNo != nil {
 		fieldWithParam[`is_force`] = req.CurrentVerNo
@@ -41,7 +43,7 @@ func (controllerThis *App) Info(ctx context.Context, req *apiApp.AppInfoReq) (re
 	if err != nil {
 		return
 	}
-	if info.IsEmpty() {
+	if info.IsEmpty() && req.CurrentVerNo == nil {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
 	}

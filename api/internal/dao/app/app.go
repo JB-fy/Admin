@@ -7,6 +7,7 @@ package dao
 import (
 	daoIndex "api/internal/dao"
 	"api/internal/dao/app/internal"
+	"api/internal/utils"
 	"context"
 	"database/sql"
 	"database/sql/driver"
@@ -122,6 +123,11 @@ func (daoThis *appDao) ParseField(field []string, fieldWithParam map[string]any,
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
+			case `download_url_to_app`, `download_url_to_h5`:
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().AppType)
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().PackageFile)
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraConfig)
+				daoModel.AfterField.Add(v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -158,15 +164,37 @@ func (daoThis *appDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 				defer wg.Done()
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
+					case `download_url_to_app`, `download_url_to_h5`:
+						if _, ok := record[v]; ok {
+							continue
+						}
+						// m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraConfig)
+						switch record[daoThis.Columns().AppType].Uint() {
+						case 0: //安卓
+							record[`download_url_to_app`] = record[daoThis.Columns().PackageFile]
+							record[`download_url_to_h5`] = record[daoThis.Columns().PackageFile]
+						case 1: //苹果
+							extraConfig := record[daoThis.Columns().ExtraConfig].Map()
+							if _, ok := extraConfig[`marketUrl`]; ok {
+								record[`download_url_to_app`] = gvar.New(extraConfig[`marketUrl`]) //itms-apps://itunes.apple.com/app/id6450760452
+								record[`download_url_to_h5`] = gvar.New(extraConfig[`marketUrl`])
+							} else {
+								record[`download_url_to_app`] = gvar.New(utils.GetRequestUrl(ctx, 0) + `/自定义的H5下载页`) //苹果企业签不能在APP内做更新，需要跳转网页下载更新
+								record[`download_url_to_h5`] = gvar.New(`itms-services://?action=download-manifest&url=` + gconv.String(extraConfig[`plistFile`]))
+							}
+						}
 					default:
 						record[v] = gvar.New(nil)
 					}
 				}
 				for k, v := range daoModel.AfterFieldWithParam {
 					switch k {
-					case `is_force`:
+					case `is_force`: //参数：当前版本号
 						isForce := 0
-						if sum, _ := daoModel.CloneNew().Filter(daoThis.Columns().AppType, record[daoThis.Columns().AppType]).Filter(`current_ver_no`, v).Sum(daoThis.Columns().IsForcePrev); sum > 0 {
+						if sum, _ := daoModel.CloneNew().GetModel().Where(daoThis.Columns().AppType, record[daoThis.Columns().AppType]).
+							WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().VerNo, record[daoThis.Columns().VerNo]).
+							WhereGT(daoModel.DbTable+`.`+daoThis.Columns().VerNo, v).
+							Sum(daoThis.Columns().IsForcePrev); sum > 0 {
 							isForce = 1
 						}
 						record[k] = gvar.New(isForce)

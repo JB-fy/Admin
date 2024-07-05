@@ -50,13 +50,13 @@ const saveForm = reactive({
                 },
             },
         ], */
-        'extra_config.plistFile': [
-            // { required: computed((): boolean => (saveForm.data.app_type == 1 ? true : false)), message: t('validation.required') },
-            { type: 'url', trigger: 'change', message: t('validation.upload') },
-        ],
         'extra_config.marketUrl': [
             // { required: computed((): boolean => (saveForm.data.app_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'extra_config.plistFile': [
+            // { required: computed((): boolean => (saveForm.data.app_type == 1 ? true : false)), message: t('validation.required') },
+            { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
         remark: [{ type: 'string', trigger: 'blur', max: 255, message: t('validation.max.string', { max: 255 }) }],
         is_force_prev: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
@@ -134,7 +134,8 @@ const saveDrawer = reactive({
                 </el-form-item> -->
                 <template v-if="saveForm.data.app_type == 1">
                     <el-form-item :label="t('app.app.name.extra_config_obj.marketUrl')" prop="extra_config.marketUrl">
-                        <el-input v-model="saveForm.data.extra_config.marketUrl" :placeholder="t('app.app.name.extra_config_obj.marketUrl')" :clearable="true" />
+                        <el-input v-model="saveForm.data.extra_config.marketUrl" :placeholder="t('app.app.name.extra_config_obj.marketUrl')" :clearable="true"style="max-width: 400px" />
+                        <el-alert :title="t('app.app.tip.extra_config_obj.marketUrl')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                     <el-form-item :label="t('app.app.name.extra_config_obj.plistFile')" prop="extra_config.plistFile">
                         <my-upload v-model="saveForm.data.extra_config.plistFile" :isImage="false">
