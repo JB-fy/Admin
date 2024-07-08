@@ -11,10 +11,10 @@ import (
 
 type PayOfAli struct {
 	Ctx        context.Context
-	AppId      string `json:"payOfAliAppId"`
-	PrivateKey string `json:"payOfAliPrivateKey"`
-	PublicKey  string `json:"payOfAliPublicKey"`
-	OpAppId    string `json:"payOfAliOpAppId"`
+	AppId      string `json:"appId"`
+	PrivateKey string `json:"privateKey"`
+	PublicKey  string `json:"publicKey"`
+	OpAppId    string `json:"opAppId"`
 	NotifyUrl  string `json:"notifyUrl"`
 }
 

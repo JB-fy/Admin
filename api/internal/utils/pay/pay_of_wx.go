@@ -22,11 +22,11 @@ import (
 
 type PayOfWx struct {
 	Ctx        context.Context
-	AppId      string `json:"payOfWxAppId"`
-	Mchid      string `json:"payOfWxMchid"`
-	SerialNo   string `json:"payOfWxSerialNo"`
-	APIv3Key   string `json:"payOfWxApiV3Key"`
-	PrivateKey string `json:"payOfWxPrivateKey"`
+	AppId      string `json:"appId"`
+	Mchid      string `json:"mchid"`
+	SerialNo   string `json:"serialNo"`
+	APIv3Key   string `json:"apiV3Key"`
+	PrivateKey string `json:"privateKey"`
 	NotifyUrl  string `json:"notifyUrl"`
 }
 

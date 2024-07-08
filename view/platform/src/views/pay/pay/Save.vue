@@ -11,7 +11,8 @@ const saveForm = reactive({
         pay_type: 0,
         sort: 100,
         ...saveCommon.data,
-        pay_config: saveCommon.data.pay_config ? JSON.parse(saveCommon.data.pay_config) : {},
+        pay_config_0: saveCommon.data.upload_type == 0 && saveCommon.data.pay_config ? JSON.parse(saveCommon.data.pay_config) : {},
+        pay_config_1: saveCommon.data.upload_type == 1 && saveCommon.data.pay_config ? JSON.parse(saveCommon.data.pay_config) : {},
     } as { [propName: string]: any },
     rules: {
         pay_name: [
@@ -45,36 +46,36 @@ const saveForm = reactive({
                 },
             },
         ], */
-        'pay_config.payOfAliAppId': [
+        'pay_config_0.appId': [
             { required: computed((): boolean => (saveForm.data.pay_type == 0 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'pay_config.payOfAliPrivateKey': [
+        'pay_config_0.privateKey': [
             { required: computed((): boolean => (saveForm.data.pay_type == 0 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'pay_config.payOfAliPublicKey': [
+        'pay_config_0.publicKey': [
             { required: computed((): boolean => (saveForm.data.pay_type == 0 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'pay_config.payOfAliOpAppId': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        'pay_config.payOfWxAppId': [
+        'pay_config_0.opAppId': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'pay_config_1.appId': [
             { required: computed((): boolean => (saveForm.data.pay_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'pay_config.payOfWxMchid': [
+        'pay_config_1.mchid': [
             { required: computed((): boolean => (saveForm.data.pay_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'pay_config.payOfWxSerialNo': [
+        'pay_config_1.serialNo': [
             { required: computed((): boolean => (saveForm.data.pay_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'pay_config.payOfWxApiV3Key': [
+        'pay_config_1.apiV3Key': [
             { required: computed((): boolean => (saveForm.data.pay_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'pay_config.payOfWxPrivateKey': [
+        'pay_config_1.privateKey': [
             { required: computed((): boolean => (saveForm.data.pay_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
@@ -102,6 +103,7 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
+            param.pay_config = param['pay_config_' + param.pay_type]
             try {
                 if (param?.id_arr?.length > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/pay/pay/update', param, true)
@@ -147,7 +149,7 @@ const saveDrawer = reactive({
                     <my-upload v-model="saveForm.data.pay_icon" accept="image/*" />
                 </el-form-item>
                 <el-form-item :label="t('pay.pay.name.pay_type')" prop="pay_type">
-                    <el-radio-group v-model="saveForm.data.pay_type" @change="() => (saveForm.data.pay_config = {})">
+                    <el-radio-group v-model="saveForm.data.pay_type">
                         <el-radio v-for="(item, index) in (tm('pay.pay.status.pay_type') as any)" :key="index" :value="item.value">
                             {{ item.label }}
                         </el-radio>
@@ -158,35 +160,35 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.pay_config" type="textarea" :autosize="{ minRows: 3 }" />
                 </el-form-item> -->
                 <template v-if="saveForm.data.pay_type == 0">
-                    <el-form-item :label="t('pay.pay.name.pay_config_obj.payOfAliAppId')" prop="pay_config.payOfAliAppId">
-                        <el-input v-model="saveForm.data.pay_config.payOfAliAppId" :placeholder="t('pay.pay.name.pay_config_obj.payOfAliAppId')" :clearable="true" />
+                    <el-form-item :label="t('pay.pay.name.pay_config_0.appId')" prop="pay_config_0.appId">
+                        <el-input v-model="saveForm.data.pay_config_0.appId" :placeholder="t('pay.pay.name.pay_config_0.appId')" :clearable="true" />
                     </el-form-item>
-                    <el-form-item :label="t('pay.pay.name.pay_config_obj.payOfAliPrivateKey')" prop="pay_config.payOfAliPrivateKey">
-                        <el-input v-model="saveForm.data.pay_config.payOfAliPrivateKey" type="textarea" :autosize="{ minRows: 5 }" />
+                    <el-form-item :label="t('pay.pay.name.pay_config_0.privateKey')" prop="pay_config_0.privateKey">
+                        <el-input v-model="saveForm.data.pay_config_0.privateKey" type="textarea" :autosize="{ minRows: 5 }" />
                     </el-form-item>
-                    <el-form-item :label="t('pay.pay.name.pay_config_obj.payOfAliPublicKey')" prop="pay_config.payOfAliPublicKey">
-                        <el-input v-model="saveForm.data.pay_config.payOfAliPublicKey" type="textarea" :autosize="{ minRows: 5 }" />
+                    <el-form-item :label="t('pay.pay.name.pay_config_0.publicKey')" prop="pay_config_0.publicKey">
+                        <el-input v-model="saveForm.data.pay_config_0.publicKey" type="textarea" :autosize="{ minRows: 5 }" />
                     </el-form-item>
-                    <el-form-item :label="t('pay.pay.name.pay_config_obj.payOfAliOpAppId')" prop="pay_config.payOfAliOpAppId">
-                        <el-input v-model="saveForm.data.pay_config.payOfAliOpAppId" :placeholder="t('pay.pay.name.pay_config_obj.payOfAliOpAppId')" :clearable="true" style="max-width: 250px" />
-                        <el-alert :title="t('pay.pay.tip.pay_config_obj.payOfAliOpAppId')" type="info" :show-icon="true" :closable="false" />
+                    <el-form-item :label="t('pay.pay.name.pay_config_0.opAppId')" prop="pay_config_0.opAppId">
+                        <el-input v-model="saveForm.data.pay_config_0.opAppId" :placeholder="t('pay.pay.name.pay_config_0.opAppId')" :clearable="true" style="max-width: 250px" />
+                        <el-alert :title="t('pay.pay.tip.pay_config_0.opAppId')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                 </template>
                 <template v-else-if="saveForm.data.pay_type == 1">
-                    <el-form-item :label="t('pay.pay.name.pay_config_obj.payOfWxAppId')" prop="pay_config.payOfWxAppId">
-                        <el-input v-model="saveForm.data.pay_config.payOfWxAppId" :placeholder="t('pay.pay.name.pay_config_obj.payOfWxAppId')" :clearable="true" />
+                    <el-form-item :label="t('pay.pay.name.pay_config_1.appId')" prop="pay_config_1.appId">
+                        <el-input v-model="saveForm.data.pay_config_1.appId" :placeholder="t('pay.pay.name.pay_config_1.appId')" :clearable="true" />
                     </el-form-item>
-                    <el-form-item :label="t('pay.pay.name.pay_config_obj.payOfWxMchid')" prop="pay_config.payOfWxMchid">
-                        <el-input v-model="saveForm.data.pay_config.payOfWxMchid" :placeholder="t('pay.pay.name.pay_config_obj.payOfWxMchid')" :clearable="true" />
+                    <el-form-item :label="t('pay.pay.name.pay_config_1.mchid')" prop="pay_config_1.mchid">
+                        <el-input v-model="saveForm.data.pay_config_1.mchid" :placeholder="t('pay.pay.name.pay_config_1.mchid')" :clearable="true" />
                     </el-form-item>
-                    <el-form-item :label="t('pay.pay.name.pay_config_obj.payOfWxSerialNo')" prop="pay_config.payOfWxSerialNo">
-                        <el-input v-model="saveForm.data.pay_config.payOfWxSerialNo" :placeholder="t('pay.pay.name.pay_config_obj.payOfWxSerialNo')" :clearable="true" />
+                    <el-form-item :label="t('pay.pay.name.pay_config_1.serialNo')" prop="pay_config_1.serialNo">
+                        <el-input v-model="saveForm.data.pay_config_1.serialNo" :placeholder="t('pay.pay.name.pay_config_1.serialNo')" :clearable="true" />
                     </el-form-item>
-                    <el-form-item :label="t('pay.pay.name.pay_config_obj.payOfWxApiV3Key')" prop="pay_config.payOfWxApiV3Key">
-                        <el-input v-model="saveForm.data.pay_config.payOfWxApiV3Key" :placeholder="t('pay.pay.name.pay_config_obj.payOfWxApiV3Key')" :clearable="true" />
+                    <el-form-item :label="t('pay.pay.name.pay_config_1.apiV3Key')" prop="pay_config_1.apiV3Key">
+                        <el-input v-model="saveForm.data.pay_config_1.apiV3Key" :placeholder="t('pay.pay.name.pay_config_1.apiV3Key')" :clearable="true" />
                     </el-form-item>
-                    <el-form-item :label="t('pay.pay.name.pay_config_obj.payOfWxPrivateKey')" prop="pay_config.payOfWxPrivateKey">
-                        <el-input v-model="saveForm.data.pay_config.payOfWxPrivateKey" type="textarea" :autosize="{ minRows: 5 }" />
+                    <el-form-item :label="t('pay.pay.name.pay_config_1.privateKey')" prop="pay_config_1.privateKey">
+                        <el-input v-model="saveForm.data.pay_config_1.privateKey" type="textarea" :autosize="{ minRows: 5 }" />
                     </el-form-item>
                 </template>
                 <el-form-item :label="t('pay.pay.name.pay_rate')" prop="pay_rate">
