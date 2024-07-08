@@ -10,7 +10,8 @@ const saveForm = reactive({
     data: {
         upload_type: 0,
         ...saveCommon.data,
-        upload_config: saveCommon.data.upload_config ? JSON.parse(saveCommon.data.upload_config) : {},
+        upload_config_0: saveCommon.data.upload_type == 0 && saveCommon.data.upload_config ? JSON.parse(saveCommon.data.upload_config) : {},
+        upload_config_1: saveCommon.data.upload_type == 1 && saveCommon.data.upload_config ? JSON.parse(saveCommon.data.upload_config) : {},
     } as { [propName: string]: any },
     rules: {
         upload_type: [{ type: 'enum', trigger: 'change', enum: (tm('upload.upload.status.upload_type') as any).map((item: any) => item.value), message: t('validation.select') }],
@@ -79,6 +80,7 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
+            param.upload_config = param['upload_config_' + param.upload_type]
             try {
                 if (param?.id_arr?.length > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/upload/upload/update', param, true)
@@ -118,7 +120,7 @@ const saveDrawer = reactive({
         <el-scrollbar>
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
                 <el-form-item :label="t('upload.upload.name.upload_type')" prop="upload_type">
-                    <el-radio-group v-model="saveForm.data.upload_type" @change="() => (saveForm.data.upload_config = {})">
+                    <el-radio-group v-model="saveForm.data.upload_type">
                         <el-radio v-for="(item, index) in (tm('upload.upload.status.upload_type') as any)" :key="index" :value="item.value">
                             {{ item.label }}
                         </el-radio>
@@ -130,36 +132,36 @@ const saveDrawer = reactive({
                 </el-form-item> -->
                 <template v-if="saveForm.data.upload_type == 0">
                     <el-form-item :label="t('upload.upload.name.upload_config_0.url')" prop="upload_config_0.url">
-                        <el-input v-model="saveForm.data.upload_config.url" :placeholder="t('upload.upload.name.upload_config_0.url')" :clearable="true" />
+                        <el-input v-model="saveForm.data.upload_config_0.url" :placeholder="t('upload.upload.name.upload_config_0.url')" :clearable="true" />
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_0.signKey')" prop="upload_config_0.signKey">
-                        <el-input v-model="saveForm.data.upload_config.signKey" :placeholder="t('upload.upload.name.upload_config_0.signKey')" :clearable="true" />
+                        <el-input v-model="saveForm.data.upload_config_0.signKey" :placeholder="t('upload.upload.name.upload_config_0.signKey')" :clearable="true" />
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_0.fileSaveDir')" prop="upload_config_0.fileSaveDir">
-                        <el-input v-model="saveForm.data.upload_config.fileSaveDir" :placeholder="t('upload.upload.name.upload_config_0.fileSaveDir')" :clearable="true" style="max-width: 300px" />
+                        <el-input v-model="saveForm.data.upload_config_0.fileSaveDir" :placeholder="t('upload.upload.name.upload_config_0.fileSaveDir')" :clearable="true" style="max-width: 300px" />
                         <el-alert :title="t('upload.upload.tip.upload_config_0.fileSaveDir')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_0.fileUrlPrefix')" prop="upload_config_0.fileUrlPrefix">
-                        <el-input v-model="saveForm.data.upload_config.fileUrlPrefix" :placeholder="t('upload.upload.name.upload_config_0.fileUrlPrefix')" :clearable="true" style="max-width: 300px" />
+                        <el-input v-model="saveForm.data.upload_config_0.fileUrlPrefix" :placeholder="t('upload.upload.name.upload_config_0.fileUrlPrefix')" :clearable="true" style="max-width: 300px" />
                         <el-alert :title="t('upload.upload.tip.upload_config_0.fileUrlPrefix')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                 </template>
                 <template v-else-if="saveForm.data.upload_type == 1">
                     <el-form-item :label="t('upload.upload.name.upload_config_1.host')" prop="upload_config_1.host">
-                        <el-input v-model="saveForm.data.upload_config.host" :placeholder="t('upload.upload.name.upload_config_1.host')" :clearable="true" style="max-width: 300px" />
+                        <el-input v-model="saveForm.data.upload_config_1.host" :placeholder="t('upload.upload.name.upload_config_1.host')" :clearable="true" style="max-width: 300px" />
                         <el-alert :title="t('upload.upload.tip.upload_config_1.host')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_1.bucket')" prop="upload_config_1.bucket">
-                        <el-input v-model="saveForm.data.upload_config.bucket" :placeholder="t('upload.upload.name.upload_config_1.bucket')" :clearable="true" />
+                        <el-input v-model="saveForm.data.upload_config_1.bucket" :placeholder="t('upload.upload.name.upload_config_1.bucket')" :clearable="true" />
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_1.accessKeyId')" prop="upload_config_1.accessKeyId">
-                        <el-input v-model="saveForm.data.upload_config.accessKeyId" :placeholder="t('upload.upload.name.upload_config_1.accessKeyId')" :clearable="true" />
+                        <el-input v-model="saveForm.data.upload_config_1.accessKeyId" :placeholder="t('upload.upload.name.upload_config_1.accessKeyId')" :clearable="true" />
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_1.accessKeySecret')" prop="upload_config_1.accessKeySecret">
-                        <el-input v-model="saveForm.data.upload_config.accessKeySecret" :placeholder="t('upload.upload.name.upload_config_1.accessKeySecret')" :clearable="true" />
+                        <el-input v-model="saveForm.data.upload_config_1.accessKeySecret" :placeholder="t('upload.upload.name.upload_config_1.accessKeySecret')" :clearable="true" />
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_1.endpoint')" prop="upload_config_1.endpoint">
-                        <el-input v-model="saveForm.data.upload_config.endpoint" :placeholder="t('upload.upload.name.upload_config_1.endpoint')" :clearable="true" style="max-width: 300px" />
+                        <el-input v-model="saveForm.data.upload_config_1.endpoint" :placeholder="t('upload.upload.name.upload_config_1.endpoint')" :clearable="true" style="max-width: 300px" />
                         <el-alert type="info" :show-icon="true" :closable="false">
                             <template #title>
                                 <span v-html="t('upload.upload.tip.upload_config_1.endpoint')"></span>
@@ -167,12 +169,12 @@ const saveDrawer = reactive({
                         </el-alert>
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_1.roleArn')" prop="upload_config_1.roleArn">
-                        <el-input v-model="saveForm.data.upload_config.roleArn" :placeholder="t('upload.upload.name.upload_config_1.roleArn')" :clearable="true" style="max-width: 300px" />
+                        <el-input v-model="saveForm.data.upload_config_1.roleArn" :placeholder="t('upload.upload.name.upload_config_1.roleArn')" :clearable="true" style="max-width: 300px" />
                         <el-alert :title="t('upload.upload.tip.upload_config_1.roleArn')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_1.isNotify')" prop="upload_config_1.isNotify">
                         <el-switch
-                            v-model="saveForm.data.upload_config.isNotify"
+                            v-model="saveForm.data.upload_config_1.isNotify"
                             :active-value="1"
                             :inactive-value="0"
                             :inline-prompt="true"
