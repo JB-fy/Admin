@@ -90,28 +90,6 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'is_stop',
-            title: t('upload.upload.name.is_stop'),
-            key: 'is_stop',
-            align: 'center',
-            width: 100,
-            cellRenderer: (props: any): any => {
-                return [
-                    <el-switch
-                        model-value={props.rowData.is_stop}
-                        active-value={1}
-                        inactive-value={0}
-                        inline-prompt={true}
-                        active-text={t('common.yes')}
-                        inactive-text={t('common.no')}
-                        disabled={!authAction.isUpdate}
-                        onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
-                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
-                    />,
-                ]
-            },
-        },
-        {
             dataKey: 'updated_at',
             title: t('common.name.updatedAt'),
             key: 'updated_at',

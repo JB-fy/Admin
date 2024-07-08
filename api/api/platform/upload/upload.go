@@ -14,7 +14,6 @@ type UploadInfo struct {
 	UploadConfig *string     `json:"upload_config,omitempty" dc:"配置。根据upload_type类型设置"`
 	Remark       *string     `json:"remark,omitempty" dc:"备注"`
 	IsDefault    *uint       `json:"is_default,omitempty" dc:"默认：0否 1是"`
-	IsStop       *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt    *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt    *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
@@ -30,7 +29,6 @@ type UploadFilter struct {
 	UploadId       *uint       `json:"upload_id,omitempty" v:"between:1,4294967295" dc:"上传ID"`
 	UploadType     *uint       `json:"upload_type,omitempty" v:"in:0,1" dc:"类型：0本地 1阿里云OSS"`
 	IsDefault      *uint       `json:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
-	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------列表 开始--------*/
@@ -70,7 +68,6 @@ type UploadCreateReq struct {
 	UploadConfig *string `json:"upload_config,omitempty" v:"required|json" dc:"配置。根据upload_type类型设置"`
 	Remark       *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsDefault    *uint   `json:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
-	IsStop       *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------新增 结束--------*/
@@ -83,7 +80,6 @@ type UploadUpdateReq struct {
 	UploadConfig *string `json:"upload_config,omitempty" v:"json" dc:"配置。根据upload_type类型设置"`
 	Remark       *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsDefault    *uint   `json:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
-	IsStop       *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

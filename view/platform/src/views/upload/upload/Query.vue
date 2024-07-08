@@ -33,9 +33,6 @@ const queryForm = reactive({
         <el-form-item prop="is_default">
             <el-select-v2 v-model="queryCommon.data.is_default" :options="tm('common.status.whether')" :placeholder="t('upload.upload.name.is_default')" :clearable="true" style="width: 86px" />
         </el-form-item>
-        <el-form-item prop="is_stop">
-            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('upload.upload.name.is_stop')" :clearable="true" style="width: 86px" />
-        </el-form-item>
         <el-form-item prop="time_range">
             <el-date-picker
                 v-model="queryCommon.data.time_range"

@@ -25,7 +25,6 @@ type UploadDao struct {
 type UploadColumns struct {
 	CreatedAt    string // 创建时间
 	UpdatedAt    string // 更新时间
-	IsStop       string // 停用：0否 1是
 	UploadId     string // 上传ID
 	UploadType   string // 类型：0本地 1阿里云OSS
 	UploadConfig string // 配置。根据upload_type类型设置
@@ -37,7 +36,6 @@ type UploadColumns struct {
 var uploadColumns = UploadColumns{
 	CreatedAt:    "created_at",
 	UpdatedAt:    "updated_at",
-	IsStop:       "is_stop",
 	UploadId:     "upload_id",
 	UploadType:   "upload_type",
 	UploadConfig: "upload_config",

@@ -19,7 +19,6 @@ export default {
         },
         remark: '备注',
         is_default: '默认',
-        is_stop: '停用',
     },
     status: {
         upload_type: [
