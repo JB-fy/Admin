@@ -14,6 +14,7 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -178,6 +179,9 @@ func (daoThis *uploadDao) ParseInsert(insert map[string]any, daoModel *daoIndex.
 		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
+			case daoThis.Columns().IsDefault:
+				insertData[k] = v
+				daoModel.AfterInsert[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					insertData[k] = v
@@ -200,14 +204,16 @@ func (daoThis *uploadDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			if err != nil {
 				return
 			}
-			// id, _ := result.LastInsertId()
+			id, _ := result.LastInsertId()
 
-			/* for k, v := range daoModel.AfterInsert {
+			for k, v := range daoModel.AfterInsert {
 				switch k {
-				case `xxxx`:
-					daoModel.CloneNew().Filter(`id`, id).HookUpdate(g.Map{k: v}).Update()
+				case daoThis.Columns().IsDefault:
+					if gconv.Uint(v) == 1 {
+						daoModel.CloneNew().Filter(`exc_id`, id).HookUpdate(g.Map{daoThis.Columns().IsDefault: 0}).Update()
+					}
 				}
-			} */
+			}
 			return
 		},
 	}
@@ -219,6 +225,9 @@ func (daoThis *uploadDao) ParseUpdate(update map[string]any, daoModel *daoIndex.
 		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
+			case daoThis.Columns().IsDefault:
+				updateData[k] = v
+				daoModel.AfterUpdate[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					updateData[k] = v
@@ -249,19 +258,23 @@ func (daoThis *uploadDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandle
 				}
 			}
 
-			/* row, _ := result.RowsAffected()
+			row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			} */
+			}
 
-			/* for k, v := range daoModel.AfterUpdate {
+			for k, v := range daoModel.AfterUpdate {
 				switch k {
-				case `xxxx`:
-					for _, id := range daoModel.IdArr {
-						daoModel.CloneNew().Filter(`id`, id).HookUpdate(g.Map{k: v}).Update()
+				/* case `xxxx`:
+				for _, id := range daoModel.IdArr {
+					daoModel.CloneNew().Filter(`id`, id).HookUpdate(g.Map{k: v}).Update()
+				} */
+				case daoThis.Columns().IsDefault:
+					if gconv.Uint(v) == 1 {
+						daoModel.CloneNew().Filter(`exc_id`, daoModel.IdArr).HookUpdate(g.Map{daoThis.Columns().IsDefault: 0}).Update()
 					}
 				}
-			} */
+			}
 			return
 		},
 	}
