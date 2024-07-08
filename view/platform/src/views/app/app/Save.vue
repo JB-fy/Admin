@@ -134,7 +134,7 @@ const saveDrawer = reactive({
                 </el-form-item> -->
                 <template v-if="saveForm.data.app_type == 1">
                     <el-form-item :label="t('app.app.name.extra_config_obj.marketUrl')" prop="extra_config.marketUrl">
-                        <el-input v-model="saveForm.data.extra_config.marketUrl" :placeholder="t('app.app.name.extra_config_obj.marketUrl')" :clearable="true"style="max-width: 400px" />
+                        <el-input v-model="saveForm.data.extra_config.marketUrl" :placeholder="t('app.app.name.extra_config_obj.marketUrl')" :clearable="true" style="max-width: 400px" />
                         <el-alert :title="t('app.app.tip.extra_config_obj.marketUrl')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                     <el-form-item :label="t('app.app.name.extra_config_obj.plistFile')" prop="extra_config.plistFile">
@@ -158,7 +158,7 @@ const saveDrawer = reactive({
                         :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
-                    <el-alert :title="t('app.app.tip.is_force_prev')" type="info" :show-icon="true" :closable="false" style="margin-left: 10px;" />
+                    <el-alert :title="t('app.app.tip.is_force_prev')" type="info" :show-icon="true" :closable="false" style="margin-left: 10px" />
                 </el-form-item>
                 <el-form-item :label="t('app.app.name.is_stop')" prop="is_stop">
                     <el-switch
