@@ -83,7 +83,7 @@ const table = reactive({
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
                         disabled={!authAction.isUpdate}
-                        onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_default: val }).then(() => (props.rowData.is_default = val))}
+                        onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_default: val }).then((): any => (val ? getList() : (props.rowData.is_default = val)))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
                 ]
