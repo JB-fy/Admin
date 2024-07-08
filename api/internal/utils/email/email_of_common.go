@@ -12,12 +12,12 @@ import (
 
 type EmailOfCommon struct {
 	Ctx          context.Context
-	SmtpHost     string `json:"emailOfCommonSmtpHost"`
-	SmtpPort     string `json:"emailOfCommonSmtpPort"`
-	FromEmail    string `json:"emailOfCommonFromEmail"`
-	Password     string `json:"emailOfCommonPassword"` //QQ邮箱需注意：填QQ邮箱的授权码，而不是密码
-	CodeSubject  string `json:"emailCodeSubject"`
-	CodeTemplate string `json:"emailCodeTemplate"`
+	SmtpHost     string `json:"smtpHost"`
+	SmtpPort     string `json:"smtpPort"`
+	FromEmail    string `json:"fromEmail"`
+	Password     string `json:"password"` //QQ邮箱需注意：填QQ邮箱的授权码，而不是密码
+	CodeSubject  string `json:"codeSubject"`
+	CodeTemplate string `json:"codeTemplate"`
 }
 
 func NewEmailOfCommon(ctx context.Context, config map[string]any) *EmailOfCommon {

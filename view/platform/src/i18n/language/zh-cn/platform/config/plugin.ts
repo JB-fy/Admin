@@ -24,10 +24,12 @@ export default {
         smsOfAliyunTemplateCode: '阿里云SMS-模板标识',
 
         emailType: '邮箱方式',
-        emailOfCommonSmtpHost: '通用-SmtpHost',
-        emailOfCommonSmtpPort: '通用-SmtpPort',
-        emailOfCommonFromEmail: '通用-邮箱',
-        emailOfCommonPassword: '通用-密码',
+        emailOfCommon:{
+            smtpHost: '通用-SmtpHost',
+            smtpPort: '通用-SmtpPort',
+            fromEmail: '通用-邮箱',
+            password: '通用-密码',
+        },
         emailCodeSubject: '验证码标题',
         emailCodeTemplate: '验证码模板',
 
@@ -73,7 +75,9 @@ export default {
         vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
     },
     tip: {
-        emailOfCommonPassword: '注意：如果使用的是QQ邮箱，则此处应填写QQ邮箱的授权码，而不是密码',
+        emailOfCommon:{
+            password: '注意：如果使用的是QQ邮箱，则此处应填写QQ邮箱的授权码，而不是密码',
+        },
         emailCodeTemplate: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
 
         idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',

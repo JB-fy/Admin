@@ -30,7 +30,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 				actionCodeSet.Add(`platformConfigCommonRead`)
 			case `smsType`, `smsOfAliyunAccessKeyId`, `smsOfAliyunAccessKeySecret`, `smsOfAliyunEndpoint`, `smsOfAliyunSignName`, `smsOfAliyunTemplateCode`:
 				actionCodeSet.Add(`platformConfigSmsRead`)
-			case `emailType`, `emailOfCommonSmtpHost`, `emailOfCommonSmtpPort`, `emailOfCommonFromEmail`, `emailOfCommonPassword`, `emailCodeSubject`, `emailCodeTemplate`:
+			case `emailType`, `emailOfCommon`, `emailCodeSubject`, `emailCodeTemplate`:
 				actionCodeSet.Add(`platformConfigEmailRead`)
 			case `idCardType`, `idCardOfAliyunHost`, `idCardOfAliyunPath`, `idCardOfAliyunAppcode`:
 				actionCodeSet.Add(`platformConfigIdCardRead`)
@@ -82,7 +82,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 				actionCodeSet.Add(`platformConfigCommonSave`)
 			case `smsType`, `smsOfAliyunAccessKeyId`, `smsOfAliyunAccessKeySecret`, `smsOfAliyunEndpoint`, `smsOfAliyunSignName`, `smsOfAliyunTemplateCode`:
 				actionCodeSet.Add(`platformConfigSmsSave`)
-			case `emailType`, `emailOfCommonSmtpHost`, `emailOfCommonSmtpPort`, `emailOfCommonFromEmail`, `emailOfCommonPassword`, `emailCodeSubject`, `emailCodeTemplate`:
+			case `emailType`, `emailOfCommon`, `emailCodeSubject`, `emailCodeTemplate`:
 				actionCodeSet.Add(`platformConfigEmailSave`)
 			case `idCardType`, `idCardOfAliyunHost`, `idCardOfAliyunPath`, `idCardOfAliyunAppcode`:
 				actionCodeSet.Add(`platformConfigIdCardSave`)

@@ -14,7 +14,10 @@ const saveForm = reactive({
         upload_config_1: saveCommon.data.upload_type == 1 && saveCommon.data.upload_config ? JSON.parse(saveCommon.data.upload_config) : {},
     } as { [propName: string]: any },
     rules: {
-        upload_type: [{ type: 'enum', trigger: 'change', enum: (tm('upload.upload.status.upload_type') as any).map((item: any) => item.value), message: t('validation.select') }],
+        upload_type: [
+            { required: true, message: t('validation.required') },
+            { type: 'enum', trigger: 'change', enum: (tm('upload.upload.status.upload_type') as any).map((item: any) => item.value), message: t('validation.select') },
+        ],
         /* upload_config: [
             { required: true, message: t('validation.required') },
             {
