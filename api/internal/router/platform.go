@@ -9,6 +9,7 @@ import (
 	controllerOrg "api/internal/controller/platform/org"
 	controllerPay "api/internal/controller/platform/pay"
 	controllerPlatform "api/internal/controller/platform/platform"
+	controllerUpload "api/internal/controller/platform/upload"
 	controllerUsers "api/internal/controller/platform/users"
 	"api/internal/middleware"
 
@@ -62,13 +63,8 @@ func InitRouterPlatform(s *ghttp.Server) {
 				group.Bind(controllerPlatform.NewConfig())
 			})
 
-			group.Group(`/users`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerUsers.NewUsers())
-			})
-
-			group.Group(`/org`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerOrg.NewAdmin())
-				group.Bind(controllerOrg.NewOrg())
+			group.Group(`/upload`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerUpload.NewUpload())
 			})
 
 			group.Group(`/pay`, func(group *ghttp.RouterGroup) {
@@ -77,6 +73,15 @@ func InitRouterPlatform(s *ghttp.Server) {
 
 			group.Group(`/app`, func(group *ghttp.RouterGroup) {
 				group.Bind(controllerApp.NewApp())
+			})
+
+			group.Group(`/users`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerUsers.NewUsers())
+			})
+
+			group.Group(`/org`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerOrg.NewAdmin())
+				group.Bind(controllerOrg.NewOrg())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/

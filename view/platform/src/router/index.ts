@@ -114,6 +114,33 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/plugin' },
             },
             {
+                path: '/upload/upload',
+                component: async () => {
+                    const component = await import('@/views/upload/upload/Index.vue')
+                    component.default.name = '/upload/upload'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/upload/upload' },
+            },
+            {
+                path: '/pay/pay',
+                component: async () => {
+                    const component = await import('@/views/pay/pay/Index.vue')
+                    component.default.name = '/pay/pay'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/pay/pay' },
+            },
+            {
+                path: '/app/app',
+                component: async () => {
+                    const component = await import('@/views/app/app/Index.vue')
+                    component.default.name = '/app/app'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/app/app' },
+            },
+            {
                 path: '/users/users',
                 component: async () => {
                     const component = await import('@/views/users/users/Index.vue')
@@ -139,24 +166,6 @@ const initRouteList = [
                     return component
                 },
                 meta: { isAuth: true, keepAlive: true, componentName: '/org/admin' },
-            },
-            {
-                path: '/pay/pay',
-                component: async () => {
-                    const component = await import('@/views/pay/pay/Index.vue')
-                    component.default.name = '/pay/pay'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '/pay/pay' },
-            },
-            {
-                path: '/app/app',
-                component: async () => {
-                    const component = await import('@/views/app/app/Index.vue')
-                    component.default.name = '/app/app'
-                    return component
-                },
-                meta: { isAuth: true, keepAlive: true, componentName: '/app/app' },
             },
             /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
             {
