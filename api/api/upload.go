@@ -53,8 +53,7 @@ type UploadConfigRes struct {
 /*--------获取Sts 获取配置信息（APP直传前调用） 结束--------*/
 
 /*--------获取Sts Token（APP直传用） 开始--------*/
-//阿里云的APP SDK通过设置地址来获取Sts Token。请求方式必须是GET
-type UploadStsReq struct {
+type UploadStsReq struct { //阿里云的APP SDK通过设置地址来获取Sts Token。请求方式必须是GET
 	g.Meta   `path:"/sts" method:"get" tags:"上传" sm:"获取Sts Token（APP直传用）"`
 	FileType string `json:"file_type" v:"" dc:"文件类型"`
 }

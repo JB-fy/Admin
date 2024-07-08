@@ -1,5 +1,4 @@
 <script setup lang="tsx">
-const Upload = defineAsyncComponent(() => import('./plugin/Upload.vue'))
 const Sms = defineAsyncComponent(() => import('./plugin/Sms.vue'))
 const Email = defineAsyncComponent(() => import('./plugin/Email.vue'))
 const IdCard = defineAsyncComponent(() => import('./plugin/IdCard.vue'))
@@ -14,8 +13,6 @@ const adminStore = useAdminStore()
 const isRead = adminStore.IsAction('platformConfigRead')
 const isSave = adminStore.IsAction('platformConfigSave')
 const authAction: { [propName: string]: boolean } = {
-    isUploadRead: isRead || adminStore.IsAction('platformConfigUploadRead'),
-    isUploadSave: isSave || adminStore.IsAction('platformConfigUploadSave'),
     isSmsRead: isRead || adminStore.IsAction('platformConfigSmsRead'),
     isSmsSave: isSave || adminStore.IsAction('platformConfigSmsSave'),
     isEmailRead: isRead || adminStore.IsAction('platformConfigEmailRead'),
@@ -32,7 +29,7 @@ const authAction: { [propName: string]: boolean } = {
     isWxSave: isSave || adminStore.IsAction('platformConfigWxSave'),
 }
 provide('authAction', authAction)
-const notReadAll = !(authAction.isUploadRead || authAction.isSmsRead || authAction.isEmailRead || authAction.isIdCardRead || authAction.isOneClickRead || authAction.isPushRead || authAction.isVodRead || authAction.isWxRead)
+const notReadAll = !(authAction.isSmsRead || authAction.isEmailRead || authAction.isIdCardRead || authAction.isOneClickRead || authAction.isPushRead || authAction.isVodRead || authAction.isWxRead)
 </script>
 
 <template>
@@ -40,7 +37,6 @@ const notReadAll = !(authAction.isUploadRead || authAction.isSmsRead || authActi
     <el-container v-else class="common-container">
         <el-main>
             <el-tabs type="border-card" tab-position="top">
-                <el-tab-pane v-if="authAction.isUploadRead" :label="t('platform.config.plugin.label.upload')" :lazy="true"><upload /></el-tab-pane>
                 <el-tab-pane v-if="authAction.isSmsRead" :label="t('platform.config.plugin.label.sms')" :lazy="true"><sms /></el-tab-pane>
                 <el-tab-pane v-if="authAction.isEmailRead" :label="t('platform.config.plugin.label.email')" :lazy="true"><email /></el-tab-pane>
                 <el-tab-pane v-if="authAction.isIdCardRead" :label="t('platform.config.plugin.label.idCard')" :lazy="true"><id-card /></el-tab-pane>

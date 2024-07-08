@@ -16,19 +16,6 @@ export default {
         wxGzh: '公众号',
     },
     name: {
-        uploadType: '上传方式',
-        uploadOfLocalUrl: '本地-上传地址',
-        uploadOfLocalSignKey: '本地-密钥',
-        uploadOfLocalFileSaveDir: '本地-文件保存目录',
-        uploadOfLocalFileUrlPrefix: '本地-文件地址前缀',
-        uploadOfAliyunOssHost: '阿里云OSS-域名',
-        uploadOfAliyunOssBucket: '阿里云OSS-Bucket',
-        uploadOfAliyunOssAccessKeyId: '阿里云OSS-AccessKeyId',
-        uploadOfAliyunOssAccessKeySecret: '阿里云OSS-AccessKeySecret',
-        uploadOfAliyunOssCallbackUrl: '阿里云OSS-回调地址',
-        uploadOfAliyunOssEndpoint: '阿里云OSS-Endpoint',
-        uploadOfAliyunOssRoleArn: '阿里云OSS-RoleArn',
-
         smsType: '短信方式',
         smsOfAliyunAccessKeyId: '阿里云SMS-AccessKeyId',
         smsOfAliyunAccessKeySecret: '阿里云SMS-AccessKeySecret',
@@ -79,10 +66,6 @@ export default {
         wxGzhEncodingAESKey: 'EncodingAESKey',
     },
     status: {
-        uploadType: [
-            { value: `uploadOfLocal`, label: '本地' },
-            { value: `uploadOfAliyunOss`, label: '阿里云' },
-        ],
         smsType: [{ value: `smsOfAliyun`, label: '阿里云' }],
         emailType: [{ value: `emailOfCommon`, label: '通用' }],
         idCardType: [{ value: `idCardOfAliyun`, label: '阿里云' }],
@@ -90,13 +73,6 @@ export default {
         vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
     },
     tip: {
-        uploadOfLocalFileSaveDir: '根据部署的线上环境设置。一般与nginx中设置的网站对外目录一致',
-        uploadOfLocalFileUrlPrefix: '根据部署的线上环境设置。与文件保存路径拼接形成文件访问地址',
-        uploadOfAliyunOssHost: '不含Bucket部分',
-        uploadOfAliyunOssCallbackUrl: '设置后开启回调，否则关闭回调',
-        uploadOfAliyunOssEndpoint: 'APP直传需设置，用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
-        uploadOfAliyunOssRoleArn: 'APP直传需设置，用于生成STS凭证',
-
         emailOfCommonPassword: '注意：如果使用的是QQ邮箱，则此处应填写QQ邮箱的授权码，而不是密码',
         emailCodeTemplate: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
 
