@@ -33,41 +33,41 @@ const saveForm = reactive({
                 },
             },
         ], */
-        'upload_config.uploadOfLocalUrl': [
+        'upload_config_0.url': [
             { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
-        'upload_config.uploadOfLocalSignKey': [
+        'upload_config_0.signKey': [
             { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'upload_config.uploadOfLocalFileSaveDir': [
+        'upload_config_0.fileSaveDir': [
             { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'upload_config.uploadOfLocalFileUrlPrefix': [
+        'upload_config_0.fileUrlPrefix': [
             { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
-        'upload_config.uploadOfAliyunOssHost': [
+        'upload_config_1.host': [
             { required: computed((): boolean => (saveForm.data.upload_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'url', trigger: 'blur', message: t('validation.url') },
         ],
-        'upload_config.uploadOfAliyunOssBucket': [
+        'upload_config_1.bucket': [
             { required: computed((): boolean => (saveForm.data.upload_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'upload_config.uploadOfAliyunOssAccessKeyId': [
+        'upload_config_1.accessKeyId': [
             { required: computed((): boolean => (saveForm.data.upload_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') },
         ],
-        'upload_config.uploadOfAliyunOssAccessKeySecret': [
+        'upload_config_1.accessKeySecret': [
             { required: computed((): boolean => (saveForm.data.upload_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') },
         ],
-        'upload_config.uploadOfAliyunOssEndpoint': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        'upload_config.uploadOfAliyunOssRoleArn': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        'upload_config.uploadOfAliyunOssIsNotify': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        'upload_config_1.endpoint': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'upload_config_1.roleArn': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'upload_config_1.isNotify': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
         remark: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
         is_default: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
         is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
@@ -129,50 +129,50 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.upload_config" type="textarea" :autosize="{ minRows: 3 }" />
                 </el-form-item> -->
                 <template v-if="saveForm.data.upload_type == 0">
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfLocalUrl')" prop="upload_config.uploadOfLocalUrl">
-                        <el-input v-model="saveForm.data.upload_config.uploadOfLocalUrl" :placeholder="t('upload.upload.name.upload_config_obj.uploadOfLocalUrl')" :clearable="true" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_0.url')" prop="upload_config_0.url">
+                        <el-input v-model="saveForm.data.upload_config.url" :placeholder="t('upload.upload.name.upload_config_0.url')" :clearable="true" />
                     </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfLocalSignKey')" prop="upload_config.uploadOfLocalSignKey">
-                        <el-input v-model="saveForm.data.upload_config.uploadOfLocalSignKey" :placeholder="t('upload.upload.name.upload_config_obj.uploadOfLocalSignKey')" :clearable="true" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_0.signKey')" prop="upload_config_0.signKey">
+                        <el-input v-model="saveForm.data.upload_config.signKey" :placeholder="t('upload.upload.name.upload_config_0.signKey')" :clearable="true" />
                     </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfLocalFileSaveDir')" prop="upload_config.uploadOfLocalFileSaveDir">
-                        <el-input v-model="saveForm.data.upload_config.uploadOfLocalFileSaveDir" :placeholder="t('upload.upload.name.upload_config_obj.uploadOfLocalFileSaveDir')" :clearable="true" style="max-width: 300px" />
-                        <el-alert :title="t('upload.upload.tip.upload_config_obj.uploadOfLocalFileSaveDir')" type="info" :show-icon="true" :closable="false" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_0.fileSaveDir')" prop="upload_config_0.fileSaveDir">
+                        <el-input v-model="saveForm.data.upload_config.fileSaveDir" :placeholder="t('upload.upload.name.upload_config_0.fileSaveDir')" :clearable="true" style="max-width: 300px" />
+                        <el-alert :title="t('upload.upload.tip.upload_config_0.fileSaveDir')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfLocalFileUrlPrefix')" prop="upload_config.uploadOfLocalFileUrlPrefix">
-                        <el-input v-model="saveForm.data.upload_config.uploadOfLocalFileUrlPrefix" :placeholder="t('upload.upload.name.upload_config_obj.uploadOfLocalFileUrlPrefix')" :clearable="true" style="max-width: 300px" />
-                        <el-alert :title="t('upload.upload.tip.upload_config_obj.uploadOfLocalFileUrlPrefix')" type="info" :show-icon="true" :closable="false" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_0.fileUrlPrefix')" prop="upload_config_0.fileUrlPrefix">
+                        <el-input v-model="saveForm.data.upload_config.fileUrlPrefix" :placeholder="t('upload.upload.name.upload_config_0.fileUrlPrefix')" :clearable="true" style="max-width: 300px" />
+                        <el-alert :title="t('upload.upload.tip.upload_config_0.fileUrlPrefix')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                 </template>
                 <template v-else-if="saveForm.data.upload_type == 1">
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssHost')" prop="upload_config.uploadOfAliyunOssHost">
-                        <el-input v-model="saveForm.data.upload_config.uploadOfAliyunOssHost" :placeholder="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssHost')" :clearable="true" style="max-width: 300px" />
-                        <el-alert :title="t('upload.upload.tip.upload_config_obj.uploadOfAliyunOssHost')" type="info" :show-icon="true" :closable="false" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_1.host')" prop="upload_config_1.host">
+                        <el-input v-model="saveForm.data.upload_config.host" :placeholder="t('upload.upload.name.upload_config_1.host')" :clearable="true" style="max-width: 300px" />
+                        <el-alert :title="t('upload.upload.tip.upload_config_1.host')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssBucket')" prop="upload_config.uploadOfAliyunOssBucket">
-                        <el-input v-model="saveForm.data.upload_config.uploadOfAliyunOssBucket" :placeholder="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssBucket')" :clearable="true" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_1.bucket')" prop="upload_config_1.bucket">
+                        <el-input v-model="saveForm.data.upload_config.bucket" :placeholder="t('upload.upload.name.upload_config_1.bucket')" :clearable="true" />
                     </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssAccessKeyId')" prop="upload_config.uploadOfAliyunOssAccessKeyId">
-                        <el-input v-model="saveForm.data.upload_config.uploadOfAliyunOssAccessKeyId" :placeholder="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssAccessKeyId')" :clearable="true" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_1.accessKeyId')" prop="upload_config_1.accessKeyId">
+                        <el-input v-model="saveForm.data.upload_config.accessKeyId" :placeholder="t('upload.upload.name.upload_config_1.accessKeyId')" :clearable="true" />
                     </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssAccessKeySecret')" prop="upload_config.uploadOfAliyunOssAccessKeySecret">
-                        <el-input v-model="saveForm.data.upload_config.uploadOfAliyunOssAccessKeySecret" :placeholder="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssAccessKeySecret')" :clearable="true" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_1.accessKeySecret')" prop="upload_config_1.accessKeySecret">
+                        <el-input v-model="saveForm.data.upload_config.accessKeySecret" :placeholder="t('upload.upload.name.upload_config_1.accessKeySecret')" :clearable="true" />
                     </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssEndpoint')" prop="upload_config.uploadOfAliyunOssEndpoint">
-                        <el-input v-model="saveForm.data.upload_config.uploadOfAliyunOssEndpoint" :placeholder="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssEndpoint')" :clearable="true" style="max-width: 300px" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_1.endpoint')" prop="upload_config_1.endpoint">
+                        <el-input v-model="saveForm.data.upload_config.endpoint" :placeholder="t('upload.upload.name.upload_config_1.endpoint')" :clearable="true" style="max-width: 300px" />
                         <el-alert type="info" :show-icon="true" :closable="false">
                             <template #title>
-                                <span v-html="t('upload.upload.tip.upload_config_obj.uploadOfAliyunOssEndpoint')"></span>
+                                <span v-html="t('upload.upload.tip.upload_config_1.endpoint')"></span>
                             </template>
                         </el-alert>
                     </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssRoleArn')" prop="upload_config.uploadOfAliyunOssRoleArn">
-                        <el-input v-model="saveForm.data.upload_config.uploadOfAliyunOssRoleArn" :placeholder="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssRoleArn')" :clearable="true" style="max-width: 300px" />
-                        <el-alert :title="t('upload.upload.tip.upload_config_obj.uploadOfAliyunOssRoleArn')" type="info" :show-icon="true" :closable="false" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_1.roleArn')" prop="upload_config_1.roleArn">
+                        <el-input v-model="saveForm.data.upload_config.roleArn" :placeholder="t('upload.upload.name.upload_config_1.roleArn')" :clearable="true" style="max-width: 300px" />
+                        <el-alert :title="t('upload.upload.tip.upload_config_1.roleArn')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_obj.uploadOfAliyunOssIsNotify')" prop="upload_config.uploadOfAliyunOssIsNotify">
+                    <el-form-item :label="t('upload.upload.name.upload_config_1.isNotify')" prop="upload_config_1.isNotify">
                         <el-switch
-                            v-model="saveForm.data.upload_config.uploadOfAliyunOssIsNotify"
+                            v-model="saveForm.data.upload_config.isNotify"
                             :active-value="1"
                             :inactive-value="0"
                             :inline-prompt="true"

@@ -52,8 +52,8 @@ func NewUpload(ctx context.Context, uploadInfo gdb.Record) Upload {
 
 	switch uploadInfo[daoUpload.Upload.Columns().UploadType].Uint() {
 	case 1: //阿里云OSS
-		if gconv.Bool(config[`uploadOfAliyunOssIsNotify`]) {
-			config[`uploadOfAliyunOssCallbackUrl`] = utils.GetRequestUrl(ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
+		if gconv.Bool(config[`isNotify`]) {
+			config[`callbackUrl`] = utils.GetRequestUrl(ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
 		}
 		return NewUploadOfAliyunOss(ctx, config)
 	// case 0: //本地

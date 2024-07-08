@@ -29,13 +29,13 @@ import (
 
 type UploadOfAliyunOss struct {
 	Ctx             context.Context
-	Host            string `json:"uploadOfAliyunOssHost"`
-	Bucket          string `json:"uploadOfAliyunOssBucket"`
-	AccessKeyId     string `json:"uploadOfAliyunOssAccessKeyId"`
-	AccessKeySecret string `json:"uploadOfAliyunOssAccessKeySecret"`
-	CallbackUrl     string `json:"uploadOfAliyunOssCallbackUrl"`
-	Endpoint        string `json:"uploadOfAliyunOssEndpoint"`
-	RoleArn         string `json:"uploadOfAliyunOssRoleArn"`
+	Host            string `json:"host"`
+	Bucket          string `json:"bucket"`
+	AccessKeyId     string `json:"accessKeyId"`
+	AccessKeySecret string `json:"accessKeySecret"`
+	Endpoint        string `json:"endpoint"`
+	RoleArn         string `json:"roleArn"`
+	CallbackUrl     string `json:"callbackUrl"`
 }
 
 func NewUploadOfAliyunOss(ctx context.Context, config map[string]any) *UploadOfAliyunOss {
