@@ -42,7 +42,7 @@ type PayFilter struct {
 
 /*--------列表 开始--------*/
 type PayListReq struct {
-	g.Meta `path:"/pay/list" method:"post" tags:"平台后台/系统管理/支付" sm:"列表"`
+	g.Meta `path:"/pay/list" method:"post" tags:"平台后台/系统管理/配置中心/支付配置" sm:"列表"`
 	Filter PayFilter `json:"filter" dc:"过滤条件"`
 	Field  []string  `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
 	Sort   string    `json:"sort" default:"id DESC" dc:"排序"`
@@ -59,7 +59,7 @@ type PayListRes struct {
 
 /*--------详情 开始--------*/
 type PayInfoReq struct {
-	g.Meta `path:"/pay/info" method:"post" tags:"平台后台/系统管理/支付" sm:"详情"`
+	g.Meta `path:"/pay/info" method:"post" tags:"平台后台/系统管理/配置中心/支付配置" sm:"详情"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
 	Id     uint     `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
@@ -72,7 +72,7 @@ type PayInfoRes struct {
 
 /*--------新增 开始--------*/
 type PayCreateReq struct {
-	g.Meta    `path:"/pay/create" method:"post" tags:"平台后台/系统管理/支付" sm:"新增"`
+	g.Meta    `path:"/pay/create" method:"post" tags:"平台后台/系统管理/配置中心/支付配置" sm:"新增"`
 	PayName   *string  `json:"pay_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	PayIcon   *string  `json:"pay_icon,omitempty" v:"max-length:200|url" dc:"图标"`
 	PayType   *uint    `json:"pay_type,omitempty" v:"required|in:0,1" dc:"类型：0支付宝 1微信"`
@@ -82,7 +82,7 @@ type PayCreateReq struct {
 	// Balance     *float64 `json:"balance,omitempty" v:"between:0,999999999999.999999" dc:"余额"`
 	Sort        *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序"`
 	Remark      *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	PaySceneArr *[]uint `json:"pay_scene_arr,omitempty" v:"required|distinct|foreach|in:0,1,2,10,11,20" dc:"支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序"`
+	PaySceneArr *[]uint `json:"pay_scene_arr,omitempty" v:"distinct|foreach|in:0,1,2,10,11,20" dc:"支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序"`
 	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
@@ -90,7 +90,7 @@ type PayCreateReq struct {
 
 /*--------修改 开始--------*/
 type PayUpdateReq struct {
-	g.Meta    `path:"/pay/update" method:"post" tags:"平台后台/系统管理/支付" sm:"修改"`
+	g.Meta    `path:"/pay/update" method:"post" tags:"平台后台/系统管理/配置中心/支付配置" sm:"修改"`
 	IdArr     []uint   `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	PayName   *string  `json:"pay_name,omitempty" v:"max-length:30" dc:"名称"`
 	PayIcon   *string  `json:"pay_icon,omitempty" v:"max-length:200|url" dc:"图标"`
@@ -109,7 +109,7 @@ type PayUpdateReq struct {
 
 /*--------删除 开始--------*/
 type PayDeleteReq struct {
-	g.Meta `path:"/pay/del" method:"post" tags:"平台后台/系统管理/支付" sm:"删除"`
+	g.Meta `path:"/pay/del" method:"post" tags:"平台后台/系统管理/配置中心/支付配置" sm:"删除"`
 	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 }
 
