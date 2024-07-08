@@ -42,7 +42,7 @@ func NewUploadOfAliyunOss(ctx context.Context, config map[string]any) *UploadOfA
 	uploadObj := UploadOfAliyunOss{Ctx: ctx}
 	gconv.Struct(config, &uploadObj)
 	if uploadObj.Host == `` || uploadObj.Bucket == `` || uploadObj.AccessKeyId == `` || uploadObj.AccessKeySecret == `` || uploadObj.CallbackUrl == `` || uploadObj.Endpoint == `` || uploadObj.RoleArn == `` {
-		panic(`缺少插件配置：上传-阿里云`)
+		panic(`缺少配置：上传-阿里云OSS`)
 	}
 	return &uploadObj
 }

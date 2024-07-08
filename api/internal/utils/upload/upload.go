@@ -1,11 +1,14 @@
 package upload
 
 import (
-	daoPlatform "api/internal/dao/platform"
+	daoUpload "api/internal/dao/upload"
+	"api/internal/utils"
 	"context"
 
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type UploadParam struct {
@@ -41,22 +44,21 @@ type Upload interface {
 	Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error)  // 回调
 }
 
-func NewUpload(ctx context.Context, uploadTypeOpt ...string) Upload {
-	uploadType := ``
-	if len(uploadTypeOpt) > 0 {
-		uploadType = uploadTypeOpt[0]
-	} else {
-		uploadType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `uploadType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
+func NewUpload(ctx context.Context, uploadInfo gdb.Record) Upload {
+	if uploadInfo.IsEmpty() {
+		uploadInfo, _ = daoUpload.Upload.CtxDaoModel(ctx).Filter(daoUpload.Upload.Columns().IsDefault, 1).One()
 	}
+	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
 
-	switch uploadType {
-	case `uploadOfAliyunOss`:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`uploadOfAliyunOssHost`, `uploadOfAliyunOssBucket`, `uploadOfAliyunOssAccessKeyId`, `uploadOfAliyunOssAccessKeySecret`, `uploadOfAliyunOssCallbackUrl`, `uploadOfAliyunOssEndpoint`, `uploadOfAliyunOssRoleArn`})
-		return NewUploadOfAliyunOss(ctx, config.Map())
-	// case `uploadOfLocal`:
+	switch uploadInfo[daoUpload.Upload.Columns().UploadType].Uint() {
+	case 1: //阿里云OSS
+		if gconv.Bool(config[`uploadOfAliyunOssIsNotify`]) {
+			config[`uploadOfAliyunOssCallbackUrl`] = utils.GetRequestUrl(ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
+		}
+		return NewUploadOfAliyunOss(ctx, config)
+	// case 0: //本地
 	default:
-		config, _ := daoPlatform.Config.Get(ctx, []string{`uploadOfLocalUrl`, `uploadOfLocalSignKey`, `uploadOfLocalFileSaveDir`, `uploadOfLocalFileUrlPrefix`})
-		return NewUploadOfLocal(ctx, config.Map())
+		return NewUploadOfLocal(ctx, config)
 	}
 }
 

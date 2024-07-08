@@ -2,6 +2,7 @@ package controller
 
 import (
 	"api/api"
+	daoUpload "api/internal/dao/upload"
 	"api/internal/utils"
 	"api/internal/utils/upload"
 	"context"
@@ -17,7 +18,7 @@ func NewUpload() *Upload {
 
 // 本地上传
 func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadReq) (res *api.UploadNotifyRes, err error) {
-	notifyInfo, err := upload.NewUpload(ctx).Upload(g.RequestFromCtx(ctx))
+	notifyInfo, err := upload.NewUpload(ctx, nil).Upload(g.RequestFromCtx(ctx))
 	if err != nil {
 		return
 	}
@@ -33,7 +34,7 @@ func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadR
 
 // 获取签名（H5直传用）
 func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) (res *api.UploadSignRes, err error) {
-	signInfo, err := upload.NewUpload(ctx).Sign(upload.CreateUploadParam(req.FileType))
+	signInfo, err := upload.NewUpload(ctx, nil).Sign(upload.CreateUploadParam(req.FileType))
 	if err != nil {
 		return
 	}
@@ -50,7 +51,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 
 // 获取配置信息（APP直传前调用）
 func (controllerThis *Upload) Config(ctx context.Context, req *api.UploadConfigReq) (res *api.UploadConfigRes, err error) {
-	config, err := upload.NewUpload(ctx).Config(upload.CreateUploadParam(req.FileType))
+	config, err := upload.NewUpload(ctx, nil).Config(upload.CreateUploadParam(req.FileType))
 	if err != nil {
 		return
 	}
@@ -60,7 +61,7 @@ func (controllerThis *Upload) Config(ctx context.Context, req *api.UploadConfigR
 
 // 获取Sts Token（APP直传用）
 func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (res *api.UploadStsRes, err error) {
-	stsInfo, err := upload.NewUpload(ctx).Sts(upload.CreateUploadParam(req.FileType))
+	stsInfo, err := upload.NewUpload(ctx, nil).Sts(upload.CreateUploadParam(req.FileType))
 	if err != nil {
 		return
 	}
@@ -70,7 +71,13 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 
 // 回调
 func (controllerThis *Upload) Notify(ctx context.Context, req *api.UploadNotifyReq) (res *api.UploadNotifyRes, err error) {
-	notifyInfo, err := upload.NewUpload(ctx, req.UploadType).Notify(g.RequestFromCtx(ctx))
+	uploadInfo, _ := daoUpload.Upload.CtxDaoModel(ctx).Filter(daoUpload.Upload.Columns().UploadId, req.UploadId).One()
+	if uploadInfo.IsEmpty() {
+		err = utils.NewErrorCode(ctx, 30020000, ``)
+		return
+	}
+
+	notifyInfo, err := upload.NewUpload(ctx, uploadInfo).Notify(g.RequestFromCtx(ctx))
 	if err != nil {
 		return
 	}
