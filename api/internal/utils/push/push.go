@@ -69,7 +69,7 @@ func NewPush(ctx context.Context, deviceType uint, pushTypeOpt ...string) Push {
 		config := configTmp.Map()
 		switch deviceType {
 		case 1: //IOS
-			config[`accessID`] = config[`iosAccessID`]
+			config[`accessID`] = config[`accessIDOfIos`]
 			config[`secretKey`] = config[`secretKeyOfIos`]
 		case 2: //MacOS
 			config[`accessID`] = config[`accessIDOfMacOS`]
