@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 09/07/2024 16:30:29
+ Date: 09/07/2024 17:45:44
 */
 
 SET NAMES utf8mb4;
@@ -509,7 +509,7 @@ CREATE TABLE `platform_config`  (
 -- Records of platform_config
 -- ----------------------------
 INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailCode', '{\"subject\":\"您的验证码\",\"template\":\"验证码：{code}\\n说明：\\n1. 验证码在发送后的5分钟内有效。如果验证码过期，请重新请求一个新的验证码。\\n2. 出于安全考虑，请不要将此验证码分享给任何人。\"}');
-INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailOfCommon', '{\"fromEmail\":\"274456806@qq.com\",\"password\":\"fkrepxbmjubrbhib\",\"smtpHost\":\"smtp.qq.com\",\"smtpPort\":\"465\"}');
+INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailOfCommon', '{\"fromEmail\":\"xxxxxxxx@qq.com\",\"password\":\"xxxxxxxx\",\"smtpHost\":\"smtp.qq.com\",\"smtpPort\":\"465\"}');
 INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailType', 'emailOfCommon');
 INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardOfAliyun', '{\"appcode\":\"appcode\",\"host\":\"http://idcard.market.alicloudapi.com\",\"path\":\"/lianzhuo/idcard\"}');
 INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardType', 'idCardOfAliyun');
