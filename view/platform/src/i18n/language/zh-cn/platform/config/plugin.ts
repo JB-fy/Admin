@@ -42,13 +42,16 @@ export default {
             appcode: '阿里云-Appcode',
         },
 
-        oneClickOfWxHost: '微信-域名',
-        oneClickOfWxAppId: '微信-AppId',
-        oneClickOfWxSecret: '微信-密钥',
-
-        oneClickOfYidunSecretId: '易盾-SecretId',
-        oneClickOfYidunSecretKey: '易盾-SecretKey',
-        oneClickOfYidunBusinessId: '易盾-BusinessId',
+        oneClickOfWx: {
+            host: '微信-域名',
+            appId: '微信-AppId',
+            secret: '微信-密钥',
+        },
+        oneClickOfYidun: {
+            secretId: '易盾-SecretId',
+            secretKey: '易盾-SecretKey',
+            businessId: '易盾-BusinessId',
+        },
 
         pushType: '推送方式',
         pushOfTxHost: '腾讯移动推送-域名',
@@ -88,7 +91,9 @@ export default {
             host: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（也可购买阿里云市场其它接口，但需修改id_card_of_aliyun.go文件）',
         },
 
-        wxHost: '参考：<a target="_blank" href="https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html">https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html</a>',
+        oneClickOfWx: {
+            host: '参考：<a target="_blank" href="https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html">https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html</a>',
+        },
 
         pushOfTxHost: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
 

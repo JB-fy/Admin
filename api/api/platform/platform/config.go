@@ -45,12 +45,16 @@ type Config struct {
 		Appcode *string `json:"appcode,omitempty" dc:"阿里云-Appcode"`
 	} `json:"idCardOfAliyun,omitempty" dc:"实名认证配置-阿里云"`
 
-	OneClickOfWxHost          *string `json:"oneClickOfWxHost,omitempty" dc:"微信-域名"`
-	OneClickOfWxAppId         *string `json:"oneClickOfWxAppId,omitempty" dc:"微信-AppId"`
-	OneClickOfWxSecret        *string `json:"oneClickOfWxSecret,omitempty" dc:"微信-密钥"`
-	OneClickOfYidunSecretId   *string `json:"oneClickOfYidunSecretId,omitempty" dc:"易盾-SecretId"`
-	OneClickOfYidunSecretKey  *string `json:"oneClickOfYidunSecretKey,omitempty" dc:"易盾-SecretKey"`
-	OneClickOfYidunBusinessId *string `json:"oneClickOfYidunBusinessId,omitempty" dc:"易盾-BusinessId"`
+	OneClickOfWx *struct {
+		Host   *string `json:"host,omitempty" dc:"微信-域名"`
+		AppId  *string `json:"appId,omitempty" dc:"微信-AppId"`
+		Secret *string `json:"secret,omitempty" dc:"微信-密钥"`
+	} `json:"oneClickOfWx,omitempty" dc:"一键登录配置-微信"`
+	OneClickOfYidun *struct {
+		SecretId   *string `json:"secretId,omitempty" dc:"易盾-SecretId"`
+		SecretKey  *string `json:"secretKey,omitempty" dc:"易盾-SecretKey"`
+		BusinessId *string `json:"businessId,omitempty" dc:"易盾-BusinessId"`
+	} `json:"oneClickOfYidun,omitempty" dc:"一键登录配置-易盾"`
 
 	PushType                 *string `json:"pushType,omitempty" dc:"推送方式"`
 	PushOfTxHost             *string `json:"pushOfTxHost,omitempty" dc:"腾讯移动推送-域名"`
@@ -91,31 +95,35 @@ type ConfigSaveReq struct {
 		Endpoint        *string `json:"endpoint,omitempty" v:"" dc:"阿里云-Endpoint"`
 		SignName        *string `json:"signName,omitempty" v:"" dc:"阿里云-签名"`
 		TemplateCode    *string `json:"templateCode,omitempty" v:"" dc:"阿里云-模板标识"`
-	} `json:"smsOfAliyun,omitempty" v:"required-if:SmsType,smsOfAliyun|json" dc:"短信配置-阿里云"`
+	} `json:"smsOfAliyun,omitempty" v:"required-if:SmsType,smsOfAliyun" dc:"短信配置-阿里云"`
 
 	EmailCodeSubject  *string `json:"emailCodeSubject,omitempty" v:"" dc:"验证码标题"`
 	EmailCodeTemplate *string `json:"emailCodeTemplate,omitempty" v:"" dc:"验证码模板"`
 	EmailType         *string `json:"emailType,omitempty" v:"in:emailOfCommon" dc:"邮箱方式"`
 	EmailOfCommon     *struct {
-		SmtpHost  *string `json:"smtpHost,omitempty" v:"required" dc:"通用-SmtpHost"`
-		SmtpPort  *string `json:"smtpPort,omitempty" v:"required" dc:"通用-SmtpPort"`
-		FromEmail *string `json:"fromEmail,omitempty" v:"required|email" dc:"通用-邮箱"`
-		Password  *string `json:"password,omitempty" v:"required" dc:"通用-密码"`
-	} `json:"emailOfCommon,omitempty" v:"required-if:EmailType,emailOfCommon|json" dc:"邮箱配置-通用"`
+		SmtpHost  *string `json:"smtpHost,omitempty" v:"" dc:"通用-SmtpHost"`
+		SmtpPort  *string `json:"smtpPort,omitempty" v:"" dc:"通用-SmtpPort"`
+		FromEmail *string `json:"fromEmail,omitempty" v:"email" dc:"通用-邮箱"`
+		Password  *string `json:"password,omitempty" v:"" dc:"通用-密码"`
+	} `json:"emailOfCommon,omitempty" v:"required-if:EmailType,emailOfCommon" dc:"邮箱配置-通用"`
 
 	IdCardType     *string `json:"idCardType,omitempty" v:"in:idCardOfAliyun" dc:"实名认证方式"`
 	IdCardOfAliyun *struct {
 		Host    *string `json:"host,omitempty" v:"url" dc:"阿里云-域名"`
 		Path    *string `json:"path,omitempty" v:"" dc:"阿里云-请求路径"`
 		Appcode *string `json:"appcode,omitempty" v:"" dc:"阿里云-Appcode"`
-	} `json:"idCardOfAliyun,omitempty" dc:"实名认证配置-阿里云"`
+	} `json:"idCardOfAliyun,omitempty" v:"required-if:IdCardType,idCardOfAliyun" dc:"实名认证配置-阿里云"`
 
-	OneClickOfWxHost          *string `json:"oneClickOfWxHost,omitempty" v:"url" dc:"微信-域名"`
-	OneClickOfWxAppId         *string `json:"oneClickOfWxAppId,omitempty" v:"" dc:"微信-AppId"`
-	OneClickOfWxSecret        *string `json:"oneClickOfWxSecret,omitempty" v:"" dc:"微信-密钥"`
-	OneClickOfYidunSecretId   *string `json:"oneClickOfYidunSecretId,omitempty" v:"" dc:"易盾-SecretId"`
-	OneClickOfYidunSecretKey  *string `json:"oneClickOfYidunSecretKey,omitempty" v:"" dc:"易盾-SecretKey"`
-	OneClickOfYidunBusinessId *string `json:"oneClickOfYidunBusinessId,omitempty" v:"" dc:"易盾-BusinessId"`
+	OneClickOfWx *struct {
+		Host   *string `json:"host,omitempty" v:"url" dc:"微信-域名"`
+		AppId  *string `json:"appId,omitempty" v:"" dc:"微信-AppId"`
+		Secret *string `json:"secret,omitempty" v:"" dc:"微信-密钥"`
+	} `json:"oneClickOfWx,omitempty" v:"" dc:"一键登录配置-微信"`
+	OneClickOfYidun *struct {
+		SecretId   *string `json:"secretId,omitempty" v:"" dc:"易盾-SecretId"`
+		SecretKey  *string `json:"secretKey,omitempty" v:"" dc:"易盾-SecretKey"`
+		BusinessId *string `json:"businessId,omitempty" v:"" dc:"易盾-BusinessId"`
+	} `json:"oneClickOfYidun,omitempty" v:"" dc:"一键登录配置-易盾"`
 
 	PushType                 *string `json:"pushType,omitempty" v:"in:pushOfTx" dc:"推送方式"`
 	PushOfTxHost             *string `json:"pushOfTxHost,omitempty" v:"url" dc:"腾讯移动推送-域名"`

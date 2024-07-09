@@ -8,22 +8,16 @@ const saveForm = reactive({
     loading: false,
     data: {
         //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
-        oneClickOfWxHost: '',
-        oneClickOfWxAppId: '',
-        oneClickOfWxSecret: '',
-
-        oneClickOfYidunSecretId: '',
-        oneClickOfYidunSecretKey: '',
-        oneClickOfYidunBusinessId: '',
+        oneClickOfWx: {},
+        oneClickOfYidun: {},
     } as { [propName: string]: any },
     rules: {
-        oneClickOfWxHost: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
-        oneClickOfWxAppId: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        oneClickOfWxSecret: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-
-        oneClickOfYidunSecretId: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        oneClickOfYidunSecretKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        oneClickOfYidunBusinessId: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'oneClickOfWx.host': [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
+        'oneClickOfWx.appId': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'oneClickOfWx.secret': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'oneClickOfYidun.secretId': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'oneClickOfYidun.secretKey': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'oneClickOfYidun.businessId': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }
@@ -60,31 +54,31 @@ saveForm.initData()
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <el-tabs tab-position="left">
             <el-tab-pane :label="t('platform.config.plugin.label.oneClickOfWx')" :lazy="true">
-                <el-form-item :label="t('platform.config.plugin.name.oneClickOfWxHost')" prop="oneClickOfWxHost">
-                    <el-input v-model="saveForm.data.oneClickOfWxHost" :placeholder="t('platform.config.plugin.name.oneClickOfWxHost')" :clearable="true" style="max-width: 500px" />
+                <el-form-item :label="t('platform.config.plugin.name.oneClickOfWx.host')" prop="oneClickOfWx.host">
+                    <el-input v-model="saveForm.data.oneClickOfWx.host" :placeholder="t('platform.config.plugin.name.oneClickOfWx.host')" :clearable="true" style="max-width: 500px" />
                     <el-alert type="info" :show-icon="true" :closable="false">
                         <template #title>
-                            <span v-html="t('platform.config.plugin.tip.wxHost')"></span>
+                            <span v-html="t('platform.config.plugin.tip.oneClickOfWx.host')"></span>
                         </template>
                     </el-alert>
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.oneClickOfWxAppId')" prop="oneClickOfWxAppId">
-                    <el-input v-model="saveForm.data.oneClickOfWxAppId" :placeholder="t('platform.config.plugin.name.oneClickOfWxAppId')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.oneClickOfWx.appId')" prop="oneClickOfWx.appId">
+                    <el-input v-model="saveForm.data.oneClickOfWx.appId" :placeholder="t('platform.config.plugin.name.oneClickOfWx.appId')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.oneClickOfWxSecret')" prop="oneClickOfWxSecret">
-                    <el-input v-model="saveForm.data.oneClickOfWxSecret" :placeholder="t('platform.config.plugin.name.oneClickOfWxSecret')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.oneClickOfWx.secret')" prop="oneClickOfWx.secret">
+                    <el-input v-model="saveForm.data.oneClickOfWx.secret" :placeholder="t('platform.config.plugin.name.oneClickOfWx.secret')" :clearable="true" />
                 </el-form-item>
             </el-tab-pane>
 
             <el-tab-pane :label="t('platform.config.plugin.label.oneClickOfYidun')" :lazy="true">
-                <el-form-item :label="t('platform.config.plugin.name.oneClickOfYidunSecretId')" prop="oneClickOfYidunSecretId">
-                    <el-input v-model="saveForm.data.oneClickOfYidunSecretId" :placeholder="t('platform.config.plugin.name.oneClickOfYidunSecretId')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.oneClickOfYidun.secretId')" prop="oneClickOfYidun.secretId">
+                    <el-input v-model="saveForm.data.oneClickOfYidun.secretId" :placeholder="t('platform.config.plugin.name.oneClickOfYidun.secretId')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.oneClickOfYidunSecretKey')" prop="oneClickOfYidunSecretKey">
-                    <el-input v-model="saveForm.data.oneClickOfYidunSecretKey" :placeholder="t('platform.config.plugin.name.oneClickOfYidunSecretKey')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.oneClickOfYidun.secretKey')" prop="oneClickOfYidun.secretKey">
+                    <el-input v-model="saveForm.data.oneClickOfYidun.secretKey" :placeholder="t('platform.config.plugin.name.oneClickOfYidun.secretKey')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.oneClickOfYidunBusinessId')" prop="oneClickOfYidunBusinessId">
-                    <el-input v-model="saveForm.data.oneClickOfYidunBusinessId" :placeholder="t('platform.config.plugin.name.oneClickOfYidunBusinessId')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.oneClickOfYidun.businessId')" prop="oneClickOfYidun.businessId">
+                    <el-input v-model="saveForm.data.oneClickOfYidun.businessId" :placeholder="t('platform.config.plugin.name.oneClickOfYidun.businessId')" :clearable="true" />
                 </el-form-item>
             </el-tab-pane>
         </el-tabs>

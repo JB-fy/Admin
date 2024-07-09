@@ -12,9 +12,9 @@ import (
 
 type OneClickOfWx struct {
 	Ctx    context.Context
-	Host   string `json:"oneClickOfWxHost"`
-	AppId  string `json:"oneClickOfWxAppId"`
-	Secret string `json:"oneClickOfWxSecret"`
+	Host   string `json:"host"`
+	AppId  string `json:"appId"`
+	Secret string `json:"secret"`
 }
 
 func NewOneClickOfWx(ctx context.Context, config map[string]any) *OneClickOfWx {

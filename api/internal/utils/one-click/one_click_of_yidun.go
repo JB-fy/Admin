@@ -10,9 +10,9 @@ import (
 
 type OneClickOfYidun struct {
 	Ctx        context.Context
-	SecretId   string `json:"oneClickOfYidunSecretId"`
-	SecretKey  string `json:"oneClickOfYidunSecretKey"`
-	BusinessId string `json:"oneClickOfYidunBusinessId"`
+	SecretId   string `json:"secretId"`
+	SecretKey  string `json:"secretKey"`
+	BusinessId string `json:"businessId"`
 }
 
 func NewOneClickOfYidun(ctx context.Context, config map[string]any) *OneClickOfYidun {
