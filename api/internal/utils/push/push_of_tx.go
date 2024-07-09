@@ -18,9 +18,9 @@ import (
 
 type PushOfTx struct {
 	Ctx       context.Context
-	Host      string `json:"pushOfTxHost"`
-	AccessID  uint32 `json:"pushOfTxAccessID"`
-	SecretKey string `json:"pushOfTxSecretKey"`
+	Host      string `json:"host"`
+	AccessID  uint32 `json:"accessID"`
+	SecretKey string `json:"secretKey"`
 }
 
 func NewPushOfTx(ctx context.Context, config map[string]any) *PushOfTx {

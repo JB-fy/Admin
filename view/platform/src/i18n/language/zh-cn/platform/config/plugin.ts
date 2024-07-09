@@ -54,13 +54,15 @@ export default {
         },
 
         pushType: '推送方式',
-        pushOfTxHost: '腾讯移动推送-域名',
-        pushOfTxAndroidAccessID: '腾讯移动推送-AccessID(安卓)',
-        pushOfTxAndroidSecretKey: '腾讯移动推送-SecretKey(安卓)',
-        pushOfTxIosAccessID: '腾讯移动推送-AccessID(苹果)',
-        pushOfTxIosSecretKey: '腾讯移动推送-SecretKey(苹果)',
-        pushOfTxMacOSAccessID: '腾讯移动推送-AccessID(苹果电脑)',
-        pushOfTxMacOSSecretKey: '腾讯移动推送-SecretKey(苹果电脑)',
+        pushOfTx: {
+            host: '腾讯移动推送-域名',
+            accessIDOfAndroid: '腾讯移动推送-AccessID(安卓)',
+            secretKeyOfAndroid: '腾讯移动推送-SecretKey(安卓)',
+            accessIDOfIos: '腾讯移动推送-AccessID(苹果)',
+            secretKeyOfIos: '腾讯移动推送-SecretKey(苹果)',
+            accessIDOfMacOS: '腾讯移动推送-AccessID(苹果电脑)',
+            secretKeyOfMacOS: '腾讯移动推送-SecretKey(苹果电脑)',
+        },
 
         vodType: '视频点播方式',
         vodOfAliyunAccessKeyId: '阿里云VOD-AccessKeyId',
@@ -95,7 +97,9 @@ export default {
             host: '参考：<a target="_blank" href="https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html">https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html</a>',
         },
 
-        pushOfTxHost: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
+        pushOfTx: {
+            host: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
+        },
 
         vodOfAliyunEndpoint: '用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
         vodOfAliyunRoleArn: '用于生成STS凭证',

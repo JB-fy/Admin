@@ -9,23 +9,23 @@ const saveForm = reactive({
     data: {
         //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
         pushType: 'pushOfTx',
-        pushOfTxHost: '',
-        pushOfTxAndroidAccessID: '',
-        pushOfTxAndroidSecretKey: '',
-        pushOfTxIosAccessID: '',
-        pushOfTxIosSecretKey: '',
-        pushOfTxMacOSAccessID: '',
-        pushOfTxMacOSSecretKey: '',
+        pushOfTx: {},
     } as { [propName: string]: any },
     rules: {
-        pushType: [{ type: 'enum', trigger: 'change', enum: [`pushOfTx`], message: t('validation.select') }],
-        pushOfTxHost: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
-        pushOfTxAndroidAccessID: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        pushOfTxAndroidSecretKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        pushOfTxIosAccessID: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        pushOfTxIosSecretKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        pushOfTxMacOSAccessID: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        pushOfTxMacOSSecretKey: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        pushType: [
+            { required: true, message: t('validation.required') },
+            { type: 'enum', trigger: 'change', enum: [`pushOfTx`], message: t('validation.select') },
+        ],
+        'pushOfTx.host': [
+            { required: computed((): boolean => (saveForm.data.pushType == `pushOfTx` ? true : false)), message: t('validation.required') },
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
+        ],
+        'pushOfTx.accessIDOfAndroid': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'pushOfTx.secretKeyOfAndroid': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'pushOfTx.accessIDOfIos': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'pushOfTx.secretKeyOfIos': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'pushOfTx.accessIDOfMacOS': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'pushOfTx.secretKeyOfMacOS': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }
@@ -69,31 +69,31 @@ saveForm.initData()
         </el-form-item>
 
         <template v-if="saveForm.data.pushType == 'pushOfTx'">
-            <el-form-item :label="t('platform.config.plugin.name.pushOfTxHost')" prop="pushOfTxHost">
-                <el-input v-model="saveForm.data.pushOfTxHost" :placeholder="t('platform.config.plugin.name.pushOfTxHost')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTx.host')" prop="pushOfTx.host">
+                <el-input v-model="saveForm.data.pushOfTx.host" :placeholder="t('platform.config.plugin.name.pushOfTx.host')" :clearable="true" style="max-width: 500px" />
                 <el-alert type="info" :show-icon="true" :closable="false">
                     <template #title>
-                        <span v-html="t('platform.config.plugin.tip.pushOfTxHost')"></span>
+                        <span v-html="t('platform.config.plugin.tip.pushOfTx.host')"></span>
                     </template>
                 </el-alert>
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.pushOfTxAndroidAccessID')" prop="pushOfTxAndroidAccessID">
-                <el-input v-model="saveForm.data.pushOfTxAndroidAccessID" :placeholder="t('platform.config.plugin.name.pushOfTxAndroidAccessID')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTx.accessIDOfAndroid')" prop="pushOfTx.accessIDOfAndroid">
+                <el-input v-model="saveForm.data.pushOfTx.accessIDOfAndroid" :placeholder="t('platform.config.plugin.name.pushOfTx.accessIDOfAndroid')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.pushOfTxAndroidSecretKey')" prop="pushOfTxAndroidSecretKey">
-                <el-input v-model="saveForm.data.pushOfTxAndroidSecretKey" :placeholder="t('platform.config.plugin.name.pushOfTxAndroidSecretKey')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTx.secretKeyOfAndroid')" prop="pushOfTx.secretKeyOfAndroid">
+                <el-input v-model="saveForm.data.pushOfTx.secretKeyOfAndroid" :placeholder="t('platform.config.plugin.name.pushOfTx.secretKeyOfAndroid')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.pushOfTxIosAccessID')" prop="pushOfTxIosAccessID">
-                <el-input v-model="saveForm.data.pushOfTxIosAccessID" :placeholder="t('platform.config.plugin.name.pushOfTxIosAccessID')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTx.accessIDOfIos')" prop="pushOfTx.accessIDOfIos">
+                <el-input v-model="saveForm.data.pushOfTx.accessIDOfIos" :placeholder="t('platform.config.plugin.name.pushOfTx.accessIDOfIos')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.pushOfTxIosSecretKey')" prop="pushOfTxIosSecretKey">
-                <el-input v-model="saveForm.data.pushOfTxIosSecretKey" :placeholder="t('platform.config.plugin.name.pushOfTxIosSecretKey')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTx.secretKeyOfIos')" prop="pushOfTx.secretKeyOfIos">
+                <el-input v-model="saveForm.data.pushOfTx.secretKeyOfIos" :placeholder="t('platform.config.plugin.name.pushOfTx.secretKeyOfIos')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.pushOfTxMacOSAccessID')" prop="pushOfTxMacOSAccessID">
-                <el-input v-model="saveForm.data.pushOfTxMacOSAccessID" :placeholder="t('platform.config.plugin.name.pushOfTxMacOSAccessID')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTx.accessIDOfMacOS')" prop="pushOfTx.accessIDOfMacOS">
+                <el-input v-model="saveForm.data.pushOfTx.accessIDOfMacOS" :placeholder="t('platform.config.plugin.name.pushOfTx.accessIDOfMacOS')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.pushOfTxMacOSSecretKey')" prop="pushOfTxMacOSSecretKey">
-                <el-input v-model="saveForm.data.pushOfTxMacOSSecretKey" :placeholder="t('platform.config.plugin.name.pushOfTxMacOSSecretKey')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.pushOfTx.secretKeyOfMacOS')" prop="pushOfTx.secretKeyOfMacOS">
+                <el-input v-model="saveForm.data.pushOfTx.secretKeyOfMacOS" :placeholder="t('platform.config.plugin.name.pushOfTx.secretKeyOfMacOS')" :clearable="true" />
             </el-form-item>
         </template>
 

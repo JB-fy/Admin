@@ -36,7 +36,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 				actionCodeSet.Add(`platformConfigIdCardRead`)
 			case `oneClickOfWx`, `oneClickOfYidun`:
 				actionCodeSet.Add(`platformConfigOneClickRead`)
-			case `pushType`, `pushOfTxHost`, `pushOfTxAndroidAccessID`, `pushOfTxAndroidSecretKey`, `pushOfTxIosAccessID`, `pushOfTxIosSecretKey`, `pushOfTxMacOSAccessID`, `pushOfTxMacOSSecretKey`:
+			case `pushType`, `pushOfTx`:
 				actionCodeSet.Add(`platformConfigPushRead`)
 			case `vodType`, `vodOfAliyunAccessKeyId`, `vodOfAliyunAccessKeySecret`, `vodOfAliyunEndpoint`, `vodOfAliyunRoleArn`:
 				actionCodeSet.Add(`platformConfigVodRead`)
@@ -88,7 +88,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 				actionCodeSet.Add(`platformConfigIdCardSave`)
 			case `oneClickOfWx`, `oneClickOfYidun`:
 				actionCodeSet.Add(`platformConfigOneClickSave`)
-			case `pushType`, `pushOfTxHost`, `pushOfTxAndroidAccessID`, `pushOfTxAndroidSecretKey`, `pushOfTxIosAccessID`, `pushOfTxIosSecretKey`, `pushOfTxMacOSAccessID`, `pushOfTxMacOSSecretKey`:
+			case `pushType`, `pushOfTx`:
 				actionCodeSet.Add(`platformConfigPushSave`)
 			case `vodType`, `vodOfAliyunAccessKeyId`, `vodOfAliyunAccessKeySecret`, `vodOfAliyunEndpoint`, `vodOfAliyunRoleArn`:
 				actionCodeSet.Add(`platformConfigVodSave`)
