@@ -28,10 +28,12 @@ type Config struct {
 		TemplateCode    *string `json:"templateCode,omitempty" dc:"阿里云-模板标识"`
 	} `json:"smsOfAliyun,omitempty" dc:"短信配置-阿里云"`
 
-	EmailCodeSubject  *string `json:"emailCodeSubject,omitempty" dc:"验证码邮件标题"`
-	EmailCodeTemplate *string `json:"emailCodeTemplate,omitempty" dc:"验证码邮件内容"`
-	EmailType         *string `json:"emailType,omitempty" dc:"邮箱方式"`
-	EmailOfCommon     *struct {
+	EmailCode *struct {
+		Subject  *string `json:"subject,omitempty" dc:"标题"`
+		Template *string `json:"template,omitempty" dc:"内容"`
+	} `json:"emailCode,omitempty" dc:"验证码邮件配置"`
+	EmailType     *string `json:"emailType,omitempty" dc:"邮箱方式"`
+	EmailOfCommon *struct {
 		SmtpHost  *string `json:"smtpHost,omitempty" dc:"通用-SmtpHost"`
 		SmtpPort  *string `json:"smtpPort,omitempty" dc:"通用-SmtpPort"`
 		FromEmail *string `json:"fromEmail,omitempty" dc:"通用-邮箱"`
@@ -103,10 +105,12 @@ type ConfigSaveReq struct {
 		TemplateCode    *string `json:"templateCode,omitempty" v:"" dc:"阿里云-模板标识"`
 	} `json:"smsOfAliyun,omitempty" v:"required-if:SmsType,smsOfAliyun" dc:"短信配置-阿里云"`
 
-	EmailCodeSubject  *string `json:"emailCodeSubject,omitempty" v:"" dc:"验证码标题"`
-	EmailCodeTemplate *string `json:"emailCodeTemplate,omitempty" v:"" dc:"验证码模板"`
-	EmailType         *string `json:"emailType,omitempty" v:"in:emailOfCommon" dc:"邮箱方式"`
-	EmailOfCommon     *struct {
+	EmailCode *struct {
+		Subject  *string `json:"subject,omitempty" v:"" dc:"标题"`
+		Template *string `json:"template,omitempty" v:"" dc:"内容"`
+	} `json:"emailCode,omitempty" v:"" dc:"验证码邮件配置"`
+	EmailType     *string `json:"emailType,omitempty" v:"in:emailOfCommon" dc:"邮箱方式"`
+	EmailOfCommon *struct {
 		SmtpHost  *string `json:"smtpHost,omitempty" v:"" dc:"通用-SmtpHost"`
 		SmtpPort  *string `json:"smtpPort,omitempty" v:"" dc:"通用-SmtpPort"`
 		FromEmail *string `json:"fromEmail,omitempty" v:"email" dc:"通用-邮箱"`

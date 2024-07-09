@@ -9,16 +9,15 @@ const saveForm = reactive({
     data: {
         //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
         emailType: 'emailOfCommon',
+        emailCode: {},
         emailOfCommon: {},
-        emailCodeSubject: '',
-        emailCodeTemplate: '',
     } as { [propName: string]: any },
     rules: {
-        emailCodeSubject: [
+        'emailCode.subject': [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        emailCodeTemplate: [
+        'emailCode.template': [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
@@ -77,12 +76,12 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('platform.config.plugin.name.emailCodeSubject')" prop="emailCodeSubject">
-            <el-input v-model="saveForm.data.emailCodeSubject" :placeholder="t('platform.config.plugin.name.emailCodeSubject')" :clearable="true" />
+        <el-form-item :label="t('platform.config.plugin.name.emailCode.subject')" prop="emailCode.subject">
+            <el-input v-model="saveForm.data.emailCode.subject" :placeholder="t('platform.config.plugin.name.emailCode.subject')" :clearable="true" />
         </el-form-item>
-        <el-form-item :label="t('platform.config.plugin.name.emailCodeTemplate')" prop="emailCodeTemplate">
-            <el-alert :title="t('platform.config.plugin.tip.emailCodeTemplate')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
-            <el-input v-model="saveForm.data.emailCodeTemplate" type="textarea" :autosize="{ minRows: 3 }" />
+        <el-form-item :label="t('platform.config.plugin.name.emailCode.template')" prop="emailCode.template">
+            <el-alert :title="t('platform.config.plugin.tip.emailCode.template')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
+            <el-input v-model="saveForm.data.emailCode.template" type="textarea" :autosize="{ minRows: 3 }" />
         </el-form-item>
         <el-form-item :label="t('platform.config.plugin.name.emailType')" prop="emailType">
             <el-radio-group v-model="saveForm.data.emailType">

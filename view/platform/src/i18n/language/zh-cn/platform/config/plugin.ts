@@ -23,8 +23,10 @@ export default {
             templateCode: '阿里云-模板标识',
         },
 
-        emailCodeSubject: '验证码标题',
-        emailCodeTemplate: '验证码模板',
+        emailCode: {
+            subject: '验证码标题',
+            template: '验证码模板',
+        },
         emailType: '邮箱方式',
         emailOfCommon: {
             smtpHost: '通用-SmtpHost',
@@ -86,7 +88,9 @@ export default {
         vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
     },
     tip: {
-        emailCodeTemplate: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
+        emailCode: {
+            template: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
+        },
         emailOfCommon: {
             password: '注意：如果使用的是QQ邮箱，则此处应填写QQ邮箱的授权码，而不是密码',
         },
