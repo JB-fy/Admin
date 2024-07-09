@@ -11,37 +11,39 @@ import (
 )
 
 type EmailOfCommon struct {
-	Ctx          context.Context
-	SmtpHost     string `json:"smtpHost"`
-	SmtpPort     string `json:"smtpPort"`
-	FromEmail    string `json:"fromEmail"`
-	Password     string `json:"password"` //QQ邮箱需注意：填QQ邮箱的授权码，而不是密码
-	CodeSubject  string `json:"codeSubject"`
-	CodeTemplate string `json:"codeTemplate"`
+	Ctx       context.Context
+	SmtpHost  string `json:"smtpHost"`
+	SmtpPort  string `json:"smtpPort"`
+	FromEmail string `json:"fromEmail"`
+	Password  string `json:"password"` //QQ邮箱需注意：填QQ邮箱的授权码，而不是密码
+	Code      struct {
+		Subject  string `json:"subject"`
+		Template string `json:"template"`
+	} `json:"code"`
 }
 
 func NewEmailOfCommon(ctx context.Context, config map[string]any) *EmailOfCommon {
 	emailObj := EmailOfCommon{Ctx: ctx}
 	gconv.Struct(config, &emailObj)
+	/* if emailObj.Code.Subject == `` || emailObj.Code.Template == `` {
+		panic(`缺少插件配置：邮箱-验证码模板`)
+	} */
 	if emailObj.SmtpHost == `` || emailObj.SmtpPort == `` || emailObj.FromEmail == `` || emailObj.Password == `` {
 		panic(`缺少插件配置：邮箱-通用`)
 	}
-	/* if emailObj.CodeSubject == `` || emailObj.CodeTemplate == `` {
-		panic(`缺少插件配置：邮箱-验证码模板`)
-	} */
 	return &emailObj
 }
 
 func (emailThis *EmailOfCommon) SendCode(toEmail string, code string) (err error) {
-	if emailThis.CodeSubject == `` || emailThis.CodeTemplate == `` {
+	if emailThis.Code.Subject == `` || emailThis.Code.Template == `` {
 		err = errors.New(`缺少插件配置：邮箱-验证码模板`)
 		return
 	}
 	messageArr := []string{
 		`From: ` + emailThis.FromEmail,
 		`To: ` + toEmail,
-		`Subject: ` + emailThis.CodeSubject,
-		gstr.Replace(emailThis.CodeTemplate, `{code}`, code),
+		`Subject: ` + emailThis.Code.Subject,
+		gstr.Replace(emailThis.Code.Template, `{code}`, code),
 	}
 	err = emailThis.SendEmail([]string{toEmail}, gstr.Join(messageArr, "\r\n"))
 	return

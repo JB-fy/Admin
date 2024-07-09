@@ -3,8 +3,6 @@ package email
 import (
 	daoPlatform "api/internal/dao/platform"
 	"context"
-
-	"github.com/gogf/gf/v2/container/gmap"
 )
 
 type Email interface {
@@ -24,8 +22,11 @@ func NewEmail(ctx context.Context, emailTypeOpt ...string) Email {
 	// case `emailOfCommon`:
 	default:
 		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`emailCode`, `emailOfCommon`})
-		config := gmap.NewStrAnyMapFrom(configTmp[`emailCode`].Map())
+		/* config := gmap.NewStrAnyMapFrom(configTmp[`emailCode`].Map())
 		config.Merge(gmap.NewStrAnyMapFrom(configTmp[`emailOfCommon`].Map()))
-		return NewEmailOfCommon(ctx, config.Map())
+		return NewEmailOfCommon(ctx, config.Map()) */
+		config := configTmp[`emailOfCommon`].Map()
+		config[`code`] = configTmp[`emailCode`].Map()
+		return NewEmailOfCommon(ctx, config)
 	}
 }
