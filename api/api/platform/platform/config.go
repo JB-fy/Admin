@@ -21,12 +21,12 @@ type Config struct {
 
 	SmsType     *string `json:"smsType,omitempty" dc:"短信方式"`
 	SmsOfAliyun *struct {
-		AccessKeyId     *string `json:"accessKeyId,omitempty" dc:"阿里云SMS-AccessKeyId"`
-		AccessKeySecret *string `json:"accessKeySecret,omitempty" dc:"阿里云SMS-AccessKeySecret"`
-		Endpoint        *string `json:"endpoint,omitempty" dc:"阿里云SMS-Endpoint"`
-		SignName        *string `json:"signName,omitempty" dc:"阿里云SMS-签名"`
-		TemplateCode    *string `json:"templateCode,omitempty" dc:"阿里云SMS-模板标识"`
-	} `json:"smsOfAliyun,omitempty" dc:"阿里云SMS配置"`
+		AccessKeyId     *string `json:"accessKeyId,omitempty" dc:"阿里云-AccessKeyId"`
+		AccessKeySecret *string `json:"accessKeySecret,omitempty" dc:"阿里云-AccessKeySecret"`
+		Endpoint        *string `json:"endpoint,omitempty" dc:"阿里云-Endpoint"`
+		SignName        *string `json:"signName,omitempty" dc:"阿里云-签名"`
+		TemplateCode    *string `json:"templateCode,omitempty" dc:"阿里云-模板标识"`
+	} `json:"smsOfAliyun,omitempty" dc:"短信配置-阿里云"`
 
 	EmailCodeSubject  *string `json:"emailCodeSubject,omitempty" dc:"验证码邮件标题"`
 	EmailCodeTemplate *string `json:"emailCodeTemplate,omitempty" dc:"验证码邮件内容"`
@@ -36,12 +36,14 @@ type Config struct {
 		SmtpPort  *string `json:"smtpPort,omitempty" dc:"通用-SmtpPort"`
 		FromEmail *string `json:"fromEmail,omitempty" dc:"通用-邮箱"`
 		Password  *string `json:"password,omitempty" dc:"通用-密码"`
-	} `json:"emailOfCommon,omitempty" dc:"通用配置"`
+	} `json:"emailOfCommon,omitempty" dc:"邮箱配置-通用"`
 
-	IdCardType            *string `json:"idCardType,omitempty" dc:"实名认证方式"`
-	IdCardOfAliyunHost    *string `json:"idCardOfAliyunHost,omitempty" dc:"阿里云IdCard-域名"`
-	IdCardOfAliyunPath    *string `json:"idCardOfAliyunPath,omitempty" dc:"阿里云IdCard-请求路径"`
-	IdCardOfAliyunAppcode *string `json:"idCardOfAliyunAppcode,omitempty" dc:"阿里云IdCard-Appcode"`
+	IdCardType     *string `json:"idCardType,omitempty" dc:"实名认证方式"`
+	IdCardOfAliyun *struct {
+		Host    *string `json:"host,omitempty" dc:"阿里云-域名"`
+		Path    *string `json:"path,omitempty" dc:"阿里云-请求路径"`
+		Appcode *string `json:"appcode,omitempty" dc:"阿里云-Appcode"`
+	} `json:"idCardOfAliyun,omitempty" dc:"实名认证配置-阿里云"`
 
 	OneClickOfWxHost          *string `json:"oneClickOfWxHost,omitempty" dc:"微信-域名"`
 	OneClickOfWxAppId         *string `json:"oneClickOfWxAppId,omitempty" dc:"微信-AppId"`
@@ -84,12 +86,12 @@ type ConfigSaveReq struct {
 
 	SmsType     *string `json:"smsType,omitempty" v:"in:smsOfAliyun" dc:"短信方式"`
 	SmsOfAliyun *struct {
-		AccessKeyId     *string `json:"accessKeyId,omitempty" v:"" dc:"阿里云SMS-AccessKeyId"`
-		AccessKeySecret *string `json:"accessKeySecret,omitempty" v:"" dc:"阿里云SMS-AccessKeySecret"`
-		Endpoint        *string `json:"endpoint,omitempty" v:"" dc:"阿里云SMS-Endpoint"`
-		SignName        *string `json:"signName,omitempty" v:"" dc:"阿里云SMS-签名"`
-		TemplateCode    *string `json:"templateCode,omitempty" v:"" dc:"阿里云SMS-模板标识"`
-	} `json:"smsOfAliyun,omitempty" v:"required-if:SmsType,smsOfAliyun|json" dc:"阿里云SMS配置"`
+		AccessKeyId     *string `json:"accessKeyId,omitempty" v:"" dc:"阿里云-AccessKeyId"`
+		AccessKeySecret *string `json:"accessKeySecret,omitempty" v:"" dc:"阿里云-AccessKeySecret"`
+		Endpoint        *string `json:"endpoint,omitempty" v:"" dc:"阿里云-Endpoint"`
+		SignName        *string `json:"signName,omitempty" v:"" dc:"阿里云-签名"`
+		TemplateCode    *string `json:"templateCode,omitempty" v:"" dc:"阿里云-模板标识"`
+	} `json:"smsOfAliyun,omitempty" v:"required-if:SmsType,smsOfAliyun|json" dc:"短信配置-阿里云"`
 
 	EmailCodeSubject  *string `json:"emailCodeSubject,omitempty" v:"" dc:"验证码标题"`
 	EmailCodeTemplate *string `json:"emailCodeTemplate,omitempty" v:"" dc:"验证码模板"`
@@ -99,12 +101,14 @@ type ConfigSaveReq struct {
 		SmtpPort  *string `json:"smtpPort,omitempty" v:"required" dc:"通用-SmtpPort"`
 		FromEmail *string `json:"fromEmail,omitempty" v:"required|email" dc:"通用-邮箱"`
 		Password  *string `json:"password,omitempty" v:"required" dc:"通用-密码"`
-	} `json:"emailOfCommon,omitempty" v:"required-if:EmailType,emailOfCommon|json" dc:"通用配置"`
+	} `json:"emailOfCommon,omitempty" v:"required-if:EmailType,emailOfCommon|json" dc:"邮箱配置-通用"`
 
-	IdCardType            *string `json:"idCardType,omitempty" v:"in:idCardOfAliyun" dc:"实名认证方式"`
-	IdCardOfAliyunHost    *string `json:"idCardOfAliyunHost,omitempty" v:"url" dc:"阿里云IdCard-域名"`
-	IdCardOfAliyunPath    *string `json:"idCardOfAliyunPath,omitempty" v:"" dc:"阿里云IdCard-请求路径"`
-	IdCardOfAliyunAppcode *string `json:"idCardOfAliyunAppcode,omitempty" v:"" dc:"阿里云IdCard-Appcode"`
+	IdCardType     *string `json:"idCardType,omitempty" v:"in:idCardOfAliyun" dc:"实名认证方式"`
+	IdCardOfAliyun *struct {
+		Host    *string `json:"host,omitempty" v:"url" dc:"阿里云-域名"`
+		Path    *string `json:"path,omitempty" v:"" dc:"阿里云-请求路径"`
+		Appcode *string `json:"appcode,omitempty" v:"" dc:"阿里云-Appcode"`
+	} `json:"idCardOfAliyun,omitempty" dc:"实名认证配置-阿里云"`
 
 	OneClickOfWxHost          *string `json:"oneClickOfWxHost,omitempty" v:"url" dc:"微信-域名"`
 	OneClickOfWxAppId         *string `json:"oneClickOfWxAppId,omitempty" v:"" dc:"微信-AppId"`

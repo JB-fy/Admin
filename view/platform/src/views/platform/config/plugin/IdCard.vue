@@ -9,15 +9,25 @@ const saveForm = reactive({
     data: {
         //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
         idCardType: 'idCardOfAliyun',
-        idCardOfAliyunHost: '',
-        idCardOfAliyunPath: '',
-        idCardOfAliyunAppcode: '',
+        idCardOfAliyun: {},
     } as { [propName: string]: any },
     rules: {
-        idCardType: [{ type: 'enum', trigger: 'change', enum: [`idCardOfAliyun`], message: t('validation.select') }],
-        idCardOfAliyunHost: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
-        idCardOfAliyunPath: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        idCardOfAliyunAppcode: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        idCardType: [
+            { required: true, message: t('validation.required') },
+            { type: 'enum', trigger: 'change', enum: [`idCardOfAliyun`], message: t('validation.select') },
+        ],
+        'idCardOfAliyun.host': [
+            { required: computed((): boolean => (saveForm.data.idCardType == `idCardOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
+        ],
+        'idCardOfAliyun.path': [
+            { required: computed((): boolean => (saveForm.data.idCardType == `idCardOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'idCardOfAliyun.appcode': [
+            { required: computed((): boolean => (saveForm.data.idCardType == `idCardOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }
@@ -61,19 +71,19 @@ saveForm.initData()
         </el-form-item>
 
         <template v-if="saveForm.data.idCardType == 'idCardOfAliyun'">
-            <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyunHost')" prop="idCardOfAliyunHost">
-                <el-input v-model="saveForm.data.idCardOfAliyunHost" :placeholder="t('platform.config.plugin.name.idCardOfAliyunHost')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyun.host')" prop="idCardOfAliyun.host">
+                <el-input v-model="saveForm.data.idCardOfAliyun.host" :placeholder="t('platform.config.plugin.name.idCardOfAliyun.host')" :clearable="true" style="max-width: 500px" />
                 <el-alert type="info" :show-icon="true" :closable="false">
                     <template #title>
-                        <span v-html="t('platform.config.plugin.tip.idCardOfAliyunHost')"></span>
+                        <span v-html="t('platform.config.plugin.tip.idCardOfAliyun.host')"></span>
                     </template>
                 </el-alert>
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyunPath')" prop="idCardOfAliyunPath">
-                <el-input v-model="saveForm.data.idCardOfAliyunPath" :placeholder="t('platform.config.plugin.name.idCardOfAliyunPath')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyun.path')" prop="idCardOfAliyun.path">
+                <el-input v-model="saveForm.data.idCardOfAliyun.path" :placeholder="t('platform.config.plugin.name.idCardOfAliyun.path')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyunAppcode')" prop="idCardOfAliyunAppcode">
-                <el-input v-model="saveForm.data.idCardOfAliyunAppcode" :placeholder="t('platform.config.plugin.name.idCardOfAliyunAppcode')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyun.appcode')" prop="idCardOfAliyun.appcode">
+                <el-input v-model="saveForm.data.idCardOfAliyun.appcode" :placeholder="t('platform.config.plugin.name.idCardOfAliyun.appcode')" :clearable="true" />
             </el-form-item>
         </template>
 

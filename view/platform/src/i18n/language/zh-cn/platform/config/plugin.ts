@@ -18,11 +18,11 @@ export default {
     name: {
         smsType: '短信方式',
         smsOfAliyun: {
-            accessKeyId: '阿里云SMS-AccessKeyId',
-            accessKeySecret: '阿里云SMS-AccessKeySecret',
-            endpoint: '阿里云SMS-Endpoint',
-            signName: '阿里云SMS-签名',
-            templateCode: '阿里云SMS-模板标识',
+            accessKeyId: '阿里云-AccessKeyId',
+            accessKeySecret: '阿里云-AccessKeySecret',
+            endpoint: '阿里云-Endpoint',
+            signName: '阿里云-签名',
+            templateCode: '阿里云-模板标识',
         },
 
         emailCodeSubject: '验证码标题',
@@ -36,9 +36,11 @@ export default {
         },
 
         idCardType: '实名认证方式',
-        idCardOfAliyunHost: '阿里云IdCard-域名',
-        idCardOfAliyunPath: '阿里云IdCard-请求路径',
-        idCardOfAliyunAppcode: '阿里云IdCard-Appcode',
+        idCardOfAliyun: {
+            host: '阿里云-域名',
+            path: '阿里云-请求路径',
+            appcode: '阿里云-Appcode',
+        },
 
         oneClickOfWxHost: '微信-域名',
         oneClickOfWxAppId: '微信-AppId',
@@ -77,12 +79,14 @@ export default {
         vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
     },
     tip: {
+        emailCodeTemplate: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
         emailOfCommon: {
             password: '注意：如果使用的是QQ邮箱，则此处应填写QQ邮箱的授权码，而不是密码',
         },
-        emailCodeTemplate: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
 
-        idCardOfAliyunHost: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（购买其它接口，只需对代码文件做下简单修改即可）',
+        idCardOfAliyun: {
+            host: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（也可购买阿里云市场其它接口，但需修改id_card_of_aliyun.go文件）',
+        },
 
         wxHost: '参考：<a target="_blank" href="https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html">https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html</a>',
 

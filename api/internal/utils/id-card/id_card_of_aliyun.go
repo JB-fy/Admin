@@ -12,9 +12,9 @@ import (
 
 type IdCardOfAliyun struct {
 	Ctx     context.Context
-	Host    string `json:"idCardOfAliyunHost"`
-	Path    string `json:"idCardOfAliyunPath"`
-	Appcode string `json:"idCardOfAliyunAppcode"`
+	Host    string `json:"host"`
+	Path    string `json:"path"`
+	Appcode string `json:"appcode"`
 }
 
 func NewIdCardOfAliyun(ctx context.Context, config map[string]any) *IdCardOfAliyun {

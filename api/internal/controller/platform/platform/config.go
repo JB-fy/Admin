@@ -32,7 +32,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 				actionCodeSet.Add(`platformConfigSmsRead`)
 			case `emailCodeSubject`, `emailCodeTemplate`, `emailType`, `emailOfCommon`:
 				actionCodeSet.Add(`platformConfigEmailRead`)
-			case `idCardType`, `idCardOfAliyunHost`, `idCardOfAliyunPath`, `idCardOfAliyunAppcode`:
+			case `idCardType`, `idCardOfAliyun`:
 				actionCodeSet.Add(`platformConfigIdCardRead`)
 			case `oneClickOfWxHost`, `oneClickOfWxAppId`, `oneClickOfWxSecret`, `oneClickOfYidunSecretId`, `oneClickOfYidunSecretKey`, `oneClickOfYidunBusinessId`:
 				actionCodeSet.Add(`platformConfigOneClickRead`)
@@ -84,7 +84,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 				actionCodeSet.Add(`platformConfigSmsSave`)
 			case `emailCodeSubject`, `emailCodeTemplate`, `emailType`, `emailOfCommon`:
 				actionCodeSet.Add(`platformConfigEmailSave`)
-			case `idCardType`, `idCardOfAliyunHost`, `idCardOfAliyunPath`, `idCardOfAliyunAppcode`:
+			case `idCardType`, `idCardOfAliyun`:
 				actionCodeSet.Add(`platformConfigIdCardSave`)
 			case `oneClickOfWxHost`, `oneClickOfWxAppId`, `oneClickOfWxSecret`, `oneClickOfYidunSecretId`, `oneClickOfYidunSecretKey`, `oneClickOfYidunBusinessId`:
 				actionCodeSet.Add(`platformConfigOneClickSave`)

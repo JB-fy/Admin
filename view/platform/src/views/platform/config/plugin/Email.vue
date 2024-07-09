@@ -107,6 +107,7 @@ saveForm.initData()
                 <el-alert :title="t('platform.config.plugin.tip.emailOfCommon.password')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
         </template>
+
         <el-form-item>
             <el-button v-if="authAction.isSmsSave" type="primary" @click="saveForm.submit" :loading="saveForm.loading"><autoicon-ep-circle-check />{{ t('common.save') }}</el-button>
             <el-button type="info" @click="saveForm.reset"><autoicon-ep-circle-close />{{ t('common.reset') }}</el-button>
