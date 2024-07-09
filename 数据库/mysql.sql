@@ -270,7 +270,7 @@ CREATE TABLE `auth_role`  (
   `role_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '角色ID',
   `role_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
   `scene_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '场景ID',
-  `rel_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联ID。0表示平台创建，其它值根据sceneId对应不同表',
+  `rel_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联ID。0表示平台创建，其它值根据scene_id对应不同表',
   PRIMARY KEY (`role_id`) USING BTREE,
   INDEX `scene_id`(`scene_id` ASC) USING BTREE,
   INDEX `rel_id`(`rel_id` ASC) USING BTREE

@@ -445,7 +445,7 @@ COMMENT ON COLUMN "public"."auth_role"."is_stop" IS '停用：0否 1是';
 COMMENT ON COLUMN "public"."auth_role"."role_id" IS '角色ID';
 COMMENT ON COLUMN "public"."auth_role"."role_name" IS '名称';
 COMMENT ON COLUMN "public"."auth_role"."scene_id" IS '场景ID';
-COMMENT ON COLUMN "public"."auth_role"."rel_id" IS '关联ID。0表示平台创建，其它值根据sceneId对应不同表';
+COMMENT ON COLUMN "public"."auth_role"."rel_id" IS '关联ID。0表示平台创建，其它值根据scene_id对应不同表';
 COMMENT ON TABLE "public"."auth_role" IS '权限角色表';
 
 -- ----------------------------
