@@ -1,7 +1,5 @@
 export default {
     label: {
-        upload: '上传',
-        pay: '支付',
         sms: '短信',
         email: '邮箱',
         idCard: '实名认证',
@@ -72,11 +70,13 @@ export default {
             roleArn: '阿里云-RoleArn',
         },
 
-        wxGzhHost: '域名',
-        wxGzhAppId: 'AppId',
-        wxGzhSecret: '密钥',
-        wxGzhToken: 'Token',
-        wxGzhEncodingAESKey: 'EncodingAESKey',
+        wxGzh: {
+            host: '公众号-域名',
+            appId: '公众号-AppId',
+            secret: '公众号-密钥',
+            token: '公众号-Token',
+            encodingAESKey: '公众号-EncodingAESKey',
+        },
     },
     status: {
         smsType: [{ value: `smsOfAliyun`, label: '阿里云' }],

@@ -8,18 +8,14 @@ const saveForm = reactive({
     loading: false,
     data: {
         //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
-        wxGzhHost: '',
-        wxGzhAppId: '',
-        wxGzhSecret: '',
-        wxGzhToken: '',
-        wxGzhEncodingAESKey: '',
+        wxGzh: {},
     } as { [propName: string]: any },
     rules: {
-        wxGzhHost: [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
-        wxGzhAppId: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        wxGzhSecret: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        wxGzhToken: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        wxGzhEncodingAESKey: [{ type: 'string', trigger: 'blur', len: 43, message: t('validation.size.string', { size: 43 }) }],
+        'wxGzh.host': [{ type: 'url', trigger: 'blur', message: t('validation.url') }],
+        'wxGzh.appId': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'wxGzh.secret': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'wxGzh.token': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'wxGzh.encodingAESKey': [{ type: 'string', trigger: 'blur', len: 43, message: t('validation.size.string', { size: 43 }) }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }
@@ -56,25 +52,25 @@ saveForm.initData()
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <el-tabs tab-position="left">
             <el-tab-pane :label="t('platform.config.plugin.label.wxGzh')" :lazy="true">
-                <el-form-item :label="t('platform.config.plugin.name.wxGzhHost')" prop="wxGzhHost">
-                    <el-input v-model="saveForm.data.wxGzhHost" :placeholder="t('platform.config.plugin.name.wxGzhHost')" :clearable="true" style="max-width: 500px" />
+                <el-form-item :label="t('platform.config.plugin.name.wxGzh.host')" prop="wxGzh.host">
+                    <el-input v-model="saveForm.data.wxGzh.host" :placeholder="t('platform.config.plugin.name.wxGzh.host')" :clearable="true" style="max-width: 500px" />
                     <el-alert type="info" :show-icon="true" :closable="false">
                         <template #title>
                             <span v-html="t('platform.config.plugin.tip.wxHost')"></span>
                         </template>
                     </el-alert>
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.wxGzhAppId')" prop="wxGzhAppId">
-                    <el-input v-model="saveForm.data.wxGzhAppId" :placeholder="t('platform.config.plugin.name.wxGzhAppId')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.wxGzh.appId')" prop="wxGzh.appId">
+                    <el-input v-model="saveForm.data.wxGzh.appId" :placeholder="t('platform.config.plugin.name.wxGzh.appId')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.wxGzhSecret')" prop="wxGzhSecret">
-                    <el-input v-model="saveForm.data.wxGzhSecret" :placeholder="t('platform.config.plugin.name.wxGzhSecret')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.wxGzh.secret')" prop="wxGzh.secret">
+                    <el-input v-model="saveForm.data.wxGzh.secret" :placeholder="t('platform.config.plugin.name.wxGzh.secret')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.wxGzhToken')" prop="wxGzhToken">
-                    <el-input v-model="saveForm.data.wxGzhToken" :placeholder="t('platform.config.plugin.name.wxGzhToken')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.wxGzh.token')" prop="wxGzh.token">
+                    <el-input v-model="saveForm.data.wxGzh.token" :placeholder="t('platform.config.plugin.name.wxGzh.token')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.wxGzhEncodingAESKey')" prop="wxGzhEncodingAESKey">
-                    <el-input v-model="saveForm.data.wxGzhEncodingAESKey" :placeholder="t('platform.config.plugin.name.wxGzhEncodingAESKey')" :clearable="true" />
+                <el-form-item :label="t('platform.config.plugin.name.wxGzh.encodingAESKey')" prop="wxGzh.encodingAESKey">
+                    <el-input v-model="saveForm.data.wxGzh.encodingAESKey" :placeholder="t('platform.config.plugin.name.wxGzh.encodingAESKey')" :clearable="true" />
                 </el-form-item>
             </el-tab-pane>
         </el-tabs>

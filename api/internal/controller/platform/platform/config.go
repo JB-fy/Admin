@@ -40,7 +40,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 				actionCodeSet.Add(`platformConfigPushRead`)
 			case `vodType`, `vodOfAliyun`:
 				actionCodeSet.Add(`platformConfigVodRead`)
-			case `wxGzhHost`, `wxGzhAppId`, `wxGzhSecret`, `wxGzhToken`, `wxGzhEncodingAESKey`:
+			case `wxGzh`:
 				actionCodeSet.Add(`platformConfigWxRead`)
 			}
 			_, err = service.AuthAction().CheckAuth(ctx, actionCodeSet.Slice()...)
@@ -92,7 +92,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 				actionCodeSet.Add(`platformConfigPushSave`)
 			case `vodType`, `vodOfAliyun`:
 				actionCodeSet.Add(`platformConfigVodSave`)
-			case `wxGzhHost`, `wxGzhAppId`, `wxGzhSecret`, `wxGzhToken`, `wxGzhEncodingAESKey`:
+			case `wxGzh`:
 				actionCodeSet.Add(`platformConfigWxSave`)
 			}
 			_, err = service.AuthAction().CheckAuth(ctx, actionCodeSet.Slice()...)

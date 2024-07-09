@@ -75,11 +75,13 @@ type Config struct {
 		RoleArn         *string `json:"roleArn,omitempty" dc:"阿里云-RoleArn"`
 	} `json:"vodOfAliyun,omitempty" dc:"视频点播配置-阿里云"`
 
-	WxGzhHost           *string `json:"wxGzhHost,omitempty" dc:"域名"`
-	WxGzhAppId          *string `json:"wxGzhAppId,omitempty" dc:"AppId"`
-	WxGzhSecret         *string `json:"wxGzhSecret,omitempty" dc:"密钥"`
-	WxGzhToken          *string `json:"wxGzhToken,omitempty" dc:"Token"`
-	WxGzhEncodingAESKey *string `json:"wxGzhEncodingAESKey,omitempty" dc:"EncodingAESKey"`
+	WxGzh *struct {
+		Host           *string `json:"host,omitempty" dc:"公众号-域名"`
+		AppId          *string `json:"appId,omitempty" dc:"公众号-AppId"`
+		Secret         *string `json:"secret,omitempty" dc:"公众号-密钥"`
+		Token          *string `json:"token,omitempty" dc:"公众号-Token"`
+		EncodingAESKey *string `json:"encodingAESKey,omitempty" dc:"公众号-EncodingAESKey"`
+	} `json:"wxGzh,omitempty" dc:"微信配置-公众号"`
 }
 
 /*--------获取 结束--------*/
@@ -148,11 +150,13 @@ type ConfigSaveReq struct {
 		RoleArn         *string `json:"roleArn,omitempty" v:"" dc:"阿里云-RoleArn"`
 	} `json:"vodOfAliyun,omitempty" v:"required-if:VodType,vodOfAliyun" dc:"视频点播配置-阿里云"`
 
-	WxGzhHost           *string `json:"wxGzhHost,omitempty" v:"url" dc:"微信公众号-域名"`
-	WxGzhAppId          *string `json:"wxGzhAppId,omitempty" v:"" dc:"微信公众号-AppId"`
-	WxGzhSecret         *string `json:"wxGzhSecret,omitempty" v:"" dc:"微信公众号-密钥"`
-	WxGzhToken          *string `json:"wxGzhToken,omitempty" v:"" dc:"微信公众号-Token"`
-	WxGzhEncodingAESKey *string `json:"wxGzhEncodingAESKey,omitempty" v:"size:43" dc:"微信公众号-EncodingAESKey"`
+	WxGzh *struct {
+		Host           *string `json:"host,omitempty" v:"url" dc:"公众号-域名"`
+		AppId          *string `json:"appId,omitempty" v:"" dc:"公众号-AppId"`
+		Secret         *string `json:"secret,omitempty" v:"" dc:"公众号-密钥"`
+		Token          *string `json:"token,omitempty" v:"" dc:"公众号-Token"`
+		EncodingAESKey *string `json:"encodingAESKey,omitempty" v:"size:43" dc:"公众号-EncodingAESKey"`
+	} `json:"wxGzh,omitempty" v:"" dc:"微信配置-公众号"`
 }
 
 /*--------保存 结束--------*/

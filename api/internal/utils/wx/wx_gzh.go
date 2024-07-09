@@ -25,11 +25,11 @@ import (
 
 type WxGzh struct {
 	Ctx            context.Context
-	Host           string `json:"wxGzhHost"`
-	AppId          string `json:"wxGzhAppId"`
-	Secret         string `json:"wxGzhSecret"`
-	Token          string `json:"wxGzhToken"`
-	EncodingAESKey string `json:"wxGzhEncodingAESKey"`
+	Host           string `json:"host"`
+	AppId          string `json:"appId"`
+	Secret         string `json:"secret"`
+	Token          string `json:"token"`
+	EncodingAESKey string `json:"encodingAESKey"`
 	AESKey         []byte
 }
 
