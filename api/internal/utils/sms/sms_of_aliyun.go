@@ -14,11 +14,11 @@ import (
 
 type SmsOfAliyun struct {
 	Ctx             context.Context
-	AccessKeyId     string `json:"smsOfAliyunAccessKeyId"`
-	AccessKeySecret string `json:"smsOfAliyunAccessKeySecret"`
-	Endpoint        string `json:"smsOfAliyunEndpoint"`
-	SignName        string `json:"smsOfAliyunSignName"`
-	TemplateCode    string `json:"smsOfAliyunTemplateCode"`
+	AccessKeyId     string `json:"accessKeyId"`
+	AccessKeySecret string `json:"accessKeySecret"`
+	Endpoint        string `json:"endpoint"`
+	SignName        string `json:"signName"`
+	TemplateCode    string `json:"templateCode"`
 }
 
 func NewSmsOfAliyun(ctx context.Context, config map[string]any) *SmsOfAliyun {

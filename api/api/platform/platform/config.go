@@ -19,12 +19,14 @@ type Config struct {
 	UserAgreement    *string   `json:"userAgreement,omitempty" dc:"用户协议"`
 	PrivacyAgreement *string   `json:"privacyAgreement,omitempty" dc:"隐私协议"`
 
-	SmsType                    *string `json:"smsType,omitempty" dc:"短信方式"`
-	SmsOfAliyunAccessKeyId     *string `json:"smsOfAliyunAccessKeyId,omitempty" dc:"阿里云SMS-AccessKeyId"`
-	SmsOfAliyunAccessKeySecret *string `json:"smsOfAliyunAccessKeySecret,omitempty" dc:"阿里云SMS-AccessKeySecret"`
-	SmsOfAliyunEndpoint        *string `json:"smsOfAliyunEndpoint,omitempty" dc:"阿里云SMS-Endpoint"`
-	SmsOfAliyunSignName        *string `json:"smsOfAliyunSignName,omitempty" dc:"阿里云SMS-签名"`
-	SmsOfAliyunTemplateCode    *string `json:"smsOfAliyunTemplateCode,omitempty" dc:"阿里云SMS-模板标识"`
+	SmsType     *string `json:"smsType,omitempty" dc:"短信方式"`
+	SmsOfAliyun *struct {
+		AccessKeyId     *string `json:"accessKeyId,omitempty" dc:"阿里云SMS-AccessKeyId"`
+		AccessKeySecret *string `json:"accessKeySecret,omitempty" dc:"阿里云SMS-AccessKeySecret"`
+		Endpoint        *string `json:"endpoint,omitempty" dc:"阿里云SMS-Endpoint"`
+		SignName        *string `json:"signName,omitempty" dc:"阿里云SMS-签名"`
+		TemplateCode    *string `json:"templateCode,omitempty" dc:"阿里云SMS-模板标识"`
+	} `json:"smsOfAliyun,omitempty" dc:"阿里云SMS配置"`
 
 	EmailType     *string `json:"emailType,omitempty" dc:"邮箱方式"`
 	EmailOfCommon *struct {
@@ -80,12 +82,14 @@ type ConfigSaveReq struct {
 	UserAgreement    *string   `json:"userAgreement,omitempty" v:"" dc:"用户协议"`
 	PrivacyAgreement *string   `json:"privacyAgreement,omitempty" v:"" dc:"隐私协议"`
 
-	SmsType                    *string `json:"smsType,omitempty" v:"in:smsOfAliyun" dc:"短信方式"`
-	SmsOfAliyunAccessKeyId     *string `json:"smsOfAliyunAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeyId"`
-	SmsOfAliyunAccessKeySecret *string `json:"smsOfAliyunAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云SMS-AccessKeySecret"`
-	SmsOfAliyunEndpoint        *string `json:"smsOfAliyunEndpoint,omitempty" v:"" dc:"阿里云SMS-Endpoint"`
-	SmsOfAliyunSignName        *string `json:"smsOfAliyunSignName,omitempty" v:"" dc:"阿里云SMS-签名"`
-	SmsOfAliyunTemplateCode    *string `json:"smsOfAliyunTemplateCode,omitempty" v:"" dc:"阿里云SMS-模板标识"`
+	SmsType     *string `json:"smsType,omitempty" v:"in:smsOfAliyun" dc:"短信方式"`
+	SmsOfAliyun *struct {
+		AccessKeyId     *string `json:"accessKeyId,omitempty" v:"" dc:"阿里云SMS-AccessKeyId"`
+		AccessKeySecret *string `json:"accessKeySecret,omitempty" v:"" dc:"阿里云SMS-AccessKeySecret"`
+		Endpoint        *string `json:"endpoint,omitempty" v:"" dc:"阿里云SMS-Endpoint"`
+		SignName        *string `json:"signName,omitempty" v:"" dc:"阿里云SMS-签名"`
+		TemplateCode    *string `json:"templateCode,omitempty" v:"" dc:"阿里云SMS-模板标识"`
+	} `json:"smsOfAliyun,omitempty" v:"required-if:SmsType,smsOfAliyun|json" dc:"阿里云SMS配置"`
 
 	EmailType     *string `json:"emailType,omitempty" v:"in:emailOfCommon" dc:"邮箱方式"`
 	EmailOfCommon *struct {

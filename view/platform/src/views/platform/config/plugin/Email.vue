@@ -14,7 +14,10 @@ const saveForm = reactive({
         emailCodeTemplate: '',
     } as { [propName: string]: any },
     rules: {
-        emailType: [{ type: 'enum', trigger: 'change', enum: [`emailOfCommon`], message: t('validation.select') }],
+        emailType: [
+            { required: true, message: t('validation.required') },
+            { type: 'enum', trigger: 'change', enum: [`emailOfCommon`], message: t('validation.select') },
+        ],
         'emailOfCommon.smtpHost': [
             { required: computed((): boolean => (saveForm.data.emailType == `emailOfCommon` ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },

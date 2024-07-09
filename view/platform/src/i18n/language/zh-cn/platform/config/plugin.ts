@@ -17,14 +17,16 @@ export default {
     },
     name: {
         smsType: '短信方式',
-        smsOfAliyunAccessKeyId: '阿里云SMS-AccessKeyId',
-        smsOfAliyunAccessKeySecret: '阿里云SMS-AccessKeySecret',
-        smsOfAliyunEndpoint: '阿里云SMS-Endpoint',
-        smsOfAliyunSignName: '阿里云SMS-签名',
-        smsOfAliyunTemplateCode: '阿里云SMS-模板标识',
+        smsOfAliyun: {
+            accessKeyId: '阿里云SMS-AccessKeyId',
+            accessKeySecret: '阿里云SMS-AccessKeySecret',
+            endpoint: '阿里云SMS-Endpoint',
+            signName: '阿里云SMS-签名',
+            templateCode: '阿里云SMS-模板标识',
+        },
 
         emailType: '邮箱方式',
-        emailOfCommon:{
+        emailOfCommon: {
             smtpHost: '通用-SmtpHost',
             smtpPort: '通用-SmtpPort',
             fromEmail: '通用-邮箱',
@@ -75,7 +77,7 @@ export default {
         vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
     },
     tip: {
-        emailOfCommon:{
+        emailOfCommon: {
             password: '注意：如果使用的是QQ邮箱，则此处应填写QQ邮箱的授权码，而不是密码',
         },
         emailCodeTemplate: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',

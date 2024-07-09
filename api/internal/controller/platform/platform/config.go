@@ -28,7 +28,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 			switch configKey {
 			case `hotSearch`, `userAgreement`, `privacyAgreement`:
 				actionCodeSet.Add(`platformConfigCommonRead`)
-			case `smsType`, `smsOfAliyunAccessKeyId`, `smsOfAliyunAccessKeySecret`, `smsOfAliyunEndpoint`, `smsOfAliyunSignName`, `smsOfAliyunTemplateCode`:
+			case `smsType`, `smsOfAliyun`:
 				actionCodeSet.Add(`platformConfigSmsRead`)
 			case `emailType`, `emailOfCommon`, `emailCodeSubject`, `emailCodeTemplate`:
 				actionCodeSet.Add(`platformConfigEmailRead`)
@@ -80,7 +80,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 			switch configKey {
 			case `hotSearch`, `userAgreement`, `privacyAgreement`:
 				actionCodeSet.Add(`platformConfigCommonSave`)
-			case `smsType`, `smsOfAliyunAccessKeyId`, `smsOfAliyunAccessKeySecret`, `smsOfAliyunEndpoint`, `smsOfAliyunSignName`, `smsOfAliyunTemplateCode`:
+			case `smsType`, `smsOfAliyun`:
 				actionCodeSet.Add(`platformConfigSmsSave`)
 			case `emailType`, `emailOfCommon`, `emailCodeSubject`, `emailCodeTemplate`:
 				actionCodeSet.Add(`platformConfigEmailSave`)

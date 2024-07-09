@@ -9,19 +9,33 @@ const saveForm = reactive({
     data: {
         //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
         smsType: 'smsOfAliyun',
-        smsOfAliyunAccessKeyId: '',
-        smsOfAliyunAccessKeySecret: '',
-        smsOfAliyunEndpoint: '',
-        smsOfAliyunSignName: '',
-        smsOfAliyunTemplateCode: '',
+        smsOfAliyun: {},
     } as { [propName: string]: any },
     rules: {
-        smsType: [{ type: 'enum', trigger: 'change', enum: [`smsOfAliyun`], message: t('validation.select') }],
-        smsOfAliyunAccessKeyId: [{ type: 'string', trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') }],
-        smsOfAliyunAccessKeySecret: [{ type: 'string', trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') }],
-        smsOfAliyunEndpoint: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        smsOfAliyunSignName: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        smsOfAliyunTemplateCode: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        smsType: [
+            { required: true, message: t('validation.required') },
+            { type: 'enum', trigger: 'change', enum: [`smsOfAliyun`], message: t('validation.select') },
+        ],
+        'smsOfAliyun.accessKeyId': [
+            { required: computed((): boolean => (saveForm.data.smsType == `smsOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'smsOfAliyun.accessKeySecret': [
+            { required: computed((): boolean => (saveForm.data.smsType == `smsOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'smsOfAliyun.endpoint': [
+            { required: computed((): boolean => (saveForm.data.smsType == `smsOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'smsOfAliyun.signName': [
+            { required: computed((): boolean => (saveForm.data.smsType == `smsOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'smsOfAliyun.templateCode': [
+            { required: computed((): boolean => (saveForm.data.smsType == `smsOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }
@@ -65,20 +79,20 @@ saveForm.initData()
         </el-form-item>
 
         <template v-if="saveForm.data.smsType == 'smsOfAliyun'">
-            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyunAccessKeyId')" prop="smsOfAliyunAccessKeyId">
-                <el-input v-model="saveForm.data.smsOfAliyunAccessKeyId" :placeholder="t('platform.config.plugin.name.smsOfAliyunAccessKeyId')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyun.accessKeyId')" prop="smsOfAliyun.accessKeyId">
+                <el-input v-model="saveForm.data.smsOfAliyun.accessKeyId" :placeholder="t('platform.config.plugin.name.smsOfAliyun.accessKeyId')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyunAccessKeySecret')" prop="smsOfAliyunAccessKeySecret">
-                <el-input v-model="saveForm.data.smsOfAliyunAccessKeySecret" :placeholder="t('platform.config.plugin.name.smsOfAliyunAccessKeySecret')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyun.accessKeySecret')" prop="smsOfAliyun.accessKeySecret">
+                <el-input v-model="saveForm.data.smsOfAliyun.accessKeySecret" :placeholder="t('platform.config.plugin.name.smsOfAliyun.accessKeySecret')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyunEndpoint')" prop="smsOfAliyunEndpoint">
-                <el-input v-model="saveForm.data.smsOfAliyunEndpoint" :placeholder="t('platform.config.plugin.name.smsOfAliyunEndpoint')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyun.endpoint')" prop="smsOfAliyun.endpoint">
+                <el-input v-model="saveForm.data.smsOfAliyun.endpoint" :placeholder="t('platform.config.plugin.name.smsOfAliyun.endpoint')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyunSignName')" prop="smsOfAliyunSignName">
-                <el-input v-model="saveForm.data.smsOfAliyunSignName" :placeholder="t('platform.config.plugin.name.smsOfAliyunSignName')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyun.signName')" prop="smsOfAliyun.signName">
+                <el-input v-model="saveForm.data.smsOfAliyun.signName" :placeholder="t('platform.config.plugin.name.smsOfAliyun.signName')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyunTemplateCode')" prop="smsOfAliyunTemplateCode">
-                <el-input v-model="saveForm.data.smsOfAliyunTemplateCode" :placeholder="t('platform.config.plugin.name.smsOfAliyunTemplateCode')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.smsOfAliyun.templateCode')" prop="smsOfAliyun.templateCode">
+                <el-input v-model="saveForm.data.smsOfAliyun.templateCode" :placeholder="t('platform.config.plugin.name.smsOfAliyun.templateCode')" :clearable="true" />
             </el-form-item>
         </template>
 
