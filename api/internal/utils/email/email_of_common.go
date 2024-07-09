@@ -15,7 +15,7 @@ type EmailOfCommon struct {
 	SmtpHost  string `json:"smtpHost"`
 	SmtpPort  string `json:"smtpPort"`
 	FromEmail string `json:"fromEmail"`
-	Password  string `json:"password"` //QQ邮箱需注意：填QQ邮箱的授权码，而不是密码
+	Password  string `json:"password"`
 	Code      struct {
 		Subject  string `json:"subject"`
 		Template string `json:"template"`

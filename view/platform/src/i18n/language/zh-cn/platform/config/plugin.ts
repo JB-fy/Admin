@@ -92,7 +92,7 @@ export default {
             template: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
         },
         emailOfCommon: {
-            password: '注意：如果使用的是QQ邮箱，则此处应填写QQ邮箱的授权码，而不是密码',
+            password: '注意：如果使用QQ邮箱，此处应填写QQ邮箱的授权码，而不是密码',
         },
 
         idCardOfAliyun: {
