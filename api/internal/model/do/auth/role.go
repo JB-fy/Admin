@@ -18,5 +18,5 @@ type Role struct {
 	RoleId    interface{} // 角色ID
 	RoleName  interface{} // 名称
 	SceneId   interface{} // 场景ID
-	RelId     interface{} // 关联ID。0表示平台创建，其它值根据sceneId对应不同表
+	RelId     interface{} // 关联ID。0表示平台创建，其它值根据scene_id对应不同表
 }

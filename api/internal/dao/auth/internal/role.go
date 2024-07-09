@@ -29,7 +29,7 @@ type RoleColumns struct {
 	RoleId    string // 角色ID
 	RoleName  string // 名称
 	SceneId   string // 场景ID
-	RelId     string // 关联ID。0表示平台创建，其它值根据sceneId对应不同表
+	RelId     string // 关联ID。0表示平台创建，其它值根据scene_id对应不同表
 }
 
 // roleColumns holds the columns for table auth_role.
