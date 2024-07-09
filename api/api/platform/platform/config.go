@@ -67,11 +67,13 @@ type Config struct {
 		SecretKeyOfMacOS   *string `json:"secretKeyOfMacOS,omitempty" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
 	} `json:"pushOfTx,omitempty" dc:"推送配置-腾讯移动推送"`
 
-	VodType                    *string `json:"vodType,omitempty" dc:"视频点播方式"`
-	VodOfAliyunAccessKeyId     *string `json:"vodOfAliyunAccessKeyId,omitempty" dc:"阿里云VOD-AccessKeyId"`
-	VodOfAliyunAccessKeySecret *string `json:"vodOfAliyunAccessKeySecret,omitempty" dc:"阿里云VOD-AccessKeySecret"`
-	VodOfAliyunEndpoint        *string `json:"vodOfAliyunEndpoint,omitempty" dc:"阿里云VOD-Endpoint"`
-	VodOfAliyunRoleArn         *string `json:"vodOfAliyunRoleArn,omitempty" dc:"阿里云VOD-RoleArn"`
+	VodType     *string `json:"vodType,omitempty" dc:"视频点播方式"`
+	VodOfAliyun *struct {
+		AccessKeyId     *string `json:"accessKeyId,omitempty" dc:"阿里云-AccessKeyId"`
+		AccessKeySecret *string `json:"accessKeySecret,omitempty" dc:"阿里云-AccessKeySecret"`
+		Endpoint        *string `json:"endpoint,omitempty" dc:"阿里云-Endpoint"`
+		RoleArn         *string `json:"roleArn,omitempty" dc:"阿里云-RoleArn"`
+	} `json:"vodOfAliyun,omitempty" dc:"视频点播配置-阿里云"`
 
 	WxGzhHost           *string `json:"wxGzhHost,omitempty" dc:"域名"`
 	WxGzhAppId          *string `json:"wxGzhAppId,omitempty" dc:"AppId"`
@@ -138,11 +140,13 @@ type ConfigSaveReq struct {
 		SecretKeyOfMacOS   *string `json:"secretKeyOfMacOS,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
 	} `json:"pushOfTx,omitempty" v:"required-if:PushType,pushOfTx" dc:"推送配置-腾讯移动推送"`
 
-	VodType                    *string `json:"vodType,omitempty" v:"in:vodOfAliyun" dc:"视频点播方式"`
-	VodOfAliyunAccessKeyId     *string `json:"vodOfAliyunAccessKeyId,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeyId"`
-	VodOfAliyunAccessKeySecret *string `json:"vodOfAliyunAccessKeySecret,omitempty" v:"regex:^[\\p{L}\\p{N}_-]+$" dc:"阿里云VOD-AccessKeySecret"`
-	VodOfAliyunEndpoint        *string `json:"vodOfAliyunEndpoint,omitempty" v:"" dc:"阿里云VOD-Endpoint"`
-	VodOfAliyunRoleArn         *string `json:"vodOfAliyunRoleArn,omitempty" v:"" dc:"阿里云VOD-RoleArn"`
+	VodType     *string `json:"vodType,omitempty" v:"in:vodOfAliyun" dc:"视频点播方式"`
+	VodOfAliyun *struct {
+		AccessKeyId     *string `json:"accessKeyId,omitempty" v:"" dc:"阿里云-AccessKeyId"`
+		AccessKeySecret *string `json:"accessKeySecret,omitempty" v:"" dc:"阿里云-AccessKeySecret"`
+		Endpoint        *string `json:"endpoint,omitempty" v:"" dc:"阿里云-Endpoint"`
+		RoleArn         *string `json:"roleArn,omitempty" v:"" dc:"阿里云-RoleArn"`
+	} `json:"vodOfAliyun,omitempty" v:"required-if:VodType,vodOfAliyun" dc:"视频点播配置-阿里云"`
 
 	WxGzhHost           *string `json:"wxGzhHost,omitempty" v:"url" dc:"微信公众号-域名"`
 	WxGzhAppId          *string `json:"wxGzhAppId,omitempty" v:"" dc:"微信公众号-AppId"`

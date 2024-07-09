@@ -12,10 +12,10 @@ import (
 
 type VodOfAliyun struct {
 	Ctx             context.Context
-	AccessKeyId     string `json:"vodOfAliyunAccessKeyId"`
-	AccessKeySecret string `json:"vodOfAliyunAccessKeySecret"`
-	Endpoint        string `json:"vodOfAliyunEndpoint"`
-	RoleArn         string `json:"vodOfAliyunRoleArn"`
+	AccessKeyId     string `json:"accessKeyId"`
+	AccessKeySecret string `json:"accessKeySecret"`
+	Endpoint        string `json:"endpoint"`
+	RoleArn         string `json:"roleArn"`
 }
 
 func NewVodOfAliyun(ctx context.Context, config map[string]any) *VodOfAliyun {

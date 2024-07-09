@@ -65,10 +65,12 @@ export default {
         },
 
         vodType: '视频点播方式',
-        vodOfAliyunAccessKeyId: '阿里云VOD-AccessKeyId',
-        vodOfAliyunAccessKeySecret: '阿里云VOD-AccessKeySecret',
-        vodOfAliyunEndpoint: '阿里云VOD-Endpoint',
-        vodOfAliyunRoleArn: '阿里云VOD-RoleArn',
+        vodOfAliyun: {
+            accessKeyId: '阿里云-AccessKeyId',
+            accessKeySecret: '阿里云-AccessKeySecret',
+            endpoint: '阿里云-Endpoint',
+            roleArn: '阿里云-RoleArn',
+        },
 
         wxGzhHost: '域名',
         wxGzhAppId: 'AppId',
@@ -101,7 +103,9 @@ export default {
             host: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
         },
 
-        vodOfAliyunEndpoint: '用于生成STS凭证。请参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
-        vodOfAliyunRoleArn: '用于生成STS凭证',
+        vodOfAliyun: {
+            endpoint: '用于生成STS凭证。参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
+            roleArn: '用于生成STS凭证',
+        },
     },
 }

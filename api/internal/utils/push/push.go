@@ -5,8 +5,7 @@ import (
 	"context"
 )
 
-/*
-//tx_tpns(腾讯移动推送）标签推送规则格式
+/* //tx_tpns(腾讯移动推送）标签推送规则格式
 TagRules: []map[string]any{
 	{
 		`tag_items`: []map[string]any{

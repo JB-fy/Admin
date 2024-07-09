@@ -9,17 +9,29 @@ const saveForm = reactive({
     data: {
         //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
         vodType: 'vodOfAliyun',
-        vodOfAliyunAccessKeyId: '',
-        vodOfAliyunAccessKeySecret: '',
-        vodOfAliyunEndpoint: '',
-        vodOfAliyunRoleArn: '',
+        vodOfAliyun: {},
     } as { [propName: string]: any },
     rules: {
-        vodType: [{ type: 'enum', trigger: 'change', enum: [`vodOfAliyun`], message: t('validation.select') }],
-        vodOfAliyunAccessKeyId: [{ type: 'string', trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') }],
-        vodOfAliyunAccessKeySecret: [{ type: 'string', trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') }],
-        vodOfAliyunEndpoint: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        vodOfAliyunRoleArn: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        vodType: [
+            { required: true, message: t('validation.required') },
+            { type: 'enum', trigger: 'change', enum: [`vodOfAliyun`], message: t('validation.select') },
+        ],
+        'vodOfAliyun.accessKeyId': [
+            { required: computed((): boolean => (saveForm.data.vodType == `vodOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'vodOfAliyun.accessKeySecret': [
+            { required: computed((): boolean => (saveForm.data.vodType == `vodOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'vodOfAliyun.endpoint': [
+            { required: computed((): boolean => (saveForm.data.vodType == `vodOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'vodOfAliyun.roleArn': [
+            { required: computed((): boolean => (saveForm.data.vodType == `vodOfAliyun` ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }
@@ -63,23 +75,23 @@ saveForm.initData()
         </el-form-item>
 
         <template v-if="saveForm.data.vodType == 'vodOfAliyun'">
-            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyunAccessKeyId')" prop="vodOfAliyunAccessKeyId">
-                <el-input v-model="saveForm.data.vodOfAliyunAccessKeyId" :placeholder="t('platform.config.plugin.name.vodOfAliyunAccessKeyId')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyun.accessKeyId')" prop="vodOfAliyun.accessKeyId">
+                <el-input v-model="saveForm.data.vodOfAliyun.accessKeyId" :placeholder="t('platform.config.plugin.name.vodOfAliyun.accessKeyId')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyunAccessKeySecret')" prop="vodOfAliyunAccessKeySecret">
-                <el-input v-model="saveForm.data.vodOfAliyunAccessKeySecret" :placeholder="t('platform.config.plugin.name.vodOfAliyunAccessKeySecret')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyun.accessKeySecret')" prop="vodOfAliyun.accessKeySecret">
+                <el-input v-model="saveForm.data.vodOfAliyun.accessKeySecret" :placeholder="t('platform.config.plugin.name.vodOfAliyun.accessKeySecret')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyunEndpoint')" prop="vodOfAliyunEndpoint">
-                <el-input v-model="saveForm.data.vodOfAliyunEndpoint" :placeholder="t('platform.config.plugin.name.vodOfAliyunEndpoint')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyun.endpoint')" prop="vodOfAliyun.endpoint">
+                <el-input v-model="saveForm.data.vodOfAliyun.endpoint" :placeholder="t('platform.config.plugin.name.vodOfAliyun.endpoint')" :clearable="true" style="max-width: 500px" />
                 <el-alert type="info" :show-icon="true" :closable="false">
                     <template #title>
-                        <span v-html="t('platform.config.plugin.tip.vodOfAliyunEndpoint')"></span>
+                        <span v-html="t('platform.config.plugin.tip.vodOfAliyun.endpoint')"></span>
                     </template>
                 </el-alert>
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyunRoleArn')" prop="vodOfAliyunRoleArn">
-                <el-input v-model="saveForm.data.vodOfAliyunRoleArn" :placeholder="t('platform.config.plugin.name.vodOfAliyunRoleArn')" :clearable="true" style="max-width: 500px" />
-                <el-alert :title="t('platform.config.plugin.tip.vodOfAliyunRoleArn')" type="info" :show-icon="true" :closable="false" />
+            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyun.roleArn')" prop="vodOfAliyun.roleArn">
+                <el-input v-model="saveForm.data.vodOfAliyun.roleArn" :placeholder="t('platform.config.plugin.name.vodOfAliyun.roleArn')" :clearable="true" style="max-width: 500px" />
+                <el-alert :title="t('platform.config.plugin.tip.vodOfAliyun.roleArn')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
         </template>
 

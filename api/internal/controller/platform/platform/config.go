@@ -38,7 +38,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 				actionCodeSet.Add(`platformConfigOneClickRead`)
 			case `pushType`, `pushOfTx`:
 				actionCodeSet.Add(`platformConfigPushRead`)
-			case `vodType`, `vodOfAliyunAccessKeyId`, `vodOfAliyunAccessKeySecret`, `vodOfAliyunEndpoint`, `vodOfAliyunRoleArn`:
+			case `vodType`, `vodOfAliyun`:
 				actionCodeSet.Add(`platformConfigVodRead`)
 			case `wxGzhHost`, `wxGzhAppId`, `wxGzhSecret`, `wxGzhToken`, `wxGzhEncodingAESKey`:
 				actionCodeSet.Add(`platformConfigWxRead`)
@@ -90,7 +90,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 				actionCodeSet.Add(`platformConfigOneClickSave`)
 			case `pushType`, `pushOfTx`:
 				actionCodeSet.Add(`platformConfigPushSave`)
-			case `vodType`, `vodOfAliyunAccessKeyId`, `vodOfAliyunAccessKeySecret`, `vodOfAliyunEndpoint`, `vodOfAliyunRoleArn`:
+			case `vodType`, `vodOfAliyun`:
 				actionCodeSet.Add(`platformConfigVodSave`)
 			case `wxGzhHost`, `wxGzhAppId`, `wxGzhSecret`, `wxGzhToken`, `wxGzhEncodingAESKey`:
 				actionCodeSet.Add(`platformConfigWxSave`)
