@@ -141,7 +141,9 @@ const cascader = reactive({
                                   ...tree[i],
                                   value: tree[i][cascader.api.param.field[0]],
                                   label: tree[i][cascader.api.param.field[1]],
-                                  leaf: tree[i]?.['is_has_child'] === 0 ? true : false,
+                              }
+                              if ('is_has_child' in tree[i]) {
+                                  treeTmp[i].leaf = tree[i].is_has_child === 0 ? true : false
                               }
                               if (tree[i].children?.length) {
                                   treeTmp[i].children = handle(tree[i].children)
