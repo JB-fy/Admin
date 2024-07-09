@@ -5,6 +5,20 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
+type UploadConfig struct {
+	Url             *string `json:"url,omitempty" v:"url" dc:"本地-上传地址"`
+	SignKey         *string `json:"signKey,omitempty" v:"" dc:"本地-密钥"`
+	FileSaveDir     *string `json:"fileSaveDir,omitempty" v:"" dc:"本地-保存目录"`
+	FileUrlPrefix   *string `json:"fileUrlPrefix,omitempty" v:"" dc:"本地-文件地址前缀"`
+	Host            *string `json:"host,omitempty" v:"" dc:"阿里云OSS-域名"`
+	Bucket          *string `json:"bucket,omitempty" v:"" dc:"阿里云OSS-Bucket"`
+	AccessKeyId     *string `json:"accessKeyId,omitempty" v:"" dc:"阿里云OSS-AccessKeyId"`
+	AccessKeySecret *string `json:"accessKeySecret,omitempty" v:"" dc:"阿里云OSS-AccessKeySecret"`
+	Endpoint        *string `json:"endpoint,omitempty" v:"" dc:"阿里云OSS-Endpoint"`
+	RoleArn         *string `json:"roleArn,omitempty" v:"" dc:"阿里云OSS-RoleArn"`
+	IsNotify        *string `json:"isNotify,omitempty" v:"" dc:"阿里云OSS-回调"`
+}
+
 // 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
 type UploadInfo struct {
 	Id           *uint       `json:"id,omitempty" dc:"ID"`
@@ -64,10 +78,10 @@ type UploadInfoRes struct {
 /*--------新增 开始--------*/
 type UploadCreateReq struct {
 	g.Meta       `path:"/upload/create" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"新增"`
-	UploadType   *uint   `json:"upload_type,omitempty" v:"required|in:0,1" dc:"类型：0本地 1阿里云OSS"`
-	UploadConfig *string `json:"upload_config,omitempty" v:"required|json" dc:"配置。根据upload_type类型设置"`
-	Remark       *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	IsDefault    *uint   `json:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
+	UploadType   *uint         `json:"upload_type,omitempty" v:"required|in:0,1" dc:"类型：0本地 1阿里云OSS"`
+	UploadConfig *UploadConfig `json:"upload_config,omitempty" v:"required|json" dc:"配置。根据upload_type类型设置"`
+	Remark       *string       `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
+	IsDefault    *uint         `json:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
 }
 
 /*--------新增 结束--------*/
@@ -75,11 +89,11 @@ type UploadCreateReq struct {
 /*--------修改 开始--------*/
 type UploadUpdateReq struct {
 	g.Meta       `path:"/upload/update" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"修改"`
-	IdArr        []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	UploadType   *uint   `json:"upload_type,omitempty" v:"in:0,1" dc:"类型：0本地 1阿里云OSS"`
-	UploadConfig *string `json:"upload_config,omitempty" v:"json" dc:"配置。根据upload_type类型设置"`
-	Remark       *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	IsDefault    *uint   `json:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
+	IdArr        []uint        `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	UploadType   *uint         `json:"upload_type,omitempty" v:"in:0,1" dc:"类型：0本地 1阿里云OSS"`
+	UploadConfig *UploadConfig `json:"upload_config,omitempty" v:"json" dc:"配置。根据upload_type类型设置"`
+	Remark       *string       `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
+	IsDefault    *uint         `json:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
 }
 
 /*--------修改 结束--------*/

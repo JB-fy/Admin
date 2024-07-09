@@ -11,8 +11,8 @@ const saveForm = reactive({
         pay_type: 0,
         sort: 100,
         ...saveCommon.data,
-        pay_config_0: saveCommon.data.upload_type == 0 && saveCommon.data.pay_config ? JSON.parse(saveCommon.data.pay_config) : {},
-        pay_config_1: saveCommon.data.upload_type == 1 && saveCommon.data.pay_config ? JSON.parse(saveCommon.data.pay_config) : {},
+        pay_config_0: saveCommon.data.pay_type == 0 && saveCommon.data.pay_config ? JSON.parse(saveCommon.data.pay_config) : {},
+        pay_config_1: saveCommon.data.pay_type == 1 && saveCommon.data.pay_config ? JSON.parse(saveCommon.data.pay_config) : {},
     } as { [propName: string]: any },
     rules: {
         pay_name: [
