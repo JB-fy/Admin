@@ -14,6 +14,14 @@ const saveForm = reactive({
         emailCodeTemplate: '',
     } as { [propName: string]: any },
     rules: {
+        emailCodeSubject: [
+            { required: true, message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        emailCodeTemplate: [
+            { required: true, message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
         emailType: [
             { required: true, message: t('validation.required') },
             { type: 'enum', trigger: 'change', enum: [`emailOfCommon`], message: t('validation.select') },
@@ -35,8 +43,6 @@ const saveForm = reactive({
             { required: computed((): boolean => (saveForm.data.emailType == `emailOfCommon` ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        emailCodeSubject: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        emailCodeTemplate: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }
@@ -71,6 +77,13 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
+        <el-form-item :label="t('platform.config.plugin.name.emailCodeSubject')" prop="emailCodeSubject">
+            <el-input v-model="saveForm.data.emailCodeSubject" :placeholder="t('platform.config.plugin.name.emailCodeSubject')" :clearable="true" />
+        </el-form-item>
+        <el-form-item :label="t('platform.config.plugin.name.emailCodeTemplate')" prop="emailCodeTemplate">
+            <el-alert :title="t('platform.config.plugin.tip.emailCodeTemplate')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
+            <el-input v-model="saveForm.data.emailCodeTemplate" type="textarea" :autosize="{ minRows: 3 }" />
+        </el-form-item>
         <el-form-item :label="t('platform.config.plugin.name.emailType')" prop="emailType">
             <el-radio-group v-model="saveForm.data.emailType">
                 <el-radio v-for="(item, index) in tm('platform.config.plugin.status.emailType') as any" :key="index" :value="item.value">
@@ -94,14 +107,6 @@ saveForm.initData()
                 <el-alert :title="t('platform.config.plugin.tip.emailOfCommon.password')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
         </template>
-
-        <el-form-item :label="t('platform.config.plugin.name.emailCodeSubject')" prop="emailCodeSubject">
-            <el-input v-model="saveForm.data.emailCodeSubject" :placeholder="t('platform.config.plugin.name.emailCodeSubject')" :clearable="true" />
-        </el-form-item>
-        <el-form-item :label="t('platform.config.plugin.name.emailCodeTemplate')" prop="emailCodeTemplate">
-            <el-alert :title="t('platform.config.plugin.tip.emailCodeTemplate')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
-            <el-input v-model="saveForm.data.emailCodeTemplate" type="textarea" :autosize="{ minRows: 3 }" />
-        </el-form-item>
         <el-form-item>
             <el-button v-if="authAction.isSmsSave" type="primary" @click="saveForm.submit" :loading="saveForm.loading"><autoicon-ep-circle-check />{{ t('common.save') }}</el-button>
             <el-button type="info" @click="saveForm.reset"><autoicon-ep-circle-close />{{ t('common.reset') }}</el-button>

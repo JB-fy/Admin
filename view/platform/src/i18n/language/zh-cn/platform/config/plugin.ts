@@ -25,6 +25,8 @@ export default {
             templateCode: '阿里云SMS-模板标识',
         },
 
+        emailCodeSubject: '验证码标题',
+        emailCodeTemplate: '验证码模板',
         emailType: '邮箱方式',
         emailOfCommon: {
             smtpHost: '通用-SmtpHost',
@@ -32,8 +34,6 @@ export default {
             fromEmail: '通用-邮箱',
             password: '通用-密码',
         },
-        emailCodeSubject: '验证码标题',
-        emailCodeTemplate: '验证码模板',
 
         idCardType: '实名认证方式',
         idCardOfAliyunHost: '阿里云IdCard-域名',

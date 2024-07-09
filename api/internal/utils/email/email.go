@@ -21,7 +21,7 @@ func NewEmail(ctx context.Context, emailTypeOpt ...string) Email {
 	switch emailType {
 	// case `emailOfCommon`:
 	default:
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`emailOfCommon`, `emailCodeSubject`, `emailCodeTemplate`})
+		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`emailCodeSubject`, `emailCodeTemplate`, `emailOfCommon`})
 		config := configTmp[`emailOfCommon`].Map()
 		config[`codeSubject`] = configTmp[`emailCodeSubject`]
 		config[`codeTemplate`] = configTmp[`emailCodeTemplate`]

@@ -30,7 +30,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 				actionCodeSet.Add(`platformConfigCommonRead`)
 			case `smsType`, `smsOfAliyun`:
 				actionCodeSet.Add(`platformConfigSmsRead`)
-			case `emailType`, `emailOfCommon`, `emailCodeSubject`, `emailCodeTemplate`:
+			case `emailCodeSubject`, `emailCodeTemplate`, `emailType`, `emailOfCommon`:
 				actionCodeSet.Add(`platformConfigEmailRead`)
 			case `idCardType`, `idCardOfAliyunHost`, `idCardOfAliyunPath`, `idCardOfAliyunAppcode`:
 				actionCodeSet.Add(`platformConfigIdCardRead`)
@@ -82,7 +82,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 				actionCodeSet.Add(`platformConfigCommonSave`)
 			case `smsType`, `smsOfAliyun`:
 				actionCodeSet.Add(`platformConfigSmsSave`)
-			case `emailType`, `emailOfCommon`, `emailCodeSubject`, `emailCodeTemplate`:
+			case `emailCodeSubject`, `emailCodeTemplate`, `emailType`, `emailOfCommon`:
 				actionCodeSet.Add(`platformConfigEmailSave`)
 			case `idCardType`, `idCardOfAliyunHost`, `idCardOfAliyunPath`, `idCardOfAliyunAppcode`:
 				actionCodeSet.Add(`platformConfigIdCardSave`)
