@@ -65,8 +65,8 @@ func NewPush(ctx context.Context, deviceType uint, pushTypeOpt ...string) Push {
 	switch pushType {
 	// case `pushOfTx`:	//腾讯移动推送
 	default:
-		configTmp, _ := daoPlatform.Config.Get(ctx, []string{`pushOfTx`})
-		config := configTmp[`pushOfTx`].Map()
+		configTmp, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `pushOfTx`).Value(daoPlatform.Config.Columns().ConfigValue)
+		config := configTmp.Map()
 		switch deviceType {
 		case 1: //IOS
 			config[`accessID`] = config[`iosAccessID`]

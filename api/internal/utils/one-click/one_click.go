@@ -6,13 +6,11 @@ import (
 )
 
 func NewOneClickOfWxByPfCfg(ctx context.Context) *OneClickOfWx {
-	configTmp, _ := daoPlatform.Config.Get(ctx, []string{`oneClickOfWx`})
-	config := configTmp[`oneClickOfWx`].Map()
-	return NewOneClickOfWx(ctx, config)
+	config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `oneClickOfWx`).Value(daoPlatform.Config.Columns().ConfigValue)
+	return NewOneClickOfWx(ctx, config.Map())
 }
 
 func NewOneClickOfYidunByPfCfg(ctx context.Context, configOpt ...map[string]any) *OneClickOfYidun {
-	configTmp, _ := daoPlatform.Config.Get(ctx, []string{`oneClickOfYidun`})
-	config := configTmp[`oneClickOfYidun`].Map()
-	return NewOneClickOfYidun(ctx, config)
+	config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `oneClickOfYidun`).Value(daoPlatform.Config.Columns().ConfigValue)
+	return NewOneClickOfYidun(ctx, config.Map())
 }
