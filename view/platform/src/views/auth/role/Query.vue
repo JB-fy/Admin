@@ -48,7 +48,7 @@ const queryForm = reactive({
         <el-form-item v-if="queryCommon.data.scene_code == 'org'" prop="rel_id">
             <my-select v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/org/org/list' }" :defaultOptions="tm('auth.role.status.rel_id')" />
         </el-form-item>
-        <el-form-item v-if="queryCommon.data.scene_id > 0" prop="action_id">
+        <el-form-item v-if="queryCommon.data.scene_id > 0" prop="action_id" :key="queryCommon.data.scene_id">
             <my-select v-model="queryCommon.data.action_id" :placeholder="t('auth.role.name.action_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { scene_id: queryCommon.data.scene_id } } }" />
         </el-form-item>
         <el-form-item v-if="queryCommon.data.scene_id > 0" prop="menu_id">
