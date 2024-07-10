@@ -136,25 +136,25 @@ const cascader = reactive({
                 : (res: any) => {
                       const handle = (tree: any) => {
                           const treeTmp: any = []
-                          for (let i = 0; i < tree.length; i++) {
-                              treeTmp[i] = {
-                                  ...tree[i],
-                                  value: tree[i][cascader.api.param.field[0]],
-                                  label: tree[i][cascader.api.param.field[1]],
+                          tree.forEach((item: any, index: number) => {
+                              treeTmp[index] = {
+                                  ...item,
+                                  value: item[cascader.api.param.field[0]],
+                                  label: item[cascader.api.param.field[1]],
                               }
-                              if ('is_has_child' in tree[i]) {
-                                  treeTmp[i].leaf = tree[i].is_has_child === 0 ? true : false
+                              if ('is_has_child' in item) {
+                                  treeTmp[index].leaf = item.is_has_child === 0 ? true : false
                               }
-                              if (tree[i].children?.length) {
-                                  treeTmp[i].children = handle(tree[i].children)
+                              if (item.children?.length) {
+                                  treeTmp[index].children = handle(item.children)
                               }
-                          }
+                          })
                           return treeTmp
                       }
                       if (!cascader.props.lazy) {
-                          return handle(res.data.tree)
+                          return handle(res.data.tree ?? [])
                       }
-                      return handle(res.data.list)
+                      return handle(res.data.list ?? [])
                   }
         }),
         pidField: computed((): string => {

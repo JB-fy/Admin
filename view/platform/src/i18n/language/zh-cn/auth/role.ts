@@ -6,7 +6,6 @@ export default {
         action_id_arr: '操作',
         menu_id_arr: '菜单',
         is_stop: '停用',
-        scene_code: '场景',
     },
     status: {
         rel_id: [{ value: 0, label: '平台' }],
