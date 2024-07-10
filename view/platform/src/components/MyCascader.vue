@@ -134,9 +134,10 @@ const cascader = reactive({
             return props.api.transform
                 ? props.api.transform
                 : (res: any) => {
-                      const handle = (tree: any) => {
-                          const treeTmp: any = []
-                          tree.forEach((item: any, index: number) => {
+                      type treeNode = { value: string | number; label: any; leaf?: boolean; children?: treeNode[]; [propName: string]: any }
+                      const handle = (tree: { [propName: string]: any }[]): treeNode[] => {
+                          const treeTmp: treeNode[] = []
+                          tree.forEach((item, index) => {
                               treeTmp[index] = {
                                   ...item,
                                   value: item[cascader.api.param.field[0]],

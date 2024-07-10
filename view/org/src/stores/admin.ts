@@ -303,28 +303,28 @@ export const useAdminStore = defineStore('admin', {
         async setMenuTree() {
             const res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/my/menu/tree')
             const tree = import.meta.env.DEV ? [...res.data.tree, this.menuTreeOfDev] : res.data.tree
-            const handleMenuTree = (menuTree: any, menuChain: any = []) => {
-                const menuTreeTmp: any = []
-                for (let i = 0; i < menuTree.length; i++) {
-                    menuTreeTmp[i] = {
-                        i18n: menuTree[i].i18n,
-                        icon: menuTree[i]?.menu_icon ?? menuTree[i]?.icon,
-                        url: menuTree[i]?.menu_url ?? menuTree[i]?.url,
+            const handleMenuTree = (menuTree: any[], menuChain: any[] = []) => {
+                const menuTreeTmp: any[] = []
+                menuTree.forEach((item, index) => {
+                    menuTreeTmp[index] = {
+                        i18n: item.i18n,
+                        icon: item?.menu_icon ?? item?.icon,
+                        url: item?.menu_url ?? item?.url,
                         children: [],
                     }
-                    if (menuTree[i].children?.length) {
+                    if (item.children?.length) {
                         menuChain.push({
-                            i18n: menuTree[i].i18n,
-                            icon: menuTree[i]?.menu_icon ?? menuTree[i]?.icon,
-                            url: menuTree[i]?.menu_url ?? menuTree[i]?.url,
+                            i18n: item.i18n,
+                            icon: item?.menu_icon ?? item?.icon,
+                            url: item?.menu_url ?? item?.url,
                         })
-                        menuTreeTmp[i].children = handleMenuTree(menuTree[i].children, [...menuChain])
+                        menuTreeTmp[index].children = handleMenuTree(item.children, [...menuChain])
                         menuChain.pop()
                     } else {
                         const menu = {
-                            i18n: menuTree[i].i18n,
-                            icon: menuTree[i]?.menu_icon ?? menuTree[i]?.icon,
-                            url: menuTree[i]?.menu_url ?? menuTree[i]?.url,
+                            i18n: item.i18n,
+                            icon: item?.menu_icon ?? item?.icon,
+                            url: item?.menu_url ?? item?.url,
                         }
                         //设置菜单列表
                         this.menuList.push({
@@ -332,7 +332,7 @@ export const useAdminStore = defineStore('admin', {
                             menuChain: [...menuChain, menu],
                         })
                     }
-                }
+                })
                 return menuTreeTmp
             }
             this.menuTree = handleMenuTree(tree)
