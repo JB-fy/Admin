@@ -72,14 +72,7 @@ const select = reactive({
         },
         set: (val) => {
             emits('update:modelValue', val)
-            emits(
-                'change',
-                props.multiple
-                    ? select.options.filter((item) => {
-                          return (val as any).indexOf(item.value) !== -1
-                      })
-                    : select.options.find((item) => item.value == val)
-            )
+            emits('change', props.multiple ? select.options.filter((item) => (val as any).indexOf(item.value) !== -1) : select.options.find((item) => item.value == val))
         },
     }),
     options: [...props.defaultOptions] as { value: any; label: any; [propName: string]: any }[],
