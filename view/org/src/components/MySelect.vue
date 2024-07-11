@@ -156,16 +156,12 @@ const select = reactive({
             return options
         },
         addOptions: () => {
-            if (select.api.loading) {
-                return
-            }
             select.api.getOptions().then((options) => {
                 select.options = select.api.param.page === 1 ? [...props.defaultOptions, ...(options ?? [])] : select.options.concat(options ?? [])
             })
         },
     },
     visibleChange: (val: boolean) => {
-        //if (val && select.options.length == props.defaultOptions.length) {    //只在首次打开加载。但用户切换页面做数据变动，再返回时，需要刷新页面清理缓存才能获取最新数据
         if (val) {
             //每次打开都重新加载
             delete select.api.param.filter[select.api.searchField]
@@ -177,8 +173,11 @@ const select = reactive({
     remoteMethod: (label: string) => {
         if (label) {
             select.api.param.filter[select.api.searchField] = label
-        } else {
+        } else if (select.api.searchField in select.api.param.filter) {
             delete select.api.param.filter[select.api.searchField]
+        } else {
+            // 点击组件，会同时触发remoteMethod和visibleChange事件。故当点击组件时，不执行下方操作，防止多次变动select.options
+            return
         }
         select.api.param.page = 1
         select.api.isEnd = false
