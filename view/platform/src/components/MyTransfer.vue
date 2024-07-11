@@ -10,7 +10,7 @@ const props = defineProps({
         type: Array,
     },
     defaultOptions: {
-        //选项初始默认值。格式：{ [transfer.props.key]: any, [transfer.props.label]: any }[]
+        //选项初始默认值。格式：{ [transfer.props.key]: any, [transfer.props.label]: any, [propName: string]: any }[]
         type: Array,
         default: () => [],
     },

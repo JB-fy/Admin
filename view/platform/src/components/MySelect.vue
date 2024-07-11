@@ -10,7 +10,7 @@ const props = defineProps({
         type: [String, Number, Array],
     },
     defaultOptions: {
-        //选项初始默认值。格式：{ [select.props.value]: any, [select.props.label]: any }[]
+        //选项初始默认值。格式：{ [select.props.value]: any, [select.props.label]: any, [propName: string]: any }[]
         type: Array,
         default: () => [],
     },

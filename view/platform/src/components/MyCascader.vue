@@ -15,7 +15,7 @@ const props = defineProps({
         type: [String, Number, Array],
     },
     defaultOptions: {
-        //选项初始默认值。格式：{ [cascader.props.value]: any, [cascader.props.label]: any, [cascader.props.leaf]: boolean, [cascader.props.children]: { [propName: string]: any }[] }[]
+        //选项初始默认值。格式：{ [cascader.props.value]: any, [cascader.props.label]: any, [cascader.props.leaf]: boolean, [cascader.props.children]: { [propName: string]: any }[], [propName: string]: any }[]
         type: Array,
         default: () => [],
     },
