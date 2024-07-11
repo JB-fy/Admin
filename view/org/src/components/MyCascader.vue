@@ -15,7 +15,7 @@ const props = defineProps({
         type: [String, Number, Array],
     },
     defaultOptions: {
-        //选项初始默认值。格式：[{ value: any, label: any, leaf: boolean },...]。动态加载时leaf必须
+        //选项初始默认值。格式：{ [cascader.props.value]: any, [cascader.props.label]: any, [cascader.props.leaf]: boolean, [cascader.props.children]: { [propName: string]: any }[] }[]
         type: Array,
         default: () => [],
     },
@@ -84,12 +84,12 @@ const cascader = reactive({
     props: {
         expandTrigger: 'hover' as any, //子级展开方式。click或hover
         checkStrictly: false,
-        lazy: false, //不建议使用动态加载模式，使用体验很差
+        lazy: false,
         lazyLoad: (node: any, resolve: any) => {
             if (node.level == 0) {
                 cascader.api.param.filter[cascader.api.pidField] = 0
             } else {
-                cascader.api.param.filter[cascader.api.pidField] = node.data.value
+                cascader.api.param.filter[cascader.api.pidField] = node.data[cascader.props.value]
             }
             cascader.api.getOptions().then((options) => {
                 if (!options?.length) {
@@ -102,14 +102,14 @@ const cascader = reactive({
             })
             delete cascader.api.param.filter[cascader.api.pidField]
         },
+        value: 'value',
+        label: 'label',
+        leaf: 'leaf',
+        children: 'children',
         ...props.props,
     },
     initOptions: () => {
         cascader.api.addOptions()
-    },
-    resetOptions: () => {
-        cascader.options = [...props.defaultOptions] as any
-        cascader.api.param.page = 1
     },
     api: {
         loading: false,
@@ -134,20 +134,19 @@ const cascader = reactive({
             return props.api.transform
                 ? props.api.transform
                 : (res: any) => {
-                      type treeNode = { value: string | number; label: any; leaf?: boolean; children?: treeNode[]; [propName: string]: any }
-                      const handle = (tree: { [propName: string]: any }[]): treeNode[] => {
-                          const treeTmp: treeNode[] = []
+                      const handle = (tree: { [propName: string]: any }[]) => {
+                          const treeTmp: { [propName: string]: any }[] = []
                           tree.forEach((item, index) => {
                               treeTmp[index] = {
                                   ...item,
-                                  value: item[cascader.api.param.field[0]],
-                                  label: item[cascader.api.param.field[1]],
+                                  [cascader.props.value]: item[cascader.api.param.field[0]],
+                                  [cascader.props.label]: item[cascader.api.param.field[1]],
                               }
                               if ('is_has_child' in item) {
-                                  treeTmp[index].leaf = item.is_has_child === 0 ? true : false
+                                  treeTmp[index][cascader.props.leaf] = item.is_has_child === 0 ? true : false
                               }
                               if (item.children?.length) {
-                                  treeTmp[index].children = handle(item.children)
+                                  treeTmp[index][cascader.props.children] = handle(item.children)
                               }
                           })
                           return treeTmp
@@ -177,9 +176,7 @@ const cascader = reactive({
         },
         addOptions: () => {
             cascader.api.getOptions().then((options) => {
-                if (options?.length) {
-                    cascader.options = cascader.options.concat(options ?? [])
-                }
+                cascader.options = [...props.defaultOptions, ...(options ?? [])]
             })
         },
     },
@@ -187,11 +184,10 @@ const cascader = reactive({
         if (val) {
             //每次打开都重新加载
             if (cascader.props.lazy) {
-                //重新触发下动态加载事件。
-                /* cascader.props.lazy = false
-                cascader.props.lazy = true */
+                //重新触发下动态加载事件
+                cascader.props.lazy = false
+                cascader.props.lazy = true
             } else {
-                cascader.resetOptions()
                 cascader.api.addOptions()
             }
         }
@@ -207,7 +203,6 @@ watch(
     () => props.api?.param?.filter,
     (newVal: any, oldVal: any) => {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-            cascader.resetOptions()
             cascader.api.addOptions()
         }
     }
