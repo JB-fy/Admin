@@ -10,7 +10,7 @@ const props = defineProps({
         type: [String, Number, Array],
     },
     defaultOptions: {
-        //选项初始默认值。格式：[{ value: any, label: any },...]
+        //选项初始默认值。格式：{ [select.props.value]: any, [select.props.label]: any }[]
         type: Array,
         default: () => [],
     },
@@ -61,6 +61,10 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    props: {
+        type: Object,
+        default: () => {},
+    },
 })
 
 const emits = defineEmits(['update:modelValue', 'change'])
@@ -72,19 +76,19 @@ const select = reactive({
         },
         set: (val) => {
             emits('update:modelValue', val)
-            emits('change', props.multiple ? select.options.filter((item) => (val as any).indexOf(item.value) !== -1) : select.options.find((item) => item.value == val))
+            emits('change', props.multiple ? select.options.filter((item) => (val as any).indexOf(item[select.props.value]) !== -1) : select.options.find((item) => item[select.props.value] == val))
         },
     }),
     options: [...props.defaultOptions] as { value: any; label: any; [propName: string]: any }[],
+    props: {
+        value: 'value',
+        label: 'label',
+        ...props.props,
+    },
     initOptions: () => {
         select.api.param.filter[select.api.selectedField] = props.modelValue
         select.api.addOptions()
         delete select.api.param.filter[select.api.selectedField]
-    },
-    resetOptions: () => {
-        select.options = [...props.defaultOptions] as { value: any; label: any; [propName: string]: any }[]
-        select.api.param.page = 1
-        select.api.isEnd = false
     },
     loading: computed((): boolean => {
         //ElSelectV2的loading属性建议在远程数据全部加载时使用，其它情况下都为false。
@@ -111,12 +115,12 @@ const select = reactive({
             return props.api.transform
                 ? props.api.transform
                 : (res: any) => {
-                      const options: { value: any; label: any }[] = []
+                      const options: { [propName: string]: any }[] = []
                       res.data.list.forEach((item: any) => {
                           options.push({
                               ...item,
-                              value: item[select.api.param.field[0]],
-                              label: item[select.api.param.field[1]],
+                              [select.props.value]: item[select.api.param.field[0]],
+                              [select.props.label]: item[select.api.param.field[1]],
                           })
                       })
                       return options
@@ -135,10 +139,7 @@ const select = reactive({
             return props.api.searchField ?? select.api.param.field[1]
         }),
         getOptions: async () => {
-            if (select.api.loading) {
-                return
-            }
-            if (select.api.isEnd) {
+            if (select.api.loading || select.api.isEnd) {
                 return
             }
             select.api.loading = true
@@ -155,10 +156,11 @@ const select = reactive({
             return options
         },
         addOptions: () => {
+            if (select.api.loading) {
+                return
+            }
             select.api.getOptions().then((options) => {
-                if (options?.length) {
-                    select.options = select.options.concat(options ?? [])
-                }
+                select.options = select.api.param.page === 1 ? [...props.defaultOptions, ...(options ?? [])] : select.options.concat(options ?? [])
             })
         },
     },
@@ -167,7 +169,8 @@ const select = reactive({
         if (val) {
             //每次打开都重新加载
             delete select.api.param.filter[select.api.searchField]
-            select.resetOptions()
+            select.api.param.page = 1
+            select.api.isEnd = false
             select.api.addOptions()
         }
     },
@@ -177,7 +180,8 @@ const select = reactive({
         } else {
             delete select.api.param.filter[select.api.searchField]
         }
-        select.resetOptions()
+        select.api.param.page = 1
+        select.api.isEnd = false
         select.api.addOptions()
     },
 })
@@ -197,14 +201,14 @@ if ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelV
 /* watch(() => props.modelValue, (newVal: any, oldVal: any) => {
     if (Array.isArray(props.modelValue)) {
         if (props.modelValue.length && select.options.filter((item) => {
-            //return (<string[] | number[]>props.modelValue).indexOf(item.value) !== -1
-            return (<any>props.modelValue).indexOf(item.value) !== -1
+            //return (<string[] | number[]>props.modelValue).indexOf(item[select.props.value]) !== -1
+            return (<any>props.modelValue).indexOf(item[select.props.value]) !== -1
         }).length !== props.modelValue.length) {
             select.resetOptions()
             select.initOptions()
         }
     } else if (props.modelValue && select.options.findIndex((item) => {
-        return item.value == props.modelValue
+        return item[select.props.value] == props.modelValue
     }) === -1) {
         select.resetOptions()
         select.initOptions()
@@ -266,6 +270,7 @@ defineExpose({
         :multiple-limit="multipleLimit"
         :collapse-tags="collapseTags"
         :collapse-tags-tooltip="collapseTagsTooltip"
+        :props="select.props"
     >
         <template v-if="slots.default" #default="{ item }">
             <slot name="default" :item="item"></slot>

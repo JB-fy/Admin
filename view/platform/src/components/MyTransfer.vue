@@ -1,8 +1,7 @@
 <!-------- 使用示例 开始-------->
 <!-- <my-transfer v-model="saveForm.data.scene_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 
-<my-transfer v-model="saveForm.data.scene_id_arr"
-    :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'scene_name'] } }" /> -->
+<my-transfer v-model="saveForm.data.scene_id_arr" :defaultOptions="tm('common.status.xxxx')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'scene_name'] } }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 const slots = useSlots()
@@ -11,7 +10,7 @@ const props = defineProps({
         type: Array,
     },
     defaultOptions: {
-        //选项初始默认值。格式：[{ [transfer.props.key]: any, [transfer.props.label]: any },...]
+        //选项初始默认值。格式：{ [transfer.props.key]: any, [transfer.props.label]: any }[]
         type: Array,
         default: () => [],
     },
@@ -49,24 +48,18 @@ const transfer = reactive({
             emits('update:modelValue', val)
             emits(
                 'change',
-                transfer.options.filter((item: any) => {
-                    return val.indexOf(item[transfer.props.key]) !== -1
-                })
+                transfer.options.filter((item: any) => val.indexOf(item[transfer.props.key]) !== -1)
             )
         },
     }),
     options: [...props.defaultOptions] as any,
     props: {
-        key: props.api?.param?.field?.[0] ?? 'id',
-        label: props.api?.param?.field?.[1] ?? 'label',
+        key: 'value',
+        label: 'label',
         ...props.props,
     },
     initOptions: () => {
         transfer.api.addOptions()
-    },
-    resetOptions: () => {
-        transfer.options = [...props.defaultOptions] as any
-        transfer.api.param.page = 1
     },
     api: {
         loading: false,
@@ -84,7 +77,15 @@ const transfer = reactive({
             return props.api.transform
                 ? props.api.transform
                 : (res: any) => {
-                      return res.data.list
+                      const options: { key: any; label: any }[] = []
+                      res.data.list.forEach((item: any) => {
+                          options.push({
+                              ...item,
+                              [transfer.props.key]: item[transfer.api.param.field[0]],
+                              [transfer.props.label]: item[transfer.api.param.field[1]],
+                          })
+                      })
+                      return options
                   }
         }),
         getOptions: async () => {
@@ -103,9 +104,7 @@ const transfer = reactive({
         },
         addOptions: () => {
             transfer.api.getOptions().then((options) => {
-                if (options?.length) {
-                    transfer.options = transfer.options.concat(options ?? [])
-                }
+                transfer.options = [...props.defaultOptions, ...(options ?? [])]
             })
         },
     },
@@ -118,7 +117,7 @@ watch(
     () => props.api?.param?.filter,
     (newVal: any, oldVal: any) => {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-            transfer.resetOptions()
+            transfer.api.param.page = 1
             transfer.api.addOptions()
         }
     }
