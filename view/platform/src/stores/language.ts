@@ -62,7 +62,11 @@ export const useLanguageStore = defineStore('language', {
             const menu =
                 useAdminStore().menuList.find((item) => {
                     return item.url == fullPath
-                }) ?? router.currentRoute.value?.meta?.menu
+                }) ??
+                router.getRoutes().find((item) => {
+                    return item.path == fullPath
+                })?.meta?.menu ??
+                router.currentRoute.value?.meta?.menu
             return this.getMenuTitle(menu)
         },
         //获取网站标题
