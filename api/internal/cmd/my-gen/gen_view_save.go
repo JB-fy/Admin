@@ -424,11 +424,6 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = '')`
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
-		if relIdObj.tpl.Table != `` {
-			apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
-		}
 		viewSaveField.dataInitAfter.Method = internal.ReturnTypeName
 		viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + dataFieldPath + ` ? saveCommon.data.` + dataFieldPath + ` : undefined`
 		viewSaveField.rule.Method = internal.ReturnTypeName
@@ -437,10 +432,20 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		}
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
-		if relIdObj.tpl.Handle.Pid.Pid != `` {
-			viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
+		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+		if relIdObj.tpl.Table != `` {
+			apiUrl := relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
+			if relIdObj.tpl.Handle.Pid.Pid != `` {
+				viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
+			} else {
+				viewSaveField.formContent.DataTypeName = `<my-select v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
+			}
 		} else {
-			viewSaveField.formContent.DataTypeName = `<my-select v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
+			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
+			viewSaveField.formContent.DataTypeName = `<!-- 可选择组件<my-select>或<my-cascader>使用，但需手动确认关联表，并修改接口路径 -->
+                    ` + viewSaveField.formContent.DataType + `
+                    <!-- <my-select v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" /> -->
+                    <!-- <my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" /> -->`
 		}
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = 0)`
@@ -633,22 +638,19 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
                     <el-transfer v-model="saveForm.data.` + tplEM.FieldVar + `" :data="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :props="{ key: 'value', label: 'label' }" />
                     <!-- <el-select-v2 v-model="saveForm.data.` + tplEM.FieldVar + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :multiple="true" :collapse-tags="true" :collapse-tags-tooltip="true" style="width: ` + gconv.String(170+(v.FieldShowLenMax-3)*14) + `px" /> -->`
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
-			isReturn = true
-
 			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
 			if relIdObj.tpl.Table != `` {
-				apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
-			}
-			viewSaveField.formContent.Method = internal.ReturnTypeName
-			if relIdObj.tpl.Handle.Pid.Pid != `` {
-				viewSaveField.rule.Method = internal.ReturnTypeName
-				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select') },`)
+				isReturn = true
+				apiUrl := relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
+				viewSaveField.formContent.Method = internal.ReturnTypeName
+				if relIdObj.tpl.Handle.Pid.Pid != `` {
+					viewSaveField.rule.Method = internal.ReturnTypeName
+					viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select') },`)
 
-				viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :isPanel="true" :props="{ multiple: true }" />`
+					viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :isPanel="true" :props="{ multiple: true }" />`
 
-				viewSaveField.paramHandle.Method = internal.ReturnTypeName
-				viewSaveField.paramHandle.DataTypeName = `if (param.` + tplEM.FieldVar + ` === undefined) {
+					viewSaveField.paramHandle.Method = internal.ReturnTypeName
+					viewSaveField.paramHandle.DataTypeName = `if (param.` + tplEM.FieldVar + ` === undefined) {
                 param.` + tplEM.FieldVar + ` = []
             } else {
                 let ` + gstr.CaseCamelLower(tplEM.FieldVar) + `: any = []
@@ -657,13 +659,14 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
                 })
                 param.` + tplEM.FieldVar + ` = [...new Set(` + gstr.CaseCamelLower(tplEM.FieldVar) + `)]
             }`
-			} else {
-				viewSaveField.rule.Method = internal.ReturnTypeName
-				viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
+				} else {
+					viewSaveField.rule.Method = internal.ReturnTypeName
+					viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
 
-				viewSaveField.formContent.DataTypeName = `<!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
+					viewSaveField.formContent.DataTypeName = `<!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
 					<my-select v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" :multiple="true" />
                     <!-- <my-transfer v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" /> -->`
+				}
 			}
 		case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix, internal.TypeNameAudioSuffix, internal.TypeNameFileSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text	// audio,audio_list,audioList,audio_arr,audioArr等后缀；	类型：单音频varchar，多音频json或text	// file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
 			if v.FieldType == internal.TypeVarchar {

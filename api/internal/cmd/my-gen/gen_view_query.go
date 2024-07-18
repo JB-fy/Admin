@@ -229,16 +229,21 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 		return myGenViewQueryField{}
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
-		if relIdObj.tpl.Table != `` {
-			apiUrl = relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
-		}
-
 		viewQueryField.form.Method = internal.ReturnTypeName
-		viewQueryField.form.DataTypeName = `<my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
-		if relIdObj.tpl.Handle.Pid.Pid != `` {
-			viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
+		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+		if relIdObj.tpl.Table != `` {
+			apiUrl := relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
+			if relIdObj.tpl.Handle.Pid.Pid != `` {
+				viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" />`
+			} else {
+				viewQueryField.form.DataTypeName = `<my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
+			}
+		} else {
+			apiUrl := tpl.ModuleDirCaseKebab + `/` + gstr.CaseKebab(gstr.SubStr(v.FieldCaseCamelRemove, 0, -2))
+			viewQueryField.form.DataTypeName = `<!-- 可选择组件<my-select>或<my-cascader>使用，但需手动确认关联表，并修改接口路径 -->
+            ` + viewQueryField.form.DataType + `
+            <!-- <my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" /> -->
+            <!-- <my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" /> -->`
 		}
 	case internal.TypeNameSortSuffix: // sort,num,number,weight等后缀；	类型：int等类型；
 		return myGenViewQueryField{}
