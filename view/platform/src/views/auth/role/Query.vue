@@ -46,7 +46,10 @@ const queryForm = reactive({
             />
         </el-form-item>
         <el-form-item v-if="queryCommon.data.scene_code == 'org'" prop="rel_id">
+            <!-- 可选择组件<my-select>或<my-cascader>使用，但需手动确认关联表，并修改接口路径 -->
+            <!-- <el-input-number v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :min="1" :max="4294967295" :precision="0" :controls="false" /> -->
             <my-select v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/org/org/list' }" :defaultOptions="tm('auth.role.status.rel_id')" />
+            <!-- <my-cascader v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/tree' }" :props="{ emitPath: false }" /> -->
         </el-form-item>
         <el-form-item v-if="queryCommon.data.scene_id > 0" prop="action_id" :key="queryCommon.data.scene_id">
             <my-select v-model="queryCommon.data.action_id" :placeholder="t('auth.role.name.action_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { scene_id: queryCommon.data.scene_id } } }" />

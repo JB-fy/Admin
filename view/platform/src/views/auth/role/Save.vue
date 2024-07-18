@@ -102,9 +102,12 @@ const saveDrawer = reactive({
                         "
                     />
                 </el-form-item>
-                <!-- <el-form-item :label="t('auth.role.name.rel_id')" prop="rel_id">
-                    <my-select v-model="saveForm.data.rel_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/list' }" />
-                </el-form-item> -->
+                <!-- <el-form-item :label="t('auth.role.name.rel_id')" prop="rel_id"> -->
+                    <!-- 可选择组件<my-select>或<my-cascader>使用，但需手动确认关联表，并修改接口路径 -->
+                    <!-- <el-input-number v-model="saveForm.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :min="1" :max="4294967295" :precision="0" :controls="false" :value-on-clear="0" /> -->
+                    <!-- <my-select v-model="saveForm.data.rel_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/list' }" /> -->
+                    <!-- <my-cascader v-model="saveForm.data.rel_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/tree' }" :props="{ emitPath: false }" /> -->
+                <!-- </el-form-item> -->
                 <el-form-item v-if="saveForm.data.scene_id" :label="t('auth.role.name.action_id_arr')" prop="action_id_arr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
                     <!-- <my-select v-model="saveForm.data.action_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/action/list', param: { filter: { scene_id: saveForm.data.scene_id } } }" :multiple="true" /> -->
