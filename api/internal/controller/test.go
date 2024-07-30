@@ -64,7 +64,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	/*--------数据库使用示例 结束--------*/
 
 	/*--------数据操作示例 开始--------*/
-	// g.Validator().Rules(`required|integer`).Data(`aaaa`).Run(ctx) // 单独验证
+	// g.Validator().Rules(`required|length:1,10|regex:^[\p{L}\p{M}\p{N}_-]+$`).Messages(`必须|最长10个字|昵称不允许特殊字符`).Data(`aaaa`).Run(ctx) // 单独验证
 
 	// garray.NewStrArrayFrom([]string{`a`, `b`, `c`}).Contains(`a`) // 是否含有元素
 
