@@ -533,7 +533,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		fieldHandle := gstr.CaseCamelLower(gstr.Replace(dataFieldPath, `.`, `_`)) + `Handle`
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<template v-for="(_, index) in saveForm.data.` + dataFieldPath + `" :key="index">
-                    <el-tag type="info" :closable="true" @close="` + fieldHandle + `.del(index)" size="large" style="padding-left: 0; margin: 3px 10px 3px 0;"">
+                    <el-tag type="info" :closable="true" @close="` + fieldHandle + `.del(index)" size="large" style="padding-left: 0; margin: 3px 10px 3px 0;">
                         <el-input :ref="(el: any) => ` + fieldHandle + `.ref[index] = el" v-model="saveForm.data.` + dataFieldPath + `[index]" @blur="` + fieldHandle + `.del(index, true)" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" style="width: 150px" />
                         <!-- <el-input-number :ref="(el: any) => ` + fieldHandle + `.ref[index] = el" v-model="saveForm.data.` + dataFieldPath + `[index]" @blur="` + fieldHandle + `.del(index, true)" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :controls="false" style="width: 150px" /> -->
                     </el-tag>
@@ -799,13 +799,13 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		case `<el-input`:
 			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />`
 		case `<el-input-number`:
-			formContent = gstr.Replace(gstr.SubStr(formContent, 0, -2)+`:controls="false" style="width: 150px;" />`, ` :controls="true"`, ``)
+			// formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />`
 		}
 
 		viewSaveField.isI18nTm = true
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<template v-for="(_, index) in saveForm.data.` + tplEM.FieldVar + `" :key="index">
-                    <el-tag type="info" :closable="true" @close="` + fieldHandle + `.del(index)" size="large" style="padding-left: 0; margin: 3px 10px 3px 0;"">
+                    <el-tag type="info" :closable="true" @close="` + fieldHandle + `.del(index)" size="large" style="padding-left: 0; margin: 3px 10px 3px 0;">
                         ` + formContent + `
                     </el-tag>
                 </template>
