@@ -796,10 +796,8 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		formContent := gstr.TrimStr(viewSaveFieldTmp.formContent.GetData(), ` `)
 		formContent = gstr.Replace(formContent, ` `, ` :ref="(el: any) => `+fieldHandle+`.ref[index] = el" v-model="saveForm.data.`+tplEM.FieldVar+`[index]" @blur="`+fieldHandle+`.del(index, true)" :placeholder="t('`+i18nPath+`.name.`+i18nFieldPath+`')"`, 1)
 		switch gstr.Split(formContent, ` `)[0] {
-		case `<el-input`:
+		case `<el-input`, `<el-input-number`:
 			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />`
-		case `<el-input-number`:
-			// formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />`
 		}
 
 		viewSaveField.isI18nTm = true
