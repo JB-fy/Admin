@@ -48,25 +48,18 @@ const saveForm = reactive({
 })
 
 const hotSearchHandle = reactive({
-    ref: null as any,
-    visible: false,
-    value: undefined,
-    tagType: tm('config.const.tagType') as any[],
-    visibleChange: () => {
-        hotSearchHandle.visible = true
-        nextTick(() => {
-            hotSearchHandle.ref?.focus()
-        })
+    ref: [] as any[],
+    add: () => {
+        !Array.isArray(saveForm.data.hotSearch) && (saveForm.data.hotSearch = [])
+        saveForm.data.hotSearch.push(undefined)
+        nextTick(() => hotSearchHandle.ref[hotSearchHandle.ref.length - 1].focus())
     },
-    addValue: () => {
-        if (!(hotSearchHandle.value === undefined || hotSearchHandle.value === null || hotSearchHandle.value === '')) {
-            saveForm.data.hotSearch.push(hotSearchHandle.value)
+    del: (index: number, isBlur: boolean = false) => {
+        if (isBlur && saveForm.data.hotSearch[index] !== undefined && saveForm.data.hotSearch[index] !== null && saveForm.data.hotSearch[index] !== '') {
+            return
         }
-        hotSearchHandle.visible = false
-        hotSearchHandle.value = undefined
-    },
-    delValue: (item: any) => {
-        saveForm.data.hotSearch.splice(saveForm.data.hotSearch.indexOf(item), 1)
+        saveForm.data.hotSearch.splice(index, 1)
+        hotSearchHandle.ref.splice(index, 1)
     },
 })
 
@@ -76,20 +69,12 @@ saveForm.initData()
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <el-form-item :label="t('platform.config.app.name.hotSearch')" prop="hotSearch">
-            <el-tag v-for="(item, index) in saveForm.data.hotSearch" :type="hotSearchHandle.tagType[index % hotSearchHandle.tagType.length]" @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px">
-                {{ item }}
-            </el-tag>
-            <el-input
-                v-if="hotSearchHandle.visible"
-                :ref="(el: any) => hotSearchHandle.ref = el"
-                v-model="hotSearchHandle.value"
-                :placeholder="t('platform.config.app.name.hotSearch')"
-                @keyup.enter="hotSearchHandle.addValue"
-                @blur="hotSearchHandle.addValue"
-                size="small"
-                style="width: 100px"
-            />
-            <el-button v-else type="primary" size="small" @click="hotSearchHandle.visibleChange"><autoicon-ep-plus />{{ t('common.add') }}</el-button>
+            <template v-for="(_, index) in saveForm.data.hotSearch" :key="index">
+                <el-tag type="info" :closable="true" @close="hotSearchHandle.del(index)" size="large" style="padding-left: 0; margin: 3px 10px 3px 0">
+                    <el-input :ref="(el: any) => hotSearchHandle.ref[index] = el" v-model="saveForm.data.hotSearch[index]" @blur="hotSearchHandle.del(index, true)" :placeholder="t('platform.config.app.name.hotSearch')" style="width: 150px" />
+                </el-tag>
+            </template>
+            <el-button type="primary" @click="hotSearchHandle.add" style="margin: 3px 0"> <autoicon-ep-plus />{{ t('common.add') }} </el-button>
         </el-form-item>
         <el-form-item :label="t('platform.config.app.name.userAgreement')" prop="userAgreement">
             <my-editor v-model="saveForm.data.userAgreement" />

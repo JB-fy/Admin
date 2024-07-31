@@ -532,36 +532,27 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'blur', message: t('validation.array'), defaultField: { type: 'string', message: t('validation.input') } },	// 限制数组数量时用：max: 10, message: t('validation.max.array', { max: 10 })`)
 		fieldHandle := gstr.CaseCamelLower(gstr.Replace(dataFieldPath, `.`, `_`)) + `Handle`
 		viewSaveField.formContent.Method = internal.ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-tag v-for="(item, index) in saveForm.data.` + dataFieldPath + `" :type="` + fieldHandle + `.tagType[index % ` + fieldHandle + `.tagType.length] as any" @close="` + fieldHandle + `.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
-                        {{ item }}
+		viewSaveField.formContent.DataTypeName = `<template v-for="(_, index) in saveForm.data.` + dataFieldPath + `" :key="index">
+                    <el-tag type="info" :closable="true" @close="` + fieldHandle + `.del(index)" size="large" style="padding-left: 0; margin: 3px 10px 3px 0;"">
+                        <el-input :ref="(el: any) => ` + fieldHandle + `.ref[index] = el" v-model="saveForm.data.` + dataFieldPath + `[index]" @blur="` + fieldHandle + `.del(index, true)" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" style="width: 150px" />
+                        <!-- <el-input-number :ref="(el: any) => ` + fieldHandle + `.ref[index] = el" v-model="saveForm.data.` + dataFieldPath + `[index]" @blur="` + fieldHandle + `.del(index, true)" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :controls="false" style="width: 150px" /> -->
                     </el-tag>
-                    <!-- <el-input-number v-if="` + fieldHandle + `.visible" :ref="(el: any) => ` + fieldHandle + `.ref = el" v-model="` + fieldHandle + `.value" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" @keyup.enter="` + fieldHandle + `.addValue" @blur="` + fieldHandle + `.addValue" :controls="false" size="small" style="width: 150px;" /> -->
-                    <el-input v-if="` + fieldHandle + `.visible" :ref="(el: any) => ` + fieldHandle + `.ref = el" v-model="` + fieldHandle + `.value" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" @keyup.enter="` + fieldHandle + `.addValue" @blur="` + fieldHandle + `.addValue" :show-word-limit="true" :clearable="true" size="small" style="width: 200px;" />
-                    <el-button v-else type="primary" size="small" @click="` + fieldHandle + `.visibleChange">
-                        <autoicon-ep-plus />{{ t('common.add') }}
-                    </el-button>`
+                </template>
+                <el-button type="primary" @click="` + fieldHandle + `.add" style="margin: 3px 0"> <autoicon-ep-plus />{{ t('common.add') }} </el-button>`
 		viewSaveField.formHandle.Method = internal.ReturnTypeName
 		viewSaveField.formHandle.DataTypeName = `const ` + fieldHandle + ` = reactive({
-    ref: null as any,
-    visible: false,
-    value: undefined,
-    tagType: tm('config.const.tagType') as string[],
-    visibleChange: () => {
-        ` + fieldHandle + `.visible = true
-        nextTick(() => {
-            ` + fieldHandle + `.ref?.focus()
-        })
+    ref: [] as any[],
+    add: () => {
+        !Array.isArray(saveForm.data.` + dataFieldPath + `) && (saveForm.data.` + dataFieldPath + ` = [])
+        saveForm.data.` + dataFieldPath + `.push(undefined)
+        nextTick(() => ` + fieldHandle + `.ref[` + fieldHandle + `.ref.length - 1].focus())
     },
-    addValue: () => {
-        if (!(` + fieldHandle + `.value === undefined || ` + fieldHandle + `.value === null || ` + fieldHandle + `.value === '')) {
-			Array.isArray(saveForm.data.` + dataFieldPath + `) ? null : (saveForm.data.` + dataFieldPath + ` = [])
-            saveForm.data.` + dataFieldPath + `.push(` + fieldHandle + `.value)
+    del: (index: number, isBlur: boolean = false) => {
+        if (isBlur && saveForm.data.` + dataFieldPath + `[index] !== undefined && saveForm.data.` + dataFieldPath + `[index] !== null && saveForm.data.` + dataFieldPath + `[index] !== '') {
+            return
         }
-        ` + fieldHandle + `.visible = false
-        ` + fieldHandle + `.value = undefined
-    },
-    delValue: (item: any) => {
-        saveForm.data.` + dataFieldPath + `.splice(saveForm.data.` + dataFieldPath + `.indexOf(item), 1)
+        saveForm.data.` + dataFieldPath + `.splice(index, 1)
+        ` + fieldHandle + `.ref.splice(index, 1)
     },
 })`
 	}
@@ -803,45 +794,36 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 
 		fieldHandle := gstr.CaseCamelLower(tplEM.FieldVar) + `Handle`
 		formContent := gstr.TrimStr(viewSaveFieldTmp.formContent.GetData(), ` `)
-		formContent = gstr.Replace(formContent, ` `, ` v-if="`+fieldHandle+`.visible" :ref="(el: any) => `+fieldHandle+`.ref = el" v-model="`+fieldHandle+`.value" :placeholder="t('`+i18nPath+`.name.`+i18nFieldPath+`')" @keyup.enter="`+fieldHandle+`.addValue" @blur="`+fieldHandle+`.addValue"`, 1)
+		formContent = gstr.Replace(formContent, ` `, ` :ref="(el: any) => `+fieldHandle+`.ref[index] = el" v-model="saveForm.data.`+tplEM.FieldVar+`[index]" @blur="`+fieldHandle+`.del(index, true)" :placeholder="t('`+i18nPath+`.name.`+i18nFieldPath+`')"`, 1)
 		switch gstr.Split(formContent, ` `)[0] {
 		case `<el-input`:
-			formContent = gstr.SubStr(formContent, 0, -2) + `size="small" style="width: 200px;" />`
+			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />`
 		case `<el-input-number`:
-			formContent = gstr.SubStr(formContent, 0, -2) + `size="small" style="width: 150px;" />`
+			formContent = gstr.Replace(gstr.SubStr(formContent, 0, -2)+`:controls="false" style="width: 150px;" />`, ` :controls="true"`, ``)
 		}
 
 		viewSaveField.isI18nTm = true
 		viewSaveField.formContent.Method = internal.ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-tag v-for="(item, index) in saveForm.data.` + tplEM.FieldVar + `" :type="` + fieldHandle + `.tagType[index % ` + fieldHandle + `.tagType.length] as any" @close="` + fieldHandle + `.delValue(item)" :key="index" :closable="true" style="margin-right: 10px;">
-                        {{ item }}
+		viewSaveField.formContent.DataTypeName = `<template v-for="(_, index) in saveForm.data.` + tplEM.FieldVar + `" :key="index">
+                    <el-tag type="info" :closable="true" @close="` + fieldHandle + `.del(index)" size="large" style="padding-left: 0; margin: 3px 10px 3px 0;"">
+                        ` + formContent + `
                     </el-tag>
-					` + formContent + `
-                    <el-button v-else type="primary" size="small" @click="` + fieldHandle + `.visibleChange">
-                        <autoicon-ep-plus />{{ t('common.add') }}
-                    </el-button>`
+                </template>
+                <el-button type="primary" @click="` + fieldHandle + `.add" style="margin: 3px 0"> <autoicon-ep-plus />{{ t('common.add') }} </el-button>`
 		viewSaveField.formHandle.Method = internal.ReturnTypeName
 		viewSaveField.formHandle.DataTypeName = `const ` + fieldHandle + ` = reactive({
-    ref: null as any,
-    visible: false,
-    value: undefined,
-    tagType: tm('config.const.tagType') as string[],
-    visibleChange: () => {
-        ` + fieldHandle + `.visible = true
-        nextTick(() => {
-            ` + fieldHandle + `.ref?.focus()
-        })
+    ref: [] as any[],
+    add: () => {
+        !Array.isArray(saveForm.data.` + tplEM.FieldVar + `) && (saveForm.data.` + tplEM.FieldVar + ` = [])
+        saveForm.data.` + tplEM.FieldVar + `.push(undefined)
+        nextTick(() => ` + fieldHandle + `.ref[` + fieldHandle + `.ref.length - 1].focus())
     },
-    addValue: () => {
-        if (!(` + fieldHandle + `.value === undefined || ` + fieldHandle + `.value === null || ` + fieldHandle + `.value === '')) {
-			Array.isArray(saveForm.data.` + tplEM.FieldVar + `) ? null : (saveForm.data.` + tplEM.FieldVar + ` = [])
-            saveForm.data.` + tplEM.FieldVar + `.push(` + fieldHandle + `.value)
+    del: (index: number, isBlur: boolean = false) => {
+        if (isBlur && saveForm.data.` + tplEM.FieldVar + `[index] !== undefined && saveForm.data.` + tplEM.FieldVar + `[index] !== null && saveForm.data.` + tplEM.FieldVar + `[index] !== '') {
+            return
         }
-        ` + fieldHandle + `.visible = false
-        ` + fieldHandle + `.value = undefined
-    },
-    delValue: (item: any) => {
-        saveForm.data.` + tplEM.FieldVar + `.splice(saveForm.data.` + tplEM.FieldVar + `.indexOf(item), 1)
+        saveForm.data.` + tplEM.FieldVar + `.splice(index, 1)
+        ` + fieldHandle + `.ref.splice(index, 1)
     },
 })`
 		viewSave.Add(viewSaveField, tplEM.FieldVar, i18nPath, i18nFieldPath, tplEM.TableType, ``)
@@ -909,9 +891,9 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
                     </template>
 
                     <template v-for="(item, index) in saveForm.data.`+tplEM.FieldVar+`" :key="index">
-                        <div style="width: 100%; margin: 2.5px 0; display: flex; align-items: center; gap: 10px">
+                        <div style="width: 100%; margin: 3px 0; display: flex; align-items: center; gap: 10px">
                             <el-button type="danger" size="small" @click="() => saveForm.data.`+tplEM.FieldVar+`.splice(index, 1)"><autoicon-ep-close />{{ t('common.delete') }}</el-button>
-							{{formContent}}
+                            {{formContent}}
                         </div>
                     </template>
                 </el-form-item>`)
