@@ -553,7 +553,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
         })
     },
     addValue: () => {
-        if (!(` + fieldHandle + `.value === undefined || ` + fieldHandle + `.value === '')) {
+        if (!(` + fieldHandle + `.value === undefined || ` + fieldHandle + `.value === null || ` + fieldHandle + `.value === '')) {
 			Array.isArray(saveForm.data.` + dataFieldPath + `) ? null : (saveForm.data.` + dataFieldPath + ` = [])
             saveForm.data.` + dataFieldPath + `.push(` + fieldHandle + `.value)
         }
@@ -833,7 +833,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
         })
     },
     addValue: () => {
-        if (!(` + fieldHandle + `.value === undefined || ` + fieldHandle + `.value === '')) {
+        if (!(` + fieldHandle + `.value === undefined || ` + fieldHandle + `.value === null || ` + fieldHandle + `.value === '')) {
 			Array.isArray(saveForm.data.` + tplEM.FieldVar + `) ? null : (saveForm.data.` + tplEM.FieldVar + ` = [])
             saveForm.data.` + tplEM.FieldVar + `.push(` + fieldHandle + `.value)
         }

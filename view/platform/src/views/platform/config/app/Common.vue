@@ -57,7 +57,7 @@ const hotSearchHandle = reactive({
         })
     },
     addValue: () => {
-        if (hotSearchHandle.value) {
+        if (!(hotSearchHandle.value === undefined || hotSearchHandle.value === null || hotSearchHandle.value === '')) {
             saveForm.data.hotSearch.push(hotSearchHandle.value)
         }
         hotSearchHandle.visible = false
