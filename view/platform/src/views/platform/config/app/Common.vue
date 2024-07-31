@@ -13,7 +13,9 @@ const saveForm = reactive({
         privacyAgreement: '',
     } as { [propName: string]: any },
     rules: {
-        hotSearch: [{ type: 'array', trigger: 'change', max: 10, message: t('validation.max.array', { max: 10 }), defaultField: { type: 'string', message: t('validation.input') } }],
+        hotSearch: [
+            { type: 'array', trigger: 'change', message: t('validation.array'), defaultField: { type: 'string', message: t('validation.input') } }, // 限制数组数量时用：max: 10, message: t('validation.max.array', { max: 10 })
+        ],
         userAgreement: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         privacyAgreement: [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
@@ -77,19 +79,17 @@ saveForm.initData()
             <el-tag v-for="(item, index) in saveForm.data.hotSearch" :type="hotSearchHandle.tagType[index % hotSearchHandle.tagType.length]" @close="hotSearchHandle.delValue(item)" :key="index" :closable="true" style="margin-right: 10px">
                 {{ item }}
             </el-tag>
-            <template v-if="saveForm.data.hotSearch.length < 10">
-                <el-input
-                    v-if="hotSearchHandle.visible"
-                    :ref="(el: any) => hotSearchHandle.ref = el"
-                    v-model="hotSearchHandle.value"
-                    :placeholder="t('platform.config.app.name.hotSearch')"
-                    @keyup.enter="hotSearchHandle.addValue"
-                    @blur="hotSearchHandle.addValue"
-                    size="small"
-                    style="width: 100px"
-                />
-                <el-button v-else type="primary" size="small" @click="hotSearchHandle.visibleChange"><autoicon-ep-plus />{{ t('common.add') }}</el-button>
-            </template>
+            <el-input
+                v-if="hotSearchHandle.visible"
+                :ref="(el: any) => hotSearchHandle.ref = el"
+                v-model="hotSearchHandle.value"
+                :placeholder="t('platform.config.app.name.hotSearch')"
+                @keyup.enter="hotSearchHandle.addValue"
+                @blur="hotSearchHandle.addValue"
+                size="small"
+                style="width: 100px"
+            />
+            <el-button v-else type="primary" size="small" @click="hotSearchHandle.visibleChange"><autoicon-ep-plus />{{ t('common.add') }}</el-button>
         </el-form-item>
         <el-form-item :label="t('platform.config.app.name.userAgreement')" prop="userAgreement">
             <my-editor v-model="saveForm.data.userAgreement" />
