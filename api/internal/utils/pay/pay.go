@@ -41,9 +41,9 @@ type Pay interface {
 	App(payReqData PayReqData) (payResData PayResData, err error)    // App支付
 	H5(payReqData PayReqData) (payResData PayResData, err error)     // H5支付
 	QRCode(payReqData PayReqData) (payResData PayResData, err error) // 扫码支付
-	Jsapi(payReqData PayReqData) (payResData PayResData, err error)  // JSAPI支付
-	Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error)      // 回调
-	NotifyRes(r *ghttp.Request, failMsg string)                      // 回调响应处理
+	Jsapi(payReqData PayReqData) (payResData PayResData, err error)  // 小程序支付
+	Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error)      // 回调验证
+	NotifyRes(r *ghttp.Request, failMsg string)                      // 回调响应
 }
 
 func NewPay(ctx context.Context, payInfo gdb.Record) Pay {
