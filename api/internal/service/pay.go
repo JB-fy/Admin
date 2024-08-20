@@ -18,10 +18,19 @@ type (
 		// 删除
 		Delete(ctx context.Context, filter map[string]any) (row int64, err error)
 	}
+	IPayScene interface {
+		// 新增
+		Create(ctx context.Context, data map[string]any) (id int64, err error)
+		// 修改
+		Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error)
+		// 删除
+		Delete(ctx context.Context, filter map[string]any) (row int64, err error)
+	}
 )
 
 var (
-	localPay IPay
+	localPay      IPay
+	localPayScene IPayScene
 )
 
 func Pay() IPay {
@@ -33,4 +42,15 @@ func Pay() IPay {
 
 func RegisterPay(i IPay) {
 	localPay = i
+}
+
+func PayScene() IPayScene {
+	if localPayScene == nil {
+		panic("implement not found for interface IPayScene, forgot register?")
+	}
+	return localPayScene
+}
+
+func RegisterPayScene(i IPayScene) {
+	localPayScene = i
 }

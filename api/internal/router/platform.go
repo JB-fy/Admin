@@ -68,6 +68,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 			})
 
 			group.Group(`/pay`, func(group *ghttp.RouterGroup) {
+				group.Bind(controllerPay.NewScene())
 				group.Bind(controllerPay.NewPay())
 			})
 

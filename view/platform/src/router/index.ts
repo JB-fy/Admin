@@ -132,6 +132,15 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/pay/pay' },
             },
             {
+                path: '/pay/scene',
+                component: async () => {
+                    const component = await import('@/views/pay/scene/Index.vue')
+                    component.default.name = '/pay/scene'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/pay/scene' },
+            },
+            {
                 path: '/app/app',
                 component: async () => {
                     const component = await import('@/views/app/app/Index.vue')
