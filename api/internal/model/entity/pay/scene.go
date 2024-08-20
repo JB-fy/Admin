@@ -13,7 +13,7 @@ type Scene struct {
 	CreatedAt *gtime.Time `json:"createdAt" orm:"created_at" ` // 创建时间
 	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updated_at" ` // 更新时间
 	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
-	SceneId   uint        `json:"sceneId"   orm:"scene_id"   ` // 支付场景ID
+	SceneId   uint        `json:"sceneId"   orm:"scene_id"   ` // 场景ID
 	SceneName string      `json:"sceneName" orm:"scene_name" ` // 名称
 	Remark    string      `json:"remark"    orm:"remark"     ` // 备注
 }

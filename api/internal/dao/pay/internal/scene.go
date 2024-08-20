@@ -26,7 +26,7 @@ type SceneColumns struct {
 	CreatedAt string // 创建时间
 	UpdatedAt string // 更新时间
 	IsStop    string // 停用：0否 1是
-	SceneId   string // 支付场景ID
+	SceneId   string // 场景ID
 	SceneName string // 名称
 	Remark    string // 备注
 }

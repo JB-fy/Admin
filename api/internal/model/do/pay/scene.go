@@ -15,7 +15,7 @@ type Scene struct {
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
 	IsStop    interface{} // 停用：0否 1是
-	SceneId   interface{} // 支付场景ID
+	SceneId   interface{} // 场景ID
 	SceneName interface{} // 名称
 	Remark    interface{} // 备注
 }

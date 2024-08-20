@@ -5,6 +5,8 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
+
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 type sPay struct{}
@@ -46,6 +48,11 @@ func (logicThis *sPay) Delete(ctx context.Context, filter map[string]any) (row i
 	daoModelThis.Filters(filter).SetIdArr()
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
+		return
+	}
+
+	if count, _ := daoPay.Channel.CtxDaoModel(ctx).Filter(daoPay.Channel.Columns().PayId, daoModelThis.IdArr).Count(); count > 0 {
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pay.pay`), count, g.I18n().T(ctx, `name.pay.channel`)}})
 		return
 	}
 
