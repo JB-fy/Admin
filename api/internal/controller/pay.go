@@ -20,7 +20,17 @@ func NewPay() *Pay {
 }
 
 // 列表
-func (controllerThis *Pay) List(ctx context.Context, req *api.PayListReq) (res *api.PayListRes, err error) {
+func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq) (res *api.PayChannelListRes, err error) {
+	paySceneInfo, _ := daoPay.Scene.CtxDaoModel(ctx).Filter(daoPay.Scene.Columns().SceneId, req.SceneId).One()
+	if paySceneInfo.IsEmpty() {
+		err = utils.NewErrorCode(ctx, 30011000, ``)
+		return
+	}
+	if paySceneInfo[daoPay.Scene.Columns().IsStop].Uint() == 0 {
+		err = utils.NewErrorCode(ctx, 30011001, ``)
+		return
+	}
+
 	/* sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
 	switch sceneCode {
@@ -35,13 +45,28 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayListReq) (res *
 		return
 	}
 
-	res = &api.PayListRes{List: []api.PayInfo{}}
+	res = &api.PayChannelListRes{List: []api.PayChannelInfo{}}
 	list.Structs(&res.List)
 	return
 }
 
 // 支付
 func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *api.PayPayRes, err error) {
+	channelInfo, _ := daoPay.Channel.CtxDaoModel(ctx).Filter(daoPay.Channel.Columns().ChannelId, req.ChannelId).One()
+	if channelInfo.IsEmpty() {
+		err = utils.NewErrorCode(ctx, 30012000, ``)
+		return
+	}
+	if channelInfo[daoPay.Channel.Columns().IsStop].Uint() == 0 {
+		err = utils.NewErrorCode(ctx, 30012001, ``)
+		return
+	}
+	payInfo, _ := daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, channelInfo[daoPay.Channel.Columns().PayId]).One()
+	if payInfo.IsEmpty() {
+		err = utils.NewErrorCode(ctx, 30010000, ``)
+		return
+	}
+
 	/**--------确定支付数据 开始--------**/
 	var payReqData pay.PayReqData
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
@@ -53,11 +78,13 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		switch req.PayScene {
-		case 10, 11: //微信小程序	微信公众号
-			payReqData.Openid = loginInfo[daoUsers.Users.Columns().WxOpenid].String()
-		case 20: //支付宝小程序
-			// payReqData.Openid = loginInfo[daoUsers.Users.Columns().AliOpenid].String()
+		if channelInfo[daoPay.Channel.Columns().Method].Uint() == 3 { //小程序支付
+			switch payInfo[daoPay.Pay.Columns().PayType].Uint() {
+			case 0: //支付宝
+				// payReqData.Openid = loginInfo[daoUsers.Users.Columns().AliOpenid].String()
+			case 1: //微信
+				payReqData.Openid = loginInfo[daoUsers.Users.Columns().WxOpenid].String()
+			}
 		}
 	default:
 		err = utils.NewErrorCode(ctx, 39999998, ``)
@@ -80,22 +107,16 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	payReqData.Desc = `订单描述` */
 	/**--------确定支付数据 开始--------**/
 
-	payInfo, _ := daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, req.PayId).One()
-	if payInfo.IsEmpty() {
-		err = utils.NewErrorCode(ctx, 30010000, ``)
-		return
-	}
 	payObj := pay.NewPay(ctx, payInfo)
-
 	var payResData pay.PayResData
-	switch req.PayScene {
-	case 0: //APP
+	switch channelInfo[daoPay.Channel.Columns().Method].Uint() {
+	case 0: //APP支付
 		payResData, err = payObj.App(payReqData)
-	case 1: //H5
+	case 1: //H5支付
 		payResData, err = payObj.H5(payReqData)
-	case 2: //扫码
+	case 2: //扫码支付
 		payResData, err = payObj.QRCode(payReqData)
-	case 10, 11, 20: //微信小程序	微信公众号	支付宝小程序
+	case 3: //小程序支付
 		payResData, err = payObj.Jsapi(payReqData)
 	}
 	if err != nil {
@@ -148,7 +169,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 			return
 		}
 		if row == 0 {
-			err = utils.NewErrorCode(ctx, 30010001, ``)
+			err = utils.NewErrorCode(ctx, 30019000, ``)
 			return
 		}
 
