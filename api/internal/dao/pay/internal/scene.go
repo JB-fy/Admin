@@ -25,16 +25,20 @@ type SceneDao struct {
 type SceneColumns struct {
 	CreatedAt string // 创建时间
 	UpdatedAt string // 更新时间
-	PayId     string // 支付ID
-	PayScene  string // 支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序
+	IsStop    string // 停用：0否 1是
+	SceneId   string // 支付场景ID
+	SceneName string // 名称
+	Remark    string // 备注
 }
 
 // sceneColumns holds the columns for table pay_scene.
 var sceneColumns = SceneColumns{
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
-	PayId:     "pay_id",
-	PayScene:  "pay_scene",
+	IsStop:    "is_stop",
+	SceneId:   "scene_id",
+	SceneName: "scene_name",
+	Remark:    "remark",
 }
 
 // NewSceneDao creates and returns a new DAO object for table data access.

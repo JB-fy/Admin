@@ -22,3 +22,6 @@
     关联表:org_admin:true
 ./main myGen -dbGroup=default -dbTable=org_admin -removePrefixCommon= -removePrefixAlone=org_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/机构管理员 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     关联表:auth_role_rel_of_platform_admin:false
+./main myGen -dbGroup=default -dbTable=pay -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/支付管理/支付配置 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+    扩展表(一对多):pay_channel:false
+    关联表:pay_channel:false

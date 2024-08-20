@@ -12,6 +12,8 @@ import (
 type Scene struct {
 	CreatedAt *gtime.Time `json:"createdAt" orm:"created_at" ` // 创建时间
 	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updated_at" ` // 更新时间
-	PayId     uint        `json:"payId"     orm:"pay_id"     ` // 支付ID
-	PayScene  uint        `json:"payScene"  orm:"pay_scene"  ` // 支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序
+	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
+	SceneId   uint        `json:"sceneId"   orm:"scene_id"   ` // 支付场景ID
+	SceneName string      `json:"sceneName" orm:"scene_name" ` // 名称
+	Remark    string      `json:"remark"    orm:"remark"     ` // 备注
 }

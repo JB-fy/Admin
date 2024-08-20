@@ -33,12 +33,6 @@ const queryForm = reactive({
         <el-form-item prop="pay_type">
             <el-select-v2 v-model="queryCommon.data.pay_type" :options="tm('pay.pay.status.pay_type')" :placeholder="t('pay.pay.name.pay_type')" :clearable="true" style="width: 100px" />
         </el-form-item>
-        <el-form-item prop="pay_scene">
-            <el-select-v2 v-model="queryCommon.data.pay_scene" :options="tm('pay.pay.status.pay_scene_arr')" :placeholder="t('pay.pay.name.pay_scene_arr')" :clearable="true" style="width: 142px" />
-        </el-form-item>
-        <el-form-item prop="is_stop">
-            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('pay.pay.name.is_stop')" :clearable="true" style="width: 86px" />
-        </el-form-item>
         <el-form-item prop="time_range">
             <el-date-picker
                 v-model="queryCommon.data.time_range"

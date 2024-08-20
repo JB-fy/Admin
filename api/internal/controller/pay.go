@@ -30,7 +30,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayListReq) (res *
 		return
 	} */
 
-	list, err := daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Scene.Columns().PayScene, req.PayScene).OrderDesc(daoPay.Pay.Columns().Sort).ListPri()
+	list, err := daoPay.Channel.CtxDaoModel(ctx).Filter(daoPay.Channel.Columns().SceneId, req.SceneId).OrderDesc(daoPay.Channel.Columns().Sort).ListPri()
 	if err != nil {
 		return
 	}

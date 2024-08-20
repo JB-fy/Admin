@@ -13,50 +13,52 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// PayDao is the data access object for table pay.
-type PayDao struct {
+// ChannelDao is the data access object for table pay_channel.
+type ChannelDao struct {
 	table     string           // table is the underlying table name of the DAO.
 	group     string           // group is the database configuration group name of current DAO.
-	columns   PayColumns       // columns contains all the column names of Table for convenient usage.
+	columns   ChannelColumns   // columns contains all the column names of Table for convenient usage.
 	columnArr *garray.StrArray // 所有字段的数组
 }
 
-// PayColumns defines and stores column names for table pay.
-type PayColumns struct {
+// ChannelColumns defines and stores column names for table pay_channel.
+type ChannelColumns struct {
 	CreatedAt   string // 创建时间
 	UpdatedAt   string // 更新时间
+	IsStop      string // 停用：0否 1是
+	ChannelId   string // 通道ID
+	ChannelName string // 名称
+	ChannelIcon string // 图标
+	SceneId     string // 场景ID
 	PayId       string // 支付ID
-	PayName     string // 名称
-	PayType     string // 类型：0支付宝 1微信
-	PayConfig   string // 配置。根据pay_type类型设置
-	PayRate     string // 费率
+	Method      string // 支付方式：1APP支付 2H5支付 3扫码支付 4小程序支付
+	Sort        string // 排序值。从大到小排序
 	TotalAmount string // 总额
-	Balance     string // 余额
-	Remark      string // 备注
 }
 
-// payColumns holds the columns for table pay.
-var payColumns = PayColumns{
+// channelColumns holds the columns for table pay_channel.
+var channelColumns = ChannelColumns{
 	CreatedAt:   "created_at",
 	UpdatedAt:   "updated_at",
+	IsStop:      "is_stop",
+	ChannelId:   "channel_id",
+	ChannelName: "channel_name",
+	ChannelIcon: "channel_icon",
+	SceneId:     "scene_id",
 	PayId:       "pay_id",
-	PayName:     "pay_name",
-	PayType:     "pay_type",
-	PayConfig:   "pay_config",
-	PayRate:     "pay_rate",
+	Method:      "method",
+	Sort:        "sort",
 	TotalAmount: "total_amount",
-	Balance:     "balance",
-	Remark:      "remark",
 }
 
-// NewPayDao creates and returns a new DAO object for table data access.
-func NewPayDao() *PayDao {
-	return &PayDao{
+// NewChannelDao creates and returns a new DAO object for table data access.
+func NewChannelDao() *ChannelDao {
+	return &ChannelDao{
 		group:   `default`,
-		table:   `pay`,
-		columns: payColumns,
+		table:   `pay_channel`,
+		columns: channelColumns,
 		columnArr: func() *garray.StrArray {
-			v := reflect.ValueOf(payColumns)
+			v := reflect.ValueOf(channelColumns)
 			count := v.NumField()
 			column := make([]string, count)
 			for i := 0; i < count; i++ {
@@ -68,28 +70,28 @@ func NewPayDao() *PayDao {
 }
 
 // DB retrieves and returns the underlying raw database management object of current DAO.
-func (dao *PayDao) DB() gdb.DB {
+func (dao *ChannelDao) DB() gdb.DB {
 	return g.DB(dao.group)
 }
 
 // Table returns the table name of current dao.
-func (dao *PayDao) Table() string {
+func (dao *ChannelDao) Table() string {
 	return dao.table
 }
 
 // Columns returns all column names of current dao.
 // 使用较为频繁。为优化内存考虑，改成返回指针更为合适，但切忌使用过程中不可修改，否则会污染全局
-func (dao *PayDao) Columns() *PayColumns {
+func (dao *ChannelDao) Columns() *ChannelColumns {
 	return &dao.columns
 }
 
 // Group returns the configuration group name of database of current dao.
-func (dao *PayDao) Group() string {
+func (dao *ChannelDao) Group() string {
 	return dao.group
 }
 
 // Ctx creates and returns the Model for current DAO, It automatically sets the context for current operation.
-func (dao *PayDao) Ctx(ctx context.Context) *gdb.Model {
+func (dao *ChannelDao) Ctx(ctx context.Context) *gdb.Model {
 	return dao.DB().Model(dao.table).Safe().Ctx(ctx)
 }
 
@@ -99,11 +101,11 @@ func (dao *PayDao) Ctx(ctx context.Context) *gdb.Model {
 //
 // Note that, you should not Commit or Rollback the transaction in function f
 // as it is automatically handled by this function.
-func (dao *PayDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
+func (dao *ChannelDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return dao.Ctx(ctx).Transaction(ctx, f)
 }
 
 // 所有字段的数组
-func (dao *PayDao) ColumnArr() *garray.StrArray {
+func (dao *ChannelDao) ColumnArr() *garray.StrArray {
 	return dao.columnArr
 }

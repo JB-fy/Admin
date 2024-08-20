@@ -87,28 +87,6 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'pay_icon',
-            title: t('pay.pay.name.pay_icon'),
-            key: 'pay_icon',
-            align: 'center',
-            width: 100,
-            cellRenderer: (props: any): any => {
-                if (!props.rowData.pay_icon) {
-                    return
-                }
-                const imageList = [props.rowData.pay_icon]
-                return [
-                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-                        <el-space direction="vertical" style="margin: 5px 10px;">
-                            {imageList.map((item) => {
-                                return <el-image src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-                            })}
-                        </el-space>
-                    </el-scrollbar>,
-                ]
-            },
-        },
-        {
             dataKey: 'pay_type',
             title: t('pay.pay.name.pay_type'),
             key: 'pay_type',
@@ -153,87 +131,12 @@ const table = reactive({
             width: 150,
         },
         {
-            dataKey: 'sort',
-            title: t('pay.pay.name.sort'),
-            key: 'sort',
-            align: 'center',
-            width: 100,
-            sortable: true,
-            cellRenderer: (props: any): any => {
-                if (!authAction.isUpdate) {
-                    return [<div class="el-table-v2__cell-text">{props.rowData.sort}</div>]
-                }
-                if (!props.rowData?.editSort?.isEdit) {
-                    return [
-                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editSort = { isEdit: true, oldValue: props.rowData.sort })}>
-                            {props.rowData.sort}
-                        </div>,
-                    ]
-                }
-                let currentRef: any
-                return [
-                    <el-input-number
-                        ref={(el: any) => {
-                            el?.focus()
-                            currentRef = el
-                        }}
-                        v-model={props.rowData.sort}
-                        placeholder={t('pay.pay.tip.sort')}
-                        min={0}
-                        max={255}
-                        precision={0}
-                        controls={false}
-                        onBlur={() => {
-                            props.rowData.editSort.isEdit = false
-                            if (props.rowData.sort == props.rowData.editSort.oldValue) {
-                                return
-                            }
-                            if (!(props.rowData.sort || props.rowData.sort === 0)) {
-                                props.rowData.sort = props.rowData.editSort.oldValue
-                                return
-                            }
-                            handleUpdate({ id_arr: [props.rowData.id], sort: props.rowData.sort }).catch(() => (props.rowData.sort = props.rowData.editSort.oldValue))
-                        }}
-                        onKeydown={(event: any) => {
-                            switch (event.keyCode) {
-                                case 13: //13：Enter键 27：Esc键 32：空格键
-                                    currentRef?.blur()
-                                    break
-                            }
-                        }}
-                    />,
-                ]
-            },
-        },
-        {
             dataKey: 'remark',
             title: t('pay.pay.name.remark'),
             key: 'remark',
             align: 'center',
             width: 200,
             hidden: true,
-        },
-        {
-            dataKey: 'is_stop',
-            title: t('pay.pay.name.is_stop'),
-            key: 'is_stop',
-            align: 'center',
-            width: 100,
-            cellRenderer: (props: any): any => {
-                return [
-                    <el-switch
-                        model-value={props.rowData.is_stop}
-                        active-value={1}
-                        inactive-value={0}
-                        inline-prompt={true}
-                        active-text={t('common.yes')}
-                        inactive-text={t('common.no')}
-                        disabled={!authAction.isUpdate}
-                        onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
-                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
-                    />,
-                ]
-            },
         },
         {
             dataKey: 'updated_at',

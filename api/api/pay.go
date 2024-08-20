@@ -13,8 +13,8 @@ type PayInfo struct {
 
 /*--------列表 开始--------*/
 type PayListReq struct {
-	g.Meta   `path:"/list" method:"post" tags:"支付" sm:"列表"`
-	PayScene uint `json:"pay_scene,omitempty" v:"required|in:0,1,2,10,11,20" dc:"支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序"`
+	g.Meta  `path:"/list" method:"post" tags:"支付" sm:"列表"`
+	SceneId uint `json:"scene_id,omitempty" v:"required|min:1" dc:"支付场景ID"`
 }
 
 type PayListRes struct {

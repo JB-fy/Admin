@@ -22,7 +22,7 @@ type Pay struct {
 func NewPay() *Pay {
 	field := daoPay.Pay.ColumnArr().Slice()
 	defaultFieldOfList := []string{`id`, `label`}
-	defaultFieldOfInfo := []string{`id`, `label`, `pay_scene_arr`}
+	defaultFieldOfInfo := []string{`id`, `label`}
 	return &Pay{
 		defaultFieldOfList: append(field, defaultFieldOfList...),
 		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),

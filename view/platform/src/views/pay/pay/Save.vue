@@ -9,7 +9,6 @@ const saveForm = reactive({
     loading: false,
     data: {
         pay_type: 0,
-        sort: 100,
         ...saveCommon.data,
         pay_config_0: saveCommon.data.pay_type == 0 && saveCommon.data.pay_config ? JSON.parse(saveCommon.data.pay_config) : {},
         pay_config_1: saveCommon.data.pay_type == 1 && saveCommon.data.pay_config ? JSON.parse(saveCommon.data.pay_config) : {},
@@ -18,10 +17,6 @@ const saveForm = reactive({
         pay_name: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-        ],
-        pay_icon: [
-            { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
-            { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
         pay_type: [
             { required: true, message: t('validation.required') },
@@ -88,13 +83,7 @@ const saveForm = reactive({
         balance: [
             { type: 'number', trigger: 'change', min: 0, max: 999999999999.999999, message: t('validation.between.number', { min: 0, max: 999999999999.999999 }) }, // type: 'float'在值为0时验证不能通过
         ], */
-        sort: [{ type: 'integer', trigger: 'change', min: 0, max: 255, message: t('validation.between.number', { min: 0, max: 255 }) }],
         remark: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
-        pay_scene_arr: [
-            { required: true, message: t('validation.required') },
-            { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'enum', enum: (tm('pay.pay.status.pay_scene_arr') as any).map((item: any) => item.value), message: t('validation.select') } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
-        ],
-        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -144,9 +133,6 @@ const saveDrawer = reactive({
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
                 <el-form-item :label="t('pay.pay.name.pay_name')" prop="pay_name">
                     <el-input v-model="saveForm.data.pay_name" :placeholder="t('pay.pay.name.pay_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
-                </el-form-item>
-                <el-form-item :label="t('pay.pay.name.pay_icon')" prop="pay_icon">
-                    <my-upload v-model="saveForm.data.pay_icon" accept="image/*" />
                 </el-form-item>
                 <el-form-item :label="t('pay.pay.name.pay_type')" prop="pay_type">
                     <el-radio-group v-model="saveForm.data.pay_type">
@@ -200,28 +186,8 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('pay.pay.name.balance')" prop="balance">
                     <el-input-number v-model="saveForm.data.balance" :placeholder="t('pay.pay.name.balance')" :min="0" :max="999999999999.999999" :precision="6" :controls="false" :value-on-clear="0.0" />
                 </el-form-item> -->
-                <el-form-item :label="t('pay.pay.name.sort')" prop="sort">
-                    <el-input-number v-model="saveForm.data.sort" :placeholder="t('pay.pay.name.sort')" :min="0" :max="255" :precision="0" :value-on-clear="100" />
-                    <el-alert :title="t('pay.pay.tip.sort')" type="info" :show-icon="true" :closable="false" />
-                </el-form-item>
                 <el-form-item :label="t('pay.pay.name.remark')" prop="remark">
                     <el-input v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />
-                </el-form-item>
-                <el-form-item :label="t('pay.pay.name.pay_scene_arr')" prop="pay_scene_arr">
-                    <!-- 根据个人喜好选择组件<el-transfer>或<el-select-v2> -->
-                    <el-transfer v-model="saveForm.data.pay_scene_arr" :data="tm('pay.pay.status.pay_scene_arr')" :props="{ key: 'value', label: 'label' }" />
-                    <!-- <el-select-v2 v-model="saveForm.data.pay_scene_arr" :options="tm('pay.pay.status.pay_scene_arr')" :placeholder="t('pay.pay.name.pay_scene_arr')" :multiple="true" :collapse-tags="true" :collapse-tags-tooltip="true" style="width: 212px" /> -->
-                </el-form-item>
-                <el-form-item :label="t('pay.pay.name.is_stop')" prop="is_stop">
-                    <el-switch
-                        v-model="saveForm.data.is_stop"
-                        :active-value="1"
-                        :inactive-value="0"
-                        :inline-prompt="true"
-                        :active-text="t('common.yes')"
-                        :inactive-text="t('common.no')"
-                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
-                    />
                 </el-form-item>
             </el-form>
         </el-scrollbar>
