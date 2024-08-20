@@ -20,7 +20,7 @@ type Channel struct {
 	ChannelIcon interface{} // 图标
 	SceneId     interface{} // 场景ID
 	PayId       interface{} // 支付ID
-	Method      interface{} // 支付方式：1APP支付 2H5支付 3扫码支付 4小程序支付
+	Method      interface{} // 方法：0APP支付 1H5支付 2扫码支付 3小程序支付
 	Sort        interface{} // 排序值。从大到小排序
 	TotalAmount interface{} // 总额
 }

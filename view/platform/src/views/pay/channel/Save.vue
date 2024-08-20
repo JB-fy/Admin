@@ -97,7 +97,7 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('pay.channel.name.pay_id')" prop="pay_id">
                     <my-select v-model="saveForm.data.pay_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/pay/pay/list' }" />
                 </el-form-item>
-                <el-form-item v-if="saveForm.data.pay_id > 0" :label="t('pay.channel.name.method')" prop="method">
+                <el-form-item :label="t('pay.channel.name.method')" prop="method">
                     <el-radio-group v-model="saveForm.data.method">
                         <el-radio v-for="(item, index) in (tm('pay.channel.status.method') as any)" :key="index" :value="item.value">
                             {{ item.label }}

@@ -14,7 +14,7 @@ type ChannelInfo struct {
 	ChannelIcon *string     `json:"channel_icon,omitempty" dc:"图标"`
 	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
 	PayId       *uint       `json:"pay_id,omitempty" dc:"支付ID"`
-	Method      *uint       `json:"method,omitempty" dc:"支付方式：1APP支付 2H5支付 3扫码支付 4小程序支付"`
+	Method      *uint       `json:"method,omitempty" dc:"方法：0APP支付 1H5支付 2扫码支付 3小程序支付"`
 	Sort        *uint       `json:"sort,omitempty" dc:"排序值。从大到小排序"`
 	TotalAmount *float64    `json:"total_amount,omitempty" dc:"总额"`
 	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
@@ -36,7 +36,7 @@ type ChannelFilter struct {
 	ChannelName    string      `json:"channel_name,omitempty" v:"max-length:30" dc:"名称"`
 	SceneId        *uint       `json:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
 	PayId          *uint       `json:"pay_id,omitempty" v:"between:1,4294967295" dc:"支付ID"`
-	Method         *uint       `json:"method,omitempty" v:"in:1,2,3,4" dc:"支付方式：1APP支付 2H5支付 3扫码支付 4小程序支付"`
+	Method         *uint       `json:"method,omitempty" v:"in:0,1,2,3" dc:"方法：0APP支付 1H5支付 2扫码支付 3小程序支付"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
@@ -77,7 +77,7 @@ type ChannelCreateReq struct {
 	ChannelIcon *string `json:"channel_icon,omitempty" v:"max-length:200|url" dc:"图标"`
 	SceneId     *uint   `json:"scene_id,omitempty" v:"required|between:1,4294967295" dc:"场景ID"`
 	PayId       *uint   `json:"pay_id,omitempty" v:"required|between:1,4294967295" dc:"支付ID"`
-	Method      *uint   `json:"method,omitempty" v:"in:1,2,3,4" dc:"支付方式：1APP支付 2H5支付 3扫码支付 4小程序支付"`
+	Method      *uint   `json:"method,omitempty" v:"in:0,1,2,3" dc:"方法：0APP支付 1H5支付 2扫码支付 3小程序支付"`
 	Sort        *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序"`
 	// TotalAmount *float64 `json:"total_amount,omitempty" v:"between:0,999999999999.99" dc:"总额"`
 	IsStop *uint `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -91,9 +91,9 @@ type ChannelUpdateReq struct {
 	IdArr       []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ChannelName *string `json:"channel_name,omitempty" v:"max-length:30" dc:"名称"`
 	ChannelIcon *string `json:"channel_icon,omitempty" v:"max-length:200|url" dc:"图标"`
-	SceneId     *uint   `json:"scene_id,omitempty" v:"between:0,4294967295" dc:"场景ID"`
-	PayId       *uint   `json:"pay_id,omitempty" v:"between:0,4294967295" dc:"支付ID"`
-	Method      *uint   `json:"method,omitempty" v:"in:1,2,3,4" dc:"支付方式：1APP支付 2H5支付 3扫码支付 4小程序支付"`
+	SceneId     *uint   `json:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
+	PayId       *uint   `json:"pay_id,omitempty" v:"between:1,4294967295" dc:"支付ID"`
+	Method      *uint   `json:"method,omitempty" v:"in:0,1,2,3" dc:"方法：0APP支付 1H5支付 2扫码支付 3小程序支付"`
 	Sort        *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序"`
 	// TotalAmount *float64 `json:"total_amount,omitempty" v:"between:0,999999999999.99" dc:"总额"`
 	IsStop *uint `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
