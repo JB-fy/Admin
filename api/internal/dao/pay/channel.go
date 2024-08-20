@@ -10,12 +10,12 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
-	"reflect"
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 // internalChannelDao is internal type for wrapping internal DAO implements.
@@ -59,12 +59,12 @@ func (daoThis *channelDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[s
 
 // 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
 func (daoThis *channelDao) ParseId(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(0).String()
+	return daoModel.DbTable + `.` + daoThis.Columns().ChannelId
 }
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
 func (daoThis *channelDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(1).String()
+	return daoModel.DbTable + `.` + daoThis.Columns().ChannelName
 }
 
 // 解析filter
@@ -76,6 +76,22 @@ func (daoThis *channelDao) ParseFilter(filter map[string]any, daoModel *daoIndex
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
+			case `id`, `id_arr`:
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().ChannelId, v)
+			case `exc_id`, `exc_id_arr`:
+				if gvar.New(v).IsSlice() {
+					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.Columns().ChannelId, v)
+				} else {
+					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().ChannelId, v)
+				}
+			case `label`:
+				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().ChannelName, `%`+gconv.String(v)+`%`)
+			case daoThis.Columns().ChannelName:
+				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
+			case `time_range_start`:
+				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case `time_range_end`:
+				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -98,6 +114,18 @@ func (daoThis *channelDao) ParseField(field []string, fieldWithParam map[string]
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
 			daoModel.AfterField.Add(v) */
+			case `id`:
+				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
+			case `label`:
+				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
+			case Scene.Columns().SceneName:
+				tableScene := Scene.ParseDbTable(m.GetCtx())
+				m = m.Fields(tableScene + `.` + v)
+				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
+			case Pay.Columns().PayName:
+				tablePay := Pay.ParseDbTable(m.GetCtx())
+				m = m.Fields(tablePay + `.` + v)
+				m = m.Handler(daoThis.ParseJoin(tablePay, daoModel))
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -273,6 +301,8 @@ func (daoThis *channelDao) ParseGroup(group []string, daoModel *daoIndex.DaoMode
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
+			case `id`:
+				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ChannelId)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -293,6 +323,11 @@ func (daoThis *channelDao) ParseOrder(order []string, daoModel *daoIndex.DaoMode
 			kArr := gstr.Split(v, `,`)
 			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
+			case `id`:
+				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().ChannelId, 1))
+			case daoThis.Columns().Sort:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().ChannelId)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
@@ -316,6 +351,12 @@ func (daoThis *channelDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMod
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
+		case Scene.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable, joinTable+`.`+Scene.Columns().SceneId+` = `+daoModel.DbTable+`.`+daoThis.Columns().SceneId)
+		case Pay.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable, joinTable+`.`+Pay.Columns().PayId+` = `+daoModel.DbTable+`.`+daoThis.Columns().PayId)
+		default:
+			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().ChannelId+` = `+daoModel.DbTable+`.`+daoThis.Columns().ChannelId)
 		}
 		return m
 	}
