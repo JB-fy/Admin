@@ -78,7 +78,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		if channelInfo[daoPay.Channel.Columns().Method].Uint() == 3 { //小程序支付
+		if channelInfo[daoPay.Channel.Columns().PayMethod].Uint() == 3 { //小程序支付
 			switch payInfo[daoPay.Pay.Columns().PayType].Uint() {
 			case 0: //支付宝
 				// payReqData.Openid = loginInfo[daoUsers.Users.Columns().AliOpenid].String()
@@ -109,7 +109,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 
 	payObj := pay.NewPay(ctx, payInfo)
 	var payResData pay.PayResData
-	switch channelInfo[daoPay.Channel.Columns().Method].Uint() {
+	switch channelInfo[daoPay.Channel.Columns().PayMethod].Uint() {
 	case 0: //APP支付
 		payResData, err = payObj.App(payReqData)
 	case 1: //H5支付
