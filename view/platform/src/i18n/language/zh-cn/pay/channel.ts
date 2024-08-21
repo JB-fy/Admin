@@ -4,7 +4,7 @@ export default {
         channel_icon: '图标',
         scene_id: '场景',
         pay_id: '支付',
-        pay_method: '方法',
+        pay_method: '支付方法',
         sort: '排序值',
         total_amount: '总额',
         is_stop: '停用',
