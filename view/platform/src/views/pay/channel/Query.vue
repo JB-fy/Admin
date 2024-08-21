@@ -36,8 +36,8 @@ const queryForm = reactive({
         <el-form-item prop="pay_id">
             <my-select v-model="queryCommon.data.pay_id" :placeholder="t('pay.channel.name.pay_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/pay/pay/list' }" />
         </el-form-item>
-        <el-form-item prop="method">
-            <el-select-v2 v-model="queryCommon.data.method" :options="tm('pay.channel.status.method')" :placeholder="t('pay.channel.name.method')" :clearable="true" style="width: 128px" />
+        <el-form-item prop="pay_method">
+            <el-select-v2 v-model="queryCommon.data.pay_method" :options="tm('pay.channel.status.pay_method')" :placeholder="t('pay.channel.name.pay_method')" :clearable="true" style="width: 128px" />
         </el-form-item>
         <el-form-item prop="is_stop">
             <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('pay.channel.name.is_stop')" :clearable="true" style="width: 86px" />

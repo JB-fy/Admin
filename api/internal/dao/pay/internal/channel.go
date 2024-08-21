@@ -31,7 +31,7 @@ type ChannelColumns struct {
 	ChannelIcon string // 图标
 	SceneId     string // 场景ID
 	PayId       string // 支付ID
-	Method      string // 方法：0APP支付 1H5支付 2扫码支付 3小程序支付
+	PayMethod   string // 方法：0APP支付 1H5支付 2扫码支付 3小程序支付
 	Sort        string // 排序值。从大到小排序
 	TotalAmount string // 总额
 }
@@ -46,7 +46,7 @@ var channelColumns = ChannelColumns{
 	ChannelIcon: "channel_icon",
 	SceneId:     "scene_id",
 	PayId:       "pay_id",
-	Method:      "method",
+	PayMethod:   "pay_method",
 	Sort:        "sort",
 	TotalAmount: "total_amount",
 }

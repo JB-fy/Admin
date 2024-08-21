@@ -105,7 +105,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	payReqData.OrderNo = orderInfo[daoXxxx.Order.Columns().OrderNo].String()
 	payReqData.Amount = orderInfo[daoXxxx.Order.Columns().Price].Float64()
 	payReqData.Desc = `订单描述` */
-	/**--------确定支付数据 开始--------**/
+	/**--------确定支付数据 结束--------**/
 
 	payObj := pay.NewPay(ctx, payInfo)
 	var payResData pay.PayResData
@@ -147,16 +147,20 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 
 	gutil.Dump(notifyInfo)
 	/* // 支付数据累积方法。作用：方便不同订单调用
-	payAddFunc := func(ctx context.Context, orderAmount float64, payRate float64) { //payRate以订单支付时的费率为准
-		daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, req.PayId).HookUpdate(g.Map{
+	payAddFunc := func(ctx context.Context, payId uint, channelId uint, orderAmount float64, payRate float64) { //payRate以订单支付时的费率为准
+		daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, payId).HookUpdate(g.Map{
 			daoPay.Pay.Columns().TotalAmount: gdb.Raw(daoPay.Pay.Columns().TotalAmount + ` + ` + gconv.String(orderAmount)),
 			daoPay.Pay.Columns().Balance:     gdb.Raw(daoPay.Pay.Columns().Balance + ` + ` + gconv.String(orderAmount*(1-payRate))),
+		}).Update()
+		daoPay.Channel.CtxDaoModel(ctx).Filter(daoPay.Channel.Columns().ChannelId, channelId).HookUpdate(g.Map{
+			daoPay.Channel.Columns().TotalAmount: gdb.Raw(daoPay.Channel.Columns().TotalAmount + ` + ` + gconv.String(orderAmount)),
 		}).Update()
 	}
 	// 订单回调处理
 	xxxxOrderHandler := daoXxxx.Order.CtxDaoModel(ctx)
 	err = xxxxOrderHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		row, err := tx.Model(xxxxOrderHandler.DbTable).Where(g.Map{
+			daoXxxx.Order.Columns().PayId:     req.PayId,
 			daoXxxx.Order.Columns().OrderNo:   notifyInfo.OrderNo,
 			daoXxxx.Order.Columns().Price:     notifyInfo.Amount,
 			daoXxxx.Order.Columns().PayStatus: 0,
@@ -176,8 +180,8 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 		// 支付成功后处理逻辑
 
 		// 支付数据累积
-		payRate, _ := tx.Model(xxxxOrderHandler.DbTable).Where(daoXxxx.Order.Columns().OrderNo, notifyInfo.OrderNo).Value(daoXxxx.Order.Columns().PayRate)
-		payAddFunc(ctx, notifyInfo.Amount, payRate.Float64())
+		orderInfo, _ := tx.Model(xxxxOrderHandler.DbTable).Where(daoXxxx.Order.Columns().OrderNo, notifyInfo.OrderNo).One()
+		payAddFunc(ctx, req.PayId, orderInfo[daoXxxx.Order.Columns().ChannelId].Uint(), notifyInfo.Amount, orderInfo[daoXxxx.Order.Columns().PayRate].Float64())
 		return
 	})
 	if err != nil {

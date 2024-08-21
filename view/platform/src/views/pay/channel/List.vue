@@ -123,16 +123,16 @@ const table = reactive({
             width: 150,
         },
         {
-            dataKey: 'method',
-            title: t('pay.channel.name.method'),
-            key: 'method',
+            dataKey: 'pay_method',
+            title: t('pay.channel.name.pay_method'),
+            key: 'pay_method',
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
-                let obj = tm('pay.channel.status.method') as { value: any; label: string }[]
+                let obj = tm('pay.channel.status.pay_method') as { value: any; label: string }[]
                 let index = obj.findIndex((item) => {
-                    return item.value == props.rowData.method
+                    return item.value == props.rowData.pay_method
                 })
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
             },

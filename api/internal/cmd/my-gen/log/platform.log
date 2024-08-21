@@ -31,3 +31,4 @@
     关联表:auth_role:false
     关联表:pay_channel:true
 ./main myGen -dbGroup=default -dbTable=pay_channel -removePrefixCommon= -removePrefixAlone=pay_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/支付管理/支付通道 -isView=1 -sceneCode=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+    关联表:pay_order:false

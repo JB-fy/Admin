@@ -4,13 +4,13 @@ export default {
         channel_icon: '图标',
         scene_id: '场景',
         pay_id: '支付',
-        method: '方法',
+        pay_method: '方法',
         sort: '排序值',
         total_amount: '总额',
         is_stop: '停用',
     },
     status: {
-        method: [
+        pay_method: [
             { value: 0, label: 'APP支付' },
             { value: 1, label: 'H5支付' },
             { value: 2, label: '扫码支付' },

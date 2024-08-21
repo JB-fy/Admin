@@ -8,7 +8,7 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
-        method: 0,
+        pay_method: 0,
         sort: 100,
         ...saveCommon.data,
         scene_id: saveCommon.data.scene_id ? saveCommon.data.scene_id : undefined,
@@ -31,7 +31,7 @@ const saveForm = reactive({
             { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
         ],
-        method: [{ type: 'enum', trigger: 'change', enum: (tm('pay.channel.status.method') as any).map((item: any) => item.value), message: t('validation.select') }],
+        pay_method: [{ type: 'enum', trigger: 'change', enum: (tm('pay.channel.status.pay_method') as any).map((item: any) => item.value), message: t('validation.select') }],
         sort: [{ type: 'integer', trigger: 'change', min: 0, max: 255, message: t('validation.between.number', { min: 0, max: 255 }) }],
         /* total_amount: [
             { type: 'number', trigger: 'change', min: 0, max: 999999999999.99, message: t('validation.between.number', { min: 0, max: 999999999999.99 }) }, // type: 'float'在值为0时验证不能通过
@@ -97,9 +97,9 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('pay.channel.name.pay_id')" prop="pay_id">
                     <my-select v-model="saveForm.data.pay_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/pay/pay/list' }" />
                 </el-form-item>
-                <el-form-item :label="t('pay.channel.name.method')" prop="method">
-                    <el-radio-group v-model="saveForm.data.method">
-                        <el-radio v-for="(item, index) in (tm('pay.channel.status.method') as any)" :key="index" :value="item.value">
+                <el-form-item :label="t('pay.channel.name.pay_method')" prop="pay_method">
+                    <el-radio-group v-model="saveForm.data.pay_method">
+                        <el-radio v-for="(item, index) in (tm('pay.channel.status.pay_method') as any)" :key="index" :value="item.value">
                             {{ item.label }}
                         </el-radio>
                     </el-radio-group>
