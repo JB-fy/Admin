@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 09/07/2024 17:46:01
+ Date: 22/08/2024 12:14:43
 */
 
 
@@ -94,10 +94,43 @@ START 1
 CACHE 1;
 
 -- ----------------------------
+-- Sequence structure for pay_channel_channel_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."pay_channel_channel_id_seq";
+CREATE SEQUENCE "public"."pay_channel_channel_id_seq" 
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
+-- Sequence structure for pay_order_order_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."pay_order_order_id_seq";
+CREATE SEQUENCE "public"."pay_order_order_id_seq" 
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
 -- Sequence structure for pay_pay_id_seq
 -- ----------------------------
 DROP SEQUENCE IF EXISTS "public"."pay_pay_id_seq";
 CREATE SEQUENCE "public"."pay_pay_id_seq" 
+INCREMENT 1
+MINVALUE  1
+MAXVALUE 2147483647
+START 1
+CACHE 1;
+
+-- ----------------------------
+-- Sequence structure for pay_scene_scene_id_seq
+-- ----------------------------
+DROP SEQUENCE IF EXISTS "public"."pay_scene_scene_id_seq";
+CREATE SEQUENCE "public"."pay_scene_scene_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -237,42 +270,50 @@ INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 22, '系统管理-配置中心-上传配置-新增', 'uploadCreate', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 23, '系统管理-配置中心-上传配置-编辑', 'uploadUpdate', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 24, '系统管理-配置中心-上传配置-删除', 'uploadDelete', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 25, '系统管理-配置中心-支付配置-查看', 'payRead', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 26, '系统管理-配置中心-支付配置-新增', 'payCreate', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 27, '系统管理-配置中心-支付配置-编辑', 'payUpdate', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 28, '系统管理-配置中心-支付配置-删除', 'payDelete', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 29, '平台配置-查看', 'platformConfigRead', '可任意读取平台配置表');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 30, '平台配置-保存', 'platformConfigSave', '可任意保存平台配置表');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 31, '应用配置-常用-查看', 'platformConfigCommonRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-应用配置-常用');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 32, '应用配置-常用-保存', 'platformConfigCommonSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-应用配置-常用');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 33, '插件配置-短信-查看', 'platformConfigSmsRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-短信');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 34, '插件配置-短信-保存', 'platformConfigSmsSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-短信');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 35, '插件配置-实名认证-查看', 'platformConfigIdCardRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-实名认证');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 36, '插件配置-实名认证-查看', 'platformConfigIdCardSave', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-实名认证');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 37, '插件配置-一键登录-查看', 'platformConfigOneClickRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-一键登录');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 38, '插件配置-一键登录-保存', 'platformConfigOneClickSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-一键登录');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 39, '插件配置-推送-查看', 'platformConfigPushRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-推送');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 40, '插件配置-推送-查看', 'platformConfigPushSave', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-推送');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 41, '插件配置-视频点播-查看', 'platformConfigVodRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-视频点播');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 42, '插件配置-视频点播-保存', 'platformConfigVodSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-视频点播');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 43, '插件配置-微信-查看', 'platformConfigWxRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-微信');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 44, '插件配置-微信-查看', 'platformConfigWxSave', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-微信');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 45, '插件配置-邮箱-查看', 'platformConfigEmailRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 46, '插件配置-邮箱-保存', 'platformConfigEmailSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 47, '系统管理-APP-查看', 'appRead', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 48, '系统管理-APP-新增', 'appCreate', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 49, '系统管理-APP-编辑', 'appUpdate', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 50, '系统管理-APP-删除', 'appDelete', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 51, '用户管理-用户-查看', 'usersRead', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 52, '用户管理-用户-编辑', 'usersUpdate', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 53, '机构管理-机构-查看', 'orgRead', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 54, '机构管理-机构-新增', 'orgCreate', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 55, '机构管理-机构-编辑', 'orgUpdate', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 56, '机构管理-机构-删除', 'orgDelete', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 57, '权限管理-机构管理员-查看', 'orgAdminRead', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 58, '权限管理-机构管理员-新增', 'orgAdminCreate', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 59, '权限管理-机构管理员-编辑', 'orgAdminUpdate', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 60, '权限管理-机构管理员-删除', 'orgAdminDelete', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 25, '系统管理-配置中心-支付管理-支付配置-查看', 'payRead', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 26, '系统管理-配置中心-支付管理-支付配置-新增', 'payCreate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 27, '系统管理-配置中心-支付管理-支付配置-编辑', 'payUpdate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 28, '系统管理-配置中心-支付管理-支付配置-删除', 'payDelete', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 29, '系统管理-配置中心-支付管理-支付场景-查看', 'paySceneRead', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 30, '系统管理-配置中心-支付管理-支付场景-新增', 'paySceneCreate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 31, '系统管理-配置中心-支付管理-支付场景-编辑', 'paySceneUpdate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 32, '系统管理-配置中心-支付管理-支付场景-删除', 'paySceneDelete', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 33, '系统管理-配置中心-支付管理-支付通道-查看', 'payChannelRead', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 34, '系统管理-配置中心-支付管理-支付通道-新增', 'payChannelCreate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 35, '系统管理-配置中心-支付管理-支付通道-编辑', 'payChannelUpdate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 36, '系统管理-配置中心-支付管理-支付通道-删除', 'payChannelDelete', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 37, '平台配置-查看', 'platformConfigRead', '可任意读取平台配置表');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 38, '平台配置-保存', 'platformConfigSave', '可任意保存平台配置表');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 39, '应用配置-常用-查看', 'platformConfigCommonRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-应用配置-常用');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 40, '应用配置-常用-保存', 'platformConfigCommonSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-应用配置-常用');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 41, '插件配置-短信-查看', 'platformConfigSmsRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-短信');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 42, '插件配置-短信-保存', 'platformConfigSmsSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-短信');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 43, '插件配置-实名认证-查看', 'platformConfigIdCardRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-实名认证');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 44, '插件配置-实名认证-查看', 'platformConfigIdCardSave', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-实名认证');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 45, '插件配置-一键登录-查看', 'platformConfigOneClickRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-一键登录');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 46, '插件配置-一键登录-保存', 'platformConfigOneClickSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-一键登录');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 47, '插件配置-推送-查看', 'platformConfigPushRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-推送');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 48, '插件配置-推送-查看', 'platformConfigPushSave', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-推送');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 49, '插件配置-视频点播-查看', 'platformConfigVodRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-视频点播');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 50, '插件配置-视频点播-保存', 'platformConfigVodSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-视频点播');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 51, '插件配置-微信-查看', 'platformConfigWxRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-微信');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 52, '插件配置-微信-查看', 'platformConfigWxSave', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-微信');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 53, '插件配置-邮箱-查看', 'platformConfigEmailRead', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 54, '插件配置-邮箱-保存', 'platformConfigEmailSave', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 55, '系统管理-APP-查看', 'appRead', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 56, '系统管理-APP-新增', 'appCreate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 57, '系统管理-APP-编辑', 'appUpdate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 58, '系统管理-APP-删除', 'appDelete', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 59, '用户管理-用户-查看', 'usersRead', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 60, '用户管理-用户-编辑', 'usersUpdate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 61, '机构管理-机构-查看', 'orgRead', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 62, '机构管理-机构-新增', 'orgCreate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 63, '机构管理-机构-编辑', 'orgUpdate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 64, '机构管理-机构-删除', 'orgDelete', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 65, '权限管理-机构管理员-查看', 'orgAdminRead', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 66, '权限管理-机构管理员-新增', 'orgAdminCreate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 67, '权限管理-机构管理员-编辑', 'orgAdminUpdate', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 68, '权限管理-机构管理员-删除', 'orgAdminDelete', '');
 
 -- ----------------------------
 -- Table structure for auth_action_rel_to_scene
@@ -355,13 +396,21 @@ INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 55, 1);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 56, 1);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 57, 1);
-INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 57, 2);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 58, 1);
-INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 58, 2);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 59, 1);
-INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 59, 2);
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 60, 1);
-INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 60, 2);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 61, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 62, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 63, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 64, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 65, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 65, 2);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 66, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 66, 2);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 67, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 67, 2);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 68, 1);
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 68, 2);
 
 -- ----------------------------
 -- Table structure for auth_menu
@@ -411,19 +460,22 @@ INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:0
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 8, '系统管理', 1, 0, 1, '0-8', 'autoicon-ep-platform', '', '{"i18n": {"title": {"en": "System Manage", "zh-cn": "系统管理"}}}', 20);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 9, '配置中心', 1, 8, 2, '0-8-9', 'autoicon-ep-setting', '', '{"i18n": {"title": {"en": "Config Center", "zh-cn": "配置中心"}}}', 0);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 10, '上传配置', 1, 9, 3, '0-8-9-10', 'autoicon-ep-upload', '/upload/upload', '{"i18n": {"title": {"en": "Upload", "zh-cn": "上传配置"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 11, '支付配置', 1, 9, 3, '0-8-9-11', 'autoicon-ep-coin', '/pay/pay', '{"i18n": {"title": {"en": "Pay", "zh-cn": "支付配置"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 12, '插件配置', 1, 9, 3, '0-8-9-12', 'autoicon-ep-ticket', '/platform/config/plugin', '{"i18n": {"title": {"en": "Plugin Config", "zh-cn": "插件配置"}}}', 150);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 13, '应用配置', 1, 9, 3, '0-8-9-13', 'autoicon-ep-set-up', '/platform/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 14, 'APP', 1, 8, 2, '0-8-14', 'vant-apps-o', '/app/app', '{"i18n": {"title": {"en": "App", "zh-cn": "APP"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 15, '用户管理', 1, 0, 1, '0-15', 'vant-friends', '', '{"i18n": {"title": {"en": "User Manage", "zh-cn": "用户管理"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '用户', 1, 15, 2, '0-15-16', 'vant-user-o', '/users/users', '{"i18n": {"title": {"en": "Users", "zh-cn": "用户"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, '机构管理', 1, 0, 1, '0-17', 'autoicon-ep-office-building', '', '{"i18n": {"title": {"en": "", "zh-cn": "机构管理"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, '机构', 1, 17, 2, '0-17-18', 'autoicon-ep-school', '/org/org', '{"i18n": {"title": {"en": "Org", "zh-cn": "机构"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '机构管理员', 1, 2, 2, '0-2-19', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "机构管理员"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 20, '主页', 2, 0, 1, '0-20', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 21, '权限管理', 2, 0, 1, '0-21', 'autoicon-ep-menu', '', '{"i18n": {"title": {"en": "", "zh-cn": "权限管理"}}}', 10);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 22, '角色', 2, 21, 2, '0-21-22', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 23, '管理员', 2, 21, 2, '0-21-23', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "管理员"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 11, '支付管理', 1, 9, 3, '0-8-9-11', 'autoicon-ep-coin', '', '{"i18n": {"title": {"en": "", "zh-cn": "支付管理"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 12, '支付配置', 1, 11, 4, '0-8-9-11-12', 'autoicon-ep-money', '/pay/pay', '{"i18n": {"title": {"en": "Pay", "zh-cn": "支付配置"}}}', 50);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 13, '支付场景', 1, 11, 4, '0-8-9-11-13', 'autoicon-ep-guide', '/pay/scene', '{"i18n": {"title": {"en": "Scene", "zh-cn": "支付场景"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 14, '支付通道', 1, 11, 4, '0-8-9-11-14', 'autoicon-ep-connection', '/pay/channel', '{"i18n": {"title": {"en": "Channel", "zh-cn": "支付通道"}}}', 150);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 15, '插件配置', 1, 9, 3, '0-8-9-15', 'autoicon-ep-ticket', '/platform/config/plugin', '{"i18n": {"title": {"en": "Plugin Config", "zh-cn": "插件配置"}}}', 150);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '应用配置', 1, 9, 3, '0-8-9-16', 'autoicon-ep-set-up', '/platform/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, 'APP', 1, 8, 2, '0-8-17', 'vant-apps-o', '/app/app', '{"i18n": {"title": {"en": "App", "zh-cn": "APP"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, '用户管理', 1, 0, 1, '0-18', 'vant-friends', '', '{"i18n": {"title": {"en": "User Manage", "zh-cn": "用户管理"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '用户', 1, 18, 2, '0-18-19', 'vant-user-o', '/users/users', '{"i18n": {"title": {"en": "Users", "zh-cn": "用户"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 20, '机构管理', 1, 0, 1, '0-20', 'autoicon-ep-office-building', '', '{"i18n": {"title": {"en": "", "zh-cn": "机构管理"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 21, '机构', 1, 20, 2, '0-20-21', 'autoicon-ep-school', '/org/org', '{"i18n": {"title": {"en": "Org", "zh-cn": "机构"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 22, '机构管理员', 1, 2, 2, '0-2-22', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "机构管理员"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 23, '主页', 2, 0, 1, '0-23', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 24, '权限管理', 2, 0, 1, '0-24', 'autoicon-ep-menu', '', '{"i18n": {"title": {"en": "", "zh-cn": "权限管理"}}}', 10);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 25, '角色', 2, 24, 2, '0-24-25', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 26, '管理员', 2, 24, 2, '0-24-26', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "管理员"}}}', 100);
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -637,36 +689,135 @@ DROP TABLE IF EXISTS "public"."pay";
 CREATE TABLE "public"."pay" (
   "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "is_stop" int2 NOT NULL DEFAULT 0,
   "pay_id" int4 NOT NULL DEFAULT nextval('pay_pay_id_seq'::regclass),
   "pay_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "pay_icon" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "pay_type" int2 NOT NULL DEFAULT 0,
   "pay_config" json NOT NULL,
-  "pay_rate" numeric(4,4) NOT NULL DEFAULT 0,
-  "total_amount" numeric(14,2) NOT NULL DEFAULT 0,
-  "balance" numeric(18,0) NOT NULL DEFAULT 0,
-  "sort" int2 NOT NULL DEFAULT 100,
+  "pay_rate" numeric(4,4) NOT NULL DEFAULT 0.0000,
+  "total_amount" numeric(14,2) NOT NULL DEFAULT 0.00,
+  "balance" numeric(18,6) NOT NULL DEFAULT 0.000000,
   "remark" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying
 )
 ;
 COMMENT ON COLUMN "public"."pay"."created_at" IS '创建时间';
 COMMENT ON COLUMN "public"."pay"."updated_at" IS '更新时间';
-COMMENT ON COLUMN "public"."pay"."is_stop" IS '停用：0否 1是';
 COMMENT ON COLUMN "public"."pay"."pay_id" IS '支付ID';
 COMMENT ON COLUMN "public"."pay"."pay_name" IS '名称';
-COMMENT ON COLUMN "public"."pay"."pay_icon" IS '图标';
 COMMENT ON COLUMN "public"."pay"."pay_type" IS '类型：0支付宝 1微信';
 COMMENT ON COLUMN "public"."pay"."pay_config" IS '配置。根据pay_type类型设置';
 COMMENT ON COLUMN "public"."pay"."pay_rate" IS '费率';
 COMMENT ON COLUMN "public"."pay"."total_amount" IS '总额';
 COMMENT ON COLUMN "public"."pay"."balance" IS '余额';
-COMMENT ON COLUMN "public"."pay"."sort" IS '排序值。从大到小排序';
 COMMENT ON COLUMN "public"."pay"."remark" IS '备注';
 COMMENT ON TABLE "public"."pay" IS '支付表';
 
 -- ----------------------------
 -- Records of pay
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for pay_channel
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."pay_channel";
+CREATE TABLE "public"."pay_channel" (
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "is_stop" int2 NOT NULL DEFAULT 0,
+  "channel_id" int4 NOT NULL DEFAULT nextval('pay_channel_channel_id_seq'::regclass),
+  "channel_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "scene_id" int4 NOT NULL DEFAULT 0,
+  "pay_id" int4 NOT NULL DEFAULT 0,
+  "pay_method" int2 NOT NULL DEFAULT 0,
+  "channel_icon" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "sort" int2 NOT NULL DEFAULT 100,
+  "total_amount" numeric(14,2) NOT NULL DEFAULT 0.00
+)
+;
+COMMENT ON COLUMN "public"."pay_channel"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."pay_channel"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."pay_channel"."is_stop" IS '停用：0否 1是';
+COMMENT ON COLUMN "public"."pay_channel"."channel_id" IS '通道ID';
+COMMENT ON COLUMN "public"."pay_channel"."channel_name" IS '名称';
+COMMENT ON COLUMN "public"."pay_channel"."scene_id" IS '场景ID';
+COMMENT ON COLUMN "public"."pay_channel"."pay_id" IS '支付ID';
+COMMENT ON COLUMN "public"."pay_channel"."pay_method" IS '支付方法：0APP支付 1H5支付 2扫码支付 3小程序支付';
+COMMENT ON COLUMN "public"."pay_channel"."channel_icon" IS '图标';
+COMMENT ON COLUMN "public"."pay_channel"."sort" IS '排序值。从大到小排序';
+COMMENT ON COLUMN "public"."pay_channel"."total_amount" IS '总额';
+COMMENT ON TABLE "public"."pay_channel" IS '支付通道表';
+
+-- ----------------------------
+-- Records of pay_channel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for pay_order
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."pay_order";
+CREATE TABLE "public"."pay_order" (
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "order_id" int4 NOT NULL DEFAULT nextval('pay_order_order_id_seq'::regclass),
+  "order_no" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "rel_order_type" int2 NOT NULL DEFAULT 0,
+  "rel_order_user_id" int4 NOT NULL DEFAULT 0,
+  "pay_id" int4 NOT NULL DEFAULT 0,
+  "channel_id" int4 NOT NULL DEFAULT 0,
+  "pay_type" int2 NOT NULL DEFAULT 0,
+  "amount" numeric(10,2) NOT NULL DEFAULT 0.00,
+  "pay_status" int2 NOT NULL DEFAULT 0,
+  "pay_time" timestamp(6),
+  "pay_rate" numeric(4,4) NOT NULL DEFAULT 0.0000,
+  "third_order_no" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying
+)
+;
+COMMENT ON COLUMN "public"."pay_order"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."pay_order"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."pay_order"."order_id" IS '订单ID';
+COMMENT ON COLUMN "public"."pay_order"."order_no" IS '订单号';
+COMMENT ON COLUMN "public"."pay_order"."rel_order_type" IS '关联订单类型：0默认';
+COMMENT ON COLUMN "public"."pay_order"."rel_order_user_id" IS '关联订单用户ID';
+COMMENT ON COLUMN "public"."pay_order"."pay_id" IS '支付ID';
+COMMENT ON COLUMN "public"."pay_order"."channel_id" IS '通道ID';
+COMMENT ON COLUMN "public"."pay_order"."pay_type" IS '类型：0支付宝 1微信';
+COMMENT ON COLUMN "public"."pay_order"."amount" IS '实付金额';
+COMMENT ON COLUMN "public"."pay_order"."pay_status" IS '状态：0未付款 1已付款';
+COMMENT ON COLUMN "public"."pay_order"."pay_time" IS '支付时间';
+COMMENT ON COLUMN "public"."pay_order"."pay_rate" IS '费率';
+COMMENT ON COLUMN "public"."pay_order"."third_order_no" IS '第三方订单号';
+COMMENT ON TABLE "public"."pay_order" IS '支付订单表';
+
+-- ----------------------------
+-- Records of pay_order
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for pay_order_rel
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."pay_order_rel";
+CREATE TABLE "public"."pay_order_rel" (
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "order_id" int4 NOT NULL DEFAULT 0,
+  "rel_order_type" int2 NOT NULL DEFAULT 0,
+  "rel_order_id" int4 NOT NULL DEFAULT 0,
+  "rel_order_no" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "rel_order_user_id" int4 NOT NULL DEFAULT 0,
+  "rel_order_amount" numeric(10,2) NOT NULL DEFAULT 0.00
+)
+;
+COMMENT ON COLUMN "public"."pay_order_rel"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."pay_order_rel"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."pay_order_rel"."order_id" IS '订单ID';
+COMMENT ON COLUMN "public"."pay_order_rel"."rel_order_type" IS '关联订单类型：0默认';
+COMMENT ON COLUMN "public"."pay_order_rel"."rel_order_id" IS '关联订单ID';
+COMMENT ON COLUMN "public"."pay_order_rel"."rel_order_no" IS '关联订单号';
+COMMENT ON COLUMN "public"."pay_order_rel"."rel_order_user_id" IS '关联订单用户ID';
+COMMENT ON COLUMN "public"."pay_order_rel"."rel_order_amount" IS '关联订单实付金额';
+COMMENT ON TABLE "public"."pay_order_rel" IS '支付订单关联表';
+
+-- ----------------------------
+-- Records of pay_order_rel
 -- ----------------------------
 
 -- ----------------------------
@@ -676,14 +827,18 @@ DROP TABLE IF EXISTS "public"."pay_scene";
 CREATE TABLE "public"."pay_scene" (
   "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "pay_id" int4 NOT NULL DEFAULT 0,
-  "pay_scene" int2 NOT NULL DEFAULT 0
+  "is_stop" int2 NOT NULL DEFAULT 0,
+  "scene_id" int4 NOT NULL DEFAULT nextval('pay_scene_scene_id_seq'::regclass),
+  "scene_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "remark" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying
 )
 ;
 COMMENT ON COLUMN "public"."pay_scene"."created_at" IS '创建时间';
 COMMENT ON COLUMN "public"."pay_scene"."updated_at" IS '更新时间';
-COMMENT ON COLUMN "public"."pay_scene"."pay_id" IS '支付ID';
-COMMENT ON COLUMN "public"."pay_scene"."pay_scene" IS '支付场景：0APP 1H5 2扫码 10微信小程序 11微信公众号 20支付宝小程序';
+COMMENT ON COLUMN "public"."pay_scene"."is_stop" IS '停用：0否 1是';
+COMMENT ON COLUMN "public"."pay_scene"."scene_id" IS '场景ID';
+COMMENT ON COLUMN "public"."pay_scene"."scene_name" IS '名称';
+COMMENT ON COLUMN "public"."pay_scene"."remark" IS '备注';
 COMMENT ON TABLE "public"."pay_scene" IS '支付场景表';
 
 -- ----------------------------
@@ -749,10 +904,10 @@ COMMENT ON TABLE "public"."platform_config" IS '平台配置表';
 -- Records of platform_config
 -- ----------------------------
 INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailCode', '{"subject":"您的验证码","template":"验证码：{code}\n说明：\n1. 验证码在发送后的5分钟内有效。如果验证码过期，请重新请求一个新的验证码。\n2. 出于安全考虑，请不要将此验证码分享给任何人。"}');
+INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailOfCommon', '{"fromEmail":"xxxxxxxx@qq.com","password":"xxxxxxxx","smtpHost":"smtp.qq.com","smtpPort":"465"}');
 INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailType', 'emailOfCommon');
 INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardOfAliyun', '{"appcode":"appcode","host":"http://idcard.market.alicloudapi.com","path":"/lianzhuo/idcard"}');
 INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardType', 'idCardOfAliyun');
-INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailOfCommon', '{"fromEmail":"xxxxxxxx@qq.com","password":"xxxxxxxx","smtpHost":"smtp.qq.com","smtpPort":"465"}');
 
 -- ----------------------------
 -- Table structure for platform_server
@@ -933,9 +1088,30 @@ SELECT setval('"public"."org_org_id_seq"', 1, false);
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
+ALTER SEQUENCE "public"."pay_channel_channel_id_seq"
+OWNED BY "public"."pay_channel"."channel_id";
+SELECT setval('"public"."pay_channel_channel_id_seq"', 1, false);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
+ALTER SEQUENCE "public"."pay_order_order_id_seq"
+OWNED BY "public"."pay_order"."order_id";
+SELECT setval('"public"."pay_order_order_id_seq"', 1, false);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
 ALTER SEQUENCE "public"."pay_pay_id_seq"
 OWNED BY "public"."pay"."pay_id";
 SELECT setval('"public"."pay_pay_id_seq"', 1, false);
+
+-- ----------------------------
+-- Alter sequences owned by
+-- ----------------------------
+ALTER SEQUENCE "public"."pay_scene_scene_id_seq"
+OWNED BY "public"."pay_scene"."scene_id";
+SELECT setval('"public"."pay_scene_scene_id_seq"', 1, false);
 
 -- ----------------------------
 -- Alter sequences owned by
@@ -1142,19 +1318,69 @@ ALTER TABLE "public"."org_admin" ADD CONSTRAINT "org_admin_pkey" PRIMARY KEY ("a
 ALTER TABLE "public"."pay" ADD CONSTRAINT "pay_pkey" PRIMARY KEY ("pay_id");
 
 -- ----------------------------
--- Indexes structure for table pay_scene
+-- Indexes structure for table pay_channel
 -- ----------------------------
-CREATE INDEX "pay_scene_pay_id_idx" ON "public"."pay_scene" USING btree (
+CREATE INDEX "pay_channel_pay_id_idx" ON "public"."pay_channel" USING btree (
   "pay_id" "pg_catalog"."int4_ops" ASC NULLS LAST
 );
-CREATE INDEX "pay_scene_pay_scene_idx" ON "public"."pay_scene" USING btree (
-  "pay_scene" "pg_catalog"."int2_ops" ASC NULLS LAST
+CREATE INDEX "pay_channel_scene_id_idx" ON "public"."pay_channel" USING btree (
+  "scene_id" "pg_catalog"."int4_ops" ASC NULLS LAST
 );
+
+-- ----------------------------
+-- Primary Key structure for table pay_channel
+-- ----------------------------
+ALTER TABLE "public"."pay_channel" ADD CONSTRAINT "pay_channel_pkey" PRIMARY KEY ("channel_id");
+
+-- ----------------------------
+-- Indexes structure for table pay_order
+-- ----------------------------
+CREATE INDEX "pay_order_channel_id_idx" ON "public"."pay_order" USING btree (
+  "channel_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
+CREATE UNIQUE INDEX "pay_order_order_no_idx" ON "public"."pay_order" USING btree (
+  "order_no" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
+CREATE INDEX "pay_order_pay_id_idx" ON "public"."pay_order" USING btree (
+  "pay_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
+CREATE INDEX "pay_order_rel_order_user_id_idx" ON "public"."pay_order" USING btree (
+  "rel_order_user_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
+CREATE INDEX "pay_order_third_order_no_idx" ON "public"."pay_order" USING btree (
+  "third_order_no" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
+
+-- ----------------------------
+-- Primary Key structure for table pay_order
+-- ----------------------------
+ALTER TABLE "public"."pay_order" ADD CONSTRAINT "pay_order_pkey" PRIMARY KEY ("order_id");
+
+-- ----------------------------
+-- Indexes structure for table pay_order_rel
+-- ----------------------------
+CREATE INDEX "pay_order_rel_order_id_idx" ON "public"."pay_order_rel" USING btree (
+  "order_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
+CREATE INDEX "pay_order_rel_rel_order_id_idx" ON "public"."pay_order_rel" USING btree (
+  "rel_order_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
+CREATE INDEX "pay_order_rel_rel_order_no_idx" ON "public"."pay_order_rel" USING btree (
+  "rel_order_no" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
+CREATE INDEX "pay_order_rel_rel_order_user_id_idx" ON "public"."pay_order_rel" USING btree (
+  "rel_order_user_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+);
+
+-- ----------------------------
+-- Primary Key structure for table pay_order_rel
+-- ----------------------------
+ALTER TABLE "public"."pay_order_rel" ADD CONSTRAINT "pay_order_rel_pkey" PRIMARY KEY ("order_id", "rel_order_type", "rel_order_id");
 
 -- ----------------------------
 -- Primary Key structure for table pay_scene
 -- ----------------------------
-ALTER TABLE "public"."pay_scene" ADD CONSTRAINT "pay_scene_pkey" PRIMARY KEY ("pay_id", "pay_scene");
+ALTER TABLE "public"."pay_scene" ADD CONSTRAINT "pay_scene_pkey" PRIMARY KEY ("scene_id");
 
 -- ----------------------------
 -- Indexes structure for table platform_admin
