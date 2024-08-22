@@ -19,10 +19,6 @@ const saveForm = reactive({
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
         ],
-        channel_icon: [
-            { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
-            { type: 'url', trigger: 'change', message: t('validation.upload') },
-        ],
         scene_id: [
             { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
@@ -32,6 +28,10 @@ const saveForm = reactive({
             { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
         ],
         pay_method: [{ type: 'enum', trigger: 'change', enum: (tm('pay.channel.status.pay_method') as any).map((item: any) => item.value), message: t('validation.select') }],
+        channel_icon: [
+            { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
+            { type: 'url', trigger: 'change', message: t('validation.upload') },
+        ],
         sort: [{ type: 'integer', trigger: 'change', min: 0, max: 255, message: t('validation.between.number', { min: 0, max: 255 }) }],
         /* total_amount: [
             { type: 'number', trigger: 'change', min: 0, max: 999999999999.99, message: t('validation.between.number', { min: 0, max: 999999999999.99 }) }, // type: 'float'在值为0时验证不能通过
@@ -88,9 +88,6 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('pay.channel.name.channel_name')" prop="channel_name">
                     <el-input v-model="saveForm.data.channel_name" :placeholder="t('pay.channel.name.channel_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('pay.channel.name.channel_icon')" prop="channel_icon">
-                    <my-upload v-model="saveForm.data.channel_icon" accept="image/*" />
-                </el-form-item>
                 <el-form-item :label="t('pay.channel.name.scene_id')" prop="scene_id">
                     <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/pay/scene/list' }" />
                 </el-form-item>
@@ -103,6 +100,9 @@ const saveDrawer = reactive({
                             {{ item.label }}
                         </el-radio>
                     </el-radio-group>
+                </el-form-item>
+                <el-form-item :label="t('pay.channel.name.channel_icon')" prop="channel_icon">
+                    <my-upload v-model="saveForm.data.channel_icon" accept="image/*" />
                 </el-form-item>
                 <el-form-item :label="t('pay.channel.name.sort')" prop="sort">
                     <el-input-number v-model="saveForm.data.sort" :placeholder="t('pay.channel.name.sort')" :min="0" :max="255" :precision="0" :value-on-clear="100" />

@@ -28,10 +28,10 @@ type ChannelColumns struct {
 	IsStop      string // 停用：0否 1是
 	ChannelId   string // 通道ID
 	ChannelName string // 名称
-	ChannelIcon string // 图标
 	SceneId     string // 场景ID
 	PayId       string // 支付ID
 	PayMethod   string // 支付方法：0APP支付 1H5支付 2扫码支付 3小程序支付
+	ChannelIcon string // 图标
 	Sort        string // 排序值。从大到小排序
 	TotalAmount string // 总额
 }
@@ -43,10 +43,10 @@ var channelColumns = ChannelColumns{
 	IsStop:      "is_stop",
 	ChannelId:   "channel_id",
 	ChannelName: "channel_name",
-	ChannelIcon: "channel_icon",
 	SceneId:     "scene_id",
 	PayId:       "pay_id",
 	PayMethod:   "pay_method",
+	ChannelIcon: "channel_icon",
 	Sort:        "sort",
 	TotalAmount: "total_amount",
 }

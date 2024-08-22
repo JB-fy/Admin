@@ -17,10 +17,10 @@ type Channel struct {
 	IsStop      interface{} // 停用：0否 1是
 	ChannelId   interface{} // 通道ID
 	ChannelName interface{} // 名称
-	ChannelIcon interface{} // 图标
 	SceneId     interface{} // 场景ID
 	PayId       interface{} // 支付ID
 	PayMethod   interface{} // 支付方法：0APP支付 1H5支付 2扫码支付 3小程序支付
+	ChannelIcon interface{} // 图标
 	Sort        interface{} // 排序值。从大到小排序
 	TotalAmount interface{} // 总额
 }
