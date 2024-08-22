@@ -43,7 +43,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq)
 		return
 	} */
 
-	list, err := daoPay.Channel.CtxDaoModel(ctx).Filter(daoPay.Channel.Columns().SceneId, req.SceneId).OrderDesc(daoPay.Channel.Columns().Sort).ListPri()
+	list, err := daoPay.Channel.CtxDaoModel(ctx).Filter(daoPay.Channel.Columns().SceneId, req.SceneId).OrderDesc(daoPay.Channel.Columns().Sort).OrderAsc(daoPay.Channel.Columns().ChannelId).ListPri()
 	if err != nil {
 		return
 	}
@@ -75,8 +75,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	orderFilter[daoPay.Order.Columns().PayStatus] = 0
 	if req.OrderId > 0 {
 		orderFilter[daoPay.Order.Columns().OrderId] = req.OrderId
-	}
-	if req.OrderNo != `` {
+	} else /* if req.OrderNo != `` */ {
 		orderFilter[daoPay.Order.Columns().OrderNo] = req.OrderNo
 	}
 
