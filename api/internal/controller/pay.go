@@ -184,7 +184,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 			daoPay.Order.Columns().OrderId:   orderInfo[daoPay.Order.Columns().OrderId],
 			daoPay.Order.Columns().PayStatus: 0, //防并发
 		}).Data(g.Map{
-			daoPay.Order.Columns().ThirdOrderNo: notifyInfo.OrderNoOfThird,
+			daoPay.Order.Columns().ThirdOrderNo: notifyInfo.ThirdOrderNo,
 			daoPay.Order.Columns().PayStatus:    1,
 			daoPay.Order.Columns().PayTime:      gtime.Now(),
 			// daoPay.Order.Columns().PayRate:      payInfo[daoPay.Pay.Columns().PayRate], //以订单回调时的费率为准

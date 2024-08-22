@@ -159,7 +159,7 @@ func (payThis *PayOfAli) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err er
 
 	notifyInfo.Amount = gconv.Float64(notifyData.TotalAmount)
 	notifyInfo.OrderNo = notifyData.OutTradeNo
-	notifyInfo.OrderNoOfThird = notifyData.TradeNo
+	notifyInfo.ThirdOrderNo = notifyData.TradeNo
 	return
 }
 

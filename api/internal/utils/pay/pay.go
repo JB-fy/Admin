@@ -32,9 +32,9 @@ type PayResData struct {
 }
 
 type NotifyInfo struct {
-	OrderNo        string  //单号
-	Amount         float64 //金额。单位：元
-	OrderNoOfThird string  //第三方单号
+	OrderNo      string  //单号
+	Amount       float64 //金额。单位：元
+	ThirdOrderNo string  //第三方单号
 }
 
 type Pay interface {

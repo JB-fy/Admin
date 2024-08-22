@@ -230,7 +230,7 @@ func (payThis *PayOfWx) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err err
 
 	notifyInfo.Amount = gconv.Float64(transaction.Amount.Total) / 100
 	notifyInfo.OrderNo = *transaction.OutTradeNo
-	notifyInfo.OrderNoOfThird = *transaction.TransactionId
+	notifyInfo.ThirdOrderNo = *transaction.TransactionId
 	return
 }
 
