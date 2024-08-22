@@ -23,34 +23,38 @@ type OrderDao struct {
 
 // OrderColumns defines and stores column names for table pay_order.
 type OrderColumns struct {
-	CreatedAt    string // 创建时间
-	UpdatedAt    string // 更新时间
-	OrderId      string // 订单ID
-	OrderNo      string // 订单号
-	PayId        string // 支付ID
-	ChannelId    string // 通道ID
-	PayType      string // 类型：0支付宝 1微信
-	Amount       string // 实付金额
-	PayStatus    string // 状态：0未付款 1已付款
-	PayTime      string // 支付时间
-	PayRate      string // 费率
-	ThirdOrderNo string // 第三方订单号
+	CreatedAt      string // 创建时间
+	UpdatedAt      string // 更新时间
+	OrderId        string // 订单ID
+	OrderNo        string // 订单号
+	RelOrderType   string // 关联订单类型
+	RelOrderUserId string // 关联订单用户ID
+	PayId          string // 支付ID
+	ChannelId      string // 通道ID
+	PayType        string // 类型：0支付宝 1微信
+	Amount         string // 实付金额
+	PayStatus      string // 状态：0未付款 1已付款
+	PayTime        string // 支付时间
+	PayRate        string // 费率
+	ThirdOrderNo   string // 第三方订单号
 }
 
 // orderColumns holds the columns for table pay_order.
 var orderColumns = OrderColumns{
-	CreatedAt:    "created_at",
-	UpdatedAt:    "updated_at",
-	OrderId:      "order_id",
-	OrderNo:      "order_no",
-	PayId:        "pay_id",
-	ChannelId:    "channel_id",
-	PayType:      "pay_type",
-	Amount:       "amount",
-	PayStatus:    "pay_status",
-	PayTime:      "pay_time",
-	PayRate:      "pay_rate",
-	ThirdOrderNo: "third_order_no",
+	CreatedAt:      "created_at",
+	UpdatedAt:      "updated_at",
+	OrderId:        "order_id",
+	OrderNo:        "order_no",
+	RelOrderType:   "rel_order_type",
+	RelOrderUserId: "rel_order_user_id",
+	PayId:          "pay_id",
+	ChannelId:      "channel_id",
+	PayType:        "pay_type",
+	Amount:         "amount",
+	PayStatus:      "pay_status",
+	PayTime:        "pay_time",
+	PayRate:        "pay_rate",
+	ThirdOrderNo:   "third_order_no",
 }
 
 // NewOrderDao creates and returns a new DAO object for table data access.

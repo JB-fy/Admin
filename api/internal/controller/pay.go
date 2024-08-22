@@ -13,6 +13,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/gutil"
 )
 
 type Pay struct{}
@@ -95,7 +96,8 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 				payReqData.Openid = loginInfo[daoUsers.Users.Columns().WxOpenid].String()
 			}
 		}
-		// orderFilter[daoPay.Order.Columns().UserId] = loginInfo[`login_id`]
+		orderFilter[daoPay.Order.Columns().RelOrderType] = []uint{0}
+		orderFilter[daoPay.Order.Columns().RelOrderUserId] = loginInfo[`login_id`]
 	default:
 		err = utils.NewErrorCode(ctx, 39999998, ``)
 		return
@@ -110,6 +112,10 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	payReqData.OrderNo = orderInfo[daoPay.Order.Columns().OrderNo].String()
 	payReqData.Amount = orderInfo[daoPay.Order.Columns().Amount].Float64()
 	payReqData.Desc = `描述`
+	/* switch orderInfo[daoPay.Order.Columns().RelOrderType].Uint() { // 根据订单类型确认是否设置不同描述
+	case 0:
+		payReqData.Desc = `默认订单`
+	} */
 	/**--------订单验证和设置支付数据 结束--------**/
 
 	payObj := pay.NewPay(ctx, payInfo)
@@ -193,14 +199,16 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 		}
 
 		// 支付成功后处理关联订单
-		orderRelList, _ := daoPay.OrderRel.CtxDaoModel(ctx).TX(tx).Filter(daoPay.OrderRel.Columns().OrderId, orderInfo[daoPay.Order.Columns().OrderId]).All()
-		for _, v := range orderRelList {
-			switch v[daoPay.OrderRel.Columns().RelOrderType].Uint() { // 根据订单类型找到对应的订单表做处理
-			// case 0:
-			default:
-				err = utils.NewErrorCode(ctx, 30013001, ``)
-				return
-			}
+		relOrderIdArr, _ := daoPay.OrderRel.CtxDaoModel(ctx).TX(tx).Filter(daoPay.OrderRel.Columns().OrderId, orderInfo[daoPay.Order.Columns().OrderId]).ArrayUint(daoPay.OrderRel.Columns().RelOrderId)
+		switch orderInfo[daoPay.OrderRel.Columns().RelOrderType].Uint() { // 根据订单类型确定对应的订单表，再做处理
+		case 0:
+			gutil.Dump(relOrderIdArr)
+			/* relOrderList, _ := daoXxxx.Order.CtxDaoModel(ctx).TX(tx).Filter(daoXxxx.Order.Columns().OrderId, relOrderIdArr).All()
+			for _, relOrder := range relOrderList {
+			} */
+		default:
+			err = utils.NewErrorCode(ctx, 30013001, ``)
+			return
 		}
 
 		// 累积支付数据
