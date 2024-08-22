@@ -15,7 +15,7 @@ type OrderRel struct {
 	CreatedAt      *gtime.Time // 创建时间
 	UpdatedAt      *gtime.Time // 更新时间
 	OrderId        interface{} // 订单ID
-	RelOrderType   interface{} // 关联订单类型
+	RelOrderType   interface{} // 关联订单类型：0默认
 	RelOrderId     interface{} // 关联订单ID
 	RelOrderNo     interface{} // 关联订单号
 	RelOrderUserId interface{} // 关联订单用户ID

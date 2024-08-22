@@ -14,7 +14,7 @@ type Order struct {
 	UpdatedAt      *gtime.Time `json:"updatedAt"      orm:"updated_at"        ` // 更新时间
 	OrderId        uint        `json:"orderId"        orm:"order_id"          ` // 订单ID
 	OrderNo        string      `json:"orderNo"        orm:"order_no"          ` // 订单号
-	RelOrderType   uint        `json:"relOrderType"   orm:"rel_order_type"    ` // 关联订单类型
+	RelOrderType   uint        `json:"relOrderType"   orm:"rel_order_type"    ` // 关联订单类型：0默认
 	RelOrderUserId uint        `json:"relOrderUserId" orm:"rel_order_user_id" ` // 关联订单用户ID
 	PayId          uint        `json:"payId"          orm:"pay_id"            ` // 支付ID
 	ChannelId      uint        `json:"channelId"      orm:"channel_id"        ` // 通道ID

@@ -26,7 +26,7 @@ type OrderRelColumns struct {
 	CreatedAt      string // 创建时间
 	UpdatedAt      string // 更新时间
 	OrderId        string // 订单ID
-	RelOrderType   string // 关联订单类型
+	RelOrderType   string // 关联订单类型：0默认
 	RelOrderId     string // 关联订单ID
 	RelOrderNo     string // 关联订单号
 	RelOrderUserId string // 关联订单用户ID

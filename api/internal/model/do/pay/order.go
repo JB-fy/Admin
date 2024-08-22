@@ -16,7 +16,7 @@ type Order struct {
 	UpdatedAt      *gtime.Time // 更新时间
 	OrderId        interface{} // 订单ID
 	OrderNo        interface{} // 订单号
-	RelOrderType   interface{} // 关联订单类型
+	RelOrderType   interface{} // 关联订单类型：0默认
 	RelOrderUserId interface{} // 关联订单用户ID
 	PayId          interface{} // 支付ID
 	ChannelId      interface{} // 通道ID
