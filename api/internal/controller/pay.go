@@ -181,7 +181,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 	// 订单回调处理
 	payOrderHandler := daoPay.Order.CtxDaoModel(ctx)
 	err = payOrderHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
-		row, err := payOrderHandler.CloneNew().TX(tx).Filters(g.Map{
+		row, _ := payOrderHandler.CloneNew().TX(tx).Filters(g.Map{
 			daoPay.Order.Columns().OrderId:   orderInfo[daoPay.Order.Columns().OrderId],
 			daoPay.Order.Columns().PayStatus: 0, //防并发
 		}).Data(g.Map{
@@ -190,15 +190,12 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 			daoPay.Order.Columns().PayTime:      gtime.Now(),
 			// daoPay.Order.Columns().PayRate:      payInfo[daoPay.Pay.Columns().PayRate], //以订单回调时的费率为准
 		}).UpdateAndGetAffected()
-		if err != nil {
-			return
-		}
 		if row == 0 {
 			err = utils.NewErrorCode(ctx, 30019000, ``)
 			return
 		}
 
-		// 支付成功后处理关联订单
+		/**--------处理关联订单 开始--------**/
 		relOrderIdArr, _ := daoPay.OrderRel.CtxDaoModel(ctx).TX(tx).Filter(daoPay.OrderRel.Columns().OrderId, orderInfo[daoPay.Order.Columns().OrderId]).ArrayUint(daoPay.OrderRel.Columns().RelOrderId)
 		switch orderInfo[daoPay.OrderRel.Columns().RelOrderType].Uint() { // 根据订单类型确定对应的订单表，再做处理
 		case 0:
@@ -210,6 +207,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 			err = utils.NewErrorCode(ctx, 30013001, ``)
 			return
 		}
+		/**--------处理关联订单 结束--------**/
 
 		// 累积支付数据
 		daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, orderInfo[daoPay.Order.Columns().PayId]).HookUpdate(g.Map{
