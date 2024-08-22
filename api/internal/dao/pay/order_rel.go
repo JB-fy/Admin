@@ -10,38 +10,37 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"reflect"
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/text/gstr"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
-// internalOrderDao is internal type for wrapping internal DAO implements.
-type internalOrderDao = *internal.OrderDao
+// internalOrderRelDao is internal type for wrapping internal DAO implements.
+type internalOrderRelDao = *internal.OrderRelDao
 
-// orderDao is the data access object for table pay_order.
+// orderRelDao is the data access object for table pay_order_rel.
 // You can define custom methods on it to extend its functionality as you wish.
-type orderDao struct {
-	internalOrderDao
+type orderRelDao struct {
+	internalOrderRelDao
 }
 
 var (
-	// Order is globally public accessible object for table pay_order operations.
-	Order = orderDao{
-		internal.NewOrderDao(),
+	// OrderRel is globally public accessible object for table pay_order_rel operations.
+	OrderRel = orderRelDao{
+		internal.NewOrderRelDao(),
 	}
 )
 
 // 获取daoModel
-func (daoThis *orderDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
+func (daoThis *orderRelDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *orderDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
+func (daoThis *orderRelDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -50,7 +49,7 @@ func (daoThis *orderDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[str
 }
 
 // 解析分表
-func (daoThis *orderDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
+func (daoThis *orderRelDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {
@@ -59,17 +58,17 @@ func (daoThis *orderDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[str
 }
 
 // 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
-func (daoThis *orderDao) ParseId(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + daoThis.Columns().OrderId
+func (daoThis *orderRelDao) ParseId(daoModel *daoIndex.DaoModel) string {
+	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(0).String()
 }
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
-func (daoThis *orderDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + daoThis.Columns().OrderNo
+func (daoThis *orderRelDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
+	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(1).String()
 }
 
 // 解析filter
-func (daoThis *orderDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *orderRelDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -77,24 +76,6 @@ func (daoThis *orderDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
-			case `id`, `id_arr`:
-				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().OrderId, v)
-			case `exc_id`, `exc_id_arr`:
-				if gvar.New(v).IsSlice() {
-					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.Columns().OrderId, v)
-				} else {
-					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().OrderId, v)
-				}
-			case `label`:
-				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().OrderNo, `%`+gconv.String(v)+`%`)
-			case OrderRel.Columns().RelOrderType, OrderRel.Columns().RelOrderId, OrderRel.Columns().RelOrderUserId:
-				tableOrderRel := OrderRel.ParseDbTable(m.GetCtx())
-				m = m.Where(tableOrderRel+`.`+k, v)
-				m = m.Handler(daoThis.ParseJoin(tableOrderRel, daoModel))
-			case `time_range_start`:
-				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `time_range_end`:
-				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -108,7 +89,7 @@ func (daoThis *orderDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 }
 
 // 解析field
-func (daoThis *orderDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *orderRelDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
@@ -117,21 +98,6 @@ func (daoThis *orderDao) ParseField(field []string, fieldWithParam map[string]an
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
 			daoModel.AfterField.Add(v) */
-			case `id`:
-				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
-			case `label`:
-				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
-			case Pay.Columns().PayName:
-				tablePay := Pay.ParseDbTable(m.GetCtx())
-				m = m.Fields(tablePay + `.` + v)
-				m = m.Handler(daoThis.ParseJoin(tablePay, daoModel))
-			case Channel.Columns().ChannelName:
-				tableChannel := Channel.ParseDbTable(m.GetCtx())
-				m = m.Fields(tableChannel + `.` + v)
-				m = m.Handler(daoThis.ParseJoin(tableChannel, daoModel))
-			case `order_rel_list`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().OrderId)
-				daoModel.AfterField.Add(v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -154,7 +120,7 @@ func (daoThis *orderDao) ParseField(field []string, fieldWithParam map[string]an
 }
 
 // hook select
-func (daoThis *orderDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *orderRelDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
@@ -168,9 +134,6 @@ func (daoThis *orderDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				defer wg.Done()
 				for _, v := range daoModel.AfterField.Slice() {
 					switch v {
-					case `order_rel_list`:
-						orderRelList, _ := OrderRel.CtxDaoModel(ctx).Filter(OrderRel.Columns().OrderId, record[daoThis.Columns().OrderId]). /* OrderAsc(OrderRel.Columns().CreatedAt). */ All() // 有顺序要求时使用，自定义OrderAsc
-						record[v] = gvar.New(gjson.MustEncodeString(orderRelList))                                                                                                              //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效
 					default:
 						record[v] = gvar.New(nil)
 					}
@@ -192,13 +155,11 @@ func (daoThis *orderDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 }
 
 // 解析insert
-func (daoThis *orderDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *orderRelDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
-			case `order_rel_list`:
-				daoModel.AfterInsert[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					insertData[k] = v
@@ -214,40 +175,32 @@ func (daoThis *orderDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 }
 
 // hook insert
-func (daoThis *orderDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *orderRelDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Insert: func(ctx context.Context, in *gdb.HookInsertInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
 			if err != nil {
 				return
 			}
-			id, _ := result.LastInsertId()
+			// id, _ := result.LastInsertId()
 
-			for k, v := range daoModel.AfterInsert {
+			/* for k, v := range daoModel.AfterInsert {
 				switch k {
-				case `order_rel_list`:
-					insertList := []map[string]any{}
-					for _, item := range gconv.SliceMap(v) {
-						insertItem := gjson.New(gjson.MustEncodeString(item)).Map()
-						insertItem[OrderRel.Columns().OrderId] = id
-						insertList = append(insertList, insertItem)
-					}
-					OrderRel.CtxDaoModel(ctx).Data(insertList).Insert()
+				case `xxxx`:
+					daoModel.CloneNew().Filter(`id`, id).HookUpdate(g.Map{k: v}).Update()
 				}
-			}
+			} */
 			return
 		},
 	}
 }
 
 // 解析update
-func (daoThis *orderDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *orderRelDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
-			case `order_rel_list`:
-				daoModel.AfterUpdate[k] = v
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					updateData[k] = v
@@ -266,7 +219,7 @@ func (daoThis *orderDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 }
 
 // hook update
-func (daoThis *orderDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *orderRelDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
 			if daoModel.IsOnlyAfterUpdate {
@@ -275,14 +228,6 @@ func (daoThis *orderDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				result, err = in.Next(ctx)
 				if err != nil {
 					return
-				}
-			}
-
-			for k, v := range daoModel.AfterUpdate {
-				switch k {
-				case `order_rel_list`:
-					valList := gconv.SliceMap(v)
-					daoIndex.SaveListRelManyWithSort(ctx, &OrderRel, OrderRel.Columns().OrderId, gconv.SliceAny(daoModel.IdArr), valList)
 				}
 			}
 
@@ -305,7 +250,7 @@ func (daoThis *orderDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 }
 
 // hook delete
-func (daoThis *orderDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *orderRelDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) { //有软删除字段时需改成Update事件
 			result, err = in.Next(ctx)
@@ -313,24 +258,21 @@ func (daoThis *orderDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 
-			row, _ := result.RowsAffected()
+			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			}
+			} */
 
-			OrderRel.CtxDaoModel(ctx).Filter(OrderRel.Columns().OrderId, daoModel.IdArr).Delete()
 			return
 		},
 	}
 }
 
 // 解析group
-func (daoThis *orderDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *orderRelDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
-			case `id`:
-				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().OrderId)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -344,15 +286,13 @@ func (daoThis *orderDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel)
 }
 
 // 解析order
-func (daoThis *orderDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *orderRelDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			v = gstr.Trim(v)
 			kArr := gstr.Split(v, `,`)
 			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
-			case `id`:
-				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().OrderId, 1))
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
@@ -366,7 +306,7 @@ func (daoThis *orderDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel)
 }
 
 // 解析join
-func (daoThis *orderDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *orderRelDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		if daoModel.JoinTableSet.Contains(joinTable) {
 			return m
@@ -376,14 +316,6 @@ func (daoThis *orderDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
-		case Pay.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+Pay.Columns().PayId+` = `+daoModel.DbTable+`.`+daoThis.Columns().PayId)
-		case Channel.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+Channel.Columns().ChannelId+` = `+daoModel.DbTable+`.`+daoThis.Columns().ChannelId)
-		case OrderRel.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+OrderRel.Columns().OrderId+` = `+daoModel.DbTable+`.`+daoThis.Columns().OrderId)
-		default:
-			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().OrderId+` = `+daoModel.DbTable+`.`+daoThis.Columns().OrderId)
 		}
 		return m
 	}

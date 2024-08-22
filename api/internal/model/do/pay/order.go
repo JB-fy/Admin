@@ -19,7 +19,7 @@ type Order struct {
 	PayId        interface{} // 支付ID
 	ChannelId    interface{} // 通道ID
 	PayType      interface{} // 类型：0支付宝 1微信
-	PayPrice     interface{} // 实付金额
+	Amount       interface{} // 实付金额
 	PayStatus    interface{} // 状态：0未付款 1已付款
 	PayTime      *gtime.Time // 支付时间
 	PayRate      interface{} // 费率

@@ -17,7 +17,7 @@ type Order struct {
 	PayId        uint        `json:"payId"        orm:"pay_id"         ` // 支付ID
 	ChannelId    uint        `json:"channelId"    orm:"channel_id"     ` // 通道ID
 	PayType      uint        `json:"payType"      orm:"pay_type"       ` // 类型：0支付宝 1微信
-	PayPrice     float64     `json:"payPrice"     orm:"pay_price"      ` // 实付金额
+	Amount       float64     `json:"amount"       orm:"amount"         ` // 实付金额
 	PayStatus    uint        `json:"payStatus"    orm:"pay_status"     ` // 状态：0未付款 1已付款
 	PayTime      *gtime.Time `json:"payTime"      orm:"pay_time"       ` // 支付时间
 	PayRate      float64     `json:"payRate"      orm:"pay_rate"       ` // 费率

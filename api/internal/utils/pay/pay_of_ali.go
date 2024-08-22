@@ -21,7 +21,7 @@ type PayOfAli struct {
 func NewPayOfAli(ctx context.Context, config map[string]any) *PayOfAli {
 	payObj := PayOfAli{Ctx: ctx}
 	gconv.Struct(config, &payObj)
-	if payObj.AppId == `` || payObj.PrivateKey == `` || payObj.PublicKey == `` || payObj.NotifyUrl == `` || payObj.OpAppId == `` {
+	if payObj.AppId == `` || payObj.PrivateKey == `` || payObj.PublicKey == `` || payObj.NotifyUrl == `` {
 		panic(`缺少配置：支付-支付宝`)
 	}
 	return &payObj
@@ -109,6 +109,10 @@ func (payThis *PayOfAli) QRCode(payReqData PayReqData) (payResData PayResData, e
 func (payThis *PayOfAli) Jsapi(payReqData PayReqData) (payResData PayResData, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
+		return
+	}
+	if payThis.OpAppId == `` {
+		err = errors.New(`缺少插件配置：支付-小程序AppID`)
 		return
 	}
 

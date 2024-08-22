@@ -9,8 +9,10 @@ import (
 	"api/internal/utils/pay"
 	"context"
 
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/util/gutil"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type Pay struct{}
@@ -67,11 +69,18 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		return
 	}
 
-	/**--------确定支付数据 开始--------**/
+	/**--------订单验证和设置支付数据 开始--------**/
+	orderFilter := g.Map{}
+	orderFilter[daoPay.Order.Columns().PayStatus] = 0
+	if req.OrderId > 0 {
+		orderFilter[daoPay.Order.Columns().OrderId] = req.OrderId
+	}
+	if req.OrderNo != `` {
+		orderFilter[daoPay.Order.Columns().OrderNo] = req.OrderNo
+	}
+
 	var payReqData pay.PayReqData
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
-	switch sceneCode {
+	switch utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneCode].String() {
 	case `app`:
 		loginInfo := utils.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
@@ -86,26 +95,22 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 				payReqData.Openid = loginInfo[daoUsers.Users.Columns().WxOpenid].String()
 			}
 		}
+		// orderFilter[daoPay.Order.Columns().UserId] = loginInfo[`login_id`]
 	default:
 		err = utils.NewErrorCode(ctx, 39999998, ``)
 		return
 	}
 
-	/* //订单查询
-	orderInfo, _ := daoXxxx.Order.CtxDaoModel(ctx).Filters(g.Map{
-		daoXxxx.Order.Columns().OrderNo:   req.OrderNo,
-		daoXxxx.Order.Columns().UserId:    loginInfo[`login_id`],
-		daoXxxx.Order.Columns().PayStatus: 0,
-	}).One()
+	orderInfo, _ := daoPay.Order.CtxDaoModel(ctx).Filters(orderFilter).One()
 	if orderInfo.IsEmpty() {
-		err = utils.NewErrorCode(ctx, 29999998, ``)
+		err = utils.NewErrorCode(ctx, 30013000, ``)
 		return
 	}
 
-	payReqData.OrderNo = orderInfo[daoXxxx.Order.Columns().OrderNo].String()
-	payReqData.Amount = orderInfo[daoXxxx.Order.Columns().Price].Float64()
-	payReqData.Desc = `订单描述` */
-	/**--------确定支付数据 结束--------**/
+	payReqData.OrderNo = orderInfo[daoPay.Order.Columns().OrderNo].String()
+	payReqData.Amount = orderInfo[daoPay.Order.Columns().Amount].Float64()
+	payReqData.Desc = `描述`
+	/**--------订单验证和设置支付数据 结束--------**/
 
 	payObj := pay.NewPay(ctx, payInfo)
 	var payResData pay.PayResData
@@ -122,6 +127,16 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	if err != nil {
 		return
 	}
+
+	daoPay.Order.CtxDaoModel(ctx).Filters(g.Map{
+		daoPay.Order.Columns().OrderId:   orderInfo[daoPay.Order.Columns().OrderId],
+		daoPay.Order.Columns().PayStatus: 0,
+	}).Data(g.Map{
+		daoPay.Order.Columns().PayId:     channelInfo[daoPay.Channel.Columns().PayId],
+		daoPay.Order.Columns().ChannelId: channelInfo[daoPay.Channel.Columns().ChannelId],
+		daoPay.Order.Columns().PayType:   payInfo[daoPay.Pay.Columns().PayType],
+		daoPay.Order.Columns().PayRate:   payInfo[daoPay.Pay.Columns().PayRate], //以订单选择支付通道时的费率为准
+	}).Update()
 
 	res = &api.PayPayRes{
 		PayStr: payResData.PayStr,
@@ -145,29 +160,29 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 		return
 	}
 
-	gutil.Dump(notifyInfo)
-	/* // 支付数据累积方法。作用：方便不同订单调用
-	payAddFunc := func(ctx context.Context, payId uint, channelId uint, orderAmount float64, payRate float64) { //payRate以订单支付时的费率为准
-		daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, payId).HookUpdate(g.Map{
-			daoPay.Pay.Columns().TotalAmount: gdb.Raw(daoPay.Pay.Columns().TotalAmount + ` + ` + gconv.String(orderAmount)),
-			daoPay.Pay.Columns().Balance:     gdb.Raw(daoPay.Pay.Columns().Balance + ` + ` + gconv.String(orderAmount*(1-payRate))),
-		}).Update()
-		daoPay.Channel.CtxDaoModel(ctx).Filter(daoPay.Channel.Columns().ChannelId, channelId).HookUpdate(g.Map{
-			daoPay.Channel.Columns().TotalAmount: gdb.Raw(daoPay.Channel.Columns().TotalAmount + ` + ` + gconv.String(orderAmount)),
-		}).Update()
+	orderInfo, _ := daoPay.Order.CtxDaoModel(ctx).Filters(g.Map{
+		daoPay.Order.Columns().PayId:     req.PayId,
+		daoPay.Order.Columns().OrderNo:   notifyInfo.OrderNo,
+		daoPay.Order.Columns().Amount:    notifyInfo.Amount,
+		daoPay.Order.Columns().PayStatus: 0,
+	}).One()
+	if orderInfo.IsEmpty() {
+		err = utils.NewErrorCode(ctx, 30013000, ``)
+		payObj.NotifyRes(r, err.Error())
+		return
 	}
+
 	// 订单回调处理
-	xxxxOrderHandler := daoXxxx.Order.CtxDaoModel(ctx)
-	err = xxxxOrderHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
-		row, err := tx.Model(xxxxOrderHandler.DbTable).Where(g.Map{
-			daoXxxx.Order.Columns().PayId:     req.PayId,
-			daoXxxx.Order.Columns().OrderNo:   notifyInfo.OrderNo,
-			daoXxxx.Order.Columns().Price:     notifyInfo.Amount,
-			daoXxxx.Order.Columns().PayStatus: 0,
+	payOrderHandler := daoPay.Order.CtxDaoModel(ctx)
+	err = payOrderHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
+		row, err := payOrderHandler.CloneNew().TX(tx).Filters(g.Map{
+			daoPay.Order.Columns().OrderId:   orderInfo[daoPay.Order.Columns().OrderId],
+			daoPay.Order.Columns().PayStatus: 0, //防并发
 		}).Data(g.Map{
-			daoXxxx.Order.Columns().OrderNoOfThird: notifyInfo.OrderNoOfThird,
-			daoXxxx.Order.Columns().PayStatus:      1,
-			daoXxxx.Order.Columns().PayTime:        gtime.Now(),
+			daoPay.Order.Columns().ThirdOrderNo: notifyInfo.OrderNoOfThird,
+			daoPay.Order.Columns().PayStatus:    1,
+			daoPay.Order.Columns().PayTime:      gtime.Now(),
+			// daoPay.Order.Columns().PayRate:      payInfo[daoPay.Pay.Columns().PayRate], //以订单回调时的费率为准
 		}).UpdateAndGetAffected()
 		if err != nil {
 			return
@@ -177,17 +192,32 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 			return
 		}
 
-		// 支付成功后处理逻辑
+		// 支付成功后处理关联订单
+		orderRelList, _ := daoPay.OrderRel.CtxDaoModel(ctx).TX(tx).Filter(daoPay.OrderRel.Columns().OrderId, orderInfo[daoPay.Order.Columns().OrderId]).All()
+		for _, v := range orderRelList {
+			switch v[daoPay.OrderRel.Columns().RelOrderType].Uint() { // 根据订单类型找到对应的订单表做处理
+			// case 0:
+			default:
+				err = utils.NewErrorCode(ctx, 30013001, ``)
+				return
+			}
+		}
 
-		// 支付数据累积
-		orderInfo, _ := tx.Model(xxxxOrderHandler.DbTable).Where(daoXxxx.Order.Columns().OrderNo, notifyInfo.OrderNo).One()
-		payAddFunc(ctx, req.PayId, orderInfo[daoXxxx.Order.Columns().ChannelId].Uint(), notifyInfo.Amount, orderInfo[daoXxxx.Order.Columns().PayRate].Float64())
+		// 累积支付数据
+		daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, orderInfo[daoPay.Order.Columns().PayId]).HookUpdate(g.Map{
+			daoPay.Pay.Columns().TotalAmount: gdb.Raw(daoPay.Pay.Columns().TotalAmount + ` + ` + orderInfo[daoPay.Order.Columns().Amount].String()),
+			daoPay.Pay.Columns().Balance:     gdb.Raw(daoPay.Pay.Columns().Balance + ` + ` + gconv.String(orderInfo[daoPay.Order.Columns().Amount].Float64()*(1-orderInfo[daoPay.Order.Columns().PayRate].Float64()))), //以订单选择支付通道时的费率为准
+			// daoPay.Pay.Columns().Balance:     gdb.Raw(daoPay.Pay.Columns().Balance + ` + ` + gconv.String(orderInfo[daoPay.Order.Columns().Amount].Float64()*(1-payInfo[daoPay.Pay.Columns().PayRate].Float64()))), //以订单回调时的费率为准
+		}).Update()
+		daoPay.Channel.CtxDaoModel(ctx).Filter(daoPay.Channel.Columns().ChannelId, orderInfo[daoPay.Order.Columns().ChannelId]).HookUpdate(g.Map{
+			daoPay.Channel.Columns().TotalAmount: gdb.Raw(daoPay.Channel.Columns().TotalAmount + ` + ` + orderInfo[daoPay.Order.Columns().Amount].String()),
+		}).Update()
 		return
 	})
 	if err != nil {
 		payObj.NotifyRes(r, err.Error())
 		return
-	} */
+	}
 
 	payObj.NotifyRes(r, ``)
 	return
