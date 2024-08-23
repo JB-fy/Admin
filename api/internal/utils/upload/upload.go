@@ -72,13 +72,16 @@ func NewUpload(ctx context.Context, scene string, uploadId uint) Upload {
 	}
 }
 
-func CreateUploadParam(fileType string) (param UploadParam) {
-	param = UploadParam{
-		Dir:        `upload/` + gtime.Now().Format(`Ymd`) + `/`,
-		Expire:     gtime.Now().Unix() + 15*60,
-		ExpireTime: 15 * 60,
-		MinSize:    0,
-		MaxSize:    1024 * 1024 * 1024,
+func CreateUploadParam(scene string) (param UploadParam) {
+	switch scene {
+	default:
+		param = UploadParam{
+			Dir:        `upload/` + gtime.Now().Format(`Ymd`) + `/`,
+			Expire:     gtime.Now().Unix() + 15*60,
+			ExpireTime: 15 * 60,
+			MinSize:    0,
+			MaxSize:    1024 * 1024 * 1024,
+		}
 	}
 	return
 }
