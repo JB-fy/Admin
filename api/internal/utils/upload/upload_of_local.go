@@ -55,11 +55,12 @@ func (uploadThis *UploadOfLocal) Upload(r *ghttp.Request) (notifyInfo NotifyInfo
 		return
 	}
 	signData := map[string]any{
-		`dir`:      dir,
-		`expire`:   expire,
-		`min_size`: minSize,
-		`max_size`: maxSize,
-		`rand`:     rand,
+		`upload_id`: uploadThis.UploadId,
+		`dir`:       dir,
+		`expire`:    expire,
+		`min_size`:  minSize,
+		`max_size`:  maxSize,
+		`rand`:      rand,
 	}
 	if sign != uploadThis.CreateSign(signData) {
 		err = errors.New(`签名错误`)
@@ -138,14 +139,14 @@ func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo SignInfo, err
 	}
 
 	uploadData := map[string]any{
-		`dir`:      param.Dir,
-		`expire`:   param.Expire,
-		`min_size`: param.MinSize,
-		`max_size`: param.MaxSize,
-		`rand`:     grand.S(8),
+		`upload_id`: uploadThis.UploadId,
+		`dir`:       param.Dir,
+		`expire`:    param.Expire,
+		`min_size`:  param.MinSize,
+		`max_size`:  param.MaxSize,
+		`rand`:      grand.S(8),
 	}
 	uploadData[`sign`] = uploadThis.CreateSign(uploadData)
-	uploadData[`upload_id`] = uploadThis.UploadId
 
 	signInfo.UploadData = uploadData
 	return
