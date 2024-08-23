@@ -27,8 +27,8 @@ type PayChannelListRes struct {
 type PayPayReq struct {
 	g.Meta    `path:"/pay" method:"post" tags:"支付" sm:"支付"`
 	ChannelId uint   `json:"channel_id" v:"required|between:1,4294967295" dc:"通道ID"`
-	OrderId   uint   `json:"order_id" v:"required-without:OrderNo|between:1,4294967295" dc:"订单ID"`
-	OrderNo   string `json:"order_no" v:"required-without:OrderId|max-length:60" dc:"订单号"`
+	OrderId   uint   `json:"order_id" v:"required-without:OrderNo|between:1,4294967295" dc:"订单ID。订单ID和订单号二选一"`
+	OrderNo   string `json:"order_no" v:"required-without:OrderId|max-length:60" dc:"订单号。订单ID和订单号二选一"`
 }
 
 type PayPayRes struct {
