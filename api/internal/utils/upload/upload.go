@@ -5,7 +5,7 @@ import (
 	"api/internal/utils"
 	"context"
 
-	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -44,12 +44,21 @@ type Upload interface {
 	Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error)  // 回调
 }
 
-func NewUpload(ctx context.Context, uploadInfo gdb.Record) Upload {
-	if uploadInfo.IsEmpty() {
-		uploadInfo, _ = daoUpload.Upload.CtxDaoModel(ctx).Filter(daoUpload.Upload.Columns().IsDefault, 1).One()
+// scene	上传场景。default默认。根据自身需求扩展，用于确定上传通道和上传参数
+// uploadId	上传ID
+func NewUpload(ctx context.Context, scene string, uploadId uint) Upload {
+	uploadFilter := g.Map{}
+	if uploadId > 0 {
+		uploadFilter[daoUpload.Upload.Columns().UploadId] = uploadId
+	} else {
+		switch scene {
+		default:
+			uploadFilter[daoUpload.Upload.Columns().IsDefault] = 1
+		}
 	}
-	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
+	uploadInfo, _ := daoUpload.Upload.CtxDaoModel(ctx).Filters(uploadFilter).One()
 
+	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
 	switch uploadInfo[daoUpload.Upload.Columns().UploadType].Uint() {
 	case 1: //阿里云OSS
 		if gconv.Bool(config[`isNotify`]) {
@@ -58,6 +67,7 @@ func NewUpload(ctx context.Context, uploadInfo gdb.Record) Upload {
 		return NewUploadOfAliyunOss(ctx, config)
 	// case 0: //本地
 	default:
+		config[`uploadId`] = uploadInfo[daoUpload.Upload.Columns().UploadId]
 		return NewUploadOfLocal(ctx, config)
 	}
 }

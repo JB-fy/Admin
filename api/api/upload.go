@@ -7,21 +7,22 @@ import (
 
 /*--------上传本地 开始--------*/
 type UploadUploadReq struct {
-	g.Meta `path:"/upload" method:"post" tags:"上传" sm:"上传本地"`
-	Dir    string            `json:"dir" v:"required" dc:"上传目录"`
-	Expire string            `json:"expire" v:"required" dc:"过期时间"`
-	Rand   string            `json:"rand" v:"required" dc:"随机字符串"`
-	Sign   string            `json:"sign" v:"required" dc:"签名"`
-	Key    string            `json:"key" v:"" dc:"文件名称"`
-	File   *ghttp.UploadFile `json:"file" v:"required" dc:"上传文件"`
+	g.Meta   `path:"/upload" method:"post" tags:"上传" sm:"上传本地"`
+	UploadId uint              `json:"upload_id" v:"required|between:1,4294967295" dc:"上传ID"`
+	Dir      string            `json:"dir" v:"required" dc:"上传目录"`
+	Expire   string            `json:"expire" v:"required" dc:"过期时间"`
+	Rand     string            `json:"rand" v:"required" dc:"随机字符串"`
+	Sign     string            `json:"sign" v:"required" dc:"签名"`
+	Key      string            `json:"key" v:"" dc:"文件名称"`
+	File     *ghttp.UploadFile `json:"file" v:"required" dc:"上传文件"`
 }
 
 /*--------上传本地 结束--------*/
 
 /*--------获取签名（H5直传用） 开始--------*/
 type UploadSignReq struct {
-	g.Meta   `path:"/sign" method:"post" tags:"上传" sm:"获取签名（H5直传用）"`
-	FileType string `json:"file_type" v:"" dc:"文件类型"`
+	g.Meta `path:"/sign" method:"post" tags:"上传" sm:"获取签名（H5直传用）"`
+	Scene  string `json:"scene" v:"" dc:"上传场景"`
 }
 
 type UploadSignRes struct {
@@ -37,8 +38,8 @@ type UploadSignRes struct {
 
 /*--------获取配置信息（APP直传前调用） 开始--------*/
 type UploadConfigReq struct {
-	g.Meta   `path:"/config" method:"post" tags:"上传" sm:"获取配置信息（APP直传前调用）"`
-	FileType string `json:"file_type" v:"" dc:"文件类型"`
+	g.Meta `path:"/config" method:"post" tags:"上传" sm:"获取配置信息（APP直传前调用）"`
+	Scene  string `json:"scene" v:"" dc:"上传场景"`
 }
 
 type UploadConfigRes struct {
@@ -54,8 +55,8 @@ type UploadConfigRes struct {
 
 /*--------获取Sts Token（APP直传用） 开始--------*/
 type UploadStsReq struct { //阿里云的APP SDK通过设置地址来获取Sts Token。请求方式必须是GET
-	g.Meta   `path:"/sts" method:"get" tags:"上传" sm:"获取Sts Token（APP直传用）"`
-	FileType string `json:"file_type" v:"" dc:"文件类型"`
+	g.Meta `path:"/sts" method:"get" tags:"上传" sm:"获取Sts Token（APP直传用）"`
+	Scene  string `json:"scene" v:"" dc:"上传场景"`
 }
 
 type UploadStsRes struct {

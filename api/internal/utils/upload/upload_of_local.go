@@ -24,6 +24,7 @@ import (
 
 type UploadOfLocal struct {
 	Ctx           context.Context
+	UploadId      uint   `json:"uploadId"`
 	Url           string `json:"url"`
 	SignKey       string `json:"signKey"`
 	FileSaveDir   string `json:"fileSaveDir"`
@@ -33,7 +34,7 @@ type UploadOfLocal struct {
 func NewUploadOfLocal(ctx context.Context, config map[string]any) *UploadOfLocal {
 	uploadObj := UploadOfLocal{Ctx: ctx}
 	gconv.Struct(config, &uploadObj)
-	if uploadObj.Url == `` || uploadObj.SignKey == `` || uploadObj.FileSaveDir == `` || uploadObj.FileUrlPrefix == `` {
+	if uploadObj.UploadId == 0 || uploadObj.Url == `` || uploadObj.SignKey == `` || uploadObj.FileSaveDir == `` || uploadObj.FileUrlPrefix == `` {
 		panic(`缺少配置：上传-本地`)
 	}
 	return &uploadObj
@@ -144,6 +145,7 @@ func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo SignInfo, err
 		`rand`:     grand.S(8),
 	}
 	uploadData[`sign`] = uploadThis.CreateSign(uploadData)
+	uploadData[`upload_id`] = uploadThis.UploadId
 
 	signInfo.UploadData = uploadData
 	return
