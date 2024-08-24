@@ -283,6 +283,7 @@ upload.initSignInfo() //初始化签名信息
                             <img class="el-upload-list__item-thumbnail" :src="file.url" />
                             <span class="el-upload-list__item-actions">
                                 <span @click="upload.onPreview(file)"><autoicon-ep-zoom-in /></span>
+                                <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
                                 <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
                             </span>
                             <el-image-viewer v-if="imageViewer.visible" :url-list="imageViewer.urlList" :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
@@ -302,9 +303,9 @@ upload.initSignInfo() //初始化签名信息
                         <template v-else>
                             <el-icon :size="100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
                             <span class="el-upload-list__item-actions">
-                                <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
                                 <!-- 刚上传的文件没必要给下载按钮 -->
                                 <span v-if="file?.response === undefined" @click="upload.download(file)"><autoicon-ep-download /></span>
+                                <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
                                 <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
                             </span>
                         </template>
