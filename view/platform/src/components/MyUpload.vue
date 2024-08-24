@@ -326,6 +326,7 @@ upload.initSignInfo() //初始化签名信息
             :data="upload.data"
             :before-upload="upload.beforeUpload"
             :on-success="upload.onSuccess"
+            :on-error="upload.onError"
             :on-remove="upload.onRemove"
             :multiple="multiple"
             :accept="accept"
