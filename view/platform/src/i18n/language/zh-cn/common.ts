@@ -64,6 +64,8 @@ export default {
         notAcceptFileType: '文件格式不在允许范围内',
         notWithinFileSize: '文件大小不在允许范围内',
 
+        copySuccess: '复制成功',
+
         notDuplicate: '不能与现有记录重复',
         notRequired: '不填则不修改',
     },

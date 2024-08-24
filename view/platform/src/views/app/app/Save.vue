@@ -118,7 +118,7 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.package_name" :placeholder="t('app.app.name.package_name')" maxlength="60" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('app.app.name.package_file')" prop="package_file">
-                    <my-upload v-model="saveForm.data.package_file" list-type="text" />
+                    <my-upload v-model="saveForm.data.package_file" show-type="text" />
                 </el-form-item>
                 <el-form-item :label="t('app.app.name.ver_no')" prop="ver_no">
                     <el-input-number v-model="saveForm.data.ver_no" :placeholder="t('app.app.name.ver_no')" :min="0" :max="4294967295" :precision="0" :value-on-clear="0" />
@@ -138,7 +138,7 @@ const saveDrawer = reactive({
                         <el-alert :title="t('app.app.tip.extra_config_obj.marketUrl')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                     <el-form-item :label="t('app.app.name.extra_config_obj.plistFile')" prop="extra_config.plistFile">
-                        <my-upload v-model="saveForm.data.extra_config.plistFile" list-type="text">
+                        <my-upload v-model="saveForm.data.extra_config.plistFile" show-type="text">
                             <template #tip>
                                 <el-alert :title="t('app.app.tip.extra_config_obj.plistFile')" type="info" :show-icon="true" :closable="false" />
                             </template>

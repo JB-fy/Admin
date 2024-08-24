@@ -4,6 +4,8 @@
 <my-upload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" :listType="text" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
+import clipboard3 from 'vue-clipboard3'
+const { toClipboard } = clipboard3()
 const { t } = useI18n()
 
 const slots = useSlots()
@@ -29,6 +31,12 @@ const props = defineProps({
         //需要严格限制文件格式时使用。示例：['image/png','image/jpg','image/jpeg','image/gif']
         type: Array,
         default: () => [],
+    },
+    showType: {
+        //显示类型，只在listType=picture-card时有用
+        type: String,
+        default: 'image',
+        validator: (value: string, props) => ['image', 'video', 'audio', 'text'].includes(value),
     },
     // 以下属性参考原el-upload组件
     multiple: {
@@ -162,15 +170,13 @@ const upload = reactive({
             return signInfo
         },
     },
-    onPreview: (uploadFile: any) => {
-        imageViewer.initialIndex = imageViewer.urlList.indexOf(uploadFile.url)
+    onPreview: (file: any) => {
+        imageViewer.initialIndex = imageViewer.urlList.indexOf(file.url)
         imageViewer.visible = true
     },
     onRemove: (file: any) => {
-        //上传前处理函数beforeUpload返回false时也会触发此函数。此时file内没有response，但是由于没上传也不会存在于props.modelValue中，故不影响删除逻辑
-        let url: string = file?.response === undefined ? file.url : file.raw.saveInfo.url
         if (props.multiple) {
-            upload.value.splice(upload.value.indexOf(url), 1)
+            upload.value.splice(upload.value.indexOf(upload.getUrl(file)), 1)
         } else {
             upload.value = ''
         }
@@ -208,22 +214,19 @@ const upload = reactive({
         rawFile.saveInfo = upload.createSaveInfo(rawFile)
         upload.data.key = rawFile.saveInfo.fileName //这是文件保存路径及文件名，必须唯一，否则会覆盖oss服务器同名文件
     },
-    download: (uploadFile: any) => {
-        window.open(uploadFile.url)
+    getUrl: (file: any): string => (file?.response === undefined ? file.url : file.raw.saveInfo.url),
+    copyUrl: async (file: any) => {
+        await toClipboard(upload.getUrl(file))
+        ElMessage.success(t('common.tip.copySuccess'))
     },
+    download: (file: any) => window.open(upload.getUrl(file)),
 })
 
 const imageViewer = reactive({
-    urlList: computed((): string[] => {
-        return upload.fileList.map((item) => {
-            return item.url
-        })
-    }),
+    urlList: computed((): string[] => upload.fileList.map((item) => item.url)),
     initialIndex: 0,
     visible: false,
-    close: () => {
-        imageViewer.visible = false
-    },
+    close: () => (imageViewer.visible = false),
 })
 
 upload.initSignInfo() //初始化签名信息
@@ -270,24 +273,44 @@ upload.initSignInfo() //初始化签名信息
                 <template #file="{ file }">
                     <slot v-if="slots.file" name="file" :file="file"></slot>
                     <template v-else>
-                        <div>
-                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+                        <label class="el-upload-list__item-status-label">
+                            <el-icon class="el-icon--check">
+                                <autoicon-ep-check />
+                            </el-icon>
+                        </label>
+
+                        <template v-if="showType == 'image'">
+                            <img class="el-upload-list__item-thumbnail" :src="file.url" />
                             <span class="el-upload-list__item-actions">
-                                <span class="el-upload-list__item-preview" @click="upload.onPreview(file)">
-                                    <autoicon-ep-zoom-in />
-                                </span>
-                                <!-- <span class="el-upload-list__item-delete" @click="upload.download(file)">
-                                    <autoicon-ep-download />
-                                </span> -->
-                                <span class="el-upload-list__item-delete" @click="upload.ref.handleRemove(file)">
-                                    <autoicon-ep-delete />
-                                </span>
+                                <span @click="upload.onPreview(file)"><autoicon-ep-zoom-in /></span>
+                                <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
                             </span>
-                        </div>
+                            <el-image-viewer v-if="imageViewer.visible" :url-list="imageViewer.urlList" :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
+                        </template>
+                        <template v-else-if="showType == 'video'">
+                            <video preload="none" :controls="true" :src="file.url" style="width: 100%" />
+                            <el-icon class="el-icon--close" @click="upload.ref.handleRemove(file)">
+                                <autoicon-ep-close />
+                            </el-icon>
+                        </template>
+                        <template v-else-if="showType == 'audio'">
+                            <audio preload="none" :controls="true" :src="file.url" style="width: 100%; height: 40px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)" />
+                            <el-icon class="el-icon--close" @click="upload.ref.handleRemove(file)">
+                                <autoicon-ep-close />
+                            </el-icon>
+                        </template>
+                        <template v-else>
+                            <el-icon :size="100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
+                            <span class="el-upload-list__item-actions">
+                                <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
+                                <!-- 刚上传的文件没必要给下载按钮 -->
+                                <span v-if="file?.response === undefined" @click="upload.download(file)"><autoicon-ep-download /></span>
+                                <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
+                            </span>
+                        </template>
                     </template>
                 </template>
             </el-upload>
-            <el-image-viewer v-if="imageViewer.visible" :url-list="imageViewer.urlList" :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
         </div>
         <el-upload
             v-else
@@ -335,5 +358,14 @@ upload.initSignInfo() //初始化签名信息
 
 .upload-container :deep(.hide .el-upload) {
     display: none;
+}
+
+.upload-container :deep(.el-upload-list--picture-card .el-upload-list__item .el-icon--close) {
+    top: 5px;
+    transform: translateY(0);
+}
+
+.upload-container :deep(.el-upload-list__item:hover .el-icon--close) {
+    display: inline-flex;
 }
 </style>

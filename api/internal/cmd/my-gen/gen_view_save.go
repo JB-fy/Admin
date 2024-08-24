@@ -518,11 +518,11 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		case internal.TypeNameImageSuffix:
 			attrOfAdd += ` accept="image/*"`
 		case internal.TypeNameVideoSuffix:
-			attrOfAdd += ` accept="video/*" list-type="text"`
+			attrOfAdd += ` accept="video/*" show-type="video"`
 		case internal.TypeNameAudioSuffix:
-			attrOfAdd += ` accept="audio/*" list-type="text"`
+			attrOfAdd += ` accept="audio/*" show-type="audio"`
 		case internal.TypeNameFileSuffix:
-			attrOfAdd += ` list-type="text"`
+			attrOfAdd += ` show-type="text"`
 		}
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + dataFieldPath + `"` + attrOfAdd + ` />`
@@ -670,11 +670,11 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 				case internal.TypeNameImageSuffix:
 					attrOfAdd += ` accept="image/*"`
 				case internal.TypeNameVideoSuffix:
-					attrOfAdd += ` accept="video/*" list-type="text"`
+					attrOfAdd += ` accept="video/*" show-type="video"`
 				case internal.TypeNameAudioSuffix:
-					attrOfAdd += ` accept="audio/*" list-type="text"`
+					attrOfAdd += ` accept="audio/*" show-type="audio"`
 				case internal.TypeNameFileSuffix:
-					attrOfAdd += ` list-type="text"`
+					attrOfAdd += ` show-type="text"`
 				}
 				viewSaveField.formContent.Method = internal.ReturnTypeName
 				viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + tplEM.FieldVar + `"` + attrOfAdd + ` />`
