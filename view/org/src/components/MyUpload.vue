@@ -50,7 +50,7 @@ const props = defineProps({
         default: '',
     },
     listType: {
-        type: String as PropType<EpPropMergeType<StringConstructor, "picture-card" | "text" | "picture", unknown> | undefined>,
+        type: String as PropType<EpPropMergeType<StringConstructor, 'picture-card' | 'text' | 'picture', unknown> | undefined>,
         default: 'picture-card',
     },
     disabled: {
