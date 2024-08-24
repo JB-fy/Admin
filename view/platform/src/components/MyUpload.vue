@@ -4,6 +4,7 @@
 <my-upload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" show-type="video" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
+import type { EpPropMergeType } from 'element-plus/es/utils/vue/props/types'
 import clipboard3 from 'vue-clipboard3'
 const { toClipboard } = clipboard3()
 const { t } = useI18n()
@@ -49,7 +50,7 @@ const props = defineProps({
         default: '',
     },
     listType: {
-        type: String,
+        type: String as PropType<EpPropMergeType<StringConstructor, "picture-card" | "text" | "picture", unknown> | undefined>,
         default: 'picture-card',
     },
     disabled: {
@@ -187,7 +188,7 @@ const upload = reactive({
         if (upload.signInfo?.is_res) {
             //如有回调服务器且有报错，则默认失败
             if (res.code !== 0) {
-                ElMessage.error(t('common.tip.uploadFail'))
+                ElMessage.error(t('common.tip.uploadFail') + '(' + (res.msg ?? res) + ')')
                 fileList.splice(fileList.indexOf(file), 1)
                 return
             }
@@ -201,6 +202,9 @@ const upload = reactive({
         }
         emits('update:modelValue', upload.value)
         emits('change')
+    },
+    onError: (err: Error /* , file: any, fileList: any */) => {
+        ElMessage.error(t('common.tip.uploadFail') + '(' + err.message + ')')
     },
     beforeUpload: async (rawFile: any) => {
         if (props.acceptType.length > 0 && props.acceptType.indexOf(rawFile.type) === -1) {
@@ -242,6 +246,7 @@ upload.initSignInfo() //初始化签名信息
                 :data="upload.data"
                 :before-upload="upload.beforeUpload"
                 :on-success="upload.onSuccess"
+                :on-error="upload.onError"
                 :on-remove="upload.onRemove"
                 :multiple="multiple"
                 :accept="accept"
