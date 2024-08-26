@@ -401,6 +401,8 @@ upload.initSignInfo() //初始化签名信息
 
 .upload-container :deep(.el-upload-list__item:hover .el-icon--close) {
     display: inline-flex;
+    background-color: var(--el-color-danger);
+    border-radius: 50%;
 }
 
 .upload-container.small {
@@ -432,8 +434,6 @@ upload.initSignInfo() //初始化签名信息
 }
 
 .upload-container.small :deep(.el-upload-list__item:hover .el-icon--close) {
-    background-color: var(--el-color-danger);
-    border-radius: 50%;
     top: -7px;
     right: -7px;
 }
