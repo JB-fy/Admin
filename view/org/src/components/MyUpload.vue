@@ -1,7 +1,7 @@
 <!-------- 使用示例 开始-------->
 <!-- <my-upload v-model="saveForm.data.avatar" accept="image/*" :multiple="true" />
 
-<my-upload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" show-type="video" /> -->
+<my-upload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" show-type="video" show-style="small" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 import type { EpPropMergeType } from 'element-plus/es/utils/vue/props/types'
@@ -37,10 +37,20 @@ const props = defineProps({
         //显示类型，只在listType=picture-card时有用
         type: String,
         default: 'image',
-        validator: (value: string, props) => ['image', 'video', 'audio', 'text'].includes(value),
+        validator: (value: string /* , props */) => ['image', 'video', 'audio', 'text'].includes(value),
+    },
+    showStyle: {
+        //显示风格，只在listType=picture-card时有用
+        type: String,
+        default: 'default',
+        validator: (value: string) => ['default', 'small'].includes(value),
     },
     // 以下属性参考原el-upload组件
     multiple: {
+        type: Boolean,
+        default: false,
+    },
+    drag: {
         type: Boolean,
         default: false,
     },
@@ -115,11 +125,14 @@ const upload = reactive({
         ]
     })(),
     class: computed((): string => {
+        let classStr = 'upload-container'
+        props.showStyle == 'small' && (classStr += ' small')
         if (props.multiple) {
-            return props.limit && props.limit == upload.fileList.length ? 'hide' : ''
+            props.limit && props.limit == upload.fileList.length && (classStr += ' hide')
         } else {
-            return upload.fileList.length ? 'hide' : ''
+            upload.fileList.length && (classStr += ' hide')
         }
+        return classStr
     }),
     action: '' as string,
     data: {} as { [propName: string]: any },
@@ -172,8 +185,14 @@ const upload = reactive({
         },
     },
     onPreview: (file: any) => {
-        imageViewer.initialIndex = imageViewer.urlList.indexOf(file.url)
-        imageViewer.visible = true
+        switch (props.showType) {
+            case 'image':
+                imageViewer.initialIndex = imageViewer.urlList.indexOf(file.url)
+                imageViewer.visible = true
+                break
+            default:
+                break
+        }
     },
     onRemove: (file: any) => {
         if (props.multiple) {
@@ -219,9 +238,10 @@ const upload = reactive({
         upload.data.key = rawFile.saveInfo.fileName //这是文件保存路径及文件名，必须唯一，否则会覆盖oss服务器同名文件
     },
     getUrl: (file: any): string => (file?.response === undefined ? file.url : file.raw.saveInfo.url),
-    copyUrl: async (file: any) => {
-        await toClipboard(upload.getUrl(file))
-        ElMessage.success(t('common.tip.copySuccess'))
+    copyUrl: (file: any) => {
+        toClipboard(upload.getUrl(file))
+            .then(() => ElMessage.success(t('common.copy') + t('common.success')))
+            .catch((err) => ElMessage.error(t('common.copy') + t('common.fail') + ':' + err.message))
     },
     download: (file: any) => window.open(upload.getUrl(file)),
 })
@@ -238,86 +258,94 @@ upload.initSignInfo() //初始化签名信息
 
 <template>
     <div :id="upload.id">
-        <div v-if="listType == 'picture-card'" class="upload-container">
-            <el-upload
-                :ref="(el: any) => upload.ref = el"
-                v-model:file-list="upload.fileList"
-                :action="upload.action"
-                :data="upload.data"
-                :before-upload="upload.beforeUpload"
-                :on-success="upload.onSuccess"
-                :on-error="upload.onError"
-                :on-remove="upload.onRemove"
-                :multiple="multiple"
-                :accept="accept"
-                :list-type="listType"
-                :disabled="disabled"
-                :limit="limit"
-                :on-preview="upload.onPreview"
-                :drag="true"
-                :class="upload.class"
-            >
-                <template #default>
-                    <slot v-if="slots.default" name="default"></slot>
-                    <template v-else>
-                        <el-icon class="el-icon--upload">
-                            <autoicon-ep-upload-filled />
-                        </el-icon>
-                        <div class="el-upload__text" v-html="t('common.tip.uploadOrDrop')"></div>
-                    </template>
+        <el-upload
+            v-if="listType == 'picture-card'"
+            :ref="(el: any) => upload.ref = el"
+            v-model:file-list="upload.fileList"
+            :action="upload.action"
+            :data="upload.data"
+            :before-upload="upload.beforeUpload"
+            :on-success="upload.onSuccess"
+            :on-error="upload.onError"
+            :on-remove="upload.onRemove"
+            :multiple="multiple"
+            :accept="accept"
+            :list-type="listType"
+            :disabled="disabled"
+            :limit="limit"
+            :on-preview="upload.onPreview"
+            :drag="true"
+            :class="upload.class"
+        >
+            <template #default>
+                <slot v-if="slots.default" name="default"></slot>
+                <template v-else-if="showStyle == 'small'">
+                    <el-icon class="el-icon--upload"><autoicon-ep-upload-filled /></el-icon>
                 </template>
-                <template v-if="slots.trigger" #trigger>
-                    <slot name="trigger"></slot>
+                <template v-else>
+                    <el-icon class="el-icon--upload"><autoicon-ep-upload-filled /></el-icon>
+                    <div class="el-upload__text" v-html="t('common.tip.uploadOrDrop')"></div>
                 </template>
-                <template v-if="slots.tip" #tip>
-                    <slot name="tip"></slot>
-                </template>
-                <!-- <template v-if="slots.file" #file="{ file }">
-                    <slot name="file" :file="file"></slot>
-                </template> -->
-                <template #file="{ file }">
-                    <slot v-if="slots.file" name="file" :file="file"></slot>
-                    <template v-else>
-                        <label class="el-upload-list__item-status-label">
-                            <el-icon class="el-icon--check">
-                                <autoicon-ep-check />
-                            </el-icon>
-                        </label>
+            </template>
+            <template v-if="slots.trigger" #trigger>
+                <slot name="trigger"></slot>
+            </template>
+            <template v-if="slots.tip" #tip>
+                <slot name="tip"></slot>
+            </template>
+            <template #file="{ file }">
+                <slot v-if="slots.file" name="file" :file="file"></slot>
 
-                        <template v-if="showType == 'image'">
-                            <img class="el-upload-list__item-thumbnail" :src="file.url" />
-                            <span class="el-upload-list__item-actions">
-                                <span @click="upload.onPreview(file)"><autoicon-ep-zoom-in /></span>
-                                <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
-                                <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
-                            </span>
-                            <el-image-viewer v-if="imageViewer.visible" :url-list="imageViewer.urlList" :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
-                        </template>
-                        <template v-else-if="showType == 'video'">
-                            <video preload="none" :controls="true" :src="file.url" style="width: 100%" />
-                            <el-icon class="el-icon--close" @click="upload.ref.handleRemove(file)">
-                                <autoicon-ep-close />
-                            </el-icon>
-                        </template>
-                        <template v-else-if="showType == 'audio'">
-                            <audio preload="none" :controls="true" :src="file.url" style="width: 100%; height: 40px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)" />
-                            <el-icon class="el-icon--close" @click="upload.ref.handleRemove(file)">
-                                <autoicon-ep-close />
-                            </el-icon>
-                        </template>
-                        <template v-else>
-                            <el-icon :size="100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
-                            <span class="el-upload-list__item-actions">
-                                <!-- 刚上传的文件没必要给下载按钮 -->
-                                <span v-if="file?.response === undefined" @click="upload.download(file)"><autoicon-ep-download /></span>
-                                <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
-                                <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
-                            </span>
-                        </template>
+                <template v-else-if="showStyle == 'small'">
+                    <template v-if="showType == 'image'">
+                        <img class="el-upload-list__item-thumbnail" :src="file.url" />
+                    </template>
+                    <template v-else-if="showType == 'video'">
+                        <el-icon :size="46" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-film /></el-icon>
+                    </template>
+                    <template v-else-if="showType == 'audio'">
+                        <el-icon :size="46" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-mic /></el-icon>
+                    </template>
+                    <template v-else>
+                        <el-icon :size="46" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
+                    </template>
+
+                    <el-icon class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
+                </template>
+
+                <template v-else>
+                    <label class="el-upload-list__item-status-label">
+                        <el-icon class="el-icon--check"><autoicon-ep-check /></el-icon>
+                    </label>
+
+                    <template v-if="showType == 'image'">
+                        <img class="el-upload-list__item-thumbnail" :src="file.url" />
+                        <span class="el-upload-list__item-actions">
+                            <span @click="upload.onPreview(file)"><autoicon-ep-zoom-in /></span>
+                            <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
+                            <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
+                        </span>
+                    </template>
+                    <template v-else-if="showType == 'video'">
+                        <video class="el-upload-list__item-thumbnail" preload="none" :controls="true" :src="file.url" />
+                        <el-icon class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
+                    </template>
+                    <template v-else-if="showType == 'audio'">
+                        <audio preload="none" :controls="true" :src="file.url" style="width: 100%; height: 40px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)" />
+                        <el-icon class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
+                    </template>
+                    <template v-else>
+                        <el-icon :size="100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
+                        <span class="el-upload-list__item-actions">
+                            <!-- 刚上传的文件没必要给下载按钮 -->
+                            <span v-if="file?.response === undefined" @click="upload.download(file)"><autoicon-ep-download /></span>
+                            <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
+                            <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
+                        </span>
                     </template>
                 </template>
-            </el-upload>
-        </div>
+            </template>
+        </el-upload>
         <el-upload
             v-else
             :ref="(el: any) => upload.ref = el"
@@ -333,6 +361,8 @@ upload.initSignInfo() //初始化签名信息
             :list-type="listType"
             :disabled="disabled"
             :limit="limit"
+            :on-preview="upload.onPreview"
+            :drag="drag"
         >
             <template #default>
                 <slot v-if="slots.default" name="default"></slot>
@@ -348,22 +378,19 @@ upload.initSignInfo() //初始化签名信息
                 <slot name="file" :file="file"></slot>
             </template>
         </el-upload>
+
+        <el-image-viewer v-if="imageViewer.visible" :url-list="imageViewer.urlList" :initial-index="imageViewer.initialIndex" :hide-on-click-modal="true" @close="imageViewer.close" />
     </div>
 </template>
 
 <style scoped>
 .upload-container :deep(.el-upload .el-upload-dragger) {
     border: none;
-    height: 146px;
+    height: 100%;
     padding: 0;
 }
 
-.upload-container :deep(.el-upload) {
-    width: 146px;
-    margin-right: 10px;
-}
-
-.upload-container :deep(.hide .el-upload) {
+.upload-container.hide :deep(.el-upload) {
     display: none;
 }
 
@@ -374,5 +401,40 @@ upload.initSignInfo() //初始化签名信息
 
 .upload-container :deep(.el-upload-list__item:hover .el-icon--close) {
     display: inline-flex;
+}
+
+.upload-container.small {
+    --my-upload-container-small-wg: 50px;
+    height: var(--my-upload-container-small-wg);
+}
+
+.upload-container.small :deep(.el-upload) {
+    width: var(--my-upload-container-small-wg);
+    height: var(--my-upload-container-small-wg);
+}
+
+.upload-container.small :deep(.el-upload-dragger) {
+    height: 100%;
+}
+
+.upload-container.small :deep(.el-upload-dragger .el-icon--upload) {
+    font-size: 46px;
+    margin-bottom: 0;
+}
+
+.upload-container.small :deep(.el-upload-list__item) {
+    width: var(--my-upload-container-small-wg);
+    height: var(--my-upload-container-small-wg);
+}
+
+.upload-container.small :deep(.el-upload-list__item:hover) {
+    overflow: visible;
+}
+
+.upload-container.small :deep(.el-upload-list__item:hover .el-icon--close) {
+    background-color: var(--el-color-danger);
+    border-radius: 50%;
+    top: -7px;
+    right: -7px;
 }
 </style>

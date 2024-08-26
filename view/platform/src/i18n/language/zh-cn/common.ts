@@ -2,6 +2,8 @@ export default {
     yes: '是',
     no: '否',
     ok: '确定',
+    success: '成功',
+    fail: '失败',
     add: '新增',
     edit: '编辑',
     delete: '删除',
@@ -63,8 +65,6 @@ export default {
         uploadFail: '上传失败，请稍后再试！',
         notAcceptFileType: '文件格式不在允许范围内',
         notWithinFileSize: '文件大小不在允许范围内',
-
-        copySuccess: '复制成功',
 
         notDuplicate: '不能与现有记录重复',
         notRequired: '不填则不修改',
