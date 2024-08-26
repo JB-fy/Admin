@@ -68,28 +68,30 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 	} else {
 		viewSaveThis.rule = append(viewSaveThis.rule, field+`: [],`)
 	}
-	if fieldIf == `` {
-		viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item :label="t('`+i18nPath+`.name.`+i18nFieldPath+`')" prop="`+field+`">
+	formItem := `<el-form-item :label="t('` + i18nPath + `.name.` + i18nFieldPath + `')" prop="` + field + `">
                     {{formContent}}
-                </el-form-item>`)
-		viewSaveThis.formContent = append(viewSaveThis.formContent, viewSaveField.formContent.GetData())
-	} else {
-		viewSaveThis.formItem = append(viewSaveThis.formItem, `<el-form-item v-if="`+fieldIf+`" :label="t('`+i18nPath+`.name.`+i18nFieldPath+`')" prop="`+field+`">
-					{{formContent}}
-				</el-form-item>`)
-		if tableType == internal.TableTypeMiddleMany {
-			formContent := gstr.TrimStr(viewSaveField.formContent.GetData(), ` `)
-			formContent = gstr.Replace(formContent, ` `, ` v-if="`+fieldIf+`"`, 1)
-			/* switch gstr.Split(formContent, ` `)[0] {
-			case `<el-input`:
-				formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 200px;" />`
-			case `<el-input-number`:
-				formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />`
-			} */
-			viewSaveThis.formContent = append(viewSaveThis.formContent, formContent)
-		} else {
-			viewSaveThis.formContent = append(viewSaveThis.formContent, viewSaveField.formContent.GetData())
+                </el-form-item>`
+	if fieldIf != `` {
+		formItem = gstr.Replace(formItem, ` `, ` v-if="`+fieldIf+`" `, 1)
+	}
+	viewSaveThis.formItem = append(viewSaveThis.formItem, formItem)
+	switch tableType {
+	case internal.TableTypeExtendMany, internal.TableTypeMiddleMany:
+		formContent := gstr.TrimStr(viewSaveField.formContent.GetData(), ` `)
+		if fieldIf != `` {
+			formContent = gstr.Replace(formContent, ` `, ` v-if="`+fieldIf+`" `, 1)
 		}
+		switch gstr.Split(formContent, ` `)[0] {
+		/* case `<el-input`:
+			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 200px;" />`
+		case `<el-input-number`:
+			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />` */
+		case `<my-upload`:
+			formContent = gstr.SubStr(formContent, 0, -2) + `show-style="small" />`
+		}
+		viewSaveThis.formContent = append(viewSaveThis.formContent, formContent)
+	default:
+		viewSaveThis.formContent = append(viewSaveThis.formContent, viewSaveField.formContent.GetData())
 	}
 	if viewSaveField.formHandle.GetData() != `` {
 		viewSaveThis.formHandle = append(viewSaveThis.formHandle, viewSaveField.formHandle.GetData())
@@ -794,7 +796,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 
 		fieldHandle := gstr.CaseCamelLower(tplEM.FieldVar) + `Handle`
 		formContent := gstr.TrimStr(viewSaveFieldTmp.formContent.GetData(), ` `)
-		formContent = gstr.Replace(formContent, ` `, ` :ref="(el: any) => `+fieldHandle+`.ref[index] = el" v-model="saveForm.data.`+tplEM.FieldVar+`[index]" @blur="`+fieldHandle+`.del(index, true)" :placeholder="t('`+i18nPath+`.name.`+i18nFieldPath+`')"`, 1)
+		formContent = gstr.Replace(formContent, ` `, ` :ref="(el: any) => `+fieldHandle+`.ref[index] = el" v-model="saveForm.data.`+tplEM.FieldVar+`[index]" @blur="`+fieldHandle+`.del(index, true)" :placeholder="t('`+i18nPath+`.name.`+i18nFieldPath+`')" `, 1)
 		switch gstr.Split(formContent, ` `)[0] {
 		case `<el-input`, `<el-input-number`:
 			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />`
