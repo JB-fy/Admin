@@ -87,6 +87,28 @@ const table = reactive({
             },
         },
         {
+            dataKey: 'channel_icon',
+            title: t('pay.channel.name.channel_icon'),
+            key: 'channel_icon',
+            align: 'center',
+            width: 100,
+            cellRenderer: (props: any): any => {
+                if (!props.rowData.channel_icon) {
+                    return
+                }
+                const imageList = [props.rowData.channel_icon]
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {imageList.map((item) => {
+                                return <el-image src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
+                    </el-scrollbar>,
+                ]
+            },
+        },
+        {
             dataKey: 'scene_name',
             title: t('pay.channel.name.scene_id'),
             key: 'scene_id',
@@ -113,28 +135,6 @@ const table = reactive({
                     return item.value == props.rowData.pay_method
                 })
                 return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
-            },
-        },
-        {
-            dataKey: 'channel_icon',
-            title: t('pay.channel.name.channel_icon'),
-            key: 'channel_icon',
-            align: 'center',
-            width: 100,
-            cellRenderer: (props: any): any => {
-                if (!props.rowData.channel_icon) {
-                    return
-                }
-                const imageList = [props.rowData.channel_icon]
-                return [
-                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
-                        <el-space direction="vertical" style="margin: 5px 10px;">
-                            {imageList.map((item) => {
-                                return <el-image src={item} lazy={true} hide-on-click-modal={true} preview-teleported={true} preview-src-list={imageList} /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
-                            })}
-                        </el-space>
-                    </el-scrollbar>,
-                ]
             },
         },
         {

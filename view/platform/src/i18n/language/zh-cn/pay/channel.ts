@@ -1,10 +1,10 @@
 export default {
     name: {
         channel_name: '名称',
+        channel_icon: '图标',
         scene_id: '场景',
         pay_id: '支付',
         pay_method: '支付方法',
-        channel_icon: '图标',
         sort: '排序值',
         total_amount: '总额',
         is_stop: '停用',
