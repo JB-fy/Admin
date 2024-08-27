@@ -348,12 +348,9 @@ upload.initSignInfo() //初始化签名信息
         >
             <template #default>
                 <slot v-if="slots.default" name="default"></slot>
-                <template v-else-if="size == 'small'">
-                    <el-icon class="el-icon--upload"><autoicon-ep-upload-filled /></el-icon>
-                </template>
                 <template v-else>
                     <el-icon class="el-icon--upload"><autoicon-ep-upload-filled /></el-icon>
-                    <div class="el-upload__text" v-html="t('common.tip.uploadOrDrop')"></div>
+                    <div v-if="size != 'small'" class="el-upload__text" v-html="t('common.tip.uploadOrDrop')"></div>
                 </template>
             </template>
             <template v-if="slots.trigger" #trigger>
@@ -369,18 +366,18 @@ upload.initSignInfo() //初始化签名信息
                         <img class="el-upload-list__item-thumbnail" :src="file.url" />
                     </template>
                     <template v-else-if="upload.showType(file) == 'video'">
-                        <el-icon v-if="size == 'small'" :size="46" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-film /></el-icon>
+                        <el-icon v-if="size == 'small'" :size="38" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-film /></el-icon>
                         <video v-else class="el-upload-list__item-thumbnail" preload="none" :controls="true" :src="file.url" />
                     </template>
                     <template v-else-if="upload.showType(file) == 'audio'">
-                        <el-icon v-if="size == 'small'" :size="46" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-mic /></el-icon>
+                        <el-icon v-if="size == 'small'" :size="38" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-mic /></el-icon>
                         <audio v-else preload="none" :controls="true" :src="file.url" style="width: 100%; height: 40px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)" />
                     </template>
                     <template v-else-if="upload.showType(file) == 'application'">
-                        <el-icon :size="size == 'small' ? 46 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-box /></el-icon>
+                        <el-icon :size="size == 'small' ? 38 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-box /></el-icon>
                     </template>
                     <template v-else>
-                        <el-icon :size="size == 'small' ? 46 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
+                        <el-icon :size="size == 'small' ? 38 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
                     </template>
 
                     <el-icon v-if="size == 'small'" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
@@ -462,7 +459,6 @@ upload.initSignInfo() //初始化签名信息
 
 .upload-container.small {
     --my-upload-container-small-wg: 50px;
-    height: var(--my-upload-container-small-wg);
 }
 
 .upload-container.small :deep(.el-upload) {
@@ -475,7 +471,7 @@ upload.initSignInfo() //初始化签名信息
 }
 
 .upload-container.small :deep(.el-upload-dragger .el-icon--upload) {
-    font-size: 46px;
+    font-size: 38px;
     margin-bottom: 0;
 }
 
