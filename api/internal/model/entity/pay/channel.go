@@ -15,10 +15,10 @@ type Channel struct {
 	IsStop      uint        `json:"isStop"      orm:"is_stop"      ` // 停用：0否 1是
 	ChannelId   uint        `json:"channelId"   orm:"channel_id"   ` // 通道ID
 	ChannelName string      `json:"channelName" orm:"channel_name" ` // 名称
+	ChannelIcon string      `json:"channelIcon" orm:"channel_icon" ` // 图标
 	SceneId     uint        `json:"sceneId"     orm:"scene_id"     ` // 场景ID
 	PayId       uint        `json:"payId"       orm:"pay_id"       ` // 支付ID
 	PayMethod   uint        `json:"payMethod"   orm:"pay_method"   ` // 支付方法：0APP支付 1H5支付 2扫码支付 3小程序支付
-	ChannelIcon string      `json:"channelIcon" orm:"channel_icon" ` // 图标
 	Sort        uint        `json:"sort"        orm:"sort"         ` // 排序值。从大到小排序
 	TotalAmount float64     `json:"totalAmount" orm:"total_amount" ` // 总额
 }
