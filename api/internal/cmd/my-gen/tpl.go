@@ -807,7 +807,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 			case internal.TableTypeExtendOne:
 				isExtendOne := true
 				fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
-				isExtendOneStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对一)，请确认？默认(yes)：`))
+				isExtendOneStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对一)，关联字段(` + key.FieldArr[0] + `)，请确认？默认(yes)：`))
 			isExtendOneEnd:
 				for {
 					switch isExtendOneStr {
@@ -818,17 +818,17 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 						isExtendOne = false
 						break isExtendOneEnd
 					default:
-						isExtendOneStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对一)，请确认？默认(yes)：`))
+						isExtendOneStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对一)，关联字段(` + key.FieldArr[0] + `)，请确认？默认(yes)：`))
 					}
 				}
 				if isExtendOne {
 					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 				}
-				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%t`, `扩展表(一对一)`, extendTpl.Table, isExtendOne))
+				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对一)`, extendTpl.Table, key.FieldArr[0], isExtendOne))
 			case internal.TableTypeExtendMany:
 				isExtendMany := true
 				fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
-				isExtendManyStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对多)，请确认？默认(yes)：`))
+				isExtendManyStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对多)，关联字段(` + key.FieldArr[0] + `)，请确认？默认(yes)：`))
 			isExtendManyEnd:
 				for {
 					switch isExtendManyStr {
@@ -839,7 +839,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 						isExtendMany = false
 						break isExtendManyEnd
 					default:
-						isExtendManyStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对多)，请确认？默认(yes)：`))
+						isExtendManyStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对多)，关联字段(` + key.FieldArr[0] + `)，请确认？默认(yes)：`))
 					}
 				}
 				if isExtendMany {
@@ -850,7 +850,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 					}
 					extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
 				}
-				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%t`, `扩展表(一对多)`, extendTpl.Table, isExtendMany))
+				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对多)`, extendTpl.Table, key.FieldArr[0], isExtendMany))
 			}
 			break
 		}
@@ -1016,7 +1016,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 			}
 			isOtherRel := true
 			fmt.Println(color.HiYellowString(`其它关联表（不含扩展表和中间表），需手动确认`))
-			isOtherRelStr := gcmd.Scan(color.BlueString(`> 表(` + otherRelTpl.Table + `)疑似为关联表，请确认？默认(yes)：`))
+			isOtherRelStr := gcmd.Scan(color.BlueString(`> 表(` + otherRelTpl.Table + `)疑似为关联表，关联字段(` + field.FieldRaw + `)，请确认？默认(yes)：`))
 		isOtherRelEnd:
 			for {
 				switch isOtherRelStr {
@@ -1027,7 +1027,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 					isOtherRel = false
 					break isOtherRelEnd
 				default:
-					isOtherRelStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + otherRelTpl.Table + `)疑似为关联表，请确认？默认(yes)：`))
+					isOtherRelStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + otherRelTpl.Table + `)疑似为关联表，关联字段(` + field.FieldRaw + `)，请确认？默认(yes)：`))
 				}
 			}
 			if isOtherRel {
@@ -1042,7 +1042,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 				}
 				otherRelTableList = append(otherRelTableList, handleOtherRelObj)
 			}
-			otherRelTableCmdLog = append(otherRelTableCmdLog, fmt.Sprintf(`%s:%s:%t`, `关联表`, otherRelTpl.Table, isOtherRel))
+			otherRelTableCmdLog = append(otherRelTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `关联表`, otherRelTpl.Table, field.FieldRaw, isOtherRel))
 			break
 		}
 	}
