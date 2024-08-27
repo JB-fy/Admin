@@ -1,7 +1,7 @@
 <!-------- 使用示例 开始-------->
 <!-- <my-upload v-model="saveForm.data.avatar" accept="image/*" :multiple="true" />
 
-<my-upload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" show-style="small" /> -->
+<my-upload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" size="small" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 import type { EpPropMergeType } from 'element-plus/es/utils/vue/props/types'
@@ -34,8 +34,8 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-    showStyle: {
-        //显示风格。注意：只在listType=picture-card时有效
+    size: {
+        //尺寸。注意：只在listType=picture-card时有效
         type: String,
         validator: (value: string) => (value ? ['default', 'small'].includes(value) : true),
     },
@@ -125,7 +125,7 @@ const upload = reactive({
     })(),
     class: computed((): string => {
         let classStr = 'upload-container'
-        props.showStyle == 'small' && (classStr += ' small')
+        props.size == 'small' && (classStr += ' small')
         if (props.multiple) {
             props.limit && props.limit == upload.fileList.length && (classStr += ' hide')
         } else {
@@ -348,7 +348,7 @@ upload.initSignInfo() //初始化签名信息
         >
             <template #default>
                 <slot v-if="slots.default" name="default"></slot>
-                <template v-else-if="showStyle == 'small'">
+                <template v-else-if="size == 'small'">
                     <el-icon class="el-icon--upload"><autoicon-ep-upload-filled /></el-icon>
                 </template>
                 <template v-else>
@@ -369,21 +369,21 @@ upload.initSignInfo() //初始化签名信息
                         <img class="el-upload-list__item-thumbnail" :src="file.url" />
                     </template>
                     <template v-else-if="upload.showType(file) == 'video'">
-                        <el-icon v-if="showStyle == 'small'" :size="46" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-film /></el-icon>
+                        <el-icon v-if="size == 'small'" :size="46" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-film /></el-icon>
                         <video v-else class="el-upload-list__item-thumbnail" preload="none" :controls="true" :src="file.url" />
                     </template>
                     <template v-else-if="upload.showType(file) == 'audio'">
-                        <el-icon v-if="showStyle == 'small'" :size="46" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-mic /></el-icon>
+                        <el-icon v-if="size == 'small'" :size="46" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-mic /></el-icon>
                         <audio v-else preload="none" :controls="true" :src="file.url" style="width: 100%; height: 40px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)" />
                     </template>
                     <template v-else-if="upload.showType(file) == 'application'">
-                        <el-icon :size="showStyle == 'small' ? 46 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-box /></el-icon>
+                        <el-icon :size="size == 'small' ? 46 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-box /></el-icon>
                     </template>
                     <template v-else>
-                        <el-icon :size="showStyle == 'small' ? 46 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
+                        <el-icon :size="size == 'small' ? 46 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
                     </template>
 
-                    <el-icon v-if="showStyle == 'small'" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
+                    <el-icon v-if="size == 'small'" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
                     <template v-else>
                         <label class="el-upload-list__item-status-label">
                             <el-icon class="el-icon--check"><autoicon-ep-check /></el-icon>

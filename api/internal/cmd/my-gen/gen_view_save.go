@@ -87,7 +87,7 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 		case `<el-input-number`:
 			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />` */
 		case `<my-upload`:
-			formContent = gstr.SubStr(formContent, 0, -2) + `show-style="small" />`
+			formContent = gstr.SubStr(formContent, 0, -2) + `size="small" />`
 		}
 		viewSaveThis.formContent = append(viewSaveThis.formContent, formContent)
 	default:
