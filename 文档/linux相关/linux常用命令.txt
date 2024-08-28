@@ -158,7 +158,6 @@ timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
 查看帮助
 	ab -h
 使用
-	-H 'token: 11111'//可以追加请求头
 	ab -c 100 -n 10000 get请求地址
 	ab -c 100 -n 10000 -p 请求参数文件路径.txt -T application/json -H 'Token: xxxxx' post请求地址
 	ab -c 100 -t 持续秒数 -p 请求参数文件路径.txt -T application/x-www-form-urlencoded post请求地址
