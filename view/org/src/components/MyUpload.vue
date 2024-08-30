@@ -184,14 +184,8 @@ const upload = reactive({
         },
     },
     onPreview: (file: any) => {
-        switch (props.showType) {
-            case 'image':
-                imageViewer.initialIndex = imageViewer.urlList.indexOf(file.url)
-                imageViewer.visible = true
-                break
-            default:
-                break
-        }
+        imageViewer.initialIndex = imageViewer.urlList.indexOf(file.url)
+        imageViewer.visible = true
     },
     onRemove: (file: any) => {
         if (props.multiple) {
