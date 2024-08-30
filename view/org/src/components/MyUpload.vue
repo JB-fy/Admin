@@ -271,6 +271,7 @@ const upload = reactive({
                 '.ppt',
                 '.xul',
                 '.apk',
+                '.ipa',
                 '.tar',
                 '.ai',
                 '.ps',
@@ -362,38 +363,44 @@ upload.initSignInfo() //初始化签名信息
             <template #file="{ file }">
                 <slot v-if="slots.file" name="file" :file="file"></slot>
                 <template v-else>
-                    <template v-if="upload.showType(file) == 'image'">
-                        <img class="el-upload-list__item-thumbnail" :src="file.url" />
-                    </template>
-                    <template v-else-if="upload.showType(file) == 'video'">
-                        <el-icon v-if="size == 'small'" :size="38" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-film /></el-icon>
-                        <video v-else class="el-upload-list__item-thumbnail" preload="none" :controls="true" :src="file.url" />
-                    </template>
-                    <template v-else-if="upload.showType(file) == 'audio'">
-                        <el-icon v-if="size == 'small'" :size="38" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-mic /></el-icon>
-                        <audio v-else preload="none" :controls="true" :src="file.url" style="width: 100%; height: 40px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)" />
-                    </template>
-                    <template v-else-if="upload.showType(file) == 'application'">
-                        <el-icon :size="size == 'small' ? 38 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-box /></el-icon>
+                    <template v-if="file.status == 'uploading'">
+                        <el-progress v-if="size == 'small'" type="circle" :percentage="file.percentage" :stroke-width="3" :width="45" />
+                        <el-progress v-else type="circle" :percentage="file.percentage" />
                     </template>
                     <template v-else>
-                        <el-icon :size="size == 'small' ? 38 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
-                    </template>
+                        <template v-if="upload.showType(file) == 'image'">
+                            <img class="el-upload-list__item-thumbnail" :src="file.url" />
+                        </template>
+                        <template v-else-if="upload.showType(file) == 'video'">
+                            <el-icon v-if="size == 'small'" :size="38" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-film /></el-icon>
+                            <video v-else class="el-upload-list__item-thumbnail" preload="none" :controls="true" :src="file.url" />
+                        </template>
+                        <template v-else-if="upload.showType(file) == 'audio'">
+                            <el-icon v-if="size == 'small'" :size="38" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-mic /></el-icon>
+                            <audio v-else preload="none" :controls="true" :src="file.url" style="width: 100%; height: 40px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)" />
+                        </template>
+                        <template v-else-if="upload.showType(file) == 'application'">
+                            <el-icon :size="size == 'small' ? 38 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-box /></el-icon>
+                        </template>
+                        <template v-else>
+                            <el-icon :size="size == 'small' ? 38 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
+                        </template>
 
-                    <el-icon v-if="size == 'small'" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
-                    <template v-else>
-                        <label class="el-upload-list__item-status-label">
-                            <el-icon class="el-icon--check"><autoicon-ep-check /></el-icon>
-                        </label>
+                        <el-icon v-if="size == 'small'" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
+                        <template v-else>
+                            <label class="el-upload-list__item-status-label">
+                                <el-icon class="el-icon--check"><autoicon-ep-check /></el-icon>
+                            </label>
 
-                        <el-icon v-if="['video', 'audio'].includes(upload.showType(file))" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
-                        <span v-else class="el-upload-list__item-actions">
-                            <span v-if="upload.showType(file) == 'image'" @click="upload.onPreview(file)"><autoicon-ep-zoom-in /></span>
-                            <!-- 刚上传的文件没必要给下载按钮 -->
-                            <span v-else-if="file?.response === undefined" @click="upload.download(file)"><autoicon-ep-download /></span>
-                            <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
-                            <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
-                        </span>
+                            <el-icon v-if="['video', 'audio'].includes(upload.showType(file))" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
+                            <span v-else class="el-upload-list__item-actions">
+                                <span v-if="upload.showType(file) == 'image'" @click="upload.onPreview(file)"><autoicon-ep-zoom-in /></span>
+                                <!-- 刚上传的文件没必要给下载按钮 -->
+                                <span v-else-if="file?.response === undefined" @click="upload.download(file)"><autoicon-ep-download /></span>
+                                <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
+                                <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
+                            </span>
+                        </template>
                     </template>
                 </template>
             </template>
@@ -487,5 +494,14 @@ upload.initSignInfo() //初始化签名信息
 .upload-container.small :deep(.el-upload-list__item:hover .el-icon--close) {
     top: -7px;
     right: -7px;
+}
+
+.upload-container.small :deep(.el-progress) {
+    width: auto;
+}
+
+.upload-container.small :deep(.el-progress__text) {
+    min-width: auto;
+    font-size: 12px !important;
 }
 </style>
