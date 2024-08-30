@@ -271,6 +271,7 @@ const upload = reactive({
                 '.ppt',
                 '.xul',
                 '.apk',
+                '.ipa',
                 '.tar',
                 '.ai',
                 '.ps',
