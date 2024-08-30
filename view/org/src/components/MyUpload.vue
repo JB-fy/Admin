@@ -311,7 +311,7 @@ const upload = reactive({
 })
 
 const imageViewer = reactive({
-    urlList: computed((): string[] => upload.fileList.map((item) => item.url)),
+    urlList: computed((): string[] => upload.fileList.filter((item) => upload.showType(item) == 'image').map((item) => item.url)),
     initialIndex: 0,
     visible: false,
     close: () => (imageViewer.visible = false),
