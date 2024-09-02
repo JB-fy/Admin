@@ -3,6 +3,7 @@ package pay
 import (
 	"context"
 	"errors"
+	"net/url"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -123,6 +124,9 @@ func (payThis *PayOfWx) H5(payReqData PayReqData) (payResData PayResData, err er
 		return
 	}
 	payResData.PayStr = *resp.H5Url
+	if payReqData.ReturnUrl != `` {
+		payResData.PayStr = payResData.PayStr + `&redirect_url=` + url.QueryEscape(payReqData.ReturnUrl)
+	}
 	return
 }
 
