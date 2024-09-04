@@ -187,9 +187,9 @@ func genDao(tpl myGenTpl) {
 	}
 	if len(dao.fieldHook) > 0 {
 		fieldHookPoint := `default:
-						record[v] = gvar.New(nil)`
+			record[v] = gvar.New(nil)`
 		tplDao = gstr.Replace(tplDao, fieldHookPoint, gstr.Join(append(dao.fieldHook, ``), `
-					`)+fieldHookPoint, 1)
+		`)+fieldHookPoint, 1)
 	}
 
 	// 解析insert
@@ -527,11 +527,11 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 
 		daoField.fieldHook.Method = internal.ReturnTypeName
 		daoField.fieldHook.DataTypeName = append(daoField.fieldHook.DataTypeName, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_has_child`)+"`"+`:
-						isHasChild := 0
-						if count, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+v.FieldCaseCamel+`, record[`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`]).Count(); count > 0 {
-							isHasChild = 1
-						}
-						record[v] = gvar.New(isHasChild)`)
+			isHasChild := 0
+			if count, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+v.FieldCaseCamel+`, record[`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`]).Count(); count > 0 {
+				isHasChild = 1
+			}
+			record[v] = gvar.New(isHasChild)`)
 
 		orderParseStr := `case ` + "`tree`" + `:
 				m = m.OrderAsc(` + daoTable + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + v.FieldCaseCamel + `)`
@@ -1052,8 +1052,8 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 				daoModel.AfterUpdate[k] = v`)
 	if len(tplEM.FieldList) == 1 {
 		dao.fieldHook = append(dao.fieldHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-						`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
-						record[v] = gvar.New(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)`)
+			`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
+			record[v] = gvar.New(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					insertList := []map[string]any{}
 					for _, item := range gconv.SliceAny(v) {
@@ -1071,8 +1071,8 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 					}`)
 	} else {
 		dao.fieldHook = append(dao.fieldHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-						`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]). /* OrderAsc(`+tplEM.daoPath+`.Columns().CreatedAt). */ All()	// 有顺序要求时使用，自定义OrderAsc
-						record[v] = gvar.New(gjson.MustEncodeString(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)) //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效`)
+			`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]). /* OrderAsc(`+tplEM.daoPath+`.Columns().CreatedAt). */ All()	// 有顺序要求时使用，自定义OrderAsc
+			record[v] = gvar.New(gjson.MustEncodeString(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)) //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					insertList := []map[string]any{}
 					for _, item := range gconv.SliceMap(v) {

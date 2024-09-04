@@ -19,14 +19,15 @@ type DaoInterface interface {
 	ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string
 	ParseId(daoModel *DaoModel) string
 	ParseLabel(daoModel *DaoModel) string
+	ParseFilter(filter map[string]any, daoModel *DaoModel) gdb.ModelHandler
+	ParseField(field []string, fieldWithParam map[string]any, daoModel *DaoModel) gdb.ModelHandler
+	HandleAfterField(ctx context.Context, record gdb.Record, daoModel *DaoModel)
+	HookSelect(daoModel *DaoModel) gdb.HookHandler
 	ParseInsert(insert map[string]any, daoModel *DaoModel) gdb.ModelHandler
 	HookInsert(daoModel *DaoModel) gdb.HookHandler
 	ParseUpdate(update map[string]any, daoModel *DaoModel) gdb.ModelHandler
 	HookUpdate(daoModel *DaoModel) gdb.HookHandler
 	HookDelete(daoModel *DaoModel) gdb.HookHandler
-	ParseField(field []string, fieldWithParam map[string]any, daoModel *DaoModel) gdb.ModelHandler
-	HookSelect(daoModel *DaoModel) gdb.HookHandler
-	ParseFilter(filter map[string]any, daoModel *DaoModel) gdb.ModelHandler
 	ParseGroup(group []string, daoModel *DaoModel) gdb.ModelHandler
 	ParseOrder(order []string, daoModel *DaoModel) gdb.ModelHandler
 	ParseJoin(joinTable string, daoModel *DaoModel) gdb.ModelHandler

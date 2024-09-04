@@ -20,7 +20,7 @@ gfcli:
       #   daoPath: "dao/auth"
       #   doPath: "model/do/auth"
       #   entityPath: "model/entity/auth"
-      #   tables: "auth_action_rel_to_scene,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu"
+      #   tables: "auth_action_rel_to_scene,auth_role_rel_of_org_admin,auth_role_rel_of_platform_admin,auth_role_rel_to_action,auth_role_rel_to_menu"
       #   tplDaoIndexPath: "manifest/gen/gen_dao_template_dao.txt"
       #   tplDaoInternalPath: "manifest/gen/gen_dao_template_dao_internal.txt"
       #   overwriteDao: true

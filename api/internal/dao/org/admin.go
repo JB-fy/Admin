@@ -151,6 +151,25 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]an
 	}
 }
 
+// 处理afterField
+func (daoThis *adminDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
+	for _, v := range daoModel.AfterField.Slice() {
+		switch v {
+		case `role_id_arr`:
+			roleIdArr, _ := daoAuth.RoleRelOfOrgAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfOrgAdmin.Columns().AdminId, record[daoThis.Columns().AdminId]).Array(daoAuth.RoleRelOfOrgAdmin.Columns().RoleId)
+			record[v] = gvar.New(roleIdArr)
+		default:
+			record[v] = gvar.New(nil)
+		}
+	}
+	/* for k, v := range daoModel.AfterFieldWithParam {
+		switch k {
+		case `xxxx`:
+			record[k] = gvar.New(v)
+		}
+	} */
+}
+
 // hook select
 func (daoThis *adminDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
@@ -162,26 +181,11 @@ func (daoThis *adminDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
-			afterFieldHandleFunc := func(record gdb.Record) {
-				defer wg.Done()
-				for _, v := range daoModel.AfterField.Slice() {
-					switch v {
-					case `role_id_arr`:
-						roleIdArr, _ := daoAuth.RoleRelOfOrgAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfOrgAdmin.Columns().AdminId, record[daoThis.Columns().AdminId]).Array(daoAuth.RoleRelOfOrgAdmin.Columns().RoleId)
-						record[v] = gvar.New(roleIdArr)
-					default:
-						record[v] = gvar.New(nil)
-					}
-				}
-				/* for k, v := range daoModel.AfterFieldWithParam {
-					switch k {
-					case `xxxx`:
-						record[k] = gvar.New(v)
-					}
-				} */
-			}
 			for _, record := range result {
-				go afterFieldHandleFunc(record)
+				go func(record gdb.Record) {
+					defer wg.Done()
+					daoThis.HandleAfterField(ctx, record, daoModel)
+				}(record)
 			}
 			wg.Wait()
 			return

@@ -172,6 +172,25 @@ func (daoThis *actionDao) ParseField(field []string, fieldWithParam map[string]a
 	}
 }
 
+// 处理afterField
+func (daoThis *actionDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
+	for _, v := range daoModel.AfterField.Slice() {
+		switch v {
+		case `scene_id_arr`:
+			sceneIdArr, _ := ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().ActionId, record[daoThis.Columns().ActionId]).Array(ActionRelToScene.Columns().SceneId)
+			record[v] = gvar.New(sceneIdArr)
+		default:
+			record[v] = gvar.New(nil)
+		}
+	}
+	/* for k, v := range daoModel.AfterFieldWithParam {
+		switch k {
+		case `xxxx`:
+			record[k] = gvar.New(v)
+		}
+	} */
+}
+
 // hook select
 func (daoThis *actionDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
@@ -183,26 +202,11 @@ func (daoThis *actionDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
-			afterFieldHandleFunc := func(record gdb.Record) {
-				defer wg.Done()
-				for _, v := range daoModel.AfterField.Slice() {
-					switch v {
-					case `scene_id_arr`:
-						sceneIdArr, _ := ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().ActionId, record[daoThis.Columns().ActionId]).Array(ActionRelToScene.Columns().SceneId)
-						record[v] = gvar.New(sceneIdArr)
-					default:
-						record[v] = gvar.New(nil)
-					}
-				}
-				/* for k, v := range daoModel.AfterFieldWithParam {
-					switch k {
-					case `xxxx`:
-						record[k] = gvar.New(v)
-					}
-				} */
-			}
 			for _, record := range result {
-				go afterFieldHandleFunc(record)
+				go func(record gdb.Record) {
+					defer wg.Done()
+					daoThis.HandleAfterField(ctx, record, daoModel)
+				}(record)
 			}
 			wg.Wait()
 			return

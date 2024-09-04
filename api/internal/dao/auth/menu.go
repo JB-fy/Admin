@@ -190,6 +190,34 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]any
 	}
 }
 
+// 处理afterField
+func (daoThis *menuDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
+	for _, v := range daoModel.AfterField.Slice() {
+		switch v {
+		case `is_has_child`:
+			isHasChild := 0
+			if count, _ := daoModel.CloneNew().Filter(daoThis.Columns().Pid, record[daoThis.Columns().MenuId]).Count(); count > 0 {
+				isHasChild = 1
+			}
+			record[v] = gvar.New(isHasChild)
+		case `show_menu`:
+			extraDataJson := gjson.New(record[daoThis.Columns().ExtraData])
+			record[`i18n`] = extraDataJson.Get(`i18n`)
+			if record[`i18n`] == nil {
+				record[`i18n`] = gvar.New(map[string]any{`title`: map[string]any{`zh-cn`: record[daoThis.Columns().MenuName]}})
+			}
+		default:
+			record[v] = gvar.New(nil)
+		}
+	}
+	/* for k, v := range daoModel.AfterFieldWithParam {
+		switch k {
+		case `xxxx`:
+			record[k] = gvar.New(v)
+		}
+	} */
+}
+
 // hook select
 func (daoThis *menuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
@@ -201,35 +229,11 @@ func (daoThis *menuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
-			afterFieldHandleFunc := func(record gdb.Record) {
-				defer wg.Done()
-				for _, v := range daoModel.AfterField.Slice() {
-					switch v {
-					case `is_has_child`:
-						isHasChild := 0
-						if count, _ := daoModel.CloneNew().Filter(daoThis.Columns().Pid, record[daoThis.Columns().MenuId]).Count(); count > 0 {
-							isHasChild = 1
-						}
-						record[v] = gvar.New(isHasChild)
-					case `show_menu`:
-						extraDataJson := gjson.New(record[daoThis.Columns().ExtraData])
-						record[`i18n`] = extraDataJson.Get(`i18n`)
-						if record[`i18n`] == nil {
-							record[`i18n`] = gvar.New(map[string]any{`title`: map[string]any{`zh-cn`: record[daoThis.Columns().MenuName]}})
-						}
-					default:
-						record[v] = gvar.New(nil)
-					}
-				}
-				/* for k, v := range daoModel.AfterFieldWithParam {
-					switch k {
-					case `xxxx`:
-						record[k] = gvar.New(v)
-					}
-				} */
-			}
 			for _, record := range result {
-				go afterFieldHandleFunc(record)
+				go func(record gdb.Record) {
+					defer wg.Done()
+					daoThis.HandleAfterField(ctx, record, daoModel)
+				}(record)
 			}
 			wg.Wait()
 			return

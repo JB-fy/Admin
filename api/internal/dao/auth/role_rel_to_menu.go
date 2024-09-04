@@ -119,6 +119,22 @@ func (daoThis *roleRelToMenuDao) ParseField(field []string, fieldWithParam map[s
 	}
 }
 
+// 处理afterField
+func (daoThis *roleRelToMenuDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
+	for _, v := range daoModel.AfterField.Slice() {
+		switch v {
+		default:
+			record[v] = gvar.New(nil)
+		}
+	}
+	/* for k, v := range daoModel.AfterFieldWithParam {
+		switch k {
+		case `xxxx`:
+			record[k] = gvar.New(v)
+		}
+	} */
+}
+
 // hook select
 func (daoThis *roleRelToMenuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
@@ -130,23 +146,11 @@ func (daoThis *roleRelToMenuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.Hoo
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
-			afterFieldHandleFunc := func(record gdb.Record) {
-				defer wg.Done()
-				for _, v := range daoModel.AfterField.Slice() {
-					switch v {
-					default:
-						record[v] = gvar.New(nil)
-					}
-				}
-				/* for k, v := range daoModel.AfterFieldWithParam {
-					switch k {
-					case `xxxx`:
-						record[k] = gvar.New(v)
-					}
-				} */
-			}
 			for _, record := range result {
-				go afterFieldHandleFunc(record)
+				go func(record gdb.Record) {
+					defer wg.Done()
+					daoThis.HandleAfterField(ctx, record, daoModel)
+				}(record)
 			}
 			wg.Wait()
 			return

@@ -194,6 +194,40 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 	}
 }
 
+// 处理afterField
+func (daoThis *roleDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
+	for _, v := range daoModel.AfterField.Slice() {
+		switch v {
+		case `action_id_arr`:
+			actionIdArr, _ := RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToAction.Columns().ActionId)
+			record[v] = gvar.New(actionIdArr)
+		case `menu_id_arr`:
+			menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToMenu.Columns().MenuId)
+			record[v] = gvar.New(menuIdArr)
+		case `rel_name`:
+			relName := ``
+			if record[daoThis.Columns().RelId].Uint() == 0 {
+				relName = `平台`
+			} else {
+				switch record[Scene.Columns().SceneCode].String() {
+				// case `platform`:	// 平台都是0
+				case `org`:
+					relName, _ = daoOrg.Org.CtxDaoModel(ctx).Filter(daoOrg.Org.Columns().OrgId, record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)
+				}
+			}
+			record[v] = gvar.New(relName)
+		default:
+			record[v] = gvar.New(nil)
+		}
+	}
+	/* for k, v := range daoModel.AfterFieldWithParam {
+		switch k {
+		case `xxxx`:
+			record[k] = gvar.New(v)
+		}
+	} */
+}
+
 // hook select
 func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
@@ -205,41 +239,11 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
-			afterFieldHandleFunc := func(record gdb.Record) {
-				defer wg.Done()
-				for _, v := range daoModel.AfterField.Slice() {
-					switch v {
-					case `action_id_arr`:
-						actionIdArr, _ := RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToAction.Columns().ActionId)
-						record[v] = gvar.New(actionIdArr)
-					case `menu_id_arr`:
-						menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToMenu.Columns().MenuId)
-						record[v] = gvar.New(menuIdArr)
-					case `rel_name`:
-						relName := ``
-						if record[daoThis.Columns().RelId].Uint() == 0 {
-							relName = `平台`
-						} else {
-							switch record[Scene.Columns().SceneCode].String() {
-							// case `platform`:	// 平台都是0
-							case `org`:
-								relName, _ = daoOrg.Org.CtxDaoModel(ctx).Filter(daoOrg.Org.Columns().OrgId, record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)
-							}
-						}
-						record[v] = gvar.New(relName)
-					default:
-						record[v] = gvar.New(nil)
-					}
-				}
-				/* for k, v := range daoModel.AfterFieldWithParam {
-					switch k {
-					case `xxxx`:
-						record[k] = gvar.New(v)
-					}
-				} */
-			}
 			for _, record := range result {
-				go afterFieldHandleFunc(record)
+				go func(record gdb.Record) {
+					defer wg.Done()
+					daoThis.HandleAfterField(ctx, record, daoModel)
+				}(record)
 			}
 			wg.Wait()
 			return
