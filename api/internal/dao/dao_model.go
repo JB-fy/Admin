@@ -199,7 +199,11 @@ func (daoModelThis *DaoModel) HookDelete() *DaoModel {
 	return daoModelThis
 }
 
-/* func (daoModelThis *DaoModel) HookSelect() *DaoModel {
+/* func (daoModelThis *DaoModel) HandleAfterField(record gdb.Record) {
+	daoModelThis.dao.HandleAfterField(daoModelThis.Ctx, record, daoModelThis)
+}
+
+func (daoModelThis *DaoModel) HookSelect() *DaoModel {
 	if daoModelThis.AfterField.Size() > 0 || len(daoModelThis.AfterFieldWithParam) > 0 {
 		daoModelThis.Hook(daoModelThis.dao.HookSelect(daoModelThis))
 	}
