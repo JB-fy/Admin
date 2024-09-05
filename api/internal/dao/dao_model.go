@@ -38,14 +38,15 @@ type DaoModel struct {
 	dao                 DaoInterface
 	db                  gdb.DB
 	model               *gdb.Model
-	DbGroup             string      // 分库情况下，解析后所确定的库
-	DbTable             string      // 分表情况下，解析后所确定的表
+	DbGroup             string // 分库情况下，解析后所确定的库
+	DbTable             string // 分表情况下，解析后所确定的表
+	AfterField          *gset.StrSet
+	AfterFieldSlice     []string // 后置处理前，将AfterField转换成AfterFieldSlice，减少列表后置处理多次调用AfterField.Slice()转换
+	AfterFieldWithParam map[string]any
 	IdArr               []*gvar.Var // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即在各种sql条件设置完后）
 	AfterInsert         map[string]any
-	AfterUpdate         map[string]any
 	IsOnlyAfterUpdate   bool // 更新时，用于判断是否只做后置更新
-	AfterField          *gset.StrSet
-	AfterFieldWithParam map[string]any
+	AfterUpdate         map[string]any
 	JoinTableSet        *gset.StrSet
 }
 
@@ -54,11 +55,10 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]any)
 	daoModelObj := DaoModel{
 		Ctx:                 ctx,
 		dao:                 dao,
-		IdArr:               []*gvar.Var{},
-		AfterInsert:         map[string]any{},
-		AfterUpdate:         map[string]any{},
 		AfterField:          gset.NewStrSet(),
 		AfterFieldWithParam: map[string]any{},
+		AfterInsert:         map[string]any{},
+		AfterUpdate:         map[string]any{},
 		JoinTableSet:        gset.NewStrSet(),
 	}
 	switch len(dbOpt) {
@@ -106,11 +106,10 @@ func (daoModelThis *DaoModel) CloneNew() *DaoModel {
 		db:                  daoModelThis.db,
 		DbGroup:             daoModelThis.DbGroup,
 		DbTable:             daoModelThis.DbTable,
-		IdArr:               []*gvar.Var{},
-		AfterInsert:         map[string]any{},
-		AfterUpdate:         map[string]any{},
 		AfterField:          gset.NewStrSet(),
 		AfterFieldWithParam: map[string]any{},
+		AfterInsert:         map[string]any{},
+		AfterUpdate:         map[string]any{},
 		JoinTableSet:        gset.NewStrSet(),
 	}
 	daoModelObj.model = daoModelObj.NewModel()
@@ -199,11 +198,14 @@ func (daoModelThis *DaoModel) HookDelete() *DaoModel {
 	return daoModelThis
 }
 
-/* func (daoModelThis *DaoModel) HandleAfterField(record gdb.Record) {
-	daoModelThis.dao.HandleAfterField(daoModelThis.Ctx, record, daoModelThis)
+func (daoModelThis *DaoModel) HandleAfterField(result ...gdb.Record) {
+	daoModelThis.AfterFieldSlice = daoModelThis.AfterField.Slice()
+	for _, record := range result {
+		daoModelThis.dao.HandleAfterField(daoModelThis.Ctx, record, daoModelThis)
+	}
 }
 
-func (daoModelThis *DaoModel) HookSelect() *DaoModel {
+/* func (daoModelThis *DaoModel) HookSelect() *DaoModel {
 	if daoModelThis.AfterField.Size() > 0 || len(daoModelThis.AfterFieldWithParam) > 0 {
 		daoModelThis.Hook(daoModelThis.dao.HookSelect(daoModelThis))
 	}

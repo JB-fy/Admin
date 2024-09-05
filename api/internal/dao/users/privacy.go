@@ -143,7 +143,7 @@ func (daoThis *privacyDao) ParseField(field []string, fieldWithParam map[string]
 
 // 处理afterField
 func (daoThis *privacyDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterField.Slice() {
+	for _, v := range daoModel.AfterFieldSlice {
 		switch v {
 		default:
 			record[v] = gvar.New(nil)
@@ -168,6 +168,7 @@ func (daoThis *privacyDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandl
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
+			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()

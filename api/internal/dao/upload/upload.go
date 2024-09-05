@@ -140,7 +140,7 @@ func (daoThis *uploadDao) ParseField(field []string, fieldWithParam map[string]a
 
 // 处理afterField
 func (daoThis *uploadDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterField.Slice() {
+	for _, v := range daoModel.AfterFieldSlice {
 		switch v {
 		default:
 			record[v] = gvar.New(nil)
@@ -165,6 +165,7 @@ func (daoThis *uploadDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
+			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()

@@ -155,7 +155,7 @@ func (daoThis *orderDao) ParseField(field []string, fieldWithParam map[string]an
 
 // 处理afterField
 func (daoThis *orderDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterField.Slice() {
+	for _, v := range daoModel.AfterFieldSlice {
 		switch v {
 		case `order_rel_list`:
 			orderRelList, _ := OrderRel.CtxDaoModel(ctx).Filter(OrderRel.Columns().OrderId, record[daoThis.Columns().OrderId]). /* OrderAsc(OrderRel.Columns().CreatedAt). */ All() // 有顺序要求时使用，自定义OrderAsc
@@ -183,6 +183,7 @@ func (daoThis *orderDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
+			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()

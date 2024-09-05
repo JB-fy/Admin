@@ -151,7 +151,7 @@ func (daoThis *appDao) ParseField(field []string, fieldWithParam map[string]any,
 
 // 处理afterField
 func (daoThis *appDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterField.Slice() {
+	for _, v := range daoModel.AfterFieldSlice {
 		switch v {
 		case `download_url_to_app`, `download_url_to_h5`:
 			if _, ok := record[v]; ok {
@@ -202,6 +202,7 @@ func (daoThis *appDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
+			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()

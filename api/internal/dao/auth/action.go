@@ -174,7 +174,7 @@ func (daoThis *actionDao) ParseField(field []string, fieldWithParam map[string]a
 
 // 处理afterField
 func (daoThis *actionDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterField.Slice() {
+	for _, v := range daoModel.AfterFieldSlice {
 		switch v {
 		case `scene_id_arr`:
 			sceneIdArr, _ := ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().ActionId, record[daoThis.Columns().ActionId]).Array(ActionRelToScene.Columns().SceneId)
@@ -202,6 +202,7 @@ func (daoThis *actionDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
+			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()

@@ -121,7 +121,7 @@ func (daoThis *roleRelOfOrgAdminDao) ParseField(field []string, fieldWithParam m
 
 // 处理afterField
 func (daoThis *roleRelOfOrgAdminDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterField.Slice() {
+	for _, v := range daoModel.AfterFieldSlice {
 		switch v {
 		default:
 			record[v] = gvar.New(nil)
@@ -146,6 +146,7 @@ func (daoThis *roleRelOfOrgAdminDao) HookSelect(daoModel *daoIndex.DaoModel) gdb
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
+			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()

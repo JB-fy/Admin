@@ -149,7 +149,7 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]an
 
 // 处理afterField
 func (daoThis *adminDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterField.Slice() {
+	for _, v := range daoModel.AfterFieldSlice {
 		switch v {
 		case `role_id_arr`:
 			roleIdArr, _ := daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, record[daoThis.Columns().AdminId]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
@@ -177,6 +177,7 @@ func (daoThis *adminDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
+			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()
