@@ -183,18 +183,26 @@ func (daoModelThis *DaoModel) InfoPri() (gdb.Record, error) {
 /*--------业务可能用到的方法 结束--------*/
 
 /*--------简化对dao方法的调用 开始--------*/
-func (daoModelThis *DaoModel) HookInsert(data map[string]any) *DaoModel {
-	daoModelThis.Handler(daoModelThis.dao.ParseInsert(data, daoModelThis))
+func (daoModelThis *DaoModel) Filter(key string, val any) *DaoModel {
+	return daoModelThis.Filters(map[string]any{key: val})
+}
+
+func (daoModelThis *DaoModel) Filters(filter map[string]any) *DaoModel {
+	daoModelThis.Handler(daoModelThis.dao.ParseFilter(filter, daoModelThis))
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) HookUpdate(data map[string]any) *DaoModel {
-	daoModelThis.Handler(daoModelThis.dao.ParseUpdate(data, daoModelThis))
+func (daoModelThis *DaoModel) Fields(field ...string) *DaoModel {
+	daoModelThis.Handler(daoModelThis.dao.ParseField(field, map[string]any{}, daoModelThis))
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) HookDelete() *DaoModel {
-	daoModelThis.Hook(daoModelThis.dao.HookDelete(daoModelThis))
+func (daoModelThis *DaoModel) FieldWithParam(key string, val any) *DaoModel {
+	return daoModelThis.FieldsWithParam(map[string]any{key: val})
+}
+
+func (daoModelThis *DaoModel) FieldsWithParam(fieldWithParam map[string]any) *DaoModel {
+	daoModelThis.Handler(daoModelThis.dao.ParseField([]string{}, fieldWithParam, daoModelThis))
 	return daoModelThis
 }
 
@@ -212,26 +220,18 @@ func (daoModelThis *DaoModel) HandleAfterField(result ...gdb.Record) {
 	return daoModelThis
 } */
 
-func (daoModelThis *DaoModel) Fields(field ...string) *DaoModel {
-	daoModelThis.Handler(daoModelThis.dao.ParseField(field, map[string]any{}, daoModelThis))
+func (daoModelThis *DaoModel) HookInsert(data map[string]any) *DaoModel {
+	daoModelThis.Handler(daoModelThis.dao.ParseInsert(data, daoModelThis))
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) FieldWithParam(key string, val any) *DaoModel {
-	return daoModelThis.FieldsWithParam(map[string]any{key: val})
-}
-
-func (daoModelThis *DaoModel) FieldsWithParam(fieldWithParam map[string]any) *DaoModel {
-	daoModelThis.Handler(daoModelThis.dao.ParseField([]string{}, fieldWithParam, daoModelThis))
+func (daoModelThis *DaoModel) HookUpdate(data map[string]any) *DaoModel {
+	daoModelThis.Handler(daoModelThis.dao.ParseUpdate(data, daoModelThis))
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) Filter(key string, val any) *DaoModel {
-	return daoModelThis.Filters(map[string]any{key: val})
-}
-
-func (daoModelThis *DaoModel) Filters(filter map[string]any) *DaoModel {
-	daoModelThis.Handler(daoModelThis.dao.ParseFilter(filter, daoModelThis))
+func (daoModelThis *DaoModel) HookDelete() *DaoModel {
+	daoModelThis.Hook(daoModelThis.dao.HookDelete(daoModelThis))
 	return daoModelThis
 }
 
