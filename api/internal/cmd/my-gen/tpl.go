@@ -345,11 +345,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 					tpl.Handle.Pid.Level = fieldTmp.FieldRaw
 				}
 			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				primaryKeyArr := []string{gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1) + `_id`}
-				if primaryKeyArr[0] != `id` {
-					primaryKeyArr = append(primaryKeyArr, `id`)
-				}
-				if !garray.NewStrArrayFrom(primaryKeyArr).Contains(fieldTmp.FieldCaseSnake) { // 本表id字段不算
+				if fieldTmp.FieldTypePrimary != internal.TypePrimaryAutoInc /* && fieldTmp.FieldTypePrimary != internal.TypePrimary */ { // 本表id字段不算
 					fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
 
 					fieldTmp.FieldLimitInt.Min = `1`
