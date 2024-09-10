@@ -14,7 +14,7 @@ func NewConfig() *Config {
 
 // 获取
 func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGetReq) (res *apiPlatform.ConfigGetRes, err error) {
-	config, err := daoPlatform.Config.Get(ctx, *req.ConfigKeyArr)
+	config, err := daoPlatform.Config.Get(ctx, *req.ConfigKeyArr...)
 	if err != nil {
 		return
 	}
