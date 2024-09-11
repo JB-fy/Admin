@@ -15,11 +15,7 @@ export const errorHandle = async (err: Error) => {
                     /* ElMessageBox.alert(errMsg.msg, '确认登出', {
                         confirmButtonText: '重新登录',
                         type: 'warning'
-                    }).then(async () => {
-                        useAdminStore().logout()
-                    }).catch(async () => {
-                        useAdminStore().logout()
-                    }) */
+                    }).finally(() => useAdminStore().logout()) */
                     useAdminStore().logout(router.currentRoute.value.path)
                     ElMessage.error(errMsg.msg)
                     break

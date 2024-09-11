@@ -103,7 +103,12 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 	}
 	viewList.Unique()
 
-	tplView := `<script setup lang="tsx">
+	tplView := `<script setup lang="tsx">`
+	if option.IsDelete {
+		tplView += `
+import type { Action, MessageBoxState } from 'element-plus'`
+	}
+	tplView += `
 const { t`
 	if viewList.isI18nTm {
 		tplView += `, tm`
@@ -267,7 +272,23 @@ const handleDelete = (idArr: ` + viewList.idType + `[]) => {
         title: t('common.tip.configDelete'),
         center: true,
         showClose: false,
-    }).then(() => request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: idArr }, true).then(() => getList()))
+        beforeClose: (action: Action, instance: MessageBoxState, done: Function) => {
+            switch (action) {
+                case 'confirm':
+                    instance.confirmButtonLoading = true
+                    request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: idArr }, true)
+                        .then(() => {
+                            getList()
+                            done()
+                        })
+                        .finally(() => (instance.confirmButtonLoading = false))
+                    break
+                default:
+                    done()
+                    break
+            }
+        },
+    })
 }`
 	}
 	if option.IsUpdate {

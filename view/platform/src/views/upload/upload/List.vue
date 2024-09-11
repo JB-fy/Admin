@@ -1,4 +1,5 @@
 <script setup lang="tsx">
+import type { Action, MessageBoxState } from 'element-plus'
 const { t, tm } = useI18n()
 
 const authAction = inject('authAction') as { [propName: string]: boolean }
@@ -190,7 +191,23 @@ const handleDelete = (idArr: number[]) => {
         title: t('common.tip.configDelete'),
         center: true,
         showClose: false,
-    }).then(() => request(t('config.VITE_HTTP_API_PREFIX') + '/upload/upload/del', { id_arr: idArr }, true).then(() => getList()))
+        beforeClose: (action: Action, instance: MessageBoxState, done: Function) => {
+            switch (action) {
+                case 'confirm':
+                    instance.confirmButtonLoading = true
+                    request(t('config.VITE_HTTP_API_PREFIX') + '/upload/upload/del', { id_arr: idArr }, true)
+                        .then(() => {
+                            getList()
+                            done()
+                        })
+                        .finally(() => (instance.confirmButtonLoading = false))
+                    break
+                default:
+                    done()
+                    break
+            }
+        },
+    })
 }
 //更新
 const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {
