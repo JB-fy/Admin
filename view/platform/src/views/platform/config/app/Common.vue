@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-const { t, tm } = useI18n()
+const { t } = useI18n()
 
 const authAction = inject('authAction') as { [propName: string]: boolean }
 
