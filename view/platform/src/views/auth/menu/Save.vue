@@ -62,7 +62,7 @@ const saveForm = reactive({
             param.scene_id === undefined && (param.scene_id = 0)
             param.pid === undefined && (param.pid = 0)
             try {
-                if (param?.id_arr?.length > 0) {
+                if (param?.id > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/create', param, true)

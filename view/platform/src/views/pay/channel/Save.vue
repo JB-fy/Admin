@@ -48,7 +48,7 @@ const saveForm = reactive({
             param.scene_id === undefined && (param.scene_id = 0)
             param.pay_id === undefined && (param.pay_id = 0)
             try {
-                if (param?.id_arr?.length > 0) {
+                if (param?.id > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/pay/channel/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/pay/channel/create', param, true)
