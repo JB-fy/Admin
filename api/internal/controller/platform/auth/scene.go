@@ -128,13 +128,12 @@ func (controllerThis *Scene) Create(ctx context.Context, req *apiAuth.SceneCreat
 // 修改
 func (controllerThis *Scene) Update(ctx context.Context, req *apiAuth.SceneUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
-	delete(data, `id_arr`)
+	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
 	}
-	filter := map[string]any{`id`: req.IdArr}
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -151,7 +150,7 @@ func (controllerThis *Scene) Update(ctx context.Context, req *apiAuth.SceneUpdat
 // 删除
 func (controllerThis *Scene) Delete(ctx context.Context, req *apiAuth.SceneDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := map[string]any{`id`: req.IdArr}
+	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/

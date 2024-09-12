@@ -250,8 +250,6 @@ const handleEditCopy = (id: ` + viewList.idType + `, type: string = 'edit') => {
         saveCommon.data = { ...res.data.info }
         switch (type) {
             case 'edit':
-                saveCommon.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + ` = [saveCommon.data.id]
-                delete saveCommon.data.id
                 saveCommon.title = t('common.edit')
                 break
             case 'copy':
@@ -266,7 +264,7 @@ const handleEditCopy = (id: ` + viewList.idType + `, type: string = 'edit') => {
 	if option.IsDelete {
 		tplView += `
 //删除
-const handleDelete = (idArr: ` + viewList.idType + `[]) => {
+const handleDelete = (id: ` + viewList.idType + ` | ` + viewList.idType + `[]) => {
     ElMessageBox.confirm('', {
         type: 'warning',
         title: t('common.tip.configDelete'),
@@ -276,7 +274,7 @@ const handleDelete = (idArr: ` + viewList.idType + `[]) => {
             switch (action) {
                 case 'confirm':
                     instance.confirmButtonLoading = true
-                    request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: idArr }, true)
+                    request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', Array.isArray(id) ? { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: id } : { id: id }, true)
                         .then(() => {
                             getList()
                             done()
@@ -294,7 +292,8 @@ const handleDelete = (idArr: ` + viewList.idType + `[]) => {
 	if option.IsUpdate {
 		tplView += `
 //更新
-const handleUpdate = async (param: { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: ` + viewList.idType + `[]; [propName: string]: any }) => {
+const handleUpdate = async (id: ` + viewList.idType + ` | ` + viewList.idType + `[], param: { [propName: string]: any }) => {
+    Array.isArray(id) ? (param.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + ` = id) : (param.id = id)
     await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/update', param, true)
 }`
 	}
@@ -523,7 +522,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                                 props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue
                                 return
                             }
-                            handleUpdate({ ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id], ` + v.FieldRaw + `: props.rowData.` + v.FieldRaw + ` }).catch(() => (props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue))
+                            handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: props.rowData.` + v.FieldRaw + ` }).catch(() => (props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue))
                         }}
                         onKeydown={(event: any) => {
                             switch (event.keyCode) {
@@ -550,7 +549,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 			cellRendererStr = `disabled={!authAction.isUpdate}
                         onChange={(val: string) => {
                             if (val != props.rowData.color) {
-                                handleUpdate({  ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id], ` + v.FieldRaw + `: val ? val : '' }).then(() => (props.rowData.` + v.FieldRaw + ` = val))
+                                handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: val ? val : '' }).then(() => (props.rowData.` + v.FieldRaw + ` = val))
                             }
                         }}`
 		}
@@ -612,7 +611,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                                 props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue
                                 return
                             }
-                            handleUpdate({ ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id], ` + v.FieldRaw + `: props.rowData.` + v.FieldRaw + ` }).catch(() => (props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue))
+                            handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: props.rowData.` + v.FieldRaw + ` }).catch(() => (props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue))
                         }}
                         onKeydown={(event: any) => {
                             switch (event.keyCode) {
@@ -640,7 +639,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 		cellRendererStr := `disabled={true}`
 		if option.IsUpdate {
 			cellRendererStr = `disabled={!authAction.isUpdate}
-                        onChange={(val: number) => handleUpdate({ ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: [props.rowData.id], ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
+                        onChange={(val: number) => handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
 		}
 		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {

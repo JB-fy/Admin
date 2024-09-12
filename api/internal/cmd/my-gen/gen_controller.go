@@ -277,13 +277,12 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, re
 // 修改
 func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `UpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
-	delete(data, ` + "`" + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + "`" + `)
+	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{` + "`filter`" + `}})
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{` + "`data`" + `}})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ` + "``" + `)
 		return
 	}
-	filter := map[string]any{` + "`id`" + `: req.IdArr}
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -308,7 +307,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 // 删除
 func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `DeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := map[string]any{` + "`id`" + `: req.IdArr}
+	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {

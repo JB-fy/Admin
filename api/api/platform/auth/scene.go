@@ -78,12 +78,13 @@ type SceneCreateReq struct {
 /*--------修改 开始--------*/
 type SceneUpdateReq struct {
 	g.Meta      `path:"/scene/update" method:"post" tags:"平台后台/权限管理/场景" sm:"修改"`
-	IdArr       []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	SceneName   *string `json:"scene_name,omitempty" v:"max-length:30" dc:"名称"`
-	SceneCode   *string `json:"scene_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
-	SceneConfig *string `json:"scene_config,omitempty" v:"json" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
-	Remark      *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	Id          uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr       []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	SceneName   *string `json:"scene_name,omitempty" filter:"-" data:"scene_name,omitempty" v:"max-length:30" dc:"名称"`
+	SceneCode   *string `json:"scene_code,omitempty" filter:"-" data:"scene_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
+	SceneConfig *string `json:"scene_config,omitempty" filter:"-" data:"scene_config,omitempty" v:"json" dc:"配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}"`
+	Remark      *string `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`
+	IsStop      *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/
@@ -91,7 +92,8 @@ type SceneUpdateReq struct {
 /*--------删除 开始--------*/
 type SceneDeleteReq struct {
 	g.Meta `path:"/scene/del" method:"post" tags:"平台后台/权限管理/场景" sm:"删除"`
-	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	Id     uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr  []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

@@ -190,7 +190,7 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data)` + gstr.Join(append([]string{``}, viewSave.paramHandle...), `
             `) + `
             try {
-                if (param?.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `?.length > 0) {
+                if (param?.id > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/create', param, true)
