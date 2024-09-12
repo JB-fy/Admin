@@ -130,13 +130,12 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiPlatform.AdminC
 // 修改
 func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
-	delete(data, `id_arr`)
+	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
 	}
-	filter := map[string]any{`id`: req.IdArr}
 
 	filter[daoPlatform.Admin.Columns().IsSuper] = 0 //不允许修改平台超级管理员
 	/**--------参数处理 结束--------**/
@@ -155,7 +154,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiPlatform.AdminU
 // 删除
 func (controllerThis *Admin) Delete(ctx context.Context, req *apiPlatform.AdminDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := map[string]any{`id`: req.IdArr}
+	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	filter[daoPlatform.Admin.Columns().IsSuper] = 0 //不允许删除平台超级管理员
 	/**--------参数处理 结束--------**/
 
