@@ -70,9 +70,10 @@ type OrgCreateReq struct {
 /*--------修改 开始--------*/
 type OrgUpdateReq struct {
 	g.Meta  `path:"/org/update" method:"post" tags:"平台后台/机构管理/机构" sm:"修改"`
-	IdArr   []uint  `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	OrgName *string `json:"org_name,omitempty" v:"max-length:60" dc:"机构名称"`
-	IsStop  *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	Id      uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr   []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	OrgName *string `json:"org_name,omitempty" filter:"-" data:"org_name,omitempty" v:"max-length:60" dc:"机构名称"`
+	IsStop  *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/
@@ -80,7 +81,8 @@ type OrgUpdateReq struct {
 /*--------删除 开始--------*/
 type OrgDeleteReq struct {
 	g.Meta `path:"/org/del" method:"post" tags:"平台后台/机构管理/机构" sm:"删除"`
-	IdArr  []uint `json:"id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	Id     uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr  []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/
