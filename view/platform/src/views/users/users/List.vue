@@ -176,7 +176,7 @@ const table = reactive({
                                 props.rowData.id_card_name = props.rowData.editIdCardName.oldValue
                                 return
                             }
-                            handleUpdate({ id_arr: [props.rowData.id], id_card_name: props.rowData.id_card_name }).catch(() => (props.rowData.id_card_name = props.rowData.editIdCardName.oldValue))
+                            handleUpdate(props.rowData.id, { id_card_name: props.rowData.id_card_name }).catch(() => (props.rowData.id_card_name = props.rowData.editIdCardName.oldValue))
                         }}
                         onKeydown={(event: any) => {
                             switch (event.keyCode) {
@@ -236,7 +236,7 @@ const table = reactive({
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
                         disabled={!authAction.isUpdate}
-                        onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
+                        onChange={(val: number) => handleUpdate(props.rowData.id, { is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
                 ]
@@ -296,8 +296,6 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
         saveCommon.data = { ...res.data.info }
         switch (type) {
             case 'edit':
-                saveCommon.data.id_arr = [saveCommon.data.id]
-                delete saveCommon.data.id
                 saveCommon.title = t('common.edit')
                 break
             case 'copy':
@@ -309,7 +307,8 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
     })
 } */
 //更新
-const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {
+const handleUpdate = async (id: number | number[], param: { [propName: string]: any }) => {
+    param[Array.isArray(id) ? 'id_arr' : 'id'] = id
     await request(t('config.VITE_HTTP_API_PREFIX') + '/users/users/update', param, true)
 }
 

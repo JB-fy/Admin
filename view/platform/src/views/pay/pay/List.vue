@@ -74,7 +74,7 @@ const table = reactive({
                                 props.rowData.pay_name = props.rowData.editPayName.oldValue
                                 return
                             }
-                            handleUpdate({ id_arr: [props.rowData.id], pay_name: props.rowData.pay_name }).catch(() => (props.rowData.pay_name = props.rowData.editPayName.oldValue))
+                            handleUpdate(props.rowData.id, { pay_name: props.rowData.pay_name }).catch(() => (props.rowData.pay_name = props.rowData.editPayName.oldValue))
                         }}
                         onKeydown={(event: any) => {
                             switch (event.keyCode) {
@@ -221,8 +221,6 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
         saveCommon.data = { ...res.data.info }
         switch (type) {
             case 'edit':
-                saveCommon.data.id_arr = [saveCommon.data.id]
-                delete saveCommon.data.id
                 saveCommon.title = t('common.edit')
                 break
             case 'copy':
@@ -234,7 +232,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
     })
 }
 //删除
-const handleDelete = (idArr: number[]) => {
+const handleDelete = (id: number | number[]) => {
     ElMessageBox.confirm('', {
         type: 'warning',
         title: t('common.tip.configDelete'),
@@ -244,7 +242,7 @@ const handleDelete = (idArr: number[]) => {
             switch (action) {
                 case 'confirm':
                     instance.confirmButtonLoading = true
-                    request(t('config.VITE_HTTP_API_PREFIX') + '/pay/pay/del', { id_arr: idArr }, true)
+                    request(t('config.VITE_HTTP_API_PREFIX') + '/pay/pay/del', { [Array.isArray(id) ? 'id_arr' : 'id']: id }, true)
                         .then(() => {
                             getList()
                             done()
@@ -259,7 +257,8 @@ const handleDelete = (idArr: number[]) => {
     })
 }
 //更新
-const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {
+const handleUpdate = async (id: number | number[], param: { [propName: string]: any }) => {
+    param[Array.isArray(id) ? 'id_arr' : 'id'] = id
     await request(t('config.VITE_HTTP_API_PREFIX') + '/pay/pay/update', param, true)
 }
 
