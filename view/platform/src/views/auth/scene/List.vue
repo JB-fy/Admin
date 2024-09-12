@@ -235,7 +235,7 @@ const handleDelete = (id: number | number[]) => {
             switch (action) {
                 case 'confirm':
                     instance.confirmButtonLoading = true
-                    request(t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/del', Array.isArray(id) ? { id_arr: id } : { id: id }, true)
+                    request(t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/del', { [Array.isArray(id) ? 'id_arr' : 'id']: id }, true)
                         .then(() => {
                             getList()
                             done()
@@ -251,7 +251,7 @@ const handleDelete = (id: number | number[]) => {
 }
 //更新
 const handleUpdate = async (id: number | number[], param: { [propName: string]: any }) => {
-    Array.isArray(id) ? (param.id_arr = id) : (param.id = id)
+    param[Array.isArray(id) ? 'id_arr' : 'id'] = id
     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/update', param, true)
 }
 

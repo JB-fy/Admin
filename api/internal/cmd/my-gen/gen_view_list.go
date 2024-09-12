@@ -274,7 +274,7 @@ const handleDelete = (id: ` + viewList.idType + ` | ` + viewList.idType + `[]) =
             switch (action) {
                 case 'confirm':
                     instance.confirmButtonLoading = true
-                    request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', Array.isArray(id) ? { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `: id } : { id: id }, true)
+                    request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/del', { [Array.isArray(id) ? '` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `' : 'id']: id }, true)
                         .then(() => {
                             getList()
                             done()
@@ -293,7 +293,7 @@ const handleDelete = (id: ` + viewList.idType + ` | ` + viewList.idType + `[]) =
 		tplView += `
 //更新
 const handleUpdate = async (id: ` + viewList.idType + ` | ` + viewList.idType + `[], param: { [propName: string]: any }) => {
-    Array.isArray(id) ? (param.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + ` = id) : (param.id = id)
+    param[Array.isArray(id) ? '` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `' : 'id'] = id
     await request(t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/update', param, true)
 }`
 	}

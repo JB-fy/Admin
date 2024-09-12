@@ -74,7 +74,7 @@ const table = reactive({
                                 props.rowData.action_name = props.rowData.editActionName.oldValue
                                 return
                             }
-                            handleUpdate({ id_arr: [props.rowData.id], action_name: props.rowData.action_name }).catch(() => (props.rowData.action_name = props.rowData.editActionName.oldValue))
+                            handleUpdate(props.rowData.id, { action_name: props.rowData.action_name }).catch(() => (props.rowData.action_name = props.rowData.editActionName.oldValue))
                         }}
                         onKeydown={(event: any) => {
                             switch (event.keyCode) {
@@ -118,7 +118,7 @@ const table = reactive({
                         active-text={t('common.yes')}
                         inactive-text={t('common.no')}
                         disabled={!authAction.isUpdate}
-                        onChange={(val: number) => handleUpdate({ id_arr: [props.rowData.id], is_stop: val }).then(() => (props.rowData.is_stop = val))}
+                        onChange={(val: number) => handleUpdate(props.rowData.id, { is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
                 ]
@@ -206,8 +206,6 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
         saveCommon.data = { ...res.data.info }
         switch (type) {
             case 'edit':
-                saveCommon.data.id_arr = [saveCommon.data.id]
-                delete saveCommon.data.id
                 saveCommon.title = t('common.edit')
                 break
             case 'copy':
@@ -219,7 +217,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
     })
 }
 //删除
-const handleDelete = (idArr: number[]) => {
+const handleDelete = (id: number | number[]) => {
     ElMessageBox.confirm('', {
         type: 'warning',
         title: t('common.tip.configDelete'),
@@ -229,7 +227,7 @@ const handleDelete = (idArr: number[]) => {
             switch (action) {
                 case 'confirm':
                     instance.confirmButtonLoading = true
-                    request(t('config.VITE_HTTP_API_PREFIX') + '/auth/action/del', { id_arr: idArr }, true)
+                    request(t('config.VITE_HTTP_API_PREFIX') + '/auth/action/del', { [Array.isArray(id) ? 'id_arr' : 'id']: id }, true)
                         .then(() => {
                             getList()
                             done()
@@ -244,7 +242,8 @@ const handleDelete = (idArr: number[]) => {
     })
 }
 //更新
-const handleUpdate = async (param: { id_arr: number[]; [propName: string]: any }) => {
+const handleUpdate = async (id: number | number[], param: { [propName: string]: any }) => {
+    param[Array.isArray(id) ? 'id_arr' : 'id'] = id
     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/action/update', param, true)
 }
 
