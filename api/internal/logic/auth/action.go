@@ -51,7 +51,7 @@ func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]any,
 	}
 	daoModelThis := daoAuth.Action.CtxDaoModel(ctx)
 
-	daoModelThis.Filters(filter).SetIdArr()
+	daoModelThis.Filters(filter).SetIdArr(filter)
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -65,7 +65,7 @@ func (logicThis *sAuthAction) Update(ctx context.Context, filter map[string]any,
 func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
 	daoModelThis := daoAuth.Action.CtxDaoModel(ctx)
 
-	daoModelThis.Filters(filter).SetIdArr()
+	daoModelThis.Filters(filter).SetIdArr(filter)
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return

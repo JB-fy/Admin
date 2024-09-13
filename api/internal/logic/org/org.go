@@ -31,7 +31,7 @@ func (logicThis *sOrg) Create(ctx context.Context, data map[string]any) (id int6
 func (logicThis *sOrg) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
 	daoModelThis := daoOrg.Org.CtxDaoModel(ctx)
 
-	daoModelThis.Filters(filter).SetIdArr()
+	daoModelThis.Filters(filter).SetIdArr(filter)
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -45,7 +45,7 @@ func (logicThis *sOrg) Update(ctx context.Context, filter map[string]any, data m
 func (logicThis *sOrg) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
 	daoModelThis := daoOrg.Org.CtxDaoModel(ctx)
 
-	daoModelThis.Filters(filter).SetIdArr()
+	daoModelThis.Filters(filter).SetIdArr(filter)
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return

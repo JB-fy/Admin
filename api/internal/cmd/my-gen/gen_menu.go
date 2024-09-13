@@ -51,7 +51,7 @@ func genMenu(ctx context.Context, option myGenOption, tpl myGenTpl) {
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
 		}).Insert()
 	} else {
-		daoAuth.Menu.CtxDaoModel(ctx).Filter(daoAuth.Menu.Columns().MenuId, id).SetIdArr().HookUpdate(g.Map{
+		daoAuth.Menu.CtxDaoModel(ctx).Filter(daoAuth.Menu.Columns().MenuId, id).SetIdArr(g.Map{`id`: id}).HookUpdate(g.Map{
 			daoAuth.Menu.Columns().MenuName:  menuName,
 			daoAuth.Menu.Columns().Pid:       pid,
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,

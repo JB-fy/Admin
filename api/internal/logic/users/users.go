@@ -29,7 +29,7 @@ func (logicThis *sUsers) Create(ctx context.Context, data map[string]any) (id in
 func (logicThis *sUsers) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {
 	daoModelThis := daoUsers.Users.CtxDaoModel(ctx)
 
-	daoModelThis.Filters(filter).SetIdArr()
+	daoModelThis.Filters(filter).SetIdArr(filter)
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
@@ -43,7 +43,7 @@ func (logicThis *sUsers) Update(ctx context.Context, filter map[string]any, data
 func (logicThis *sUsers) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
 	daoModelThis := daoUsers.Users.CtxDaoModel(ctx)
 
-	daoModelThis.Filters(filter).SetIdArr()
+	daoModelThis.Filters(filter).SetIdArr(filter)
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
 		return
