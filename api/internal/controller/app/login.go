@@ -222,7 +222,7 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		filter[daoUsers.Users.Columns().Email] = req.Email
 	}
 
-	daoModelUsers := daoUsers.Users.CtxDaoModel(ctx).Filters(filter).SetIdArr()
+	daoModelUsers := daoUsers.Users.CtxDaoModel(ctx).SetIdArr(filter)
 	if len(daoModelUsers.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return

@@ -174,7 +174,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data 
 func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error) {` + logic.verifyDataFuncRun + `
 	daoModelThis := ` + daoPath + `.CtxDaoModel(ctx)
 
-	daoModelThis.Filters(filter).SetIdArr(filter)
+	daoModelThis.SetIdArr(filter)
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return
@@ -190,7 +190,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Update(ctx context.Context, filte
 func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filter map[string]any) (row int64, err error) {
 	daoModelThis := ` + daoPath + `.CtxDaoModel(ctx)
 
-	daoModelThis.Filters(filter).SetIdArr(filter)
+	daoModelThis.SetIdArr(filter)
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ` + "``" + `)
 		return

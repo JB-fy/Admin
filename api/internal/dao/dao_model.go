@@ -143,18 +143,23 @@ func (daoModelThis *DaoModel) GetModel() *gdb.Model {
 
 // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即各种sql条件都设置完成时）
 func (daoModelThis *DaoModel) SetIdArr(filterOpt ...map[string]any) *DaoModel {
-	if len(filterOpt) > 0 && len(filterOpt[0]) == 1 {
-		daoModelThis.IdArr = nil
-		if id, ok := filterOpt[0][`id`]; ok {
-			daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
-		} else if idArr, ok := filterOpt[0][`id_arr`]; ok {
-			for _, id := range gconv.SliceAny(idArr) {
+	if len(filterOpt) > 0 {
+		daoModelThis.Filters(filterOpt[0])
+		if len(filterOpt[0]) == 1 {
+			daoModelThis.IdArr = nil
+			if id, ok := filterOpt[0][`id`]; ok {
 				daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+			} else if idArr, ok := filterOpt[0][`id_arr`]; ok {
+				for _, id := range gconv.SliceAny(idArr) {
+					daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+				}
+			} else if idArr, ok := filterOpt[0][`idArr`]; ok {
+				for _, id := range gconv.SliceAny(idArr) {
+					daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+				}
 			}
-		} else if idArr, ok := filterOpt[0][`idArr`]; ok {
-			for _, id := range gconv.SliceAny(idArr) {
-				daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
-			}
+		} else {
+			daoModelThis.IdArr, _ = daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
 		}
 	} else {
 		daoModelThis.IdArr, _ = daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
@@ -246,7 +251,7 @@ func (daoModelThis *DaoModel) HookUpdate(data map[string]any) *DaoModel {
 }
 
 func (daoModelThis *DaoModel) HookDelete(filterOpt ...map[string]any) *DaoModel {
-	if len(filterOpt) > 0 && len(filterOpt[0]) > 0 {
+	if len(filterOpt) > 0 {
 		daoModelThis.Filters(filterOpt[0])
 	}
 	daoModelThis.Hook(daoModelThis.dao.HookDelete(daoModelThis))
