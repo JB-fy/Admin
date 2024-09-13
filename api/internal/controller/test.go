@@ -54,10 +54,10 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	/* // 数据库事务
 	xxxxTxxxDaoModel := daoXxxx.Txxx.CtxDaoModel(ctx)
 	err = xxxxTxxxDaoModel.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
+		list, err := daoXxxx.Txxx.CtxDaoModel(ctx).TX(tx).Filter(`filterKey`, `xxxx`).Field(`xxxx`).LockUpdate().All()                       //查询
 		id, err := xxxxTxxxDaoModel.CloneNew().TX(tx).HookInsert(g.Map{`dataKey`: `xxxx`}).InsertAndGetId()                                  //新增
-		row, err := xxxxTxxxDaoModel.CloneNew().TX(tx).HookUpdate(g.Map{`dataKey`: `xxxx`}).SetIdArr(g.Map{`id`: id}).UpdateAndGetAffected() //修改
-		row, err := xxxxTxxxDaoModel.CloneNew().TX(tx).HookDelete(g.Map{`filterKey`: `xxxx`}).SetIdArr().DeleteAndGetAffected()              //删除
-		list, err := daoXxxx.Txxx.CtxDaoModel(ctx).TX(tx).Filter(`filterKey`, `xxxx`).Field(`xxxx`).All()                                    //查询
+		row, err := xxxxTxxxDaoModel.CloneNew().TX(tx).SetIdArr(g.Map{`id`: id}).HookUpdate(g.Map{`dataKey`: `xxxx`}).UpdateAndGetAffected() //修改
+		row, err := xxxxTxxxDaoModel.CloneNew().TX(tx).SetIdArr(g.Map{`filterKey`: `xxxx`}).HookDelete().DeleteAndGetAffected()              //删除
 		// _, err = tx.Model(xxxxTxxxDaoModel.DbTable).Data(g.Map{`dataKey`: `xxxx`}).Update()                                                  //不建议用
 		return
 	}) */
