@@ -9,6 +9,7 @@ import (
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcache"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -156,6 +157,16 @@ func (daoModelThis *DaoModel) SetIdArr(filterOpt ...map[string]any) *DaoModel {
 			} else if idArr, ok := filterOpt[0][`idArr`]; ok {
 				for _, id := range gconv.SliceAny(idArr) {
 					daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+				}
+			} else {
+				idField := daoModelThis.dao.ParseId(daoModelThis)
+				if id, ok := filterOpt[0][idField]; ok {
+					daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+				} else if gstr.Pos(idField, daoModelThis.DbTable+`.`) == 0 {
+					idField = gstr.Replace(idField, daoModelThis.DbTable+`.`, ``, 1)
+					if id, ok := filterOpt[0][idField]; ok {
+						daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+					}
 				}
 			}
 		} else {
