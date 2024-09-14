@@ -386,6 +386,81 @@ func (daoModelThis *DaoModel) UnionAll(unions ...*gdb.Model) *DaoModel {
 	return daoModelThis
 }
 
+func (daoModelThis *DaoModel) Where(where interface{}, args ...interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.Where(where, args...)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereOr(where interface{}, args ...interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereOr(where, args...)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereGT(column string, value interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereGT(column, value)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereGTE(column string, value interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereGTE(column, value)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereLT(column string, value interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereLT(column, value)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereLTE(column string, value interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereLTE(column, value)
+	return daoModelThis
+}
+
+/* func (daoModelThis *DaoModel) WhereBetween(column string, min interface{}, max interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereBetween(column, min, max)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereIn(column string, in interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereIn(column, in)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereLike(column string, like string) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereLike(column, like)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereNull(columns ...string) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereNull(columns...)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereNot(column string, value interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereNot(column, value)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereNotBetween(column string, min interface{}, max interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereNotBetween(column, min, max)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereNotIn(column string, in interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereNotIn(column, in)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereNotLike(column string, like string) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereNotLike(column, like)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereNotNull(columns ...string) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereNotNull(columns...)
+	return daoModelThis
+} */
+
 func (daoModelThis *DaoModel) OrderAsc(column string) *DaoModel {
 	daoModelThis.model = daoModelThis.model.OrderAsc(column)
 	return daoModelThis
