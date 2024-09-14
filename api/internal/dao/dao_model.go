@@ -387,13 +387,9 @@ func (daoModelThis *DaoModel) UnionAll(unions ...*gdb.Model) *DaoModel {
 	return daoModelThis
 }
 
+// 以下Where开头的方法通常情况下不建议使用，更建议使用filter方法代替。只在极个别情况下可临时使用
 func (daoModelThis *DaoModel) Where(where interface{}, args ...interface{}) *DaoModel {
 	daoModelThis.model = daoModelThis.model.Where(where, args...)
-	return daoModelThis
-}
-
-func (daoModelThis *DaoModel) WhereOr(where interface{}, args ...interface{}) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereOr(where, args...)
 	return daoModelThis
 }
 
@@ -459,6 +455,11 @@ func (daoModelThis *DaoModel) WhereNotLike(column string, like string) *DaoModel
 
 func (daoModelThis *DaoModel) WhereNotNull(columns ...string) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereNotNull(columns...)
+	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) WhereOr(where interface{}, args ...interface{}) *DaoModel {
+	daoModelThis.model = daoModelThis.model.WhereOr(where, args...)
 	return daoModelThis
 } */
 
