@@ -143,6 +143,7 @@ func (daoModelThis *DaoModel) GetModel() *gdb.Model {
 }
 
 // 更新|删除需要后置处理时使用。注意：一般在更新|删除方法执行前调用（即各种sql条件都设置完成时）
+// filterOpt使用条件：	1、id未知时，需传全部过滤条件	2、id已知时，只需传id等过滤条件
 func (daoModelThis *DaoModel) SetIdArr(filterOpt ...map[string]any) *DaoModel {
 	if len(filterOpt) > 0 {
 		daoModelThis.Filters(filterOpt[0])
