@@ -357,7 +357,7 @@ upload.initSignInfo() //初始化签名信息
             <template #file="{ file }">
                 <slot v-if="slots.file" name="file" :file="file"></slot>
                 <template v-else>
-                    <template v-if="file.status == 'uploading'">
+                    <template v-if="['ready', 'uploading'].includes(file.status)">
                         <el-progress v-if="size == 'small'" type="circle" :percentage="file.percentage" :stroke-width="3" :width="45" />
                         <el-progress v-else type="circle" :percentage="file.percentage" />
                     </template>
