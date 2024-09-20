@@ -4,6 +4,7 @@
 // where('id', 'in', [])
 // where(['game_status' => 1, Db::raw('id=relation_game_id')])
 // where(['game_status'=>1, 'id'=>['exp', new Expression('=relation_game_id')]]);
+// where(function ($query) {$query->where('id', 1)->whereOr('game_status', 1);})
 // where('id', 'exp', '=relation_game_id')
 // whereRaw('id = relation_game_id')
 // whereExp('id', '= relation_game_id')
