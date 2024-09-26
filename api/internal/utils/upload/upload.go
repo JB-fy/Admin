@@ -72,7 +72,18 @@ func NewUpload(ctx context.Context, scene string, uploadId uint) Upload {
 	}
 }
 
-func CreateUploadParam(scene string) (param UploadParam) {
+func CreateUploadParam(ctx context.Context, scene string) (param UploadParam) {
+	/* sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	loginId := loginInfo[`login_id`]
+	switch sceneCode {
+	case `platform`:
+	case `org`:
+		orgId := loginInfo[daoOrg.Admin.Columns().OrgId]
+	case `app`:
+	default:
+	} */
 	switch scene {
 	default:
 		param = UploadParam{

@@ -1,7 +1,7 @@
 <!-------- 使用示例 开始-------->
 <!-- <my-upload v-model="saveForm.data.avatar" accept="image/*" :multiple="true" />
 
-<my-upload v-model="saveForm.data.avatar" :api="{ param: { type: 'common' } }" accept="video/*" size="small" /> -->
+<my-upload v-model="saveForm.data.avatar" :api="{ data: { scene: '指定上传场景' } }" accept="video/*" size="small" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 import type { EpPropMergeType } from 'element-plus/es/utils/vue/props/types'
@@ -17,9 +17,9 @@ const props = defineProps({
         type: [String, Array],
     },
     /**
-     * 接口。格式：{ code: string, param: Object }
+     * 接口。格式：{ code: string, data: Object }
      *      code：非必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：非必须。接口函数所需参数。格式：{ [propName: string]: any }
+     *      data：非必须。接口函数所需参数。格式：{ [propName: string]: any }
      */
     api: {
         type: Object,
@@ -165,8 +165,8 @@ const upload = reactive({
     api: {
         loading: false,
         code: props.api?.code ?? t('config.VITE_HTTP_API_PREFIX') + '/upload/sign',
-        param: {
-            ...props.api?.param,
+        data: {
+            ...props.api?.data,
         },
         getSignInfo: async () => {
             if (upload.api.loading) {
@@ -175,7 +175,7 @@ const upload = reactive({
             upload.api.loading = true
             let signInfo = {}
             try {
-                const res = await request(upload.api.code, upload.api.param)
+                const res = await request(upload.api.code, upload.api.data)
                 signInfo = res.data
             } finally {
                 upload.api.loading = false
