@@ -37,7 +37,8 @@ export default {
 
         idCardType: '实名认证方式',
         idCardOfAliyun: {
-            url: '阿里云-地址',
+            host: '阿里云-域名',
+            path: '阿里云-请求路径',
             appcode: '阿里云-Appcode',
         },
 
@@ -95,7 +96,7 @@ export default {
         },
 
         idCardOfAliyun: {
-            url: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（也可购买阿里云市场其它接口，但需修改id_card_of_aliyun.go文件）',
+            host: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（也可购买阿里云市场其它接口，但需修改id_card_of_aliyun.go文件）',
         },
 
         oneClickOfWx: {

@@ -12,21 +12,22 @@ import (
 
 type IdCardOfAliyun struct {
 	Ctx     context.Context
-	Url     string `json:"url"`
+	Host    string `json:"host"`
+	Path    string `json:"path"`
 	Appcode string `json:"appcode"`
 }
 
 func NewIdCardOfAliyun(ctx context.Context, config map[string]any) *IdCardOfAliyun {
 	idCardObj := IdCardOfAliyun{Ctx: ctx}
 	gconv.Struct(config, &idCardObj)
-	if idCardObj.Url == `` || idCardObj.Appcode == `` {
+	if idCardObj.Host == `` || idCardObj.Path == `` || idCardObj.Appcode == `` {
 		panic(`缺少插件配置：实名认证-阿里云`)
 	}
 	return &idCardObj
 }
 
 func (idCardThis *IdCardOfAliyun) Auth(idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error) {
-	res, err := idCardThis.CreateClient().Get(idCardThis.Ctx, idCardThis.Url, g.Map{
+	res, err := idCardThis.CreateClient().Get(idCardThis.Ctx, idCardThis.Host+idCardThis.Path, g.Map{
 		`cardno`: idCardNo,
 		`name`:   idCardName,
 	})
