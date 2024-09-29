@@ -55,16 +55,7 @@ const saveForm = reactive({
                 trigger: 'blur',
                 message: t('validation.json'),
                 // fields: { xxxx: [{ required: true, message: 'xxxx' + t('validation.required') }] }, //内部添加规则时，不再需要设置trigger属性
-                transform: (value: any) => {
-                    if (!value) {
-                        return undefined
-                    }
-                    try {
-                        return JSON.parse(value)
-                    } catch (error) {
-                        return value
-                    }
-                },
+                transform: (value: any) => (value ? jsonDecode(value) : undefined),
             },
         ],
         remark: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
@@ -79,12 +70,9 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data)
             let sceneConfig = param.scene_config ? JSON.parse(param.scene_config) : {}
             if (param.token_config.token_type > -1) {
-                sceneConfig.token_config = {
-                    ...param.token_config,
-                    ...param['token_config_' + param.token_config.token_type],
-                }
+                sceneConfig.token_config = { ...param.token_config, ...param['token_config_' + param.token_config.token_type] }
             }
-            param.scene_config = Object.keys(sceneConfig).length > 0 ? JSON.stringify(sceneConfig) : ``
+            param.scene_config = Object.keys(sceneConfig).length > 0 ? JSON.stringify(sceneConfig) : ''
             try {
                 if (param?.id > 0) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/update', param, true)

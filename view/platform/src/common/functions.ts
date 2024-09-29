@@ -52,3 +52,29 @@ export const removeEmptyOfObj = (obj: { [propName: string]: any }, isClearStr: b
     })
     return temp
 }
+
+/**
+ * JSON反序列化
+ * @param value
+ * @returns
+ */
+export const jsonDecode = (value: string, def: any = undefined): any => {
+    try {
+        return JSON.parse(value)
+    } catch (error) {
+        return def === undefined ? value : def
+    }
+}
+
+/**
+ * JSON序列化
+ * @param value
+ * @returns
+ */
+export const jsonEncode = (value: any, def: string | undefined = undefined): string => {
+    try {
+        return JSON.stringify(value)
+    } catch (error) {
+        return def === undefined ? value : def
+    }
+}

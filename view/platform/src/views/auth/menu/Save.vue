@@ -37,16 +37,7 @@ const saveForm = reactive({
                 trigger: 'blur',
                 message: t('validation.json'),
                 // fields: { xxxx: [{ required: true, message: 'xxxx' + t('validation.required') }] }, //内部添加规则时，不再需要设置trigger属性
-                transform: (value: any) => {
-                    if (!value) {
-                        return undefined
-                    }
-                    try {
-                        return JSON.parse(value)
-                    } catch (error) {
-                        return value
-                    }
-                },
+                transform: (value: any) => (value ? jsonDecode(value) : undefined),
             },
         ],
         sort: [{ type: 'integer', trigger: 'change', min: 0, max: 255, message: t('validation.between.number', { min: 0, max: 255 }) }],

@@ -317,16 +317,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
                 trigger: 'blur',
                 message: t('validation.json'),
                 // fields: { xxxx: [{ required: true, message: 'xxxx' + t('validation.required') }] }, //内部添加规则时，不再需要设置trigger属性
-                transform: (value: any) => {
-                    if (!value) {
-                        return undefined
-                    }
-                    try {
-                        return JSON.parse(value)
-                    } catch (error) {
-                        return value
-                    }
-                },
+                transform: (value: any) => (value ? jsonDecode(value) : undefined),
             },`)
 		viewSaveField.formContent.Method = internal.ReturnType
 		viewSaveField.formContent.DataType = `<el-input v-model="saveForm.data.` + dataFieldPath + `" type="textarea" :autosize="{ minRows: 3 }" />`
