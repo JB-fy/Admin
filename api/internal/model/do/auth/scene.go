@@ -18,6 +18,6 @@ type Scene struct {
 	SceneId     interface{} // 场景ID
 	SceneName   interface{} // 名称
 	SceneCode   interface{} // 标识
-	SceneConfig interface{} // 配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{"signType": "算法","signKey": "密钥","expireTime": 过期时间,...}
+	SceneConfig interface{} // 配置。JSON格式，根据场景设置
 	Remark      interface{} // 备注
 }

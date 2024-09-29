@@ -15,7 +15,7 @@ type Token interface {
 }
 
 func NewToken(ctx context.Context, config map[string]any) Token {
-	switch tokenType, _ := config[`tokenType`].(string); tokenType {
+	switch tokenType, _ := config[`token_type`].(string); tokenType {
 	// case `tokenOfJwt`:
 	default:
 		return NewTokenOfJwt(ctx, config)

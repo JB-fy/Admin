@@ -11,9 +11,9 @@ import (
 
 type TokenOfJwt struct {
 	Ctx        context.Context
-	SignType   string `json:"signType"`
-	SignKey    []byte `json:"signKey"`
-	ExpireTime uint   `json:"expireTime"`
+	SignType   string `json:"sign_type"`
+	SignKey    []byte `json:"sign_key"`
+	ExpireTime uint   `json:"expire_time"`
 	SignMethod jwt.SigningMethod
 }
 

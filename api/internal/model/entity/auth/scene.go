@@ -16,6 +16,6 @@ type Scene struct {
 	SceneId     uint        `json:"sceneId"     orm:"scene_id"     ` // 场景ID
 	SceneName   string      `json:"sceneName"   orm:"scene_name"   ` // 名称
 	SceneCode   string      `json:"sceneCode"   orm:"scene_code"   ` // 标识
-	SceneConfig string      `json:"sceneConfig" orm:"scene_config" ` // 配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{"signType": "算法","signKey": "密钥","expireTime": 过期时间,...}
+	SceneConfig string      `json:"sceneConfig" orm:"scene_config" ` // 配置。JSON格式，根据场景设置
 	Remark      string      `json:"remark"      orm:"remark"       ` // 备注
 }
