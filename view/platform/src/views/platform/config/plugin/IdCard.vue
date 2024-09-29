@@ -16,13 +16,9 @@ const saveForm = reactive({
             { required: true, message: t('validation.required') },
             { type: 'enum', trigger: 'change', enum: [`idCardOfAliyun`], message: t('validation.select') },
         ],
-        'idCardOfAliyun.host': [
+        'idCardOfAliyun.url': [
             { required: computed((): boolean => (saveForm.data.idCardType == `idCardOfAliyun` ? true : false)), message: t('validation.required') },
             { type: 'url', trigger: 'blur', message: t('validation.url') },
-        ],
-        'idCardOfAliyun.path': [
-            { required: computed((): boolean => (saveForm.data.idCardType == `idCardOfAliyun` ? true : false)), message: t('validation.required') },
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         'idCardOfAliyun.appcode': [
             { required: computed((): boolean => (saveForm.data.idCardType == `idCardOfAliyun` ? true : false)), message: t('validation.required') },
@@ -71,16 +67,13 @@ saveForm.initData()
         </el-form-item>
 
         <template v-if="saveForm.data.idCardType == 'idCardOfAliyun'">
-            <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyun.host')" prop="idCardOfAliyun.host">
-                <el-input v-model="saveForm.data.idCardOfAliyun.host" :placeholder="t('platform.config.plugin.name.idCardOfAliyun.host')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyun.url')" prop="idCardOfAliyun.url">
+                <el-input v-model="saveForm.data.idCardOfAliyun.url" :placeholder="t('platform.config.plugin.name.idCardOfAliyun.url')" :clearable="true" style="max-width: 500px" />
                 <el-alert type="info" :show-icon="true" :closable="false">
                     <template #title>
-                        <span v-html="t('platform.config.plugin.tip.idCardOfAliyun.host')"></span>
+                        <span v-html="t('platform.config.plugin.tip.idCardOfAliyun.url')"></span>
                     </template>
                 </el-alert>
-            </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyun.path')" prop="idCardOfAliyun.path">
-                <el-input v-model="saveForm.data.idCardOfAliyun.path" :placeholder="t('platform.config.plugin.name.idCardOfAliyun.path')" :clearable="true" />
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.idCardOfAliyun.appcode')" prop="idCardOfAliyun.appcode">
                 <el-input v-model="saveForm.data.idCardOfAliyun.appcode" :placeholder="t('platform.config.plugin.name.idCardOfAliyun.appcode')" :clearable="true" />
