@@ -15,7 +15,7 @@ type Token struct {
 	Key   string
 }
 
-// 用于限制多地登录，多设备登录判断
+// 用于限制多地，多设备登录判断
 // sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
 // loginId 登录用户ID。类型用字符串好兼容
 func NewTokenUnique(ctx context.Context, sceneCode string, loginId string) *Token {

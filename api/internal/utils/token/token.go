@@ -11,7 +11,7 @@ type TokenInfo struct {
 type Token interface {
 	Create(tokenInfo TokenInfo) (token string, err error) // 生成
 	Parse(token string) (tokenInfo TokenInfo, err error)  // 解析
-	GetExpireTime() (expireTime int64)                    // 获取过期时间
+	GetExpireTime() (expireTime int64)                    // 获取生成token时设置的过期时间，多少秒后token失效
 }
 
 func NewToken(ctx context.Context, config map[string]any) Token {
