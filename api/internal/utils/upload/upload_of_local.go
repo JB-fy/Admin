@@ -28,7 +28,7 @@ type UploadOfLocal struct {
 	Url           string `json:"url"`
 	SignKey       string `json:"signKey"`
 	FileSaveDir   string `json:"fileSaveDir"`
-	FileUrlPrefix string `json:"fleUrlPrefix"`
+	FileUrlPrefix string `json:"fileUrlPrefix"`
 }
 
 func NewUploadOfLocal(ctx context.Context, config map[string]any) *UploadOfLocal {
