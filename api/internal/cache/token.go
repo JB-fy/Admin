@@ -17,7 +17,7 @@ type Token struct {
 
 // sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
 // loginId 登录用户ID。类型用字符串好兼容
-func NewTokenUnique(ctx context.Context, sceneCode string, loginId string) *Token {
+func NewTokenIsUnique(ctx context.Context, sceneCode string, loginId string) *Token {
 	//可在这里写分库逻辑
 	redis := g.Redis()
 	return &Token{

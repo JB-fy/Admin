@@ -52,16 +52,3 @@ export const removeEmptyOfObj = (obj: { [propName: string]: any }, isClearStr: b
     })
     return temp
 }
-
-/**
- * JSON解析（解析）
- * @param obj
- * @returns
- */
-export const JsonParse = (text: string): any => {
-    try {
-        return JSON.parse(text)
-    } catch (error) {
-        return text
-    }
-}

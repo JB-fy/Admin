@@ -33,8 +33,8 @@ export default {
     tip: {
         scene_config: 'JSON格式，根据场景设置',
         token_config: {
-            expire_time: '多少秒后token失效',
-            is_unique: '开启后，可限制用户多地，多设备登录，因同时只会有一个token有效（新token生成时，旧token会失效）',
+            expire_time: '多少秒后Token失效',
+            is_unique: '开启后，可限制用户多地，多设备登录，因同时只会有一个Token有效（新Token生成时，旧Token会失效）',
         },
     },
 }

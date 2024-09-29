@@ -22,7 +22,7 @@ type Handler struct {
 	Ctx       context.Context
 	Token     Token
 	SceneCode string //场景标识。缓存使用，注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
-	IsUnique  bool   `json:"isUnique"` //Token唯一。开启后，可限制用户多地，多设备登录，因同时只会有一个token有效（新token生成时，旧token会失效）
+	IsUnique  bool   `json:"is_unique"` //Token唯一。开启后，可限制用户多地，多设备登录，因同时只会有一个Token有效（新Token生成时，旧Token会失效）
 }
 
 func (handlerThis *Handler) Create(tokenInfo TokenInfo) (token string, err error) {
@@ -32,7 +32,7 @@ func (handlerThis *Handler) Create(tokenInfo TokenInfo) (token string, err error
 	}
 
 	if handlerThis.IsUnique {
-		cache.NewTokenUnique(handlerThis.Ctx, handlerThis.SceneCode, tokenInfo.LoginId).Set(token, handlerThis.Token.GetExpireTime())
+		cache.NewTokenIsUnique(handlerThis.Ctx, handlerThis.SceneCode, tokenInfo.LoginId).Set(token, handlerThis.Token.GetExpireTime())
 	}
 	return
 }
@@ -45,7 +45,7 @@ func (handlerThis *Handler) Parse(token string) (tokenInfo TokenInfo, err error)
 	}
 
 	if handlerThis.IsUnique {
-		checkToken, _ := cache.NewTokenUnique(handlerThis.Ctx, handlerThis.SceneCode, tokenInfo.LoginId).Get()
+		checkToken, _ := cache.NewTokenIsUnique(handlerThis.Ctx, handlerThis.SceneCode, tokenInfo.LoginId).Get()
 		if checkToken != token {
 			err = utils.NewErrorCode(handlerThis.Ctx, 39994002, ``)
 			return
