@@ -12,9 +12,9 @@ import (
 
 type EmailOfCommon struct {
 	Ctx       context.Context
-	SmtpHost  string `json:"smtpHost"`
-	SmtpPort  string `json:"smtpPort"`
-	FromEmail string `json:"fromEmail"`
+	SmtpHost  string `json:"smtp_host"`
+	SmtpPort  string `json:"smtp_port"`
+	FromEmail string `json:"from_email"`
 	Password  string `json:"password"`
 	Code      struct {
 		Subject  string `json:"subject"`

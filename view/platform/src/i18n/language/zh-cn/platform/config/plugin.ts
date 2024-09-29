@@ -29,9 +29,9 @@ export default {
         },
         emailType: '邮箱方式',
         emailOfCommon: {
-            smtpHost: '通用-SmtpHost',
-            smtpPort: '通用-SmtpPort',
-            fromEmail: '通用-邮箱',
+            smtp_host: '通用-SmtpHost',
+            smtp_port: '通用-SmtpPort',
+            from_email: '通用-邮箱',
             password: '通用-密码',
         },
 
