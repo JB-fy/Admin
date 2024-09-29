@@ -127,7 +127,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	tokenInfo := token.TokenInfo{LoginId: info[daoUsers.Users.Columns().UserId].String()}
-	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map(), sceneCode).Create(tokenInfo)
+	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneCode).Create(tokenInfo)
 	if err != nil {
 		return
 	}
@@ -190,7 +190,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	}
 
 	tokenInfo := token.TokenInfo{LoginId: gconv.String(userId)}
-	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map(), sceneCode).Create(tokenInfo)
+	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneCode).Create(tokenInfo)
 	if err != nil {
 		return
 	}
@@ -294,7 +294,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	tokenInfo := token.TokenInfo{LoginId: gconv.String(userId)}
-	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map(), sceneInfo[daoAuth.Scene.Columns().SceneCode].String()).Create(tokenInfo)
+	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneInfo[daoAuth.Scene.Columns().SceneCode].String()).Create(tokenInfo)
 	if err != nil {
 		return
 	}

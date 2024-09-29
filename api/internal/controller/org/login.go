@@ -92,7 +92,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	tokenInfo := token.TokenInfo{LoginId: info[daoOrg.Admin.Columns().AdminId].String()}
-	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map(), sceneCode).Create(tokenInfo)
+	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneCode).Create(tokenInfo)
 	if err != nil {
 		return
 	}
