@@ -34,9 +34,9 @@ type Config struct {
 	} `json:"emailCode,omitempty" dc:"验证码邮件配置"`
 	EmailType     *string `json:"emailType,omitempty" dc:"邮箱方式"`
 	EmailOfCommon *struct {
-		SmtpHost  *string `json:"smtp_host,omitempty" dc:"通用-SmtpHost"`
-		SmtpPort  *string `json:"smtp_port,omitempty" dc:"通用-SmtpPort"`
-		FromEmail *string `json:"from_email,omitempty" dc:"通用-邮箱"`
+		SmtpHost  *string `json:"smtpHost,omitempty" dc:"通用-SmtpHost"`
+		SmtpPort  *string `json:"smtpPort,omitempty" dc:"通用-SmtpPort"`
+		FromEmail *string `json:"fromEmail,omitempty" dc:"通用-邮箱"`
 		Password  *string `json:"password,omitempty" dc:"通用-密码"`
 	} `json:"emailOfCommon,omitempty" dc:"邮箱配置-通用"`
 
@@ -111,9 +111,9 @@ type ConfigSaveReq struct {
 	} `json:"emailCode,omitempty" v:"" dc:"验证码邮件配置"`
 	EmailType     *string `json:"emailType,omitempty" v:"in:emailOfCommon" dc:"邮箱方式"`
 	EmailOfCommon *struct {
-		SmtpHost  *string `json:"smtp_host,omitempty" v:"" dc:"通用-SmtpHost"`
-		SmtpPort  *string `json:"smtp_port,omitempty" v:"" dc:"通用-SmtpPort"`
-		FromEmail *string `json:"from_email,omitempty" v:"email" dc:"通用-邮箱"`
+		SmtpHost  *string `json:"smtpHost,omitempty" v:"" dc:"通用-SmtpHost"`
+		SmtpPort  *string `json:"smtpPort,omitempty" v:"" dc:"通用-SmtpPort"`
+		FromEmail *string `json:"fromEmail,omitempty" v:"email" dc:"通用-邮箱"`
 		Password  *string `json:"password,omitempty" v:"" dc:"通用-密码"`
 	} `json:"emailOfCommon,omitempty" v:"required-if:EmailType,emailOfCommon" dc:"邮箱配置-通用"`
 
