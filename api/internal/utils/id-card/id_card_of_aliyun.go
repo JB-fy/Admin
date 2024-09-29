@@ -52,11 +52,8 @@ func (idCardThis *IdCardOfAliyun) Auth(idCardName string, idCardNo string) (idCa
 		"birthday": "1986-08-30",
 	} */
 	idCardInfoMap := resData.Get(`data`).Map()
-	switch gconv.String(idCardInfoMap[`sex`]) {
-	case `男`:
-		idCardInfo.Gender = 1
-	case `女`:
-		idCardInfo.Gender = 2
+	if gender, ok := map[string]uint{`男`: 1, `女`: 2}[gconv.String(idCardInfoMap[`sex`])]; ok {
+		idCardInfo.Gender = gender
 	}
 	idCardInfo.Address = gconv.String(idCardInfoMap[`address`])
 	// idCardInfo.Birthday = gtime.NewFromStr(gconv.String(idCardInfoMap[`birthday`]))

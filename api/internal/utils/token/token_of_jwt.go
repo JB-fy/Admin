@@ -11,24 +11,36 @@ import (
 
 type TokenOfJwt struct {
 	Ctx        context.Context
-	SignKey    []byte `json:"signKey"`
 	SignType   string `json:"signType"`
-	SignMethod *jwt.SigningMethodHMAC
-	ExpireTime uint `json:"expireTime"`
+	SignKey    []byte `json:"signKey"`
+	ExpireTime uint   `json:"expireTime"`
+	SignMethod jwt.SigningMethod
 }
 
 func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
-	tokenObj := TokenOfJwt{Ctx: ctx}
+	tokenObj := TokenOfJwt{
+		Ctx:        ctx,
+		SignMethod: jwt.SigningMethodHS256,
+	}
 	gconv.Struct(config, &tokenObj)
-	switch tokenObj.SignType {
-	case `HS256`:
-		tokenObj.SignMethod = jwt.SigningMethodHS256
-	case `HS384`:
-		tokenObj.SignMethod = jwt.SigningMethodHS384
-	case `HS512`:
-		tokenObj.SignMethod = jwt.SigningMethodHS512
-	default:
-		tokenObj.SignMethod = jwt.SigningMethodHS256
+	if tokenObj.SignKey == nil || tokenObj.SignType == `` || tokenObj.ExpireTime == 0 {
+		panic(`缺少配置：token-Jwt`)
+	}
+
+	signMethodMap := map[string]jwt.SigningMethod{
+		`HS256`: jwt.SigningMethodHS256,
+		`HS384`: jwt.SigningMethodHS384,
+		`HS512`: jwt.SigningMethodHS512,
+		/* // SignKeyToParse []byte `json:"SignKeyOfParse"`
+		`RS256`: jwt.SigningMethodRS256,
+		`RS384`: jwt.SigningMethodRS384,
+		`RS512`: jwt.SigningMethodRS512,
+		`ES256`: jwt.SigningMethodES256,
+		`ES384`: jwt.SigningMethodES384,
+		`ES512`: jwt.SigningMethodES512, */
+	}
+	if signMethod, ok := signMethodMap[tokenObj.SignType]; ok {
+		tokenObj.SignMethod = signMethod
 	}
 	return &tokenObj
 }
