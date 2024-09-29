@@ -42,8 +42,7 @@ type Config struct {
 
 	IdCardType     *string `json:"idCardType,omitempty" dc:"实名认证方式"`
 	IdCardOfAliyun *struct {
-		Host    *string `json:"host,omitempty" dc:"阿里云-域名"`
-		Path    *string `json:"path,omitempty" dc:"阿里云-请求路径"`
+		Url     *string `json:"url,omitempty" dc:"阿里云-地址"`
 		Appcode *string `json:"appcode,omitempty" dc:"阿里云-Appcode"`
 	} `json:"idCardOfAliyun,omitempty" dc:"实名认证配置-阿里云"`
 
@@ -119,8 +118,7 @@ type ConfigSaveReq struct {
 
 	IdCardType     *string `json:"idCardType,omitempty" v:"in:idCardOfAliyun" dc:"实名认证方式"`
 	IdCardOfAliyun *struct {
-		Host    *string `json:"host,omitempty" v:"url" dc:"阿里云-域名"`
-		Path    *string `json:"path,omitempty" v:"" dc:"阿里云-请求路径"`
+		Url     *string `json:"url,omitempty" v:"url" dc:"阿里云-地址"`
 		Appcode *string `json:"appcode,omitempty" v:"" dc:"阿里云-Appcode"`
 	} `json:"idCardOfAliyun,omitempty" v:"required-if:IdCardType,idCardOfAliyun" dc:"实名认证配置-阿里云"`
 
