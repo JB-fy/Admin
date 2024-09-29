@@ -15,15 +15,16 @@ type Token struct {
 	Key   string
 }
 
+// 用于限制多地登录，多设备登录判断
 // sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
-// loginId 登录用户ID
-func NewToken(ctx context.Context, sceneCode string, loginId uint) *Token {
+// loginId 登录用户ID。类型用字符串好兼容
+func NewTokenUnique(ctx context.Context, sceneCode string, loginId string) *Token {
 	//可在这里写分库逻辑
 	redis := g.Redis()
 	return &Token{
 		Ctx:   ctx,
 		Redis: redis,
-		Key:   fmt.Sprintf(consts.CacheTokenFormat, sceneCode, loginId),
+		Key:   fmt.Sprintf(consts.CacheTokenUniqueFormat, sceneCode, loginId),
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	daoAuth "api/internal/dao/auth"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils"
+	utilsToken "api/internal/utils/token"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -24,8 +25,7 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 		}
 
 		sceneInfo := utils.GetCtxSceneInfo(r.GetCtx())
-		jwt := utils.NewJWT(r.GetCtx(), sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
-		claims, err := jwt.ParseToken(token)
+		tokenInfo, err := utilsToken.NewHandler(r.GetCtx(), sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map(), sceneInfo[daoAuth.Scene.Columns().SceneCode].String()).Parse(token)
 		if err != nil {
 			if isForce {
 				r.SetError(err)
@@ -36,21 +36,8 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 		}
 		/**--------验证token 结束--------**/
 
-		/**--------限制多地登录，多设备登录等情况下用（前置条件：登录时做过token缓存） 开始--------**/
-		/* sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
-		checkToken, _ := cache.NewToken(r.GetCtx(), sceneCode, claims.LoginId).Get()
-		if checkToken != token {
-			if isForce {
-				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994002, ``))
-			} else {
-				r.Middleware.Next()
-			}
-			return
-		} */
-		/**--------限制多地登录，多设备登录等情况下用（前置条件：登录时做过token缓存） 结束--------**/
-
 		/**--------获取登录用户信息并验证 开始--------**/
-		info, _ := daoPlatform.Admin.CtxDaoModel(r.GetCtx()).Filter(daoPlatform.Admin.Columns().AdminId, claims.LoginId).One()
+		info, _ := daoPlatform.Admin.CtxDaoModel(r.GetCtx()).Filter(daoPlatform.Admin.Columns().AdminId, tokenInfo.LoginId).One()
 		if info.IsEmpty() {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994003, ``))
@@ -68,8 +55,8 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 			return
 		}
 
-		info[`login_id`] = gvar.New(claims.LoginId) //所有场景追加这个字段，方便统一调用
-		utils.SetCtxLoginInfo(r, info)              //用户信息保存在协程上下文
+		info[`login_id`] = gvar.New(tokenInfo.LoginId) //所有场景追加这个字段，方便统一调用
+		utils.SetCtxLoginInfo(r, info)                 //用户信息保存在协程上下文
 		/**--------获取用户信息并验证 结束--------**/
 
 		r.Middleware.Next()

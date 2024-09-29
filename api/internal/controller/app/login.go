@@ -8,12 +8,14 @@ import (
 	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
 	one_click "api/internal/utils/one-click"
+	"api/internal/utils/token"
 	"context"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"
 )
 
@@ -124,13 +126,11 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		}
 	}
 
-	claims := utils.CustomClaims{LoginId: info[daoUsers.Users.Columns().UserId].Uint()}
-	jwt := utils.NewJWT(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
-	token, err := jwt.CreateToken(claims)
+	tokenInfo := token.TokenInfo{LoginId: info[daoUsers.Users.Columns().UserId].String()}
+	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map(), sceneCode).Create(tokenInfo)
 	if err != nil {
 		return
 	}
-	// cache.NewToken(ctx, sceneCode, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
 
 	res = &api.CommonTokenRes{Token: token}
 	return
@@ -189,13 +189,11 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		return
 	}
 
-	claims := utils.CustomClaims{LoginId: uint(userId)}
-	jwt := utils.NewJWT(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
-	token, err := jwt.CreateToken(claims)
+	tokenInfo := token.TokenInfo{LoginId: gconv.String(userId)}
+	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map(), sceneCode).Create(tokenInfo)
 	if err != nil {
 		return
 	}
-	// cache.NewToken(ctx, sceneCode, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
 
 	res = &api.CommonTokenRes{Token: token}
 	return
@@ -295,13 +293,11 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 	} */
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	claims := utils.CustomClaims{LoginId: userId}
-	jwt := utils.NewJWT(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map())
-	token, err := jwt.CreateToken(claims)
+	tokenInfo := token.TokenInfo{LoginId: gconv.String(userId)}
+	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map(), sceneInfo[daoAuth.Scene.Columns().SceneCode].String()).Create(tokenInfo)
 	if err != nil {
 		return
 	}
-	// cache.NewToken(ctx, sceneCode, claims.LoginId).Set(token, int64(jwt.ExpireTime)) //缓存token（限制多地登录，多设备登录等情况下用）
 
 	res = &api.CommonTokenRes{Token: token}
 	return
