@@ -11,7 +11,9 @@ export default {
         },
         token_config_0: {
             sign_type: 'JWT-加密方式',
-            sign_key: 'JWT-密钥',
+            private_key_HS: 'JWT-密钥',
+            private_key: 'JWT-私钥',
+            public_key: 'JWT-公钥',
         },
         remark: '备注',
         is_stop: '停用',
@@ -28,6 +30,12 @@ export default {
                 { value: 'HS256', label: 'HS256' },
                 { value: 'HS384', label: 'HS384' },
                 { value: 'HS512', label: 'HS512' },
+                { value: 'RS256', label: 'RS256' },
+                { value: 'RS384', label: 'RS384' },
+                { value: 'RS512', label: 'RS512' },
+                /* { value: 'ES256', label: 'ES256' },
+                { value: 'ES384', label: 'ES384' },
+                { value: 'ES512', label: 'ES512' }, */
             ],
         },
     },

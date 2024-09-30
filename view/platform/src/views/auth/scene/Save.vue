@@ -20,7 +20,8 @@ const saveForm = reactive({
         },
         token_config_0: {
             sign_type: tokenConfig.token_type === 0 ? tokenConfig.sign_type : 'HS256',
-            sign_key: tokenConfig.token_type === 0 ? tokenConfig.sign_key : '',
+            private_key: tokenConfig.token_type === 0 ? tokenConfig.private_key : undefined,
+            public_key: tokenConfig.token_type === 0 ? tokenConfig.public_key : undefined,
         },
         scene_config: Object.keys(sceneConfig).length > 0 ? JSON.stringify(sceneConfig) : undefined,
     } as { [propName: string]: any },
@@ -42,20 +43,23 @@ const saveForm = reactive({
             { required: computed((): boolean => (saveForm.data.token_config.token_type == 0 ? true : false)), message: t('validation.required') },
             { type: 'enum', trigger: 'change', enum: (tm('auth.scene.status.token_config_0.sign_type') as any).map((item: any) => item.value), message: t('validation.select') },
         ],
-        'token_config_0.sign_key': [
+        'token_config_0.private_key': [
             { required: computed((): boolean => (saveForm.data.token_config.token_type == 0 ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'token_config_0.public_key': [
+            {
+                required: computed((): boolean => (saveForm.data.token_config.token_type == 0 && !['HS256', 'HS384', 'HS512'].includes(saveForm.data.token_config_0.sign_type) ? true : false)),
+                message: t('validation.required'),
+            },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         'token_config.expire_time': [
             { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },
         ],
-        'token_config.active_time': [
-            { type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },
-        ],
-        'token_config.is_unique': [
-            { type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }
-        ],
+        'token_config.active_time': [{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) }],
+        'token_config.is_unique': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
         scene_config: [
             {
                 type: 'object',
@@ -78,6 +82,9 @@ const saveForm = reactive({
             let sceneConfig = param.scene_config ? JSON.parse(param.scene_config) : {}
             if (param.token_config.token_type > -1) {
                 sceneConfig.token_config = { ...param.token_config, ...param['token_config_' + param.token_config.token_type] }
+                if (sceneConfig.token_config.token_type == 0 && ['HS256', 'HS384', 'HS512'].includes(sceneConfig.token_config.sign_type)) {
+                    delete sceneConfig.token_config.public_key
+                }
             }
             param.scene_config = Object.keys(sceneConfig).length > 0 ? JSON.stringify(sceneConfig) : ''
             try {
@@ -134,14 +141,13 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <template v-if="saveForm.data.token_config.token_type == 0">
                     <el-form-item :label="t('auth.scene.name.token_config_0.sign_type')" prop="token_config_0.sign_type">
-                        <el-radio-group v-model="saveForm.data.token_config_0.sign_type">
-                            <el-radio v-for="(item, index) in (tm('auth.scene.status.token_config_0.sign_type') as any)" :key="index" :value="item.value">
-                                {{ item.label }}
-                            </el-radio>
-                        </el-radio-group>
+                        <el-select-v2 v-model="saveForm.data.token_config_0.sign_type" :options="tm('auth.scene.status.token_config_0.sign_type')" :placeholder="t('auth.scene.name.token_config_0.sign_type')" :clearable="true" style="width: 160px" />
                     </el-form-item>
-                    <el-form-item :label="t('auth.scene.name.token_config_0.sign_key')" prop="token_config_0.sign_key">
-                        <el-input v-model="saveForm.data.token_config_0.sign_key" :placeholder="t('auth.scene.name.token_config_0.sign_key')" :clearable="true" />
+                    <el-form-item :label="t('auth.scene.name.token_config_0.' + (['HS256', 'HS384', 'HS512'].includes(saveForm.data.token_config_0.sign_type) ? 'private_key_HS' : 'private_key'))" prop="token_config_0.private_key">
+                        <el-input v-model="saveForm.data.token_config_0.private_key" type="textarea" :autosize="{ minRows: 3 }" />
+                    </el-form-item>
+                    <el-form-item v-if="!['HS256', 'HS384', 'HS512'].includes(saveForm.data.token_config_0.sign_type)" :label="t('auth.scene.name.token_config_0.public_key')" prop="token_config_0.public_key">
+                        <el-input v-model="saveForm.data.token_config_0.public_key" type="textarea" :autosize="{ minRows: 3 }" />
                     </el-form-item>
                 </template>
                 <template v-if="saveForm.data.token_config.token_type !== -1">
