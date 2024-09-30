@@ -22,7 +22,7 @@ type Handler struct {
 	Ctx        context.Context
 	Token      Token
 	SceneCode  string //场景标识。缓存使用，注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
-	ActiveTime int64  `json:"active_time"` //失活时间。大于0生效，即当Token超过多少秒未被使用，判定失活
+	ActiveTime int64  `json:"active_time"` //失活时间。大于0生效，即当Token在一段秒数内未使用
 	IsUnique   bool   `json:"is_unique"`   //Token唯一。开启后，可限制用户多地，多设备登录，因同时只会有一个Token有效（新Token生成时，旧Token会失效）
 }
 
