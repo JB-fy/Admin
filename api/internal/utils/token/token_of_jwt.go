@@ -20,7 +20,8 @@ import (
 		私钥命令：openssl genrsa -out rsa-private-key.pem 2048
 		公钥命令：openssl rsa -in rsa-private-key.pem -pubout -out rsa-public-key.pem
 	ES密钥：
-		私钥命令：openssl ecparam -genkey -name prime256v1 -out ecc-private-key.pem
+		私钥命令：openssl ecparam -genkey -name prime256r1 -noout -out ecc-private-key.pem
+			prime256v1	secp384r1	secp521r1
 		公钥命令：openssl ec -in ecc-private-key.pem -pubout -out ecc-public-key.pem
 */
 type TokenOfJwt struct {
