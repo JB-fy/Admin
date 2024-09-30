@@ -67,10 +67,9 @@ func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
 
 func (tokenThis *TokenOfJwt) Create(tokenInfo TokenInfo) (token string, err error) {
 	privateKeyFunc := func() (privateKey any) {
-		switch tokenThis.SignType {
-		case `HS256`, `HS384`, `HS512`:
+		switch tokenThis.SignMethod {
+		case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:
 			privateKey = []byte(tokenThis.PrivateKey)
-		// case `RS256`, `RS384`, `RS512`, `ES256`, `ES384`, `ES512`:
 		default:
 			privateKey, _ = common.ParsePrivateKey(tokenThis.PrivateKey)
 		}
@@ -86,11 +85,10 @@ func (tokenThis *TokenOfJwt) Create(tokenInfo TokenInfo) (token string, err erro
 }
 
 func (tokenThis *TokenOfJwt) Parse(token string) (tokenInfo TokenInfo, err error) {
-	jwtToken, err := jwt.ParseWithClaims(token, &jwt.RegisteredClaims{}, func(token *jwt.Token) (any, error) {
-		switch tokenThis.SignType {
-		case `HS256`, `HS384`, `HS512`:
+	jwtToken, err := jwt.ParseWithClaims(token, &jwt.RegisteredClaims{}, func(jwtToken *jwt.Token) (any, error) {
+		switch jwtToken.Method {
+		case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:
 			return []byte(tokenThis.PrivateKey), nil
-		// case `RS256`, `RS384`, `RS512`, `ES256`, `ES384`, `ES512`:
 		default:
 			return common.ParsePublicKey(tokenThis.PublicKey)
 		}
