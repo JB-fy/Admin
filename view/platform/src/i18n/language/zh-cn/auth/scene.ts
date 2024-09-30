@@ -6,6 +6,7 @@ export default {
         token_config: {
             token_type: 'Token方式',
             expire_time: '过期时间',
+            active_time: '失活时间',
             is_unique: 'Token唯一',
         },
         token_config_0: {
@@ -34,6 +35,7 @@ export default {
         scene_config: 'JSON格式，根据场景设置',
         token_config: {
             expire_time: '多少秒后Token失效',
+            active_time: '大于0生效，即当Token超过多少秒未被使用，判定失活',
             is_unique: '开启后，可限制用户多地，多设备登录，因同时只会有一个Token有效（新Token生成时，旧Token会失效）',
         },
     },

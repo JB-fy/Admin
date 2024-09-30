@@ -43,7 +43,8 @@ for (const [key, component] of Object.entries(epIconList)) {
 //                 case 39994001:
 //                 case 39994002:
 //                 case 39994003:
-//                 case 39994004:
+//                 case 39994100:
+//                 case 39994101:
 //                     /* ElMessageBox.alert(errMsg.msg, '确认登出', {
 //                         confirmButtonText: '重新登录',
 //                         type: 'warning'

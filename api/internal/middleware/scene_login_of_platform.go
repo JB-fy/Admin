@@ -41,7 +41,7 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 		info, _ := daoPlatform.Admin.CtxDaoModel(r.GetCtx()).Filter(daoPlatform.Admin.Columns().AdminId, tokenInfo.LoginId).One()
 		if info.IsEmpty() {
 			if isForce {
-				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994003, ``))
+				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994100, ``))
 			} else {
 				r.Middleware.Next()
 			}
@@ -49,7 +49,7 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 		}
 		if info[daoPlatform.Admin.Columns().IsStop].Uint() == 1 {
 			if isForce {
-				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994004, ``))
+				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994101, ``))
 			} else {
 				r.Middleware.Next()
 			}

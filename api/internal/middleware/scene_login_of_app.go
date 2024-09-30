@@ -41,7 +41,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 		info, _ := daoUsers.Users.CtxDaoModel(r.GetCtx()).Filter(daoUsers.Users.Columns().UserId, tokenInfo.LoginId).One()
 		if info.IsEmpty() {
 			if isForce {
-				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994003, ``))
+				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994100, ``))
 			} else {
 				r.Middleware.Next()
 			}
@@ -49,7 +49,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 		}
 		if info[daoUsers.Users.Columns().IsStop].Uint() == 1 {
 			if isForce {
-				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994004, ``))
+				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994101, ``))
 			} else {
 				r.Middleware.Next()
 			}

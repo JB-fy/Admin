@@ -15,6 +15,7 @@ const saveForm = reactive({
         token_config: {
             token_type: tokenConfig.token_type ?? -1,
             expire_time: tokenConfig.expire_time ?? 14400,
+            active_time: tokenConfig.active_time ?? 0,
             is_unique: tokenConfig.is_unique ?? 0,
         },
         token_config_0: {
@@ -46,8 +47,14 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         'token_config.expire_time': [
-            { required: computed((): boolean => (saveForm.data.token_config.token_type == 0 ? true : false)), message: t('validation.required') },
+            { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },
+        ],
+        'token_config.active_time': [
+            { type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },
+        ],
+        'token_config.is_unique': [
+            { type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }
         ],
         scene_config: [
             {
@@ -141,6 +148,10 @@ const saveDrawer = reactive({
                     <el-form-item :label="t('auth.scene.name.token_config.expire_time')" prop="token_config.expire_time">
                         <el-input-number v-model="saveForm.data.token_config.expire_time" :placeholder="t('auth.scene.name.token_config.expire_time')" :min="0" :precision="0" :controls="false" />
                         <el-alert :title="t('auth.scene.tip.token_config.expire_time')" type="info" :show-icon="true" :closable="false" />
+                    </el-form-item>
+                    <el-form-item :label="t('auth.scene.name.token_config.active_time')" prop="token_config.active_time">
+                        <el-input-number v-model="saveForm.data.token_config.active_time" :placeholder="t('auth.scene.name.token_config.active_time')" :min="0" :precision="0" :controls="false" />
+                        <el-alert :title="t('auth.scene.tip.token_config.active_time')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                     <el-form-item :label="t('auth.scene.name.token_config.is_unique')" prop="token_config.is_unique">
                         <el-switch

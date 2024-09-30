@@ -2,6 +2,8 @@ package token
 
 import (
 	"context"
+
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type TokenInfo struct {
@@ -15,8 +17,8 @@ type Token interface {
 }
 
 func NewToken(ctx context.Context, config map[string]any) Token {
-	switch tokenType, _ := config[`token_type`].(string); tokenType {
-	// case `tokenOfJwt`:
+	switch gconv.Uint(config[`token_type`]) {
+	// case 0:	//JWT
 	default:
 		return NewTokenOfJwt(ctx, config)
 	}
