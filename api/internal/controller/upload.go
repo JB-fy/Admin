@@ -17,7 +17,7 @@ func NewUpload() *Upload {
 
 // 本地上传
 func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadReq) (res *api.UploadNotifyRes, err error) {
-	notifyInfo, err := upload.NewUpload(ctx, ``, req.UploadId).Upload(g.RequestFromCtx(ctx))
+	notifyInfo, err := upload.NewHandler(ctx, ``, req.UploadId).Upload(g.RequestFromCtx(ctx))
 	if err != nil {
 		return
 	}
@@ -33,7 +33,7 @@ func (controllerThis *Upload) Upload(ctx context.Context, req *api.UploadUploadR
 
 // 获取签名（H5直传用）
 func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) (res *api.UploadSignRes, err error) {
-	signInfo, err := upload.NewUpload(ctx, req.Scene, 0).Sign(upload.CreateUploadParam(ctx, req.Scene))
+	signInfo, err := upload.NewHandler(ctx, req.Scene, 0).Sign()
 	if err != nil {
 		return
 	}
@@ -50,7 +50,7 @@ func (controllerThis *Upload) Sign(ctx context.Context, req *api.UploadSignReq) 
 
 // 获取配置信息（APP直传前调用）
 func (controllerThis *Upload) Config(ctx context.Context, req *api.UploadConfigReq) (res *api.UploadConfigRes, err error) {
-	config, err := upload.NewUpload(ctx, req.Scene, 0).Config(upload.CreateUploadParam(ctx, req.Scene))
+	config, err := upload.NewHandler(ctx, req.Scene, 0).Config()
 	if err != nil {
 		return
 	}
@@ -60,7 +60,7 @@ func (controllerThis *Upload) Config(ctx context.Context, req *api.UploadConfigR
 
 // 获取Sts Token（APP直传用）
 func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (res *api.UploadStsRes, err error) {
-	stsInfo, err := upload.NewUpload(ctx, req.Scene, 0).Sts(upload.CreateUploadParam(ctx, req.Scene))
+	stsInfo, err := upload.NewHandler(ctx, req.Scene, 0).Sts()
 	if err != nil {
 		return
 	}
@@ -70,7 +70,7 @@ func (controllerThis *Upload) Sts(ctx context.Context, req *api.UploadStsReq) (r
 
 // 回调
 func (controllerThis *Upload) Notify(ctx context.Context, req *api.UploadNotifyReq) (res *api.UploadNotifyRes, err error) {
-	notifyInfo, err := upload.NewUpload(ctx, ``, req.UploadId).Notify(g.RequestFromCtx(ctx))
+	notifyInfo, err := upload.NewHandler(ctx, ``, req.UploadId).Notify(g.RequestFromCtx(ctx))
 	if err != nil {
 		return
 	}

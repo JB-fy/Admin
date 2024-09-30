@@ -1,13 +1,9 @@
 package upload
 
 import (
-	daoUpload "api/internal/dao/upload"
-	"api/internal/utils"
 	"context"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -44,55 +40,12 @@ type Upload interface {
 	Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error)  // 回调
 }
 
-// scene	上传场景。default默认。根据自身需求扩展，用于确定上传通道和上传参数
-// uploadId	上传ID
-func NewUpload(ctx context.Context, scene string, uploadId uint) Upload {
-	uploadFilter := g.Map{}
-	if uploadId > 0 {
-		uploadFilter[daoUpload.Upload.Columns().UploadId] = uploadId
-	} else {
-		switch scene {
-		default:
-			uploadFilter[daoUpload.Upload.Columns().IsDefault] = 1
-		}
-	}
-	uploadInfo, _ := daoUpload.Upload.CtxDaoModel(ctx).Filters(uploadFilter).One()
-
-	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
-	switch uploadInfo[daoUpload.Upload.Columns().UploadType].Uint() {
+func NewUpload(ctx context.Context, config map[string]any) Upload {
+	switch gconv.Uint(config[`upload_type`]) {
 	case 1: //阿里云OSS
-		if gconv.Bool(config[`isNotify`]) {
-			config[`callbackUrl`] = utils.GetRequestUrl(ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
-		}
 		return NewUploadOfAliyunOss(ctx, config)
 	// case 0: //本地
 	default:
-		config[`uploadId`] = uploadInfo[daoUpload.Upload.Columns().UploadId]
 		return NewUploadOfLocal(ctx, config)
 	}
-}
-
-func CreateUploadParam(ctx context.Context, scene string) (param UploadParam) {
-	/* sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
-	loginInfo := utils.GetCtxLoginInfo(ctx)
-	loginId := loginInfo[`login_id`]
-	switch sceneCode {
-	case `platform`:
-	case `org`:
-		orgId := loginInfo[daoOrg.Admin.Columns().OrgId]
-	case `app`:
-	default:
-	} */
-	switch scene {
-	default:
-		param = UploadParam{
-			Dir:        `upload/` + gtime.Now().Format(`Ymd`) + `/`,
-			Expire:     gtime.Now().Unix() + 15*60,
-			ExpireTime: 15 * 60,
-			MinSize:    0,
-			MaxSize:    1024 * 1024 * 1024,
-		}
-	}
-	return
 }
