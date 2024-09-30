@@ -41,7 +41,7 @@ type Upload interface {
 }
 
 func NewUpload(ctx context.Context, config map[string]any) Upload {
-	switch gconv.Uint(config[`upload_type`]) {
+	switch gconv.Uint(config[`uploadType`]) {
 	case 1: //阿里云OSS
 		return NewUploadOfAliyunOss(ctx, config)
 	// case 0: //本地

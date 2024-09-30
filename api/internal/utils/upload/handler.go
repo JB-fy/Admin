@@ -38,7 +38,7 @@ func (handlerThis *Handler) initUpload() {
 	uploadInfo, _ := daoUpload.Upload.CtxDaoModel(handlerThis.Ctx).Filters(uploadFilter).One()
 
 	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
-	config[`upload_type`] = uploadInfo[daoUpload.Upload.Columns().UploadType]
+	config[`uploadType`] = uploadInfo[daoUpload.Upload.Columns().UploadType]
 	config[`uploadId`] = uploadInfo[daoUpload.Upload.Columns().UploadId]
 	if gconv.Bool(config[`isNotify`]) {
 		config[`callbackUrl`] = utils.GetRequestUrl(handlerThis.Ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
