@@ -26,10 +26,10 @@ import (
 */
 type TokenOfJwt struct {
 	Ctx        context.Context
+	ExpireTime uint   `json:"expire_time"`
 	SignType   string `json:"sign_type"`
 	PrivateKey string `json:"private_key"`
 	PublicKey  string `json:"public_key"`
-	ExpireTime uint   `json:"expire_time"`
 	SignMethod jwt.SigningMethod
 }
 
@@ -39,7 +39,7 @@ func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
 		SignMethod: jwt.SigningMethodHS256,
 	}
 	gconv.Struct(config, &tokenObj)
-	if tokenObj.SignType == `` || tokenObj.PrivateKey == `` || tokenObj.ExpireTime == 0 || (tokenObj.PublicKey == `` && garray.NewStrArrayFrom([]string{`RS256`, `RS384`, `RS512`}).Contains(tokenObj.SignType)) {
+	if tokenObj.ExpireTime == 0 || tokenObj.SignType == `` || tokenObj.PrivateKey == `` || (tokenObj.PublicKey == `` && garray.NewStrArrayFrom([]string{`RS256`, `RS384`, `RS512`}).Contains(tokenObj.SignType)) {
 		panic(`缺少配置：token-Jwt`)
 	}
 

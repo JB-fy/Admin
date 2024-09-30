@@ -11,7 +11,7 @@ export default {
         },
         token_config_0: {
             sign_type: 'JWT-加密方式',
-            private_key_HS: 'JWT-密钥',
+            key: 'JWT-密钥',
             private_key: 'JWT-私钥',
             public_key: 'JWT-公钥',
         },
