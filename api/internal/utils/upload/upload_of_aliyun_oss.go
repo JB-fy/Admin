@@ -160,7 +160,7 @@ func (uploadThis *UploadOfAliyunOss) Notify(r *ghttp.Request) (notifyInfo Notify
 		return
 	}
 	defer responsePublicKeyURL.Body.Close()
-	publicKey, err := common.ParsePublicKeyOfRSA(string(publicKeyByte))
+	publicKey, err := common.ParsePublicKey(string(publicKeyByte))
 	if err != nil {
 		return
 	}
@@ -188,7 +188,7 @@ func (uploadThis *UploadOfAliyunOss) Notify(r *ghttp.Request) (notifyInfo Notify
 	byteMD5 := md5Ctx.Sum(nil)
 
 	// 验证签名
-	err = rsa.VerifyPKCS1v15(publicKey, crypto.MD5, byteMD5, byteAuthorization)
+	err = rsa.VerifyPKCS1v15(publicKey.(*rsa.PublicKey), crypto.MD5, byteMD5, byteAuthorization)
 	if err != nil {
 		return
 	}

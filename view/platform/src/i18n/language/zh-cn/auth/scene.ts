@@ -33,9 +33,9 @@ export default {
                 { value: 'RS256', label: 'RS256' },
                 { value: 'RS384', label: 'RS384' },
                 { value: 'RS512', label: 'RS512' },
-                /* { value: 'ES256', label: 'ES256' },
+                { value: 'ES256', label: 'ES256' },
                 { value: 'ES384', label: 'ES384' },
-                { value: 'ES512', label: 'ES512' }, */
+                { value: 'ES512', label: 'ES512' },
             ],
         },
     },

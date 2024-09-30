@@ -11,6 +11,18 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+/*
+密钥生成方式：
+
+	HS密钥：
+		任意字符串即可
+	RS密钥：
+		私钥命令：openssl genrsa -out rsa-private-key.pem 2048
+		公钥命令：openssl rsa -in rsa-private-key.pem -pubout -out rsa-public-key.pem
+	ES密钥：
+		私钥命令：openssl ecparam -genkey -name prime256v1 -out ecc-private-key.pem
+		公钥命令：openssl ec -in ecc-private-key.pem -pubout -out ecc-public-key.pem
+*/
 type TokenOfJwt struct {
 	Ctx        context.Context
 	SignType   string `json:"sign_type"`
@@ -37,9 +49,9 @@ func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
 		`RS256`: jwt.SigningMethodRS256,
 		`RS384`: jwt.SigningMethodRS384,
 		`RS512`: jwt.SigningMethodRS512,
-		/* `ES256`: jwt.SigningMethodES256,
+		`ES256`: jwt.SigningMethodES256,
 		`ES384`: jwt.SigningMethodES384,
-		`ES512`: jwt.SigningMethodES512, */
+		`ES512`: jwt.SigningMethodES512,
 	}
 	if signMethod, ok := signMethodMap[tokenObj.SignType]; ok {
 		tokenObj.SignMethod = signMethod
@@ -55,13 +67,11 @@ func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
 func (tokenThis *TokenOfJwt) Create(tokenInfo TokenInfo) (token string, err error) {
 	privateKeyFunc := func() (privateKey any) {
 		switch tokenThis.SignType {
-		case `RS256`, `RS384`, `RS512`:
-			privateKey, _ = common.ParsePrivateKeyOfRSA(tokenThis.PrivateKey)
-		/* case `ES256`, `ES384`, `ES512`:
-		privateKey, _ = common.ParsePrivateKeyOfRSA(tokenThis.PrivateKey) */
-		// case `HS256`, `HS384`, `HS512`:
-		default:
+		case `HS256`, `HS384`, `HS512`:
 			privateKey = []byte(tokenThis.PrivateKey)
+		// case `RS256`, `RS384`, `RS512`, `ES256`, `ES384`, `ES512`:
+		default:
+			privateKey, _ = common.ParsePrivateKey(tokenThis.PrivateKey)
 		}
 		return
 	}
@@ -77,13 +87,11 @@ func (tokenThis *TokenOfJwt) Create(tokenInfo TokenInfo) (token string, err erro
 func (tokenThis *TokenOfJwt) Parse(token string) (tokenInfo TokenInfo, err error) {
 	jwtToken, err := jwt.ParseWithClaims(token, &jwt.RegisteredClaims{}, func(token *jwt.Token) (any, error) {
 		switch tokenThis.SignType {
-		case `RS256`, `RS384`, `RS512`:
-			return common.ParsePublicKeyOfRSA(tokenThis.PublicKey)
-		/* case `ES256`, `ES384`, `ES512`:
-		return common.ParsePublicKeyOfRSA(tokenThis.PublicKey) */
-		// case `HS256`, `HS384`, `HS512`:
-		default:
+		case `HS256`, `HS384`, `HS512`:
 			return []byte(tokenThis.PrivateKey), nil
+		// case `RS256`, `RS384`, `RS512`, `ES256`, `ES384`, `ES512`:
+		default:
+			return common.ParsePublicKey(tokenThis.PublicKey)
 		}
 	})
 	if err != nil {
