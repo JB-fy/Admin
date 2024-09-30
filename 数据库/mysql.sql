@@ -11,7 +11,7 @@
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 22/08/2024 12:14:22
+ Date: 30/09/2024 11:30:48
 */
 
 SET NAMES utf8mb4;
@@ -382,7 +382,7 @@ CREATE TABLE `auth_scene`  (
   `scene_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '场景ID',
   `scene_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
   `scene_code` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '标识',
-  `scene_config` json NOT NULL COMMENT '配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{\"signType\": \"算法\",\"signKey\": \"密钥\",\"expireTime\": 过期时间,...}',
+  `scene_config` json NULL COMMENT '配置。JSON格式，根据场景设置',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`scene_id`) USING BTREE,
   UNIQUE INDEX `scene_code`(`scene_code` ASC) USING BTREE
@@ -391,9 +391,76 @@ CREATE TABLE `auth_scene`  (
 -- ----------------------------
 -- Records of auth_scene
 -- ----------------------------
-INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '平台后台', 'platform', '{\"signKey\": \"www.admin.com_platform\", \"signType\": \"HS256\", \"expireTime\": 14400}', '');
-INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, '机构后台', 'org', '{\"signKey\": \"www.admin.com_org\", \"signType\": \"HS256\", \"expireTime\": 14400}', '');
-INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, 'APP', 'app', '{\"signKey\": \"www.admin.com_app\", \"signType\": \"HS256\", \"expireTime\": 604800}', '');
+INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '平台后台', 'platform', '{\"token_config\": {\"sign_key\": \"www.admin.com_platform\", \"is_unique\": 1, \"sign_type\": \"HS256\", \"token_type\": 0, \"active_time\": 3600, \"expire_time\": 14400}}', '');
+INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, '机构后台', 'org', '{\"token_config\": {\"sign_key\": \"www.admin.com_org\", \"is_unique\": 1, \"sign_type\": \"HS256\", \"token_type\": 0, \"active_time\": 3600, \"expire_time\": 14400}}', '');
+INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, 'APP', 'app', '{\"token_config\": {\"sign_key\": \"www.admin.com_app\", \"is_unique\": 0, \"sign_type\": \"HS256\", \"token_type\": 0, \"active_time\": 0, \"expire_time\": 604800}}', '');
+
+-- ----------------------------
+-- Table structure for goods
+-- ----------------------------
+DROP TABLE IF EXISTS `goods`;
+CREATE TABLE `goods`  (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
+  `goods_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '商品ID',
+  `goods_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `org_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '机构ID',
+  `goods_no` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '编号',
+  `image` json NOT NULL COMMENT '图片',
+  `attr_show` json NULL COMMENT '展示属性。JSON格式：[{\"name\":\"属性名\",\"val\":\"属性值\"},...]',
+  `attr_opt` json NULL COMMENT '可选属性。通常由不会影响价格和库存的属性组成。JSON格式：[{\"name\":\"属性名\",\"val_arr\":[\"属性值1\",\"属性值2\",...]},...]',
+  `status` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '状态：0上架 1下架',
+  `sort` tinyint UNSIGNED NOT NULL DEFAULT 100 COMMENT '排序值。从大到小排序',
+  PRIMARY KEY (`goods_id`) USING BTREE,
+  INDEX `org_id`(`org_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of goods
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for goods_attr
+-- ----------------------------
+DROP TABLE IF EXISTS `goods_attr`;
+CREATE TABLE `goods_attr`  (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `attr_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '属性ID',
+  `attr_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `org_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '机构ID',
+  `attr_val_arr` json NOT NULL COMMENT '值。JSON格式：[\"值1\",\"值2\",...]',
+  PRIMARY KEY (`attr_id`) USING BTREE,
+  INDEX `org_id`(`org_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '属性表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of goods_attr
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for goods_spec
+-- ----------------------------
+DROP TABLE IF EXISTS `goods_spec`;
+CREATE TABLE `goods_spec`  (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `spec_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '规格ID',
+  `goods_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '商品ID',
+  `attr_spec` json NULL COMMENT '规格属性。通常由会影响价格和库存的属性组成。JSON格式：[{\"name\":\"属性名\",\"val\":\"属性值\"},...]',
+  `spec_image` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '图片',
+  `price` decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '价格',
+  `cost_price` decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '成本价',
+  `stock_num` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '库存',
+  `sale_num` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '销量',
+  PRIMARY KEY (`spec_id`) USING BTREE,
+  INDEX `goods_id`(`goods_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品规格表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of goods_spec
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for org

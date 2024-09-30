@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 22/08/2024 12:14:43
+ Date: 30/09/2024 11:30:34
 */
 
 
@@ -599,7 +599,7 @@ CREATE TABLE "public"."auth_scene" (
   "scene_id" int4 NOT NULL DEFAULT nextval('auth_scene_scene_id_seq'::regclass),
   "scene_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "scene_code" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "scene_config" json NOT NULL,
+  "scene_config" json,
   "remark" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying
 )
 ;
@@ -609,16 +609,16 @@ COMMENT ON COLUMN "public"."auth_scene"."is_stop" IS '停用：0否 1是';
 COMMENT ON COLUMN "public"."auth_scene"."scene_id" IS '场景ID';
 COMMENT ON COLUMN "public"."auth_scene"."scene_name" IS '名称';
 COMMENT ON COLUMN "public"."auth_scene"."scene_code" IS '标识';
-COMMENT ON COLUMN "public"."auth_scene"."scene_config" IS '配置。JSON格式，字段根据场景自定义。如下为场景使用JWT的示例：{"signType": "算法","signKey": "密钥","expireTime": 过期时间,...}';
+COMMENT ON COLUMN "public"."auth_scene"."scene_config" IS '配置。JSON格式，根据场景设置';
 COMMENT ON COLUMN "public"."auth_scene"."remark" IS '备注';
 COMMENT ON TABLE "public"."auth_scene" IS '权限场景表';
 
 -- ----------------------------
 -- Records of auth_scene
 -- ----------------------------
-INSERT INTO "public"."auth_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '平台后台', 'platform', '{"signKey": "www.admin.com_platform", "signType": "HS256", "expireTime": 14400}', '');
-INSERT INTO "public"."auth_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, '机构后台', 'org', '{"signKey": "www.admin.com_org", "signType": "HS256", "expireTime": 14400}', '');
-INSERT INTO "public"."auth_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, 'APP', 'app', '{"signKey": "www.admin.com_app", "signType": "HS256", "expireTime": 604800}', '');
+INSERT INTO "public"."auth_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '平台后台', 'platform', '{"token_config": {"sign_key": "www.admin.com_platform", "is_unique": 1, "sign_type": "HS256", "token_type": 0, "active_time": 3600, "expire_time": 14400}}', '');
+INSERT INTO "public"."auth_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, '机构后台', 'org', '{"token_config": {"sign_key": "www.admin.com_org", "is_unique": 1, "sign_type": "HS256", "token_type": 0, "active_time": 3600, "expire_time": 14400}}', '');
+INSERT INTO "public"."auth_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, 'APP', 'app', '{"token_config": {"sign_key": "www.admin.com_app", "is_unique": 0, "sign_type": "HS256", "token_type": 0, "active_time": 0, "expire_time": 604800}}', '');
 
 -- ----------------------------
 -- Table structure for org
