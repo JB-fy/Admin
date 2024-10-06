@@ -23,7 +23,11 @@ var (
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
 
-			s.BindMiddlewareDefault(middleware.Cross, middleware.I18n, middleware.Log)
+			s.BindMiddlewareDefault(middleware.Cross, middleware.I18n)
+			if g.Cfg().MustGet(ctx, `logger.http.isRecord`).Bool() {
+				s.BindMiddlewareDefault(middleware.Log)
+				return
+			}
 			s.BindMiddlewareDefault(middleware.HandlerResponse) // 不用规范路由方式可去掉。但如果是规范路由时则必须，且有用log中间件时，必须放在其后面，才能读取到响应数据
 
 			router.InitRouterCommon(s)   //公共接口注册

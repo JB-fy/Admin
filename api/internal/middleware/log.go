@@ -9,11 +9,6 @@ import (
 )
 
 func Log(r *ghttp.Request) {
-	if !g.Cfg().MustGet(r.GetCtx(), `logger.http.isRecord`).Bool() {
-		r.Middleware.Next()
-		return
-	}
-
 	startTime := gtime.Now().UnixMicro()
 	r.Middleware.Next()
 	endTime := gtime.Now().UnixMicro()
