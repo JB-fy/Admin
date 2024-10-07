@@ -1,3 +1,10 @@
+dnf安装
+    dnf install java-11-openjdk java-11-openjdk-devel
+    dnf install java-21-openjdk java-21-openjdk-devel
+切换版本
+    alternatives --config java
+
+
 解压安装包
     tar -xvf jdk-21_linux-x64_bin.tar.gz
 移动到指定目录
