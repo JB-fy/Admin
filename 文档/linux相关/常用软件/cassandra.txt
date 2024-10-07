@@ -8,6 +8,38 @@
     tar -xvf apache-cassandra-4.1.7-bin.tar.gz
 移动到指定目录
     mv /server/apache-cassandra-4.1.7 /server/tool/apache-cassandra-4.1.7
+数据库配置
+    vi /server/tool/apache-cassandra-4.1.7/conf/cassandra.yaml
+    //开启身份验证和授权
+        authenticator: PasswordAuthenticator
+        authorizer: CassandraAuthorizer
+    //集群名称，确保所有节点的集群名称相同
+        cluster_name: 'Test Cluster'
+    //虚拟节点的数量。增加此值可以提高数据分布的均匀性
+        num_tokens: 256
+    //种子节点列表，用于初始化集群
+        seed_provider:
+            - class_name: org.apache.cassandra.locator.SimpleSeedProvider
+                parameters:
+                    - seeds: "127.0.0.1:7000,192.168.2.200:7000"
+    //节点之间通信的IP地址
+        listen_address: 192.168.2.200
+    //客户端连接的IP地址
+        rpc_address: 192.168.2.200
+    //原生传输端口（默认是9042）
+        native_transport_port: 9042
+    //并发读取线程数
+        concurrent_reads: 32
+    //并发写入线程数
+        concurrent_writes: 32
+    //并发物化视图写入线程数。
+        concurrent_materialized_view_writes: 32
+    //内存表刷新写入线程数。
+        memtable_flush_writers: 2
+    //日志级别，可以设置为 DEBUG, INFO, WARN, ERROR 等。
+        logger: 
+            org.apache.cassandra: INFO
+
 启动cassandra
     /server/tool/apache-cassandra-4.1.7/bin/cassandra -f -R
     报错处理（大多数JVM错误只需对jvm-server.options或jvm11-server.options做修改，注释到对应的配置）
@@ -15,7 +47,30 @@
             vi /server/tool/apache-cassandra-4.1.7/conf/jvm-server.options
                 注释掉-XX:-UseBiasedLocking
 登录数据库
-    /server/tool/apache-cassandra-4.1.7/bin/cqlsh
+    /server/tool/apache-cassandra-4.1.7/bin/cqlsh 192.168.2.200 9042 -u cassandra -p cassandra
+    //修改密码
+    ALTER USER 'cassandra' WITH PASSWORD '密码';
+    //创建一个新的超级用户
+    CREATE USER '用户名' WITH PASSWORD '密码' SUPERUSER;
+    //创建普通用户
+    CREATE USER '用户名' WITH PASSWORD '密码';
+    //创建角色
+    CREATE ROLE 角色名;
+    //给角色分配权限
+    GRANT SELECT ON KEYSPACE 库名 TO 角色名;    
+    GRANT MODIFY ON TABLE 库名.表名 TO 角色名;
+        SELECT：允许用户查询数据
+        MODIFY：允许用户插入、更新和删除数据
+        DROP：允许用户删除键空间或表
+        CREATE：允许用户创建新的键空间或表
+        ALTER：允许用户修改表结构（如添加或删除列）
+        AUTHORIZE：允许用户授予和撤销其他用户的权限
+        DESCRIBE：允许用户查看集群元数据
+        EXECUTE：允许用户执行用户定义函数（UDFs）和用户定义聚合函数（UDAs）
+    //给用户分配角色
+    GRANT 角色名 TO 用户名;
+    //退出数据库
+    EXIT;
 编辑自启动文件
     vi /etc/systemd/system/apache-cassandra-4.1.7.service
 [Unit]
