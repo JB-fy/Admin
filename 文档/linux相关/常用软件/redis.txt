@@ -15,11 +15,12 @@
 		/server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis.conf
 	5、修改redis配置文件
 		vi /server/tool/redis-7.0.11/etc/redis.conf
-			requirepass可以设置密码
-			port可以设置端口
-			daemonize设置为yes允许redis后台运行
-			注释掉bind 127.0.0.1 允许远程访问
-			protected-mode设置为no 开启远程访问
+			requirepass	//设置密码
+			port 6379	//设置端口
+			daemonize yes 	//设置为允许redis后台运行
+			bind 127.0.0.1	//限制IP访问
+			protected-mode no	//设置远程访问
+			logfile /server/tool/redis-7.0.11/redis.log	//指定日志文件存储路径。默认是空字符串，输出到终端或控制台中
 	6、编辑自启动文件
 		vi /etc/systemd/system/redis-7.0.11.service
 [Unit]
