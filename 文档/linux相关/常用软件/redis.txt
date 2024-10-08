@@ -44,12 +44,39 @@ WantedBy=multi-user.target
 
 
 如需设置集群，按以下步骤设置（注意：设置集群至少需要3个redis）
+	启动集群需要设置系统允许进程分配的内存总量超过实际可用的物理内存
+		vi /etc/sysctl.conf
+			//添加或修改以下行
+			vm.overcommit_memory = 1
 	修改各个redis配置文件
 		vi /server/tool/redis-7.0.11/etc/redis.conf
 			cluster-enabled yes
 			cluster-config-file /server/tool/redis-7.0.11/etc/nodes.conf
 			cluster-node-timeout 15000
-	启动集群：任意一个redis运行以下命令
-		/server/tool/redis-7.0.11/bin/redis-cli --cluster create 0.0.0.0:6379 0.0.0.0:6380 0.0.0.0:6381 --cluster-replicas 1
+	启动集群：任意一个redis运行以下命令（必须先启动每个redis服务）
+		//--cluster-replicas用于设置主节点有多少个从节点。因redis集群必须满足3个节点，故必须节点数操作3个才可设置
+		/server/tool/redis-7.0.11/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382 --yes [--cluster-replicas 1]
+			报错处理：
+				[ERR] Node 0.0.0.0:6382 is not empty. Either the node already knows other nodes (check with CLUSTER NODES) or contains some key in database 0.
+					清除节点的数据：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6381 FLUSHALL
+					重置节点：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER RESET
+					检查节点状态：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER NODES
 	验证redis状态
-		/server/tool/redis-7.0.11/bin/redis-cli --cluster check 0.0.0.0:6379
+		/server/tool/redis-7.0.11/bin/redis-cli --cluster check 0.0.0.0:6380
+	关闭节点
+		/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
+	编辑集群自启动文件
+		vi /etc/systemd/system/redis-cluster.service
+[Unit]
+Description=redis-cluster
+After=network.target
+[Service]
+Type=forking
+ExecStart=/server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL;/server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET;/server/tool/redis-7.4-6380/bin/redis-server /server/tool/redis-7.4-6380/etc/redis.conf;/server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 FLUSHALL;/server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER RESET;/server/tool/redis-7.4-6381/bin/redis-server /server/tool/redis-7.4-6381/etc/redis.conf;/server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 FLUSHALL;/server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 CLUSTER RESET;/server/tool/redis-7.4-6382/bin/redis-server /server/tool/redis-7.4-6382/etc/redis.conf;echo "yes" | /server/tool/redis-7.4-6380/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382
+ExecStop=/server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown;/server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 shutdown;/server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 shutdown
+Restart=always
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
+	设置自启动
+		systemctl enable redis-cluster
