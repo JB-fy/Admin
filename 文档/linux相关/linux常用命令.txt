@@ -85,7 +85,7 @@ ExecStart=/server/tool/xxxx/sbin/nginx
 ExecReload=/server/tool/xxxx/sbin/nginx -s reload
 ExecStop=/server/tool/xxxx/sbin/nginx -s quit
 PrivateTmp=true
-# Restart=always	
+# Restart=always
 # RestartSec=5s
 # StartLimitInterval=0
 [Install]
