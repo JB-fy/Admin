@@ -86,8 +86,7 @@ ExecReload=/server/tool/xxxx/sbin/nginx -s reload
 ExecStop=/server/tool/xxxx/sbin/nginx -s quit
 PrivateTmp=true
 # Restart=always
-# RestartSec=5s
-# StartLimitInterval=0
+# RestartSec=3s
 [Install]
 WantedBy=multi-user.target
 /**--------设置自启动 结束--------**/

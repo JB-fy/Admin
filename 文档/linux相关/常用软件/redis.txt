@@ -70,61 +70,40 @@ WantedBy=multi-user.target
 			vi /server/tool/redis-cluster.sh
 #!/bin/bash
 
-check_status() {
-    if [ $? -ne 0 ]; then
-        echo "Error: $1"
-        exit 1
-    fi
-}
-
 case "$1" in
     start)
-        # 清除和重置节点 1
-        /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
-        check_status "Failed to FLUSHALL on node 1"
-        /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
-        check_status "Failed to CLUSTER RESET on node 1"
-
         # 启动节点 1
         /server/tool/redis-7.4-6380/bin/redis-server /server/tool/redis-7.4-6380/etc/redis.conf
-        check_status "Failed to start node 1"
-
-        # 清除和重置节点 2
-        /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 FLUSHALL
-        check_status "Failed to FLUSHALL on node 2"
-        /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER RESET
-        check_status "Failed to CLUSTER RESET on node 2"
-
         # 启动节点 2
         /server/tool/redis-7.4-6381/bin/redis-server /server/tool/redis-7.4-6381/etc/redis.conf
-        check_status "Failed to start node 2"
-
-        # 清除和重置节点 3
-        /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 FLUSHALL
-        check_status "Failed to FLUSHALL on node 3"
-        /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 CLUSTER RESET
-        check_status "Failed to CLUSTER RESET on node 3"
-
         # 启动节点 3
         /server/tool/redis-7.4-6382/bin/redis-server /server/tool/redis-7.4-6382/etc/redis.conf
-        check_status "Failed to start node 3"
 
         # 创建 Redis 集群
         echo "yes" | /server/tool/redis-7.4-6380/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382
-        check_status "Failed to create Redis cluster"
+        if [ $? -ne 0 ]; then
+            # 重新清除和重置节点
+            /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
+            /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
+            /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 FLUSHALL
+            /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER RESET
+            /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 FLUSHALL
+            /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 CLUSTER RESET
+			echo "yes" | /server/tool/redis-7.4-6380/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382
+			if [ $? -ne 0 ]; then
+				exit 1
+			fi
+        fi
+		exit 0
         ;;
     stop)
         # 关闭节点 1
         /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
-        check_status "Failed to shutdown node 1"
-
         # 关闭节点 2
         /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 shutdown
-        check_status "Failed to shutdown node 2"
-
         # 关闭节点 3
         /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 shutdown
-        check_status "Failed to shutdown node 3"
+		exit 0
         ;;
     *)
         echo "Usage: $0 {start|stop}"
@@ -144,6 +123,7 @@ Type=forking
 ExecStart=/server/tool/redis-cluster.sh start
 ExecStop=/server/tool/redis-cluster.sh stop
 Restart=always
+RestartSec=3s
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target

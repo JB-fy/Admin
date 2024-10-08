@@ -81,6 +81,7 @@ Type=forking
 ExecStart=/server/tool/apache-cassandra-4.1.7/bin/cassandra -f -R
 ExecStop=/server/tool/apache-cassandra-4.1.7/bin/nodetool drain
 Restart=always
+RestartSec=3s
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
