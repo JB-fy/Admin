@@ -65,18 +65,67 @@ WantedBy=multi-user.target
 		/server/tool/redis-7.0.11/bin/redis-cli --cluster check 0.0.0.0:6380
 	关闭节点
 		/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
-	编辑集群自启动文件
-		vi /etc/systemd/system/redis-cluster.service
+	设置集群自启动
+		新增sh执行文件
+			vi /server/tool/redis-cluster.sh
+#!/bin/bash
+
+case "$1" in
+    start)
+        # 清除和重置节点 1
+        /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
+        /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
+
+        # 启动节点 1
+        /server/tool/redis-7.4-6380/bin/redis-server /server/tool/redis-7.4-6380/etc/redis.conf
+
+        # 清除和重置节点 2
+        /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 FLUSHALL
+        /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER RESET
+
+        # 启动节点 2
+        /server/tool/redis-7.4-6381/bin/redis-server /server/tool/redis-7.4-6381/etc/redis.conf
+
+        # 清除和重置节点 3
+        /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 FLUSHALL
+        /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 CLUSTER RESET
+
+        # 启动节点 3
+        /server/tool/redis-7.4-6382/bin/redis-server /server/tool/redis-7.4-6382/etc/redis.conf
+
+        # 创建 Redis 集群
+        echo "yes" | /server/tool/redis-7.4-6380/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382
+        ;;
+    stop)
+        # 关闭节点 1
+        /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
+
+        # 关闭节点 2
+        /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 shutdown
+
+        # 关闭节点 3
+        /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 shutdown
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
+
+		赋予执行权限
+			chmod +x /server/tool/redis-cluster.sh
+		编辑自启动文件
+			vi /etc/systemd/system/redis-cluster.service
 [Unit]
 Description=redis-cluster
 After=network.target
 [Service]
 Type=forking
-ExecStart=/server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL;/server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET;/server/tool/redis-7.4-6380/bin/redis-server /server/tool/redis-7.4-6380/etc/redis.conf;/server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 FLUSHALL;/server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER RESET;/server/tool/redis-7.4-6381/bin/redis-server /server/tool/redis-7.4-6381/etc/redis.conf;/server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 FLUSHALL;/server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 CLUSTER RESET;/server/tool/redis-7.4-6382/bin/redis-server /server/tool/redis-7.4-6382/etc/redis.conf;echo "yes" | /server/tool/redis-7.4-6380/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382
-ExecStop=/server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown;/server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 shutdown;/server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 shutdown
+ExecStart=/server/tool/redis-cluster.sh start
+ExecStop=/server/tool/redis-cluster.sh stop
 Restart=always
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
-	设置自启动
-		systemctl enable redis-cluster
+		设置自启动
+			systemctl enable redis-cluster
