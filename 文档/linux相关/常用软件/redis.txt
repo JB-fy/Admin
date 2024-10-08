@@ -39,3 +39,16 @@ WantedBy=multi-user.target
 		/server/tool/redis-7.0.11/bin/redis-cli
 	9、如果是单独一台redis服务器，需要开放redis设置的端口号（默认6379）
 		firewall-cmd --zone=public --add-port=6379/tcp --permanent
+
+
+
+如需设置集群，按以下步骤设置（注意：设置集群至少需要3个redis）
+	修改各个redis配置文件
+		vi /server/tool/redis-7.0.11/etc/redis.conf
+			cluster-enabled yes
+			cluster-config-file /server/tool/redis-7.0.11/etc/nodes.conf
+			cluster-node-timeout 15000
+	启动集群：任意一个redis运行以下命令
+		/server/tool/redis-7.0.11/bin/redis-cli --cluster create 0.0.0.0:6379 0.0.0.0:6380 0.0.0.0:6381 --cluster-replicas 1
+	验证redis状态
+		/server/tool/redis-7.0.11/bin/redis-cli --cluster check 0.0.0.0:6379
