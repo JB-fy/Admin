@@ -7,9 +7,9 @@
 解压安装包
     tar -xvf apache-cassandra-4.1.7-bin.tar.gz
 移动到指定目录
-    mv /server/apache-cassandra-4.1.7 /server/tool/apache-cassandra-4.1.7
+    mv /server/apache-cassandra-4.1.7 /server/tool/cassandra-4.1.7
 数据库配置
-    vi /server/tool/apache-cassandra-4.1.7/conf/cassandra.yaml
+    vi /server/tool/cassandra-4.1.7/conf/cassandra.yaml
     //开启身份验证和授权
         authenticator: PasswordAuthenticator
         authorizer: CassandraAuthorizer
@@ -41,13 +41,13 @@
             org.apache.cassandra: INFO
 
 启动cassandra
-    /server/tool/apache-cassandra-4.1.7/bin/cassandra -f -R
+    /server/tool/cassandra-4.1.7/bin/cassandra -f -R
     报错处理（大多数JVM错误只需对jvm-server.options或jvm11-server.options做修改，注释到对应的配置）
         错误：Unrecognized VM option 'UseBiasedLocking'
-            vi /server/tool/apache-cassandra-4.1.7/conf/jvm-server.options
+            vi /server/tool/cassandra-4.1.7/conf/jvm-server.options
                 注释掉-XX:-UseBiasedLocking
 登录数据库
-    /server/tool/apache-cassandra-4.1.7/bin/cqlsh 192.168.2.200 9042 -u cassandra -p cassandra
+    /server/tool/cassandra-4.1.7/bin/cqlsh 192.168.2.200 9042 -u cassandra -p cassandra
     //修改密码
     ALTER USER 'cassandra' WITH PASSWORD '密码';
     //创建一个新的超级用户
@@ -72,14 +72,14 @@
     //退出数据库
     EXIT;
 编辑自启动文件
-    vi /etc/systemd/system/apache-cassandra-4.1.7.service
+    vi /etc/systemd/system/cassandra-4.1.7.service
 [Unit]
-Description=apache-cassandra-4.1.7
+Description=cassandra-4.1.7
 After=network.target
 [Service]
 Type=forking
-ExecStart=/server/tool/apache-cassandra-4.1.7/bin/cassandra -f -R
-ExecStop=/server/tool/apache-cassandra-4.1.7/bin/nodetool drain
+ExecStart=/server/tool/cassandra-4.1.7/bin/cassandra -f -R
+ExecStop=/server/tool/cassandra-4.1.7/bin/nodetool drain
 Restart=always
 RestartSec=3s
 PrivateTmp=true
@@ -87,4 +87,4 @@ PrivateTmp=true
 WantedBy=multi-user.target
 
 设置自启动
-    systemctl enable apache-cassandra-4.1.7
+    systemctl enable cassandra-4.1.7
