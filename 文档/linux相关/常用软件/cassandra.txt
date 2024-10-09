@@ -23,7 +23,7 @@
         rpc_address: 0.0.0.0
     //节点广播给其它节点的IP地址（所有节点都在同一内网中，填内网IP，否则填外网IP。当rpc_address设置为0.0.0.0时必填）
         broadcast_rpc_address: 192.168.0.200
-    //CQL协议端口（默认是9042）
+    //CQL协议端口
         native_transport_port: 9042
     //节点间的通信端口
         storage_port: 7000
