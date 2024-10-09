@@ -478,10 +478,10 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	case internal.TypeNamePid: // pid；	类型：int等类型；
 		viewListField.dataKey.Method = internal.ReturnTypeName
 		viewListField.dataKey.DataTypeName = `'` + internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`) + `'`
-	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 		viewListField.sortable.Method = internal.ReturnTypeName
 		viewListField.sortable.DataTypeName = `true`
-	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+	case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		viewListField.hidden.Method = internal.ReturnTypeName
 		viewListField.hidden.DataTypeName = `true`
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；

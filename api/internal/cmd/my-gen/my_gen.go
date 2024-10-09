@@ -44,8 +44,8 @@
 
 		固定命名：
 			父级			命名：pid；	类型：int等类型；
-			层级			命名：level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-			层级路径		命名：idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+			层级			命名：level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
+			层级路径		命名：id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 				建议直接使用text，当level层级大时，不用考虑字符长度问题。
 				当level层级不大时，可使用varchar，但必须设置足够的字段长度，否则会丢失路径后面的部分字符。
 

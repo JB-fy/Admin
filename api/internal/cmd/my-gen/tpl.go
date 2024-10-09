@@ -53,8 +53,8 @@ type myGenTpl struct {
 		*/
 		LabelList   []string
 		PasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
-		Pid         struct {                  //pid,level,idPath|id_path同时存在时，需特殊处理
-			IsCoexist bool     //是否同时存在pid,level,idPath|id_path
+		Pid         struct {                  //pid,level,id_path|idPath同时存在时，需特殊处理
+			IsCoexist bool     //是否同时存在pid,level,id_path|idPath
 			Pid       string   //父级字段
 			Level     string   //层级字段
 			IdPath    string   //层级路径字段
@@ -246,7 +246,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			fieldTmp.FieldTypeName = internal.TypeNameUpdated
 		} else if garray.NewStrArrayFrom(internal.ConfigFieldNameArrCreated).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = internal.TypeNameCreated
-		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText}).Contains(fieldTmp.FieldType) && fieldTmp.FieldCaseCamel == `IdPath` { //idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效
+		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText}).Contains(fieldTmp.FieldType) && fieldTmp.FieldCaseCamel == `IdPath` { //id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效
 			fieldTmp.FieldTypeName = internal.TypeNameIdPath
 
 			tpl.Handle.Pid.IdPath = fieldTmp.FieldRaw
@@ -339,7 +339,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				}
 			} else if garray.NewStrArrayFrom([]string{`no`, `level`, `rank`}).Contains(fieldSuffix) { //no,level,rank等后缀
 				fieldTmp.FieldTypeName = internal.TypeNameNoSuffix
-				if fieldTmp.FieldRaw == `level` { //level，且pid,level,idPath|id_path同时存在时（才）有效。该命名类型需做二次确定
+				if fieldTmp.FieldRaw == `level` { //level，且pid,level,id_path|idPath同时存在时（才）有效。该命名类型需做二次确定
 					fieldTmp.FieldTypeName = internal.TypeNameLevel
 
 					tpl.Handle.Pid.Level = fieldTmp.FieldRaw
@@ -391,7 +391,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 	}
 
-	//pid,level,idPath|id_path同时存在时，需特殊处理
+	//pid,level,id_path|idPath同时存在时，需特殊处理
 	if isTop {
 		if tpl.Handle.Pid.Pid != `` && tpl.Handle.Pid.Level != `` && tpl.Handle.Pid.IdPath != `` {
 			tpl.Handle.Pid.IsCoexist = true
@@ -402,13 +402,13 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	/*--------命名类型二次确认的字段 开始--------*/
 	for k, v := range fieldList {
 		switch v.FieldTypeName {
-		case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 			if !tpl.Handle.Pid.IsCoexist {
 				fieldList[k].FieldTypeName = internal.TypeNameNoSuffix
 			} else {
 				fieldList[k].FieldLimitInt.Min = `1`
 			}
-		case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 			if !tpl.Handle.Pid.IsCoexist {
 				fieldList[k].FieldTypeName = ``
 			}

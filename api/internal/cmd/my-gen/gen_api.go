@@ -490,11 +490,11 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 			internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, tpl.Handle.LabelList[0], `p`)+` *string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+`,omitempty" dc:"父级"`+"`",
 			internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, `is_has_child`)+` *uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_has_child`)+`,omitempty" dc:"有子级：0否 1是"`+"`",
 		)
-	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 		apiField.filterType.Method = internal.ReturnType
 		apiField.createType.Method = internal.ReturnEmpty
 		apiField.updateType.Method = internal.ReturnEmpty
-	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+	case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		apiField.filterType.Method = internal.ReturnEmpty
 		apiField.createType.Method = internal.ReturnEmpty
 		apiField.updateType.Method = internal.ReturnEmpty
@@ -752,8 +752,8 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 		switch v.FieldTypeName {
 		case internal.TypeNameDeleted, internal.TypeNameUpdated, internal.TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
 		case internal.TypeNamePid: // pid；	类型：int等类型；
-		case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-		case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
+		case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；

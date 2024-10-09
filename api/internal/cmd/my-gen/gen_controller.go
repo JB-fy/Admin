@@ -417,8 +417,8 @@ func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController)
 			"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_has_child`)+"`",
 		)
 		controller.noAuth = append(controller.noAuth, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_has_child`)+"`")
-	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+	case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 		controller.diff = append(controller.diff, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+v.FieldCaseCamel)
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；

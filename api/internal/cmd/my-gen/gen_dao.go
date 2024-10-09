@@ -650,14 +650,14 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, `case `+"`"+pIdPathOfOldStr+"`"+`: //父级ID路径（旧）
 				m = m.WhereLike(`+daoTable+`+`+"`.`"+`+`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`, gconv.String(v)+`+"`-%`"+`)`)
 		}
-	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 		daoField.filterParse.Method = internal.ReturnTypeName
 
 		daoField.orderParse.Method = internal.ReturnTypeName
 		daoField.orderParse.DataTypeName = append(daoField.orderParse.DataTypeName, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				m = m.Order(`+daoTable+` + `+"`.`"+` + v)
 				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + `+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
-	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+	case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		return myGenDaoField{}
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 		insertParseStr := `case ` + daoPath + `.Columns().` + v.FieldCaseCamel + `:
@@ -914,9 +914,9 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			continue
 		case internal.TypeNamePid: // pid；	类型：int等类型；
 			continue
-		case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 			continue
-		case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 			continue
 		case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 			continue
@@ -1151,9 +1151,9 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			continue
 		case internal.TypeNamePid: // pid；	类型：int等类型；
 			continue
-		case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 			continue
-		case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 			continue
 		case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 			continue

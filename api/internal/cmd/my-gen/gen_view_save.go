@@ -373,9 +373,9 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`) + `: saveForm.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + ` } } }" :props="{ checkStrictly: true, emitPath: false }" />`
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = 0)`
-	case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 		return myGenViewSaveField{}
-	case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+	case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		return myGenViewSaveField{}
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 		viewSaveField.importModule = append(viewSaveField.importModule, `import md5 from 'js-md5'`)
@@ -729,8 +729,8 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		switch v.FieldTypeName {
 		case internal.TypeNameDeleted, internal.TypeNameUpdated, internal.TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
 		case internal.TypeNamePid: // pid；	类型：int等类型；
-		case internal.TypeNameLevel: // level，且pid,level,idPath|id_path同时存在时（才）有效；	类型：int等类型；
-		case internal.TypeNameIdPath: // idPath|id_path，且pid,level,idPath|id_path同时存在时（才）有效；	类型：varchar或text；
+		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
+		case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
