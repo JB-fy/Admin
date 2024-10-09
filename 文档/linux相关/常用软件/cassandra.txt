@@ -10,24 +10,30 @@
     mv /server/apache-cassandra-4.1.7 /server/tool/cassandra-4.1.7
 数据库配置
     vi /server/tool/cassandra-4.1.7/conf/cassandra.yaml
-    //开启身份验证和授权
-        authenticator: PasswordAuthenticator
-        authorizer: CassandraAuthorizer
     //集群名称，确保所有节点的集群名称相同
         cluster_name: 'Test Cluster'
-    //虚拟节点的数量。增加此值可以提高数据分布的均匀性
-        num_tokens: 256
     //种子节点列表，用于初始化集群
         seed_provider:
             - class_name: org.apache.cassandra.locator.SimpleSeedProvider
                 parameters:
-                    - seeds: "192.168.0.200:7000,192.168.0.201:7000"
-    //节点之间通信的IP地址
+                    - seeds: "192.168.0.200:7000,192.168.0.201:7001"
+    //节点用来监听其它节点的IP地址（所有节点都在同一内网中，填内网IP，否则填外网IP）
         listen_address: 192.168.0.200
-    //客户端连接的IP地址
-        rpc_address: 192.168.0.200
-    //原生传输端口（默认是9042）
+    //客户端连接节点的IP地址（所有节点及应用服务器都在同一内网中时，填内网IP，否则填外网IP。可用0.0.0.0同时支持公网IP和内网IP）
+        rpc_address: 0.0.0.0
+    //节点广播给其它节点的IP地址（所有节点都在同一内网中，填内网IP，否则填外网IP。当rpc_address设置为0.0.0.0时必填）
+        broadcast_rpc_address: 192.168.0.200
+    //CQL协议端口（默认是9042）
         native_transport_port: 9042
+    //跨节点通信端口
+        storage_port: 7000
+    //跨节点通信端口（SSL）
+        ssl_storage_port: 7001
+    //开启身份验证和授权
+        authenticator: PasswordAuthenticator
+        authorizer: CassandraAuthorizer
+    //虚拟节点的数量。增加此值可以提高数据分布的均匀性
+        num_tokens: 256
     //并发读取线程数
         concurrent_reads: 32
     //并发写入线程数
@@ -47,7 +53,7 @@
             vi /server/tool/cassandra-4.1.7/conf/jvm-server.options
                 注释掉-XX:-UseBiasedLocking
 登录数据库
-    /server/tool/cassandra-4.1.7/bin/cqlsh 192.168.0.200 9042 -u cassandra -p cassandra
+    /server/tool/cassandra-4.1.7/bin/cqlsh 0.0.0.0 9042 -u cassandra -p cassandra
     //修改密码
     ALTER USER 'cassandra' WITH PASSWORD '密码';
     //创建一个新的超级用户
