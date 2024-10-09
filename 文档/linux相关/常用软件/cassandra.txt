@@ -25,9 +25,9 @@
         broadcast_rpc_address: 192.168.0.200
     //CQL协议端口（默认是9042）
         native_transport_port: 9042
-    //跨节点通信端口
+    //节点间的通信端口
         storage_port: 7000
-    //跨节点通信端口（SSL）
+    //节点间的通信端口（SSL加密用）
         ssl_storage_port: 7001
     //开启身份验证和授权
         authenticator: PasswordAuthenticator
