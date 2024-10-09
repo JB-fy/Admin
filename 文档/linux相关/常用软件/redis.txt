@@ -66,14 +66,15 @@ WantedBy=multi-user.target
 			//redis集群必须满足3个主节点才能启动
 			//--cluster-replicas用于设置主节点有多少个从节点。设置时，节点数必须满足：3 * (1 + cluster-replicas)
 			/server/tool/redis-7.0.11/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382 [--cluster-replicas 1]
-				报错处理：
-					[ERR] Node 0.0.0.0:6382 is not empty. Either the node already knows other nodes (check with CLUSTER NODES) or contains some key in database 0.
-						清除节点的数据：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
-						重置节点：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
-	验证redis状态
-		/server/tool/redis-7.0.11/bin/redis-cli --cluster check 0.0.0.0:6380
-	关闭节点
-		/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
+	常用命令
+		关闭节点
+			/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
+		验证redis状态
+			/server/tool/redis-7.0.11/bin/redis-cli --cluster check 0.0.0.0:6380
+		清除节点的数据
+			/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
+		重置节点
+			/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
 	设置集群自启动
 		新增命令执行文件
 			vi /server/tool/redis-7.0.11/cluster.sh
