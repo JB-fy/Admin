@@ -17,11 +17,11 @@
             - class_name: org.apache.cassandra.locator.SimpleSeedProvider
                 parameters:
                     - seeds: "192.168.0.200:7000,192.168.0.201:7001"
-    //节点用来监听其它节点的IP地址（所有节点都在同一内网中，填内网IP，否则填外网IP）
+    //节点用来监听其它节点的IP地址（所有节点都在同一内网中，填内网IP，否则填公网IP）
         listen_address: 192.168.0.200
-    //客户端连接节点的IP地址（所有节点及应用服务器都在同一内网中时，填内网IP，否则填外网IP。可用0.0.0.0同时支持公网IP和内网IP）
+    //客户端连接节点的IP地址（所有节点及应用服务器都在同一内网中时，填内网IP，否则填公网IP。可用0.0.0.0同时支持公网IP和内网IP）
         rpc_address: 0.0.0.0
-    //节点广播给其它节点的IP地址（所有节点都在同一内网中，填内网IP，否则填外网IP。当rpc_address设置为0.0.0.0时必填）
+    //节点广播给其它节点的IP地址（所有节点都在同一内网中，填内网IP，否则填公网IP。当rpc_address设置为0.0.0.0时必填）
         broadcast_rpc_address: 192.168.0.200
     //CQL协议端口
         native_transport_port: 9042
