@@ -51,7 +51,7 @@ WantedBy=multi-user.target
 		vi /etc/sysctl.conf
 			//添加或修改以下行
 			vm.overcommit_memory = 1
-	修改各个redis配置文件
+	修改各个redis配置文件（可直接拷贝多个配置文件做启动，但注意创建dir配置目录）
 		vi /server/tool/redis-7.0.11/etc/redis_6380.conf
 			cluster-enabled yes
 			cluster-config-file /server/tool/redis-7.0.11/etc/nodes_6380.conf
