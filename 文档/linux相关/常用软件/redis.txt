@@ -9,10 +9,11 @@
 		编译完进入src目录安装
 		make install PREFIX=/server/tool/redis-7.0.11
 	3、拷贝配置文件
-        mkdir -p /server/tool/redis-7.0.11/etc /server/tool/redis-7.0.11/run /server/tool/redis-7.0.11/data/6379
+        mkdir -p /server/tool/redis-7.0.11/etc /server/tool/redis-7.0.11/run /server/tool/redis-7.0.11/data_6379
 		cp /server/redis-7.0.11/redis.conf /server/tool/redis-7.0.11/etc
 	4、启用redis
-		/server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis.conf
+		//--daemonize no临时设置为前台模式（调试时使用，才能在终端查看启动信息）
+		/server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis.conf [--daemonize no]
 	5、修改redis配置文件
 		vi /server/tool/redis-7.0.11/etc/redis.conf
 			requirepass	//设置密码
@@ -20,9 +21,9 @@
 			daemonize yes 	//设置为允许redis后台运行
 			bind 127.0.0.1	//限制IP访问
 			protected-mode no	//设置远程访问
-			logfile ""	//指定日志文件存储路径。默认是空字符串，输出到终端或控制台中
-            dir ./server/tool/redis-7.0.11/data/6379  //指定数据目录，用于存储持久化文件（如RDB和AOF文件）。默认./
-            pidfile /server/tool/redis-7.0.11/run/redis_6379.pid //存储路径。默认/var/run/redis/6379.pid
+			logfile ""	//指定日志文件存储路径。默认是空字符串，输出到终端（前置条件：daemonize no）
+            pidfile /server/tool/redis-7.0.11/run/redis_6379.pid //存储路径。默认/var/run/redis_6379.pid
+            dir /server/tool/redis-7.0.11/data_6379  //指定数据目录，用于存储持久化文件（如RDB和AOF文件）。默认./
 	6、编辑自启动文件
 		vi /etc/systemd/system/redis-7.0.11.service
 [Unit]
@@ -51,25 +52,31 @@ WantedBy=multi-user.target
 			//添加或修改以下行
 			vm.overcommit_memory = 1
 	修改各个redis配置文件
-		vi /server/tool/redis-7.0.11/etc/redis.conf
+		vi /server/tool/redis-7.0.11/etc/redis_6380.conf
 			cluster-enabled yes
-			cluster-config-file /server/tool/redis-7.0.11/etc/nodes.conf
+			cluster-config-file /server/tool/redis-7.0.11/etc/nodes_6380.conf
 			cluster-node-timeout 15000
+			port 6380
+            pidfile /server/tool/redis-7.0.11/run/redis_6380.pid
+            dir /server/tool/redis-7.0.11/data_6380
 	启动集群：任意一个redis运行以下命令（必须先启动每个redis服务）
-		//--cluster-replicas用于设置主节点有多少个从节点。因redis集群必须满足3个节点，故必须节点数操作3个才可设置
-		/server/tool/redis-7.0.11/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382 --yes [--cluster-replicas 1]
-			报错处理：
-				[ERR] Node 0.0.0.0:6382 is not empty. Either the node already knows other nodes (check with CLUSTER NODES) or contains some key in database 0.
-					清除节点的数据：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6381 FLUSHALL
-					重置节点：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER RESET
-					检查节点状态：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER NODES
+		启动各个redis节点（需全部节点都启动才能启动集群）
+			/server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis_6380.conf [--daemonize no]
+		启动集群
+			//redis集群必须满足3个主节点才能启动
+			//--cluster-replicas用于设置主节点有多少个从节点。设置时，节点数必须满足：3 * (1 + cluster-replicas)
+			/server/tool/redis-7.0.11/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382 [--cluster-replicas 1]
+				报错处理：
+					[ERR] Node 0.0.0.0:6382 is not empty. Either the node already knows other nodes (check with CLUSTER NODES) or contains some key in database 0.
+						清除节点的数据：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
+						重置节点：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
 	验证redis状态
 		/server/tool/redis-7.0.11/bin/redis-cli --cluster check 0.0.0.0:6380
 	关闭节点
 		/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
 	设置集群自启动
 		新增命令执行文件
-			vi /server/tool/redis-cluster.sh
+			vi /server/tool/redis-7.0.11/cluster.sh
 #!/bin/bash
 
 # 添加调试信息
@@ -79,22 +86,22 @@ set -x  # 打印执行的命令
 case "$1" in
     start)
         # 启动节点
-        /server/tool/redis-7.4-6380/bin/redis-server /server/tool/redis-7.4-6380/etc/redis.conf
-        /server/tool/redis-7.4-6381/bin/redis-server /server/tool/redis-7.4-6381/etc/redis.conf
-        /server/tool/redis-7.4-6382/bin/redis-server /server/tool/redis-7.4-6382/etc/redis.conf
+        /server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis_6380.conf
+        /server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis_6381.conf
+        /server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis_6382.conf
 
         # 创建 Redis 集群
         echo "Redis集群启动"
-        echo "yes" | /server/tool/redis-7.4-6380/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382
+        echo "yes" | /server/tool/redis-7.0.11/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382
         if [ $? -ne 0 ]; then
             # 重新清除和重置节点
-            /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
-            /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
-            /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 FLUSHALL
-            /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER RESET
-            /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 FLUSHALL
-            /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 CLUSTER RESET
-            echo "yes" | /server/tool/redis-7.4-6380/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382
+            /server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
+            /server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
+            /server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6381 FLUSHALL
+            /server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6381 CLUSTER RESET
+            /server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6382 FLUSHALL
+            /server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6382 CLUSTER RESET
+            echo "yes" | /server/tool/redis-7.0.11/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382
             if [ $? -ne 0 ]; then
                 exit 1
             fi
@@ -105,11 +112,11 @@ case "$1" in
         ;;
     stop)
         # 关闭节点 1
-        /server/tool/redis-7.4-6380/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
+        /server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
         # 关闭节点 2
-        /server/tool/redis-7.4-6381/bin/redis-cli -h 0.0.0.0 -p 6381 shutdown
+        /server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6381 shutdown
         # 关闭节点 3
-        /server/tool/redis-7.4-6382/bin/redis-cli -h 0.0.0.0 -p 6382 shutdown
+        /server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6382 shutdown
 
         echo "Redis集群停止成功"
         exit 0
@@ -121,18 +128,18 @@ case "$1" in
 esac
 
 		赋予执行权限
-			chmod +x /server/tool/redis-cluster.sh
+			chmod 777 /server/tool/redis-7.0.11/cluster.sh
 		编辑自启动文件
 			vi /etc/systemd/system/redis-cluster.service
 [Unit]
 Description=redis-cluster
 After=network.target
 [Service]
-Type=oneshot
-ExecStart=/server/tool/redis-cluster.sh start
-ExecStop=/server/tool/redis-cluster.sh stop
-RemainAfterExit=true
-Restart=no
+Type=forking
+ExecStart=/server/tool/redis-7.0.11/cluster.sh start
+ExecStop=/server/tool/redis-7.0.11/cluster.sh stop
+Restart=always
+RestartSec=3s
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
