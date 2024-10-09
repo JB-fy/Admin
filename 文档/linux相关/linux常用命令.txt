@@ -60,15 +60,16 @@ source /etc/profile
 vi /etc/selinux/config
 
 //systemctl方式设置开机自启动
-systemctl status 服务名		//查看服务状态
-systemctl start 服务名		//开启服务
-systemctl stop 服务名		//关闭服务
-systemctl restart|reload 服务名		//重启服务
-systemctl disable 服务名		//禁止开机自启动
+systemctl status 服务名	//查看服务状态
+systemctl start 服务名	//开启服务
+systemctl stop 服务名	//关闭服务
+systemctl restart|reload 服务名	//重启服务
+systemctl disable 服务名	//禁止开机自启动
 systemctl enable 服务名		//开启开机自启动
 systemctl list-units --type=service //查看所有自启动服务
+systemctl daemon-reload //重载自启动服务
 
-//新增自启动文件
+//新增自启动文件（注意：文件修改后需执行systemctl daemon-reload才能生效）
 vi /etc/systemd/system/xxxx.service
 //文件示例
 [Unit]
@@ -76,17 +77,17 @@ Description=nginx
 After=network.target
 # Wants=redis-server.service mysql.service
 [Service]
-Type=forking
 # User=nginx
 # Group=nginx
+# Type=forking
 # WorkingDirectory=/server/tool/xxxx
 # PIDFile=/server/tool/xxxx/logs/nginx.pid
 ExecStart=/server/tool/xxxx/sbin/nginx
 ExecReload=/server/tool/xxxx/sbin/nginx -s reload
 ExecStop=/server/tool/xxxx/sbin/nginx -s quit
-PrivateTmp=true
 # Restart=always
 # RestartSec=3s
+PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
 /**--------设置自启动 结束--------**/
