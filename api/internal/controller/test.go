@@ -91,12 +91,12 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	/*--------日志使用示例 结束--------*/
 
 	/*--------函数结果示例 开始--------*/
-	// g.RequestFromCtx(ctx).GetClientIp() // 192.168.2.44。常用于WEB编程，如HTTP
-	// g.RequestFromCtx(ctx).GetRemoteIp() // 192.168.2.44。常用于网络编程，如TCP或UDP
+	// g.RequestFromCtx(ctx).GetClientIp() // 192.168.0.44。常用于WEB编程，如HTTP
+	// g.RequestFromCtx(ctx).GetRemoteIp() // 192.168.0.44。常用于网络编程，如TCP或UDP
 
-	// g.RequestFromCtx(ctx).GetUrl()         // http://192.168.2.200:20080/testMeta?a=1&b=2
-	// g.RequestFromCtx(ctx).GetHost()        // 192.168.2.200
-	// g.RequestFromCtx(ctx).Host             // 192.168.2.200:20080
+	// g.RequestFromCtx(ctx).GetUrl()         // http://192.168.0.200:20080/testMeta?a=1&b=2
+	// g.RequestFromCtx(ctx).GetHost()        // 192.168.0.200
+	// g.RequestFromCtx(ctx).Host             // 192.168.0.200:20080
 	// g.RequestFromCtx(ctx).RequestURI       // /testMeta?a=1&b=2
 	// g.RequestFromCtx(ctx).URL.String()     // /testMeta?a=1&b=2
 	// g.RequestFromCtx(ctx).URL              // /testMeta?a=1&b=2

@@ -1,6 +1,6 @@
 依赖java11
     安装java11
-        dnf install java-11-openjdk java-11-openjdk-devel
+        dnf install java-11-openjdk
     切换版本
         alternatives --config java
     检查JAVA_HOME是否指定非11版本（可不设置，设置后不能是非11版本）
@@ -21,11 +21,11 @@
         seed_provider:
             - class_name: org.apache.cassandra.locator.SimpleSeedProvider
                 parameters:
-                    - seeds: "127.0.0.1:7000,192.168.2.200:7000"
+                    - seeds: "192.168.0.200:7000,192.168.0.201:7000"
     //节点之间通信的IP地址
-        listen_address: 192.168.2.200
+        listen_address: 192.168.0.200
     //客户端连接的IP地址
-        rpc_address: 192.168.2.200
+        rpc_address: 192.168.0.200
     //原生传输端口（默认是9042）
         native_transport_port: 9042
     //并发读取线程数
@@ -47,7 +47,7 @@
             vi /server/tool/cassandra-4.1.7/conf/jvm-server.options
                 注释掉-XX:-UseBiasedLocking
 登录数据库
-    /server/tool/cassandra-4.1.7/bin/cqlsh 192.168.2.200 9042 -u cassandra -p cassandra
+    /server/tool/cassandra-4.1.7/bin/cqlsh 192.168.0.200 9042 -u cassandra -p cassandra
     //修改密码
     ALTER USER 'cassandra' WITH PASSWORD '密码';
     //创建一个新的超级用户

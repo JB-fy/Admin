@@ -4,7 +4,7 @@
  Source Server         : 本地-Postgresql16
  Source Server Type    : PostgreSQL
  Source Server Version : 160002 (160002)
- Source Host           : 192.168.2.200:5432
+ Source Host           : 192.168.0.200:5432
  Source Catalog        : admin
  Source Schema         : public
 
