@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"database/sql"
+	"sync"
 
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
@@ -51,17 +52,45 @@ type DaoModel struct {
 	JoinTableSet        *gset.StrSet
 }
 
+// 对象池。性能提醒不明显，暂时不用。确实大幅减少了对象创建和销毁（内存压力减少），但却需要手动增加放入对象池的代码：defer daoModel.PutPool()
+var poolDaoModel = sync.Pool{
+	New: func() any {
+		return &DaoModel{}
+	},
+}
+
+func (daoModelThis *DaoModel) PutPool() {
+	//以下属性从池中取出对象时，会重新赋值
+	daoModelThis.Ctx = nil
+	daoModelThis.dao = nil
+	daoModelThis.AfterField = nil
+	daoModelThis.AfterFieldWithParam = nil
+	daoModelThis.AfterInsert = nil
+	daoModelThis.AfterUpdate = nil
+	daoModelThis.JoinTableSet = nil
+	daoModelThis.DbTable = ``
+	daoModelThis.DbGroup = ``
+	daoModelThis.db = nil
+	daoModelThis.model = nil
+
+	daoModelThis.AfterFieldSlice = nil
+	daoModelThis.IdArr = nil
+	daoModelThis.IsOnlyAfterUpdate = false
+	daoModelThis.IsOnlyAfterUpdate = false
+
+	poolDaoModel.Put(daoModelThis)
+}
+
 // 注意：dbOpt存在时，dbOpt[0]解析DbTable，dbOpt[1]索引参数解析DbGroup
 func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]any) *DaoModel {
-	daoModelObj := DaoModel{
-		Ctx:                 ctx,
-		dao:                 dao,
-		AfterField:          gset.NewStrSet(),
-		AfterFieldWithParam: map[string]any{},
-		AfterInsert:         map[string]any{},
-		AfterUpdate:         map[string]any{},
-		JoinTableSet:        gset.NewStrSet(),
-	}
+	daoModelObj := &DaoModel{} // poolDaoModel.Get().(*DaoModel)
+	daoModelObj.Ctx = ctx
+	daoModelObj.dao = dao
+	daoModelObj.AfterField = gset.NewStrSet()
+	daoModelObj.AfterFieldWithParam = map[string]any{}
+	daoModelObj.AfterInsert = map[string]any{}
+	daoModelObj.AfterUpdate = map[string]any{}
+	daoModelObj.JoinTableSet = gset.NewStrSet()
 	switch len(dbOpt) {
 	case 1:
 		daoModelObj.DbTable = daoModelObj.dao.ParseDbTable(ctx, dbOpt[0])
@@ -75,7 +104,7 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]any)
 	}
 	daoModelObj.db = daoModelObj.NewDB()
 	daoModelObj.model = daoModelObj.NewModel()
-	return &daoModelObj
+	return daoModelObj
 }
 
 // TODO 缓存暂不考虑。原因1：当key很多时，删除操作会有效率问题。原因2：直接清空全部缓存也很不友好
