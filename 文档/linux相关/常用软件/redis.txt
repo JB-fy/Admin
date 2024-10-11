@@ -4,7 +4,7 @@
 	2、解压php安装
 		tar -xvf redis-7.0.11.tar.gz
 		进入解压目录编译
-		//报这个错误时，jemalloc/jemalloc.h：没有那个文件或目录。使用make MALLOC=libc编译
+		# 报这个错误时，jemalloc/jemalloc.h：没有那个文件或目录。使用make MALLOC=libc编译
 		make
 		编译完进入src目录安装
 		make install PREFIX=/server/tool/redis-7.0.11
@@ -12,7 +12,7 @@
         mkdir -p /server/tool/redis-7.0.11/etc /server/tool/redis-7.0.11/run /server/tool/redis-7.0.11/data_6379
 		cp /server/redis-7.0.11/redis.conf /server/tool/redis-7.0.11/etc
 	4、启用redis
-		//--daemonize no临时设置为前台模式（调试时使用，才能在终端查看启动信息）
+		# --daemonize no临时设置为前台模式（调试时使用，才能在终端查看启动信息）
 		/server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis.conf [--daemonize no]
 	5、修改redis配置文件
 		vi /server/tool/redis-7.0.11/etc/redis.conf
@@ -47,11 +47,11 @@ WantedBy=multi-user.target
 
 
 如需设置集群，按以下步骤设置（注意：设置集群至少需要3个redis）
-	启动集群需要设置系统允许进程分配的内存总量超过实际可用的物理内存
+	1、启动集群需要设置系统允许进程分配的内存总量超过实际可用的物理内存
 		vi /etc/sysctl.conf
-			//添加或修改以下行
+			# 添加或修改以下行
 			vm.overcommit_memory = 1
-	修改各个redis配置文件（可直接拷贝多个配置文件做启动，但注意创建dir配置目录）
+	2、修改各个redis配置文件（可直接拷贝多个配置文件做启动，但注意创建dir配置目录）
 		vi /server/tool/redis-7.0.11/etc/redis_6380.conf
 			cluster-enabled yes
 			cluster-config-file /server/tool/redis-7.0.11/etc/nodes_6380.conf
@@ -59,25 +59,21 @@ WantedBy=multi-user.target
 			port 6380
             pidfile /server/tool/redis-7.0.11/run/redis_6380.pid
             dir /server/tool/redis-7.0.11/data_6380
-	启动集群：任意一个redis运行以下命令（必须先启动每个redis服务）
-		启动各个redis节点（需全部节点都启动才能启动集群）
+	3、常用命令
+		启动节点：/server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis_6380.conf [--daemonize no]
+		关闭节点：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
+		验证节点：/server/tool/redis-7.0.11/bin/redis-cli --cluster check 0.0.0.0:6380
+		清除节点数据：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
+		重置节点：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
+	4、启动集群
+		启动各个节点
 			/server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis_6380.conf [--daemonize no]
-		启动集群
-			//redis集群必须满足3个主节点才能启动
-			//--cluster-replicas用于设置主节点有多少个从节点。设置时，节点数必须满足：3 * (1 + cluster-replicas)
+		任意一个节点运行以下命令启动集群（必须满足3个主节点才能启动）
+			# --cluster-replicas用于设置主节点有多少个从节点。设置时，节点数必须满足：3 * (1 + cluster-replicas)
 			/server/tool/redis-7.0.11/bin/redis-cli --cluster create 0.0.0.0:6380 0.0.0.0:6381 0.0.0.0:6382 [--cluster-replicas 1]
-	常用命令
-		关闭节点
-			/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 shutdown
-		验证redis状态
-			/server/tool/redis-7.0.11/bin/redis-cli --cluster check 0.0.0.0:6380
-		清除节点的数据
-			/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
-		重置节点
-			/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
-	设置集群自启动
+	5、设置自启动
 		新增命令执行文件
-			vi /server/tool/redis-7.0.11/cluster.sh
+			vi /server/tool/redis-7.0.11/bin/redis-cluster.sh
 #!/bin/bash
 
 # 添加调试信息
@@ -129,7 +125,7 @@ case "$1" in
 esac
 
 		赋予执行权限
-			chmod 777 /server/tool/redis-7.0.11/cluster.sh
+			chmod 777 /server/tool/redis-7.0.11/bin/redis-cluster.sh
 		编辑自启动文件
 			vi /etc/systemd/system/redis-cluster.service
 [Unit]
@@ -137,12 +133,13 @@ Description=redis-cluster
 After=network.target
 [Service]
 Type=forking
-ExecStart=/server/tool/redis-7.0.11/cluster.sh start
-ExecStop=/server/tool/redis-7.0.11/cluster.sh stop
+ExecStart=/server/tool/redis-7.0.11/bin/redis-cluster.sh start
+ExecStop=/server/tool/redis-7.0.11/bin/redis-cluster.sh stop
 Restart=always
 RestartSec=3s
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
+
 		设置自启动
 			systemctl enable redis-cluster

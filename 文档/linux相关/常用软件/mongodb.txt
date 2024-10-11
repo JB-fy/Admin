@@ -1,0 +1,73 @@
+    1、解压安装包
+        tar -xvf mongodb-linux-x86_64-rhel93-8.0.1.tgz
+    2、移动到指定目录
+        mv /server/mongodb-linux-x86_64-rhel93-8.0.1 /server/tool/mongodb-8.0.1
+    3、创建所需目录
+        mkdir -p /server/tool/mongodb-8.0.1/conf /server/tool/mongodb-8.0.1/data /server/tool/mongodb-8.0.1/log /server/tool/mongodb-8.0.1/run
+    4、数据库配置
+        vi /server/tool/mongodb-8.0.1/conf/mongod.conf
+# mongod.conf
+
+# 日志配置
+systemLog:
+  destination: file # 日志输出到文件
+  logAppend: true   # 是否追加日志
+  path: /server/tool/mongodb-8.0.1/log/mongod.log  # 日志文件路径
+
+# 存储配置
+storage:
+  dbPath: /server/tool/mongodb-8.0.1/data # 数据存储路径
+#   wiredTiger:
+#     engineConfig:
+#       cacheSizeGB: 1  # WiredTiger 缓存大小（GB）
+#     collectionConfig:
+#       blockCompressor: snappy # 块压缩算法：none, snappy, zlib
+
+# 进程管理配置
+processManagement:
+  fork: true  # 是否以守护进程方式运行
+  pidFilePath: /server/tool/mongodb-8.0.1/run/mongod.pid  # PID 文件路径
+
+# 网络配置
+net:
+  port: 27017     # 监听端口
+  bindIp: 0.0.0.0 # 绑定IP地址，可以使用 0.0.0.0 绑定所有IP地址
+#   maxIncomingConnections: 100 # 最大并发连接数
+
+# # 安全配置
+# security:
+#   authorization: enabled  # 是否启用身份验证
+#   keyFile: /path/to/keyfile # 集群内部通信密钥文件路径
+
+# # 操作配置
+# operationProfiling:
+#   mode: slowOp            # 操作配置模式：off不记录 slowOp记录慢查询 all记录所有操作
+#   slowOpThresholdMs: 100  # 慢查询阈值（毫秒）
+
+# # 复制集配置
+# replication:
+#   replSetName: myReplSet  # 复制集名称
+
+# # 分片配置
+# sharding:
+#   clusterRole: shardsvr # 分片服务器角色：configsvr配置服务器 shardsvr分片服务器
+
+    5、常用命令        
+        启动：/server/tool/mongodb-8.0.1/bin/mongod -f /server/tool/mongodb-8.0.1/conf/mongod.conf
+        关闭：/server/tool/mongodb-8.0.1/bin/mongod --shutdown --dbpath /server/tool/mongodb-8.0.1/data
+    6、编辑自启动文件
+        vi /etc/systemd/system/mongodb-8.0.1.service
+[Unit]
+Description=mongodb-8.0.1
+After=network.target
+[Service]
+Type=forking
+PIDFile=/server/tool/mongodb-8.0.1/run/mongod.pid
+ExecStart=/server/tool/mongodb-8.0.1/bin/mongod -f /server/tool/mongodb-8.0.1/conf/mongod.conf
+ExecStop=/server/tool/mongodb-8.0.1/bin/mongod --shutdown --dbpath /server/tool/mongodb-8.0.1/data
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
+
+    8、设置自启动
+        systemctl enable mongodb-8.0.1
