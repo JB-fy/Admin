@@ -22,7 +22,7 @@
 ## GO服务端（代码目录：[api](./api)）
 ```bash
 # 服务启动（--gf.gcfg.file用于指定配置文件，默认config.yaml）
-gf run main.go -a "http --gf.gcfg.file=config.prod.yaml"
+gf run main.go -a "--gf.gcfg.file=config.prod.yaml"
 
 # 代码自动生成（需先编译生成可执行文件。如修改api/internal/cmd/my-gen/文件下的代码，需重新编译才会生效）
 ./main myGen

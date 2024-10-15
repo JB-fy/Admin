@@ -17,7 +17,7 @@ var (
 	Main = gcmd.Command{
 		Name:  `main`,
 		Brief: `通过这个命令启动`,
-		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) { //gf run main.go启动时（即没有启动参数），默认使用该方法启动
+		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) { //未指定执行哪个子命令时，默认运行该方法。比如：gf run main.go -a "--gf.gcfg.file=config.yaml"
 			go func() {
 				Http.Run(ctx)
 			}()
