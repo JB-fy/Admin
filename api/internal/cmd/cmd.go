@@ -16,6 +16,16 @@ var (
 		Brief: `通过这个命令启动`,
 	}
 
+	MyGen = gcmd.Command{
+		Name:  `myGen`,
+		Usage: `myGen`,
+		Brief: `代码自动生成`,
+		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			myGen.Run(ctx, parser)
+			return
+		},
+	}
+
 	Http = gcmd.Command{
 		Name:  `http`,
 		Usage: `http`,
@@ -37,16 +47,6 @@ var (
 			// router.InitRouterWebSocket(s) //WebScoket注册（如需使用，建议把部分全局中间件移到对应接口分组内）
 
 			s.Run()
-			return
-		},
-	}
-
-	MyGen = gcmd.Command{
-		Name:  `myGen`,
-		Usage: `myGen`,
-		Brief: `代码自动生成`,
-		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
-			myGen.Run(ctx, parser)
 			return
 		},
 	}
