@@ -5,6 +5,9 @@ import (
 	"api/internal/middleware"
 	"api/internal/router"
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
@@ -14,6 +17,17 @@ var (
 	Main = gcmd.Command{
 		Name:  `main`,
 		Brief: `通过这个命令启动`,
+		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) { //gf run main.go启动时（即没有启动参数），默认使用该方法启动
+			go func() {
+				Http.Run(ctx)
+			}()
+
+			// 等待中断信号来优雅地关闭服务
+			ch := make(chan os.Signal, 1)
+			signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
+			<-ch
+			return
+		},
 	}
 
 	MyGen = gcmd.Command{
