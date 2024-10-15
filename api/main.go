@@ -10,7 +10,7 @@ import (
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 
 	"api/internal/cmd"
-	initialize "api/internal/initialize"
+	"api/internal/initialize"
 
 	"github.com/gogf/gf/v2/os/gctx"
 )
