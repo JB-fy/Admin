@@ -143,7 +143,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		Table:              table,
 	}
 	tpl.DbHandler = internal.NewMyGenDbHandler(ctx, g.DB(tpl.Group).GetConfig().Type)
-	tpl.Link = gconv.String(gconv.SliceMap(g.Cfg().MustGet(ctx, `database`).MapStrAny()[tpl.Group])[0][`link`])
+	tpl.Link = gconv.String(gconv.SliceMap(g.Cfg().MustGet(ctx, `database`).Map()[tpl.Group])[0][`link`])
 	tpl.TableArr = tpl.DbHandler.GetTableArr(ctx, tpl.Group)
 	tpl.KeyList = tpl.DbHandler.GetKeyList(ctx, tpl.Group, tpl.Table)
 	tpl.TableCaseSnake = gstr.CaseSnake(gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))

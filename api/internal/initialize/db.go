@@ -8,7 +8,7 @@ import (
 )
 
 func initDb(ctx context.Context) {
-	dbList := g.Cfg().MustGet(ctx, `database`).MapStrAny()
+	dbList := g.Cfg().MustGet(ctx, `database`).Map()
 	redis := gcache.NewAdapterRedis(g.Redis())
 	for k := range dbList {
 		switch k {
