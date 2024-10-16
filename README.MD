@@ -4,8 +4,6 @@
 <div align=center>
 
 # JB Admin
-</div>
-<div align=center>
 <img src="https://img.shields.io/badge/Golang-1.21-blue"/>
 <img src="https://img.shields.io/badge/GoFrame-2.7.2-lightBlue"/>
 <img src="https://img.shields.io/badge/Node-18.16.0-blue"/>
