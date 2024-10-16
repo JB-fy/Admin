@@ -26,9 +26,9 @@ gf run main.go	#未指定子命令时，会默认执行/internal/cmd/cmd.go中ma
 gf run main.go -a "--gf.gcfg.file=config.prod.yaml"	#指定生成环境配置文件。默认config.yaml
 gf run main.go -a "--gf.gcfg.file=config.prod.yaml http"	#只执行子命令http，即只启动http服务
 
-# 代码自动生成（使用前需先编译生成可执行文件，如修改api/internal/cmd/my-gen/文件下的代码，需重新编译才会生效）
+# 代码自动生成（需先编译生成可执行文件。如修改api/internal/cmd/my-gen/目录下的代码，需重新编译才能生效）
 ./main myGen
-./main --gf.gcfg.file=config.pgsql.yaml myGen	#指定postgresql数据库配置文件。这样就可根据该配置文件内的数据库去生成代码
+./main --gf.gcfg.file=config.pgsql.yaml myGen	#指定postgresql数据库配置文件。即根据该配置文件内的数据库生成代码
 
 # dao层生成（一般很少使用，建议直接使用代码自动生成命令）
 gf gen dao
