@@ -5,11 +5,11 @@
             alternatives --config java
         检查JAVA_HOME是否指定非11版本（可不设置，设置后不能是非11版本）
     2、解压安装包
-        tar -xvf apache-cassandra-5.0.1-bin.tar.gz
+        tar -xvf apache-cassandra-4.1.7-bin.tar.gz
     3、移动到指定目录
-        mv /server/apache-cassandra-5.0.1 /server/tool/cassandra-5.0.1
+        mv /server/apache-cassandra-4.1.7 /server/tool/cassandra-4.1.7
     4、数据库配置
-        vi /server/tool/cassandra-5.0.1/conf/cassandra.yaml
+        vi /server/tool/cassandra-4.1.7/conf/cassandra.yaml
 # 集群名称，确保所有节点的集群名称相同
 cluster_name: 'Test Cluster'
 # 种子节点列表，用于初始化集群
@@ -47,14 +47,14 @@ logger:
     org.apache.cassandra: INFO
 
         # 多个cassandra同在一个服务器中时，需要修改其它占用端口
-            vi /server/tool/cassandra-5.0.1/conf/cassandra.yaml
+            vi /server/tool/cassandra-4.1.7/conf/cassandra-env.sh
                 JMX_PORT="7199"
     5、常用命令
-        启动：/server/tool/cassandra-5.0.1/bin/cassandra -f -R
-        关闭：/server/tool/cassandra-5.0.1/bin/nodetool drain
-        登录：/server/tool/cassandra-5.0.1/bin/cqlsh 0.0.0.0 9042 -u cassandra -p cassandra
+        启动：/server/tool/cassandra-4.1.7/bin/cassandra -f -R
+        关闭：/server/tool/cassandra-4.1.7/bin/nodetool drain
+        登录：/server/tool/cassandra-4.1.7/bin/cqlsh 0.0.0.0 9042 -u cassandra -p cassandra
     6、登录数据库
-        /server/tool/cassandra-5.0.1/bin/cqlsh 0.0.0.0 9042 -u cassandra -p cassandra
+        /server/tool/cassandra-4.1.7/bin/cqlsh 0.0.0.0 9042 -u cassandra -p cassandra
         //修改密码
         ALTER USER 'cassandra' WITH PASSWORD '密码';
         //创建一个新的超级用户
@@ -79,21 +79,21 @@ logger:
         //退出数据库
         EXIT;
     7、编辑自启动文件
-        vi /etc/systemd/system/cassandra-5.0.1.service
+        vi /etc/systemd/system/cassandra-4.1.7.service
 [Unit]
-Description=cassandra-5.0.1
+Description=cassandra-4.1.7
 After=network.target
 [Service]
-ExecStart=/server/tool/cassandra-5.0.1/bin/cassandra -f -R
-ExecStop=/server/tool/cassandra-5.0.1/bin/nodetool drain
+ExecStart=/server/tool/cassandra-4.1.7/bin/cassandra -f -R
+ExecStop=/server/tool/cassandra-4.1.7/bin/nodetool drain
 PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
 
     8、设置自启动
-        systemctl enable cassandra-5.0.1
+        systemctl enable cassandra-4.1.7
     9、设置环境变量增加以下目录（参考linux常用命令）
-        /server/tool/cassandra-5.0.1/bin
+        /server/tool/cassandra-4.1.7/bin
     10、服务器对外开放配置文件中设置对外使用的端口（需要重启防火墙生效）
         firewall-cmd --zone=public --add-port=9042/tcp --permanent
         firewall-cmd --zone=public --add-port=7000/tcp --permanent
