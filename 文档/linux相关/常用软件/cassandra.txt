@@ -49,7 +49,6 @@ logger:
         # 多个cassandra同在一个服务器中时，需要修改其它占用端口
             vi /server/tool/cassandra-5.0.1/conf/cassandra.yaml
                 JMX_PORT="7199"
-
     5、常用命令
         启动：/server/tool/cassandra-5.0.1/bin/cassandra -f -R
         关闭：/server/tool/cassandra-5.0.1/bin/nodetool drain
