@@ -1,7 +1,5 @@
 <div align=center>
 <img src="./文档/logo.png" width="300" height="300" />
-</div>
-<div align=center>
 
 # JB Admin
 <img src="https://img.shields.io/badge/Golang-1.21-blue"/>
