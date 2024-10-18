@@ -11,10 +11,10 @@ require (
 	github.com/alibabacloud-go/tea v1.1.19
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.4
 	github.com/fatih/color v1.17.0
-	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.7.3
-	github.com/gogf/gf/contrib/drivers/pgsql/v2 v2.7.3
-	github.com/gogf/gf/contrib/nosql/redis/v2 v2.7.3
-	github.com/gogf/gf/v2 v2.7.3
+	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.7.4
+	github.com/gogf/gf/contrib/drivers/pgsql/v2 v2.7.4
+	github.com/gogf/gf/contrib/nosql/redis/v2 v2.7.4
+	github.com/gogf/gf/v2 v2.7.4
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/smartwalle/alipay/v3 v3.2.20
 	github.com/wechatpay-apiv3/wechatpay-go v0.2.18
