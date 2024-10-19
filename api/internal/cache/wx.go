@@ -9,29 +9,29 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-type WxGzhAccessToken struct {
+type wxGzhAccessToken struct {
 	Ctx   context.Context
 	Redis *gredis.Redis
 	Key   string
 }
 
 // appId 微信公众号AppId
-func NewWxGzhAccessToken(ctx context.Context, appId string) *WxGzhAccessToken {
+func NewWxGzhAccessToken(ctx context.Context, appId string) *wxGzhAccessToken {
 	//可在这里写分库逻辑
 	redis := g.Redis()
-	return &WxGzhAccessToken{
+	return &wxGzhAccessToken{
 		Ctx:   ctx,
 		Redis: redis,
 		Key:   fmt.Sprintf(consts.CacheWxGzhAccessToken, appId),
 	}
 }
 
-func (cacheThis *WxGzhAccessToken) Set(value string, ttl int64) (err error) {
+func (cacheThis *wxGzhAccessToken) Set(value string, ttl int64) (err error) {
 	err = cacheThis.Redis.SetEX(cacheThis.Ctx, cacheThis.Key, value, ttl)
 	return
 }
 
-func (cacheThis *WxGzhAccessToken) Get() (value string, err error) {
+func (cacheThis *wxGzhAccessToken) Get() (value string, err error) {
 	valueTmp, err := cacheThis.Redis.Get(cacheThis.Ctx, cacheThis.Key)
 	if err != nil {
 		return

@@ -9,7 +9,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-type Code struct {
+type code struct {
 	Ctx   context.Context
 	Redis *gredis.Redis
 	Key   string
@@ -18,22 +18,22 @@ type Code struct {
 // sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
 // to 手机/邮箱
 // scene 场景
-func NewCode(ctx context.Context, sceneCode string, to string, scene uint) *Code {
+func NewCode(ctx context.Context, sceneCode string, to string, scene uint) *code {
 	//可在这里写分库逻辑
 	redis := g.Redis()
-	return &Code{
+	return &code{
 		Ctx:   ctx,
 		Redis: redis,
 		Key:   fmt.Sprintf(consts.CacheCodeFormat, sceneCode, to, scene),
 	}
 }
 
-func (cacheThis *Code) Set(value string, ttl int64) (err error) {
+func (cacheThis *code) Set(value string, ttl int64) (err error) {
 	err = cacheThis.Redis.SetEX(cacheThis.Ctx, cacheThis.Key, value, ttl)
 	return
 }
 
-func (cacheThis *Code) Get() (value string, err error) {
+func (cacheThis *code) Get() (value string, err error) {
 	valueTmp, err := cacheThis.Redis.Get(cacheThis.Ctx, cacheThis.Key)
 	if err != nil {
 		return

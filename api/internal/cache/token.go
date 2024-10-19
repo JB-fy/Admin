@@ -9,54 +9,54 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-type TokenActive struct {
+type tokenActive struct {
 	Ctx   context.Context
 	Redis *gredis.Redis
 	Key   string
 }
 
-func NewTokenActive(ctx context.Context, sceneCode string, loginId string) *TokenActive {
+func NewTokenActive(ctx context.Context, sceneCode string, loginId string) *tokenActive {
 	//可在这里写分库逻辑
 	redis := g.Redis()
-	return &TokenActive{
+	return &tokenActive{
 		Ctx:   ctx,
 		Redis: redis,
 		Key:   fmt.Sprintf(consts.CacheTokenActiveFormat, sceneCode, loginId),
 	}
 }
 
-func (cacheThis *TokenActive) Set(ttl int64) (err error) {
+func (cacheThis *tokenActive) Set(ttl int64) (err error) {
 	err = cacheThis.Redis.SetEX(cacheThis.Ctx, cacheThis.Key, ttl, ttl)
 	return
 }
 
-func (cacheThis *TokenActive) Get() (isExists int64, err error) {
+func (cacheThis *tokenActive) Get() (isExists int64, err error) {
 	isExists, err = cacheThis.Redis.Exists(cacheThis.Ctx, cacheThis.Key)
 	return
 }
 
-type TokenIsUnique struct {
+type tokenIsUnique struct {
 	Ctx   context.Context
 	Redis *gredis.Redis
 	Key   string
 }
 
-func NewTokenIsUnique(ctx context.Context, sceneCode string, loginId string) *TokenIsUnique {
+func NewTokenIsUnique(ctx context.Context, sceneCode string, loginId string) *tokenIsUnique {
 	//可在这里写分库逻辑
 	redis := g.Redis()
-	return &TokenIsUnique{
+	return &tokenIsUnique{
 		Ctx:   ctx,
 		Redis: redis,
 		Key:   fmt.Sprintf(consts.CacheTokenIsUniqueFormat, sceneCode, loginId),
 	}
 }
 
-func (cacheThis *TokenIsUnique) Set(value string, ttl int64) (err error) {
+func (cacheThis *tokenIsUnique) Set(value string, ttl int64) (err error) {
 	err = cacheThis.Redis.SetEX(cacheThis.Ctx, cacheThis.Key, value, ttl)
 	return
 }
 
-func (cacheThis *TokenIsUnique) Get() (value string, err error) {
+func (cacheThis *tokenIsUnique) Get() (value string, err error) {
 	valueTmp, err := cacheThis.Redis.Get(cacheThis.Ctx, cacheThis.Key)
 	if err != nil {
 		return
