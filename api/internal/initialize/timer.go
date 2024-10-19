@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"api/internal/cache"
+	"api/internal/consts"
 	"api/internal/utils/wx"
 	"context"
 	"time"
@@ -12,7 +13,7 @@ import (
 
 func initTimer(ctx context.Context) {
 	if !g.Cfg().MustGet(ctx, `dev`).Bool() {
-		if g.Cfg().MustGet(ctx, `timerServerNetworkIp`).String() != g.Cfg().MustGetWithEnv(ctx, `SERVER_NETWORK_IP`).String() {
+		if g.Cfg().MustGet(ctx, `timerServerNetworkIp`).String() != g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String() {
 			return
 		}
 	}

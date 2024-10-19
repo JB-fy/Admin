@@ -11,3 +11,8 @@ var (
 
 	CacheWxGzhAccessToken = `wxGzhAccessToken_%s` //微信公众号授权Token缓存key。参数：微信公众号AppId
 )
+
+var (
+	SERVER_NETWORK_IP = `SERVER_NETWORK_IP` //外网ip
+	SERVER_LOCAL_IP   = `SERVER_LOCAL_IP`   //内网ip
+)
