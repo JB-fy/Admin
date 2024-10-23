@@ -47,7 +47,7 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
         password: [
-            { required: computed((): boolean => (saveForm.data.id_arr?.length ? false : true)), message: t('validation.required') },
+            { required: computed((): boolean => (saveForm.data.id ? false : true)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
         ],
         // is_super: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
@@ -124,7 +124,7 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <el-form-item :label="t('org.admin.name.password')" prop="password">
                     <el-input v-model="saveForm.data.password" :placeholder="t('org.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <el-alert v-if="saveForm.data.id_arr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    <el-alert v-if="saveForm.data.id" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <!-- <el-form-item :label="t('org.admin.name.is_super')" prop="is_super">
                     <el-switch

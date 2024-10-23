@@ -37,7 +37,7 @@ const saveForm = reactive({
         wx_openid: [{ type: 'string', trigger: 'blur', max: 128, message: t('validation.max.string', { max: 128 }) }],
         wx_unionid: [{ type: 'string', trigger: 'blur', max: 64, message: t('validation.max.string', { max: 64 }) }],
         password: [
-            { required: computed((): boolean => (saveForm.data.id_arr?.length ? false : true)), message: t('validation.required') },
+            { required: computed((): boolean => (saveForm.data.id ? false : true)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
         ],
         id_card_no: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
@@ -134,7 +134,7 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <el-form-item :label="t('users.users.name.password')" prop="password">
                     <el-input v-model="saveForm.data.password" :placeholder="t('users.users.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <el-alert v-if="saveForm.data.id_arr?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    <el-alert v-if="saveForm.data.id" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('users.users.name.id_card_no')" prop="id_card_no">
                     <el-input v-model="saveForm.data.id_card_no" :placeholder="t('users.users.name.id_card_no')" maxlength="30" :show-word-limit="true" :clearable="true" />

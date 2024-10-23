@@ -99,7 +99,7 @@ const saveDrawer = reactive({
                 <el-form-item v-if="saveForm.data.scene_id > 0" :label="t('auth.menu.name.pid')" prop="pid">
                     <my-cascader
                         v-model="saveForm.data.pid"
-                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { scene_id: saveForm.data.scene_id, exc_id_arr: saveForm.data.id_arr } } }"
+                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { scene_id: saveForm.data.scene_id, exc_id: saveForm.data.id } } }"
                         :props="{ checkStrictly: true, emitPath: false }"
                     />
                 </el-form-item>

@@ -370,7 +370,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.Method = internal.ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`) + `: saveForm.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + ` } } }" :props="{ checkStrictly: true, emitPath: false }" />`
+		viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`) + `: saveForm.data.id } } }" :props="{ checkStrictly: true, emitPath: false }" />`
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = 0)`
 	case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
@@ -381,12 +381,12 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.importModule = append(viewSaveField.importModule, `import md5 from 'js-md5'`)
 		viewSaveField.rule.Method = internal.ReturnTypeName
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName,
-			`{ required: computed((): boolean => (saveForm.data.`+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+`?.length ? false : true)), message: t('validation.required') },`,
+			`{ required: computed((): boolean => (saveForm.data.id ? false : true)), message: t('validation.required') },`,
 			`{ type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },`,
 		)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<el-input v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <el-alert v-if="saveForm.data.` + internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`) + `?.length" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />`
+                    <el-alert v-if="saveForm.data.id" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />`
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` ? param.` + dataFieldPath + ` = md5(param.` + dataFieldPath + `) : delete param.` + dataFieldPath
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
