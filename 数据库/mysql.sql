@@ -1,5 +1,5 @@
 /*
- Navicat Premium Data Transfer
+ Navicat Premium Dump SQL
 
  Source Server         : 本地-Mysql8
  Source Server Type    : MySQL
@@ -37,7 +37,7 @@ CREATE TABLE `app`  (
   `is_force_prev` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关',
   PRIMARY KEY (`app_id`) USING BTREE,
   UNIQUE INDEX `app_type`(`app_type` ASC, `ver_no` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'APP表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'APP表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app
@@ -293,7 +293,7 @@ CREATE TABLE `auth_role`  (
   PRIMARY KEY (`role_id`) USING BTREE,
   INDEX `scene_id`(`scene_id` ASC) USING BTREE,
   INDEX `rel_id`(`rel_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限角色表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_role
@@ -396,73 +396,6 @@ INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0
 INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, 'APP', 'app', '{\"token_config\": {\"is_unique\": 0, \"sign_type\": \"HS256\", \"token_type\": 0, \"active_time\": 0, \"expire_time\": 604800, \"private_key\": \"任意字符串\"}}', '');
 
 -- ----------------------------
--- Table structure for goods
--- ----------------------------
-DROP TABLE IF EXISTS `goods`;
-CREATE TABLE `goods`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
-  `goods_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '商品ID',
-  `goods_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
-  `org_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '机构ID',
-  `goods_no` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '编号',
-  `image` json NOT NULL COMMENT '图片',
-  `attr_show` json NULL COMMENT '展示属性。JSON格式：[{\"name\":\"属性名\",\"val\":\"属性值\"},...]',
-  `attr_opt` json NULL COMMENT '可选属性。通常由不会影响价格和库存的属性组成。JSON格式：[{\"name\":\"属性名\",\"val_arr\":[\"属性值1\",\"属性值2\",...]},...]',
-  `status` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '状态：0上架 1下架',
-  `sort` tinyint UNSIGNED NOT NULL DEFAULT 100 COMMENT '排序值。从大到小排序',
-  PRIMARY KEY (`goods_id`) USING BTREE,
-  INDEX `org_id`(`org_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of goods
--- ----------------------------
-
--- ----------------------------
--- Table structure for goods_attr
--- ----------------------------
-DROP TABLE IF EXISTS `goods_attr`;
-CREATE TABLE `goods_attr`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `attr_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '属性ID',
-  `attr_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
-  `org_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '机构ID',
-  `attr_val_arr` json NOT NULL COMMENT '值。JSON格式：[\"值1\",\"值2\",...]',
-  PRIMARY KEY (`attr_id`) USING BTREE,
-  INDEX `org_id`(`org_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '属性表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of goods_attr
--- ----------------------------
-
--- ----------------------------
--- Table structure for goods_spec
--- ----------------------------
-DROP TABLE IF EXISTS `goods_spec`;
-CREATE TABLE `goods_spec`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `spec_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '规格ID',
-  `goods_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '商品ID',
-  `attr_spec` json NULL COMMENT '规格属性。通常由会影响价格和库存的属性组成。JSON格式：[{\"name\":\"属性名\",\"val\":\"属性值\"},...]',
-  `spec_image` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '图片',
-  `price` decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '价格',
-  `cost_price` decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '成本价',
-  `stock_num` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '库存',
-  `sale_num` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '销量',
-  PRIMARY KEY (`spec_id`) USING BTREE,
-  INDEX `goods_id`(`goods_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品规格表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of goods_spec
--- ----------------------------
-
--- ----------------------------
 -- Table structure for org
 -- ----------------------------
 DROP TABLE IF EXISTS `org`;
@@ -473,7 +406,7 @@ CREATE TABLE `org`  (
   `org_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '机构ID',
   `org_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '机构名称',
   PRIMARY KEY (`org_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '机构表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '机构表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of org
@@ -502,7 +435,7 @@ CREATE TABLE `org_admin`  (
   UNIQUE INDEX `org_id_3`(`org_id` ASC, `email` ASC) USING BTREE,
   UNIQUE INDEX `org_id_4`(`org_id` ASC, `account` ASC) USING BTREE,
   INDEX `org_id`(`org_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '机构管理员表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '机构管理员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of org_admin
@@ -524,7 +457,7 @@ CREATE TABLE `pay`  (
   `balance` decimal(18, 6) UNSIGNED NOT NULL DEFAULT 0.000000 COMMENT '余额',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`pay_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '支付表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '支付表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay
@@ -549,7 +482,7 @@ CREATE TABLE `pay_channel`  (
   PRIMARY KEY (`channel_id`) USING BTREE,
   INDEX `scene_id`(`scene_id` ASC) USING BTREE,
   INDEX `pay_id`(`pay_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '支付通道表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '支付通道表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay_channel
@@ -578,7 +511,7 @@ CREATE TABLE `pay_order`  (
   UNIQUE INDEX `order_no`(`order_no` ASC) USING BTREE,
   INDEX `pay_id`(`pay_id` ASC) USING BTREE,
   INDEX `channel_id`(`channel_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '支付订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '支付订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay_order
@@ -620,7 +553,7 @@ CREATE TABLE `pay_scene`  (
   `scene_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`scene_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '支付场景表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '支付场景表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay_scene
@@ -688,7 +621,7 @@ CREATE TABLE `platform_server`  (
   `local_ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '内网IP',
   PRIMARY KEY (`server_id`) USING BTREE,
   UNIQUE INDEX `network_ip`(`network_ip` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of platform_server
@@ -739,7 +672,7 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `account`(`account` ASC) USING BTREE,
   UNIQUE INDEX `wx_openid`(`wx_openid` ASC) USING BTREE,
   UNIQUE INDEX `wx_unionid`(`wx_unionid` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表（postgresql中user是关键字，使用需要加双引号。程序中考虑与mysql通用，故命名成users）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表（postgresql中user是关键字，使用需要加双引号。程序中考虑与mysql通用，故命名成users）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
