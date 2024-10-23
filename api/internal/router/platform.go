@@ -55,6 +55,7 @@ func InitRouterPlatform(s *ghttp.Server) {
 				group.Bind(auth.NewAction())
 				group.Bind(auth.NewMenu())
 				group.Bind(auth.NewRole())
+				group.Bind(auth.NewScene())
 			})
 
 			group.Group(`/platform`, func(group *ghttp.RouterGroup) {
