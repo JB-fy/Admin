@@ -2,7 +2,7 @@
 // Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
 // =================================================================================
 
-package entity
+package users
 
 import (
 	"github.com/gogf/gf/v2/os/gtime"
