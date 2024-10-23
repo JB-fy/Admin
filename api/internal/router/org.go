@@ -3,9 +3,9 @@ package router
 import (
 	"api/internal/controller"
 	controllerCurrent "api/internal/controller/org"
-	controllerAuth "api/internal/controller/org/auth"
-	controllerMy "api/internal/controller/org/my"
-	controllerOrg "api/internal/controller/org/org"
+	"api/internal/controller/org/auth"
+	"api/internal/controller/org/my"
+	"api/internal/controller/org/org"
 	"api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -41,17 +41,17 @@ func InitRouterOrg(s *ghttp.Server) {
 			})
 
 			group.Group(`/my`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerMy.NewProfile())
-				group.Bind(controllerMy.NewMenu())
-				group.Bind(controllerMy.NewAction())
+				group.Bind(my.NewProfile())
+				group.Bind(my.NewMenu())
+				group.Bind(my.NewAction())
 			})
 
 			group.Group(`/auth`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerAuth.NewRole())
+				group.Bind(auth.NewRole())
 			})
 
 			group.Group(`/org`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerOrg.NewAdmin())
+				group.Bind(org.NewAdmin())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/

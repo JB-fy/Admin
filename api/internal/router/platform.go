@@ -3,14 +3,14 @@ package router
 import (
 	"api/internal/controller"
 	controllerCurrent "api/internal/controller/platform"
-	controllerApp "api/internal/controller/platform/app"
-	controllerAuth "api/internal/controller/platform/auth"
-	controllerMy "api/internal/controller/platform/my"
-	controllerOrg "api/internal/controller/platform/org"
-	controllerPay "api/internal/controller/platform/pay"
-	controllerPlatform "api/internal/controller/platform/platform"
-	controllerUpload "api/internal/controller/platform/upload"
-	controllerUsers "api/internal/controller/platform/users"
+	"api/internal/controller/platform/app"
+	"api/internal/controller/platform/auth"
+	"api/internal/controller/platform/my"
+	"api/internal/controller/platform/org"
+	"api/internal/controller/platform/pay"
+	"api/internal/controller/platform/platform"
+	"api/internal/controller/platform/upload"
+	"api/internal/controller/platform/users"
 	"api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -46,44 +46,43 @@ func InitRouterPlatform(s *ghttp.Server) {
 			})
 
 			group.Group(`/my`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerMy.NewProfile())
-				group.Bind(controllerMy.NewMenu())
-				group.Bind(controllerMy.NewAction())
+				group.Bind(my.NewProfile())
+				group.Bind(my.NewMenu())
+				group.Bind(my.NewAction())
 			})
 
 			group.Group(`/auth`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerAuth.NewAction())
-				group.Bind(controllerAuth.NewMenu())
-				group.Bind(controllerAuth.NewRole())
-				group.Bind(controllerAuth.NewScene())
+				group.Bind(auth.NewAction())
+				group.Bind(auth.NewMenu())
+				group.Bind(auth.NewRole())
 			})
 
 			group.Group(`/platform`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerPlatform.NewAdmin())
-				group.Bind(controllerPlatform.NewConfig())
+				group.Bind(platform.NewAdmin())
+				group.Bind(platform.NewConfig())
 			})
 
 			group.Group(`/upload`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerUpload.NewUpload())
+				group.Bind(upload.NewUpload())
 			})
 
 			group.Group(`/pay`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerPay.NewChannel())
-				group.Bind(controllerPay.NewScene())
-				group.Bind(controllerPay.NewPay())
+				group.Bind(pay.NewChannel())
+				group.Bind(pay.NewScene())
+				group.Bind(pay.NewPay())
 			})
 
 			group.Group(`/app`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerApp.NewApp())
+				group.Bind(app.NewApp())
 			})
 
 			group.Group(`/users`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerUsers.NewUsers())
+				group.Bind(users.NewUsers())
 			})
 
 			group.Group(`/org`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerOrg.NewAdmin())
-				group.Bind(controllerOrg.NewOrg())
+				group.Bind(org.NewAdmin())
+				group.Bind(org.NewOrg())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/

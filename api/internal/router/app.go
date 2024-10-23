@@ -3,9 +3,9 @@ package router
 import (
 	"api/internal/controller"
 	controllerCurrent "api/internal/controller/app"
-	controllerApp "api/internal/controller/app/app"
-	controllerMy "api/internal/controller/app/my"
-	controllerPlatform "api/internal/controller/app/platform"
+	"api/internal/controller/app/app"
+	"api/internal/controller/app/my"
+	"api/internal/controller/app/platform"
 	"api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -31,11 +31,11 @@ func InitRouterApp(s *ghttp.Server) {
 			})
 
 			group.Group(`/platform`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerPlatform.NewConfig())
+				group.Bind(platform.NewConfig())
 			})
 
 			group.Group(`/app`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerApp.NewApp())
+				group.Bind(app.NewApp())
 			})
 		})
 
@@ -57,7 +57,7 @@ func InitRouterApp(s *ghttp.Server) {
 			})
 
 			group.Group(`/my`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerMy.NewProfile())
+				group.Bind(my.NewProfile())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
