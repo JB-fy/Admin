@@ -1,4 +1,4 @@
-package controller
+package pay
 
 import (
 	"api/api"

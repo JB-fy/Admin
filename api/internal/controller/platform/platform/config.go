@@ -1,4 +1,4 @@
-package controller
+package platform
 
 import (
 	"api/api"

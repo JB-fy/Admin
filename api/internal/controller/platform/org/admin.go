@@ -1,4 +1,4 @@
-package controller
+package org
 
 import (
 	"api/api"

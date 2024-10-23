@@ -1,4 +1,4 @@
-package controller
+package upload
 
 import (
 	"api/api"

@@ -108,7 +108,7 @@ func genController(option myGenOption, tpl myGenTpl) {
 		defaultFieldObj.part3 = append(defaultFieldObj.part3, `noAuthField:        []string{`+gstr.Join(controller.noAuth, `, `)+`},`)
 	}
 
-	tplController := `package controller
+	tplController := `package ` + tpl.GetModuleName(`controller`) + `
 
 import (
 	"api/api"

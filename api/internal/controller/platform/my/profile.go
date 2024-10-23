@@ -1,4 +1,4 @@
-package controller
+package my
 
 import (
 	"api/api"
