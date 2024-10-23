@@ -134,7 +134,7 @@ func (logicThis *s` + tpl.LogicStructName + `) verifyData(ctx context.Context, d
 	}
 	logic.Unique()
 
-	tplLogic := `package logic
+	tplLogic := `package ` + tpl.GetModuleName(`logic`) + `
 
 import (
 	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseKebab + `"` + gstr.Join(append([]string{``}, logic.importDao...), `

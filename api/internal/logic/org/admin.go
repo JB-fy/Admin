@@ -1,4 +1,4 @@
-package logic
+package org
 
 import (
 	daoAuth "api/internal/dao/auth"

@@ -1,4 +1,4 @@
-package logic
+package upload
 
 import (
 	daoUpload "api/internal/dao/upload"

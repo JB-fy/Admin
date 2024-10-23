@@ -1,4 +1,4 @@
-package logic
+package pay
 
 import (
 	daoPay "api/internal/dao/pay"

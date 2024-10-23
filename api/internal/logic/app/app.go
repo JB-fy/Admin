@@ -1,4 +1,4 @@
-package logic
+package app
 
 import (
 	daoApp "api/internal/dao/app"

@@ -1,4 +1,4 @@
-package logic
+package org
 
 import (
 	daoOrg "api/internal/dao/org"

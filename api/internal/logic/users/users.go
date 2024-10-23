@@ -1,4 +1,4 @@
-package logic
+package users
 
 import (
 	daoUsers "api/internal/dao/users"
