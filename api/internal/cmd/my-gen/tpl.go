@@ -573,6 +573,15 @@ func (myGenTplThis *myGenTpl) gfGenDao(isOverwriteDao bool) {
 	internal.Command(`表（`+myGenTplThis.Table+`）dao生成`, true, ``, `gf`, commandArg...)
 }
 
+// 判断模块名
+func (myGenTplThis *myGenTpl) GetModuleName(def string) (moduleName string) {
+	moduleName = gstr.CaseSnake(myGenTplThis.ModuleDirCaseCamel)
+	if moduleName == `` {
+		moduleName = def
+	}
+	return
+}
+
 // 判断字段是否与查找字段匹配
 func (myGenTplThis *myGenTpl) IsFindField(field myGenField, find any) (isFind bool) {
 	switch val := find.(type) {

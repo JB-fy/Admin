@@ -1,4 +1,4 @@
-package api
+package auth
 
 import (
 	"github.com/gogf/gf/v2/frame/g"

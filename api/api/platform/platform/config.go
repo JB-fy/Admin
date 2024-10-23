@@ -1,4 +1,4 @@
-package api
+package platform
 
 import (
 	"github.com/gogf/gf/v2/frame/g"

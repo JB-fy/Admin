@@ -106,7 +106,7 @@ func genApi(option myGenOption, tpl myGenTpl) {
 	}
 	api.Unique()
 
-	tplApi := `package api
+	tplApi := `package ` + tpl.GetModuleName(`api`) + `
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
