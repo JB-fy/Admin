@@ -2,7 +2,7 @@ package router
 
 import (
 	"api/internal/controller"
-	controllerCurrent "api/internal/controller/org"
+	controllerIndex "api/internal/controller/org"
 	"api/internal/controller/org/auth"
 	"api/internal/controller/org/my"
 	"api/internal/controller/org/org"
@@ -18,7 +18,7 @@ func InitRouterOrg(s *ghttp.Server) {
 		// 无需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
 			group.Group(`/login`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerCurrent.NewLogin())
+				group.Bind(controllerIndex.NewLogin())
 			})
 		})
 
@@ -27,7 +27,7 @@ func InitRouterOrg(s *ghttp.Server) {
 			group.Middleware(middleware.SceneLoginOfOrg(false))
 
 			group.Group(`/code`, func(group *ghttp.RouterGroup) {
-				group.Bind(controllerCurrent.NewCode())
+				group.Bind(controllerIndex.NewCode())
 			})
 		})
 
