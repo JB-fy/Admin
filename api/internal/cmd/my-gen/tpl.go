@@ -888,7 +888,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 				removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
 			}
 		} else {
-			if gstr.Pos(v, tpl.RemovePrefix) == 0 { //不符合中间表_rel_of_命名的跳过（同模块）
+			if (tpl.RemovePrefix != `` && gstr.Pos(v, tpl.RemovePrefix) == 0) || (tpl.RemovePrefix == `` && gstr.Pos(v, tpl.Table) == 0) { //不符合中间表_rel_of_命名的跳过（同模块）
 				if len(v) != gstr.Pos(v, `_rel_of_`+tpl.Table)+len(`_rel_of_`+tpl.Table) || len(v) != gstr.Pos(v, `_rel_of_`+gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))+len(`_rel_of_`+gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1)) {
 					continue
 				}
