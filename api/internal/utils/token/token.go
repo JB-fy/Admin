@@ -8,7 +8,6 @@ import (
 
 type TokenInfo struct {
 	LoginId string `json:"login_id"`
-	Ip      string `json:"ip"` // 设置Token唯一，且需要验证IP地址时才有用
 }
 
 type Token interface {

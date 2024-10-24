@@ -37,7 +37,7 @@ func (handlerThis *Handler) Create(tokenInfo TokenInfo) (token string, err error
 	}
 
 	if handlerThis.IsUnique {
-		cache.NewTokenIsUnique(handlerThis.Ctx, handlerThis.SceneCode, tokenInfo.LoginId, tokenInfo.Ip).Set(token, handlerThis.Token.GetExpireTime())
+		cache.NewTokenIsUnique(handlerThis.Ctx, handlerThis.SceneCode, tokenInfo.LoginId).Set(token, handlerThis.Token.GetExpireTime())
 	}
 	return
 }
@@ -59,7 +59,7 @@ func (handlerThis *Handler) Parse(token string) (tokenInfo TokenInfo, err error)
 	}
 
 	if handlerThis.IsUnique {
-		if checkToken, _ := cache.NewTokenIsUnique(handlerThis.Ctx, handlerThis.SceneCode, tokenInfo.LoginId, tokenInfo.Ip).Get(); checkToken != token {
+		if checkToken, _ := cache.NewTokenIsUnique(handlerThis.Ctx, handlerThis.SceneCode, tokenInfo.LoginId).Get(); checkToken != token {
 			err = utils.NewErrorCode(handlerThis.Ctx, 39994003, ``)
 			return
 		}
