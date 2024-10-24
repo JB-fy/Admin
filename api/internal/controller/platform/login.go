@@ -88,7 +88,10 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
-	tokenInfo := token.TokenInfo{LoginId: info[daoPlatform.Admin.Columns().AdminId].String()}
+	tokenInfo := token.TokenInfo{
+		LoginId: info[daoPlatform.Admin.Columns().AdminId].String(),
+		Ip:      g.RequestFromCtx(ctx).GetClientIp(),
+	}
 	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneCode).Create(tokenInfo)
 	if err != nil {
 		return

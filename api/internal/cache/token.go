@@ -41,13 +41,13 @@ type tokenIsUnique struct {
 	Key   string
 }
 
-func NewTokenIsUnique(ctx context.Context, sceneCode string, loginId string) *tokenIsUnique {
+func NewTokenIsUnique(ctx context.Context, sceneCode string, loginId string, ip string) *tokenIsUnique {
 	//可在这里写分库逻辑
 	redis := g.Redis()
 	return &tokenIsUnique{
 		Ctx:   ctx,
 		Redis: redis,
-		Key:   fmt.Sprintf(consts.CacheTokenIsUniqueFormat, sceneCode, loginId),
+		Key:   fmt.Sprintf(consts.CacheTokenIsUniqueFormat, sceneCode, loginId, ip),
 	}
 }
 
