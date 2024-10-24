@@ -808,7 +808,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.createType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
 		}
 		if apiField.updateType.GetData() != `` {
-			api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.updateType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
+			api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.updateType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
 		}
 		if apiField.resType.GetData() != `` {
 			api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.resType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" dc:"`+v.FieldDesc+`"`+"`")
@@ -816,7 +816,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 	} else {
 		api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` *[]struct {`+gstr.Join(append([]string{``}, apiTmp.create...), `
 		`)+`
-	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
+	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
 		api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` *[]struct {`+gstr.Join(append([]string{``}, apiTmp.update...), `
 		`)+`
 	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
