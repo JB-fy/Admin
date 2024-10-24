@@ -45,6 +45,7 @@ func InitRouterApp(s *ghttp.Server) {
 
 			group.Group(`/upload`, func(group *ghttp.RouterGroup) {
 				controllerThis := controller.NewUpload()
+				group.Bind(controllerThis.Sign)
 				group.Bind(controllerThis.Config)
 			})
 

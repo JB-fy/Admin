@@ -6,6 +6,7 @@ package users
 
 import (
 	daoIndex "api/internal/dao"
+	"api/internal/dao/users/allow"
 	"api/internal/dao/users/internal"
 	"context"
 	"database/sql"
@@ -18,6 +19,10 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
+
+func init() {
+	allow.RegisterUsers(&Users)
+}
 
 // internalUsersDao is internal type for wrapping internal DAO implements.
 type internalUsersDao = *internal.UsersDao
