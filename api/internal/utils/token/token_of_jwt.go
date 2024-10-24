@@ -59,10 +59,10 @@ func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
 	return &tokenObj
 }
 
-/* type CustomClaims struct {
+type tokenOfJwtClaims struct {
 	jwt.RegisteredClaims
-	LoginId uint `json:"login_id"`
-} */
+	IP string `json:"ip"`
+}
 
 func (tokenThis *TokenOfJwt) Create(tokenInfo TokenInfo) (token string, err error) {
 	privateKeyFunc := func() (privateKey any) {
@@ -74,17 +74,19 @@ func (tokenThis *TokenOfJwt) Create(tokenInfo TokenInfo) (token string, err erro
 		}
 		return
 	}
-	token, err = jwt.NewWithClaims(tokenThis.SignMethod, jwt.RegisteredClaims{
-		ID:        tokenInfo.LoginId,
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(tokenThis.ExpireTime) * time.Second)), // 过期时间
-		IssuedAt:  jwt.NewNumericDate(time.Now()),                                                        // 签发时间
-		NotBefore: jwt.NewNumericDate(time.Now()),                                                        // 生效时间
-	}).SignedString(privateKeyFunc())
+
+	claims := tokenOfJwtClaims{}
+	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Duration(tokenThis.ExpireTime) * time.Second)) // 过期时间
+	claims.IssuedAt = jwt.NewNumericDate(time.Now())                                                         // 签发时间
+	claims.NotBefore = jwt.NewNumericDate(time.Now())                                                        // 生效时间
+	claims.ID = tokenInfo.LoginId
+	claims.IP = tokenInfo.IP
+	token, err = jwt.NewWithClaims(tokenThis.SignMethod, claims).SignedString(privateKeyFunc())
 	return
 }
 
 func (tokenThis *TokenOfJwt) Parse(token string) (tokenInfo TokenInfo, err error) {
-	jwtToken, err := jwt.ParseWithClaims(token, &jwt.RegisteredClaims{}, func(jwtToken *jwt.Token) (any, error) {
+	jwtToken, err := jwt.ParseWithClaims(token, &tokenOfJwtClaims{}, func(jwtToken *jwt.Token) (any, error) {
 		switch jwtToken.Method {
 		case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:
 			return []byte(tokenThis.PrivateKey), nil
@@ -99,12 +101,14 @@ func (tokenThis *TokenOfJwt) Parse(token string) (tokenInfo TokenInfo, err error
 		err = errors.New(`token无效`)
 		return
 	}
-	claims, ok := jwtToken.Claims.(*jwt.RegisteredClaims)
+	claims, ok := jwtToken.Claims.(*tokenOfJwtClaims)
 	if !ok {
 		err = errors.New(`token载体类型错误`)
 		return
 	}
+
 	tokenInfo.LoginId = claims.ID
+	tokenInfo.IP = claims.IP
 	return
 }
 

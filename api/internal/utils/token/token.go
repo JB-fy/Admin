@@ -8,6 +8,7 @@ import (
 
 type TokenInfo struct {
 	LoginId string `json:"login_id"`
+	IP      string `json:"ip"`
 }
 
 type Token interface {
