@@ -20,10 +20,11 @@ logger:
 
 server:
   address: ":20080"
-  openapiPath: "/api.json"
-  swaggerPath: "/swagger"
+  # openapiPath: "/api.json"
+  # swaggerPath: "/swagger"
   # maxHeaderBytes: "10240" # 请求Header大小限制（Byte）。默认为10KB
   # clientMaxBodySize: 104857600 # 客户端最大Body上传限制大小，影响文件上传大小(Byte)。默认为8*1024*1024=8MB
+  # serverRoot: "../public" # 静态文件服务的目录根路径，配置时自动开启。不用nginx代理且需要静态文件服务时使用
   # formParsingMemory: 1048576 # 解析表单时的缓冲区大小(Byte)，一般不需要配置。默认为1024*1024=1MB
   serverAgent: "JB Admin" # 服务端Agent信息。默认为"GoFrame HTTP Server"。建议修改，防止暴露服务器所用技术
   dumpRouterMap: false # 是否在Server启动时打印所有的路由列表。默认为true

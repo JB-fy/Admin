@@ -1,11 +1,13 @@
 package router
 
 import (
+	"context"
+
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/glog"
 )
 
-func InitRouterWebSocket(s *ghttp.Server) {
+func InitRouterWebSocket(ctx context.Context, s *ghttp.Server) {
 	s.BindHandler(`/ws`, func(r *ghttp.Request) {
 		ws, err := r.WebSocket()
 		if err != nil {

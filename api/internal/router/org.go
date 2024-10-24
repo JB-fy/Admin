@@ -7,11 +7,12 @@ import (
 	"api/internal/controller/org/my"
 	"api/internal/controller/org/org"
 	"api/internal/middleware"
+	"context"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
-func InitRouterOrg(s *ghttp.Server) {
+func InitRouterOrg(ctx context.Context, s *ghttp.Server) {
 	s.Group(`/org`, func(group *ghttp.RouterGroup) {
 		group.Middleware(middleware.Scene)
 

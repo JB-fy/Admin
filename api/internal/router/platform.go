@@ -12,11 +12,12 @@ import (
 	"api/internal/controller/platform/upload"
 	"api/internal/controller/platform/users"
 	"api/internal/middleware"
+	"context"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
-func InitRouterPlatform(s *ghttp.Server) {
+func InitRouterPlatform(ctx context.Context, s *ghttp.Server) {
 	s.Group(`/platform`, func(group *ghttp.RouterGroup) {
 		group.Middleware(middleware.Scene)
 

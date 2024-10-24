@@ -51,12 +51,12 @@ var (
 			}
 			s.BindMiddlewareDefault(middleware.HandlerResponse) // 不用规范路由方式可去掉。但如果是规范路由时则必须，且有用log中间件时，必须放在其后面，才能读取到响应数据
 
-			router.InitRouterCommon(s)   //公共接口注册
-			router.InitRouterPlatform(s) //平台后台接口注册
-			router.InitRouterOrg(s)      //机构后台接口注册
-			router.InitRouterApp(s)      //APP接口注册
+			router.InitRouterCommon(ctx, s)   //公共接口注册
+			router.InitRouterPlatform(ctx, s) //平台后台接口注册
+			router.InitRouterOrg(ctx, s)      //机构后台接口注册
+			router.InitRouterApp(ctx, s)      //APP接口注册
 
-			// router.InitRouterWebSocket(s) //WebScoket注册（如需使用，建议把部分全局中间件移到对应接口分组内）
+			// router.InitRouterWebSocket(ctx, s) //WebScoket注册（如需使用，建议把部分全局中间件移到对应接口分组内）
 
 			s.Run()
 			return

@@ -3,12 +3,14 @@ package router
 import (
 	"api/internal/controller"
 	"api/internal/middleware"
+	"context"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gres"
 )
 
-func InitRouterCommon(s *ghttp.Server) {
+func InitRouterCommon(ctx context.Context, s *ghttp.Server) {
 	//首页
 	s.BindHandler(`/`, func(r *ghttp.Request) {
 		r.Response.RedirectTo(`/admin/platform`)
@@ -45,14 +47,13 @@ func InitRouterCommon(s *ghttp.Server) {
 		controllerThis := controller.NewWx()
 		group.Bind(controllerThis.GzhNotify)
 	})
-	//测试
-	s.Group(``, func(group *ghttp.RouterGroup) {
-		group.Bind(controller.NewTest())
-	})
-	//新文档（框架文档使用的https://unpkg.com/redoc@2.0.0-rc.70/bundles/redoc.standalone.js文件可能被墙）
-	s.Group(``, func(group *ghttp.RouterGroup) {
-		group.GET(`/swaggerNew`, func(r *ghttp.Request) {
-			r.Response.Write(`<!DOCTYPE html>
+	//测试环境用
+	if g.Cfg().MustGet(ctx, `dev`).Bool() {
+		s.Group(``, func(group *ghttp.RouterGroup) {
+			group.Bind(controller.NewTest()) //测试
+			// 新文档（框架文档使用的https://unpkg.com/redoc@2.0.0-rc.70/bundles/redoc.standalone.js文件可能被墙）
+			group.GET(`/swaggerNew`, func(r *ghttp.Request) {
+				r.Response.Write(`<!DOCTYPE html>
 <html>
 	<head>
 	<title>API Reference</title>
@@ -70,6 +71,7 @@ func InitRouterCommon(s *ghttp.Server) {
 		<script>` + string(gres.GetContent(`/goframe/swaggerui/redoc.standalone.js`)) + `</script>
 	</body>
 </html>`)
+			})
 		})
-	})
+	}
 }
