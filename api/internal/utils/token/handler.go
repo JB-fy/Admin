@@ -48,7 +48,7 @@ func (handlerThis *Handler) Parse(token string, ip string) (tokenInfo TokenInfo,
 		err = utils.NewErrorCode(handlerThis.Ctx, 39994001, err.Error())
 		return
 	}
-	if ip != tokenInfo.IP {
+	if tokenInfo.IP != `` && tokenInfo.IP != ip {
 		err = utils.NewErrorCode(handlerThis.Ctx, 39994001, ``) //直接使用39994001错误码！不报出具体原因，防止被攻击
 		return
 	}

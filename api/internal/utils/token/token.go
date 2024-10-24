@@ -8,7 +8,7 @@ import (
 
 type TokenInfo struct {
 	LoginId string `json:"login_id"`
-	IP      string `json:"ip"`
+	IP      string `json:"ip"` // 要做验证IP时才用
 }
 
 type Token interface {
