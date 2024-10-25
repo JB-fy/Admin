@@ -7,6 +7,7 @@ export default {
             token_type: 'Token方式',
             expire_time: '过期时间',
             active_time: '失活时间',
+            is_ip: '验证IP',
             is_unique: 'Token唯一',
         },
         token_config_0: {
@@ -43,8 +44,9 @@ export default {
         scene_config: 'JSON格式，根据场景设置',
         token_config: {
             expire_time: '多少秒后Token失效',
-            active_time: '大于0生效，即当Token在一段秒数内未使用，判定失活',
-            is_unique: '开启后，可限制用户多地，多设备登录，因同时只会有一个Token有效（新Token生成时，旧Token会失效）',
+            active_time: '大于0生效，防止长时间无操作（人离开）时，被他人趁机而入（一段秒数内Token未使用，判定失活）',
+            is_ip: '开启后，可防止Token被盗用（验证使用Token时的IP与生成Token时的IP是否一致）',
+            is_unique: '开启后，可限制用户多地、多设备登录（同时只会有一个Token有效，生成新Token时，旧Token失效）',
         },
     },
 }

@@ -16,6 +16,7 @@ const saveForm = reactive({
             token_type: tokenConfig.token_type ?? -1,
             expire_time: tokenConfig.expire_time ?? 14400,
             active_time: tokenConfig.active_time ?? 0,
+            is_ip: tokenConfig.is_ip ?? 0,
             is_unique: tokenConfig.is_unique ?? 0,
         },
         token_config_0: {
@@ -44,6 +45,7 @@ const saveForm = reactive({
             { type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },
         ],
         'token_config.active_time': [{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) }],
+        'token_config.is_ip': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
         'token_config.is_unique': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
         'token_config_0.sign_type': [
             { required: computed((): boolean => (saveForm.data.token_config.token_type == 0 ? true : false)), message: t('validation.required') },
@@ -147,6 +149,18 @@ const saveDrawer = reactive({
                     <el-form-item :label="t('auth.scene.name.token_config.active_time')" prop="token_config.active_time">
                         <el-input-number v-model="saveForm.data.token_config.active_time" :placeholder="t('auth.scene.name.token_config.active_time')" :min="0" :precision="0" :controls="false" />
                         <el-alert :title="t('auth.scene.tip.token_config.active_time')" type="info" :show-icon="true" :closable="false" />
+                    </el-form-item>
+                    <el-form-item :label="t('auth.scene.name.token_config.is_ip')" prop="token_config.is_ip">
+                        <el-switch
+                            v-model="saveForm.data.token_config.is_ip"
+                            :active-value="1"
+                            :inactive-value="0"
+                            :inline-prompt="true"
+                            :active-text="t('common.yes')"
+                            :inactive-text="t('common.no')"
+                            style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success); margin-right: 10px"
+                        />
+                        <el-alert :title="t('auth.scene.tip.token_config.is_ip')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                     <el-form-item :label="t('auth.scene.name.token_config.is_unique')" prop="token_config.is_unique">
                         <el-switch

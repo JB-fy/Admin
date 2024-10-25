@@ -22,8 +22,9 @@ type Handler struct {
 	Ctx        context.Context
 	Token      Token
 	SceneCode  string //场景标识。缓存使用，注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
-	ActiveTime int64  `json:"active_time"` //失活时间。大于0生效，即当Token在一段秒数内未使用，判定失活
-	IsUnique   bool   `json:"is_unique"`   //Token唯一。开启后，可限制用户多地，多设备登录，因同时只会有一个Token有效（新Token生成时，旧Token会失效）
+	ActiveTime int64  `json:"active_time"` //失活时间。大于0生效，防止长时间无操作（人离开）时，被他人趁机而入（一段秒数内Token未使用，判定失活）
+	IsIP       bool   `json:"is_ip"`       //验证IP。开启后，可防止Token被盗用（验证使用Token时的IP与生成Token时的IP是否一致）
+	IsUnique   bool   `json:"is_unique"`   //Token唯一。开启后，可限制用户多地、多设备登录（同时只会有一个Token有效，生成新Token时，旧Token失效）
 }
 
 func (handlerThis *Handler) Create(tokenInfo TokenInfo) (token string, err error) {
@@ -42,14 +43,15 @@ func (handlerThis *Handler) Create(tokenInfo TokenInfo) (token string, err error
 	return
 }
 
+// 不验证IP时，ip传空
 func (handlerThis *Handler) Parse(token string, ip string) (tokenInfo TokenInfo, err error) {
 	tokenInfo, err = handlerThis.Token.Parse(token)
 	if err != nil {
 		err = utils.NewErrorCode(handlerThis.Ctx, 39994001, err.Error())
 		return
 	}
-	if tokenInfo.IP != `` && tokenInfo.IP != ip {
-		err = utils.NewErrorCode(handlerThis.Ctx, 39994001, ``) //直接使用39994001错误码！不报出具体原因，防止被攻击
+	if handlerThis.IsIP && ip != tokenInfo.IP {
+		err = utils.NewErrorCode(handlerThis.Ctx, 39994001, ``) //直接使用39994001错误码！不报出具体原因，防止被攻击（攻击者知道原因会做针对处理）
 		return
 	}
 
