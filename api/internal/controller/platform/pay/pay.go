@@ -129,7 +129,7 @@ func (controllerThis *Pay) Create(ctx context.Context, req *apiPay.PayCreateReq)
 func (controllerThis *Pay) Update(ctx context.Context, req *apiPay.PayUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return

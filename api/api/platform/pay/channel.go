@@ -88,16 +88,16 @@ type ChannelCreateReq struct {
 /*--------修改 开始--------*/
 type ChannelUpdateReq struct {
 	g.Meta      `path:"/channel/update" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付通道" sm:"修改"`
-	Id          uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr       []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	ChannelName *string `json:"channel_name,omitempty" filter:"-" data:"channel_name,omitempty" v:"max-length:30" dc:"名称"`
-	ChannelIcon *string `json:"channel_icon,omitempty" filter:"-" data:"channel_icon,omitempty" v:"max-length:200|url" dc:"图标"`
-	SceneId     *uint   `json:"scene_id,omitempty" filter:"-" data:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
-	PayId       *uint   `json:"pay_id,omitempty" filter:"-" data:"pay_id,omitempty" v:"between:1,4294967295" dc:"支付ID"`
-	PayMethod   *uint   `json:"pay_method,omitempty" filter:"-" data:"pay_method,omitempty" v:"in:0,1,2,3" dc:"支付方法：0APP支付 1H5支付 2扫码支付 3小程序支付"`
-	Sort        *uint   `json:"sort,omitempty" filter:"-" data:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序"`
-	// TotalAmount *float64 `json:"total_amount,omitempty" filter:"-" data:"total_amount,omitempty" v:"between:0,999999999999.99" dc:"总额"`
-	IsStop *uint `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	Id          uint    `json:"-" filter:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr       []uint  `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	ChannelName *string `json:"channel_name,omitempty" filter:"-" v:"max-length:30" dc:"名称"`
+	ChannelIcon *string `json:"channel_icon,omitempty" filter:"-" v:"max-length:200|url" dc:"图标"`
+	SceneId     *uint   `json:"scene_id,omitempty" filter:"-" v:"between:1,4294967295" dc:"场景ID"`
+	PayId       *uint   `json:"pay_id,omitempty" filter:"-" v:"between:1,4294967295" dc:"支付ID"`
+	PayMethod   *uint   `json:"pay_method,omitempty" filter:"-" v:"in:0,1,2,3" dc:"支付方法：0APP支付 1H5支付 2扫码支付 3小程序支付"`
+	Sort        *uint   `json:"sort,omitempty" filter:"-" v:"between:0,255" dc:"排序值。从大到小排序"`
+	// TotalAmount *float64 `json:"total_amount,omitempty" filter:"-" v:"between:0,999999999999.99" dc:"总额"`
+	IsStop *uint `json:"is_stop,omitempty" filter:"-" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

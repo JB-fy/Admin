@@ -129,7 +129,7 @@ func (controllerThis *App) Create(ctx context.Context, req *apiApp.AppCreateReq)
 func (controllerThis *App) Update(ctx context.Context, req *apiApp.AppUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
