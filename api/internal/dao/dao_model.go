@@ -396,6 +396,11 @@ func (daoModelThis *DaoModel) OnConflict(onConflict ...any) *DaoModel {
 	return daoModelThis
 }
 
+func (daoModelThis *DaoModel) Batch(batch int) *DaoModel {
+	daoModelThis.model = daoModelThis.model.Batch(batch)
+	return daoModelThis
+}
+
 func (daoModelThis *DaoModel) Distinct() *DaoModel {
 	daoModelThis.model = daoModelThis.model.Distinct()
 	return daoModelThis
@@ -543,6 +548,15 @@ func (daoModelThis *DaoModel) InsertAndGetId(data ...any) (lastInsertId int64, e
 
 func (daoModelThis *DaoModel) InsertIgnore(data ...any) (result sql.Result, err error) {
 	return daoModelThis.model.InsertIgnore(data...)
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) InsertAndGetAffected(data ...any) (affected int64, err error) {
+	result, err := daoModelThis.model.Insert(data...)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 func (daoModelThis *DaoModel) Update(dataAndWhere ...any) (result sql.Result, err error) {
