@@ -621,11 +621,14 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		table3 string   // 不同模块，公共前缀 + 表后缀一致。规则：tpl.RemovePrefixCommon + tableSuffix
 		table4 string   // 不同模块，表后缀一致。规则：tableSuffix
 		table5 []string // 不同模块，任意字符_ + 表后缀一致。规则：xx_ + tableSuffix。同时存在多个放弃匹配
+		//复数命名表时，上面肯定匹配不到关联表，故再做一次复数命名的关联表匹配
+		table11 string   // 同模块，全部前缀 + 表后缀一致。规则：tpl.RemovePrefix + tableSuffix + `s`
+		table12 []string // 同模块，全部前缀 + 任意字符_ + 表后缀一致。规则：tpl.RemovePrefix + xx_ + tableSuffix + `s`。同时存在多个放弃匹配
+		table13 string   // 不同模块，公共前缀 + 表后缀一致。规则：tpl.RemovePrefixCommon + tableSuffix + `s`
+		table14 string   // 不同模块，表后缀一致。规则：tableSuffix + `s`
+		table15 []string // 不同模块，任意字符_ + 表后缀一致。规则：xx_ + tableSuffix + `s`。同时存在多个放弃匹配
 	}
-	mayBeObj := mayBe{
-		table2: []string{},
-		table5: []string{},
-	}
+	mayBeObj := mayBe{}
 	removePrefixAloneTmp := tpl.RemovePrefixAlone //moduleDir
 	if removePrefixAloneTmp == `` {               //同模块当主表是user,good等无下划线时，找同模块关联表时，表前缀为：当前主表 + `_`
 		removePrefixAloneTmp = gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1) + `_`
@@ -655,17 +658,40 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 			if isSamePrimaryFunc(v) {
 				mayBeObj.table2 = append(mayBeObj.table2, v)
 			}
-		} else if v == tpl.RemovePrefixCommon+tableSuffix { //公共前缀+表名完全一致
+		} else if mayBeObj.table3 == `` && v == tpl.RemovePrefixCommon+tableSuffix { //公共前缀+表名完全一致
 			if isSamePrimaryFunc(v) {
 				mayBeObj.table3 = v
 			}
-		} else if v == tableSuffix { //表名完全一致
+		} else if mayBeObj.table4 == `` && v == tableSuffix { //表名完全一致
 			if isSamePrimaryFunc(v) {
 				mayBeObj.table4 = v
 			}
 		} else if len(v) == gstr.PosR(v, `_`+tableSuffix)+len(`_`+tableSuffix) { //表后缀一致
 			if isSamePrimaryFunc(v) {
 				mayBeObj.table5 = append(mayBeObj.table5, v)
+			}
+		}
+		// 复数命名
+		tableSuffixS := tableSuffix + `s`
+		if mayBeObj.table11 == `` && v == tpl.RemovePrefixCommon+removePrefixAloneTmp+tableSuffixS { //关联表在同模块目录下，且表名一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table11 = v
+			}
+		} else if gstr.Pos(v, tpl.RemovePrefixCommon+removePrefixAloneTmp) == 0 && len(v) == gstr.PosR(v, `_`+tableSuffixS)+len(`_`+tableSuffixS) { //关联表在同模块目录下，但表后缀一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table12 = append(mayBeObj.table12, v)
+			}
+		} else if mayBeObj.table13 == `` && v == tpl.RemovePrefixCommon+tableSuffixS { //公共前缀+表名完全一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table13 = v
+			}
+		} else if mayBeObj.table14 == `` && v == tableSuffixS { //表名完全一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table14 = v
+			}
+		} else if len(v) == gstr.PosR(v, `_`+tableSuffixS)+len(`_`+tableSuffixS) { //表后缀一致
+			if isSamePrimaryFunc(v) {
+				mayBeObj.table15 = append(mayBeObj.table15, v)
 			}
 		}
 	}
@@ -683,6 +709,25 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 				table = mayBeObj.table4
 			} else if len(mayBeObj.table5) > 0 && len(mayBeObj.table5) == 1 {
 				table = mayBeObj.table5[0]
+			}
+		}
+	}
+	//复数命名匹配
+	if table == `` {
+		table = mayBeObj.table11
+		if table == `` {
+			if len(mayBeObj.table12) > 0 {
+				if len(mayBeObj.table12) == 1 {
+					table = mayBeObj.table12[0]
+				}
+			} else {
+				if mayBeObj.table13 != `` {
+					table = mayBeObj.table13
+				} else if mayBeObj.table14 != `` {
+					table = mayBeObj.table14
+				} else if len(mayBeObj.table15) > 0 && len(mayBeObj.table15) == 1 {
+					table = mayBeObj.table15[0]
+				}
 			}
 		}
 	}
