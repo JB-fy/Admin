@@ -84,7 +84,7 @@ type ActionUpdateReq struct {
 	ActionName *string `json:"action_name,omitempty" filter:"-" data:"action_name,omitempty" v:"max-length:30" dc:"名称"`
 	ActionCode *string `json:"action_code,omitempty" filter:"-" data:"action_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	SceneIdArr *[]uint `json:"scene_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"场景ID"`
+	SceneIdArr *[]uint `json:"scene_id_arr,omitempty" filter:"-" data:"scene_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"场景ID"`
 	IsStop     *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 

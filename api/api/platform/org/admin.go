@@ -102,7 +102,7 @@ type AdminUpdateReq struct {
 	Account  *string `json:"account,omitempty" filter:"-" data:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password *string `json:"password,omitempty" filter:"-" data:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	// IsSuper   *uint   `json:"is_super,omitempty" filter:"-" data:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
-	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"角色ID"`
+	RoleIdArr *[]uint `json:"role_id_arr,omitempty" filter:"-" data:"role_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"角色ID"`
 	IsStop    *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
