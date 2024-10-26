@@ -4,14 +4,14 @@
  Source Server         : 本地-Mysql8
  Source Server Type    : MySQL
  Source Server Version : 80033 (8.0.33)
- Source Host           : 192.168.0.200:3306
+ Source Host           : 192.168.1.200:3306
  Source Schema         : admin
 
  Target Server Type    : MySQL
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 30/09/2024 18:02:24
+ Date: 26/10/2024 17:34:34
 */
 
 SET NAMES utf8mb4;
@@ -645,7 +645,7 @@ CREATE TABLE `upload`  (
 -- ----------------------------
 -- Records of upload
 -- ----------------------------
-INSERT INTO `upload` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, 0, '{\"url\": \"http://JB.Admin.com/upload/upload\", \"signKey\": \"secretKey\", \"fileSaveDir\": \"../public/\", \"fileUrlPrefix\": \"http://JB.Admin.com\"}', 1, '此项目自带简易文件上传接口，故可将此项目部署到服务器，对外提供文件上传下载服务');
+INSERT INTO `upload` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, 0, '{\"url\": \"/upload/upload\", \"signKey\": \"secretKey\", \"fileSaveDir\": \"../public/\", \"fileUrlPrefix\": \"\"}', 1, '此项目自带简易文件上传接口，故可将此项目部署到服务器，对外提供文件上传下载服务');
 
 -- ----------------------------
 -- Table structure for users
