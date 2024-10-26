@@ -6,7 +6,7 @@ import (
 )
 
 type UploadConfig struct {
-	Url             *string `json:"url,omitempty" v:"url" dc:"本地-上传地址"`
+	Url             *string `json:"url,omitempty" v:"" dc:"本地-上传地址"`
 	SignKey         *string `json:"signKey,omitempty" v:"" dc:"本地-密钥"`
 	FileSaveDir     *string `json:"fileSaveDir,omitempty" v:"" dc:"本地-保存目录"`
 	FileUrlPrefix   *string `json:"fileUrlPrefix,omitempty" v:"" dc:"本地-文件地址前缀"`

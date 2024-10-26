@@ -29,8 +29,9 @@ export default {
     tip: {
         upload_config: '根据upload_type类型设置',
         upload_config_0: {
-            fileSaveDir: '根据部署的线上环境设置。一般与nginx中设置的网站对外目录一致',
-            fileUrlPrefix: '根据部署的线上环境设置。与文件保存路径拼接形成文件访问地址',
+            url: '统一文件服务器时，请填写完整的http地址',
+            fileSaveDir: '填写main启动文件所在目录与网站对外目录的相对路径，需根据部署环境设置',
+            fileUrlPrefix: '与文件保存路径组成访问地址，需根据部署环境设置。统一文件服务器时，请填写完整的http地址',
         },
         upload_config_1: {
             host: '不含Bucket部分',

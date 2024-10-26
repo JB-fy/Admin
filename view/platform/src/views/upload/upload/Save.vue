@@ -30,7 +30,7 @@ const saveForm = reactive({
         ], */
         'upload_config_0.url': [
             { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
-            { type: 'url', trigger: 'blur', message: t('validation.url') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         'upload_config_0.signKey': [
             { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
@@ -41,8 +41,8 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         'upload_config_0.fileUrlPrefix': [
-            { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
-            { type: 'url', trigger: 'blur', message: t('validation.url') },
+            // { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
         'upload_config_1.host': [
             { required: computed((): boolean => (saveForm.data.upload_type == 1 ? true : false)), message: t('validation.required') },
@@ -125,7 +125,8 @@ const saveDrawer = reactive({
                 </el-form-item> -->
                 <template v-if="saveForm.data.upload_type == 0">
                     <el-form-item :label="t('upload.upload.name.upload_config_0.url')" prop="upload_config_0.url">
-                        <el-input v-model="saveForm.data.upload_config_0.url" :placeholder="t('upload.upload.name.upload_config_0.url')" :clearable="true" />
+                        <el-input v-model="saveForm.data.upload_config_0.url" :placeholder="t('upload.upload.name.upload_config_0.url')" :clearable="true" style="max-width: 300px" />
+                        <el-alert :title="t('upload.upload.tip.upload_config_0.url')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_0.signKey')" prop="upload_config_0.signKey">
                         <el-input v-model="saveForm.data.upload_config_0.signKey" :placeholder="t('upload.upload.name.upload_config_0.signKey')" :clearable="true" />

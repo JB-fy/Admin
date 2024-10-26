@@ -1,9 +1,13 @@
 package upload
 
 import (
+	"api/internal/consts"
+	"api/internal/utils"
 	"context"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -46,6 +50,29 @@ func NewUpload(ctx context.Context, config map[string]any) Upload {
 		return NewUploadOfAliyunOss(ctx, config)
 	// case 0: //本地
 	default:
+		handleUrl := func(strRaw string) (str string) {
+			str = strRaw
+			if gstr.Pos(str, `http`) != 0 {
+				currentUrl := utils.GetRequestUrl(ctx, 0)
+				for _, v := range []string{`0.0.0.0`, `127.0.0.1`} {
+					if gstr.Pos(currentUrl, v) != -1 {
+						if g.Cfg().MustGet(ctx, `dev`).Bool() {
+							currentUrl = gstr.Replace(currentUrl, v, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String(), 1)
+						} else {
+							currentUrl = gstr.Replace(currentUrl, v, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String(), 1)
+						}
+						break
+					}
+				}
+				if str != `` && gstr.Pos(str, `/`) != 0 {
+					str = `/` + str
+				}
+				str = currentUrl + str
+			}
+			return
+		}
+		config[`url`] = handleUrl(gconv.String(config[`url`]))
+		config[`fileUrlPrefix`] = handleUrl(gconv.String(config[`fileUrlPrefix`]))
 		return NewUploadOfLocal(ctx, config)
 	}
 }
