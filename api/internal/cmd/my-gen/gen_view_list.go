@@ -747,6 +747,8 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 ]
             }`
 	case internal.TypeNameFileSuffix: // file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
+		viewListField.width.Method = internal.ReturnTypeName
+		viewListField.width.DataTypeName = `100`
 		viewListField.hidden.Method = internal.ReturnEmpty
 		cellRendererStr := `
                 const fileList = [props.rowData.` + v.FieldRaw + `]`
@@ -938,6 +940,8 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
 				return myGenViewList{}
 			}
 			isReturn = true
+			viewListField.width.Method = internal.ReturnTypeName
+			viewListField.width.DataTypeName = `100`
 			viewListField.hidden.Method = internal.ReturnEmpty
 			viewListField.cellRenderer.Method = internal.ReturnTypeName
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
