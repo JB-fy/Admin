@@ -380,19 +380,27 @@ upload.initSignInfo() //初始化签名信息
                             <el-icon :size="size == 'small' ? 38 : 100" style="width: 100%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"><autoicon-ep-document /></el-icon>
                         </template>
 
-                        <el-icon v-if="size == 'small'" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
+                        <template v-if="size == 'small'">
+                            <span class="el-upload-list__item-actions">
+                                <span v-if="file?.response === undefined" @click="upload.download(file)"><autoicon-ep-download /></span>
+                                <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
+                            </span>
+                            <el-icon v-if="!disabled" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
+                        </template>
                         <template v-else>
                             <label class="el-upload-list__item-status-label">
                                 <el-icon class="el-icon--check"><autoicon-ep-check /></el-icon>
                             </label>
 
-                            <el-icon v-if="['video', 'audio'].includes(upload.showType(file))" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
+                            <template v-if="['video', 'audio'].includes(upload.showType(file))">
+                                <el-icon v-if="!disabled" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
+                            </template>
                             <span v-else class="el-upload-list__item-actions">
                                 <span v-if="upload.showType(file) == 'image'" @click="upload.onPreview(file)"><autoicon-ep-zoom-in /></span>
                                 <!-- 刚上传的文件没必要给下载按钮 -->
                                 <span v-else-if="file?.response === undefined" @click="upload.download(file)"><autoicon-ep-download /></span>
                                 <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
-                                <span @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
+                                <span v-if="!disabled" @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
                             </span>
                         </template>
                     </template>
@@ -497,5 +505,14 @@ upload.initSignInfo() //初始化签名信息
 .upload-container.small :deep(.el-progress__text) {
     min-width: auto;
     font-size: 12px !important;
+}
+
+.upload-container.small :deep(.el-upload-list__item-actions span) {
+    width: 20px;
+    height: 20px;
+}
+
+.upload-container.small :deep(.el-upload-list__item-actions span + span) {
+    margin-left: 5px;
 }
 </style>
