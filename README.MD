@@ -19,8 +19,9 @@
 ```bash
 # 服务启动
 gf run main.go	#未指定子命令时，会默认执行/internal/cmd/cmd.go中main命令的Func方法（可在该方法内使用协程同时启动多个服务）
-gf run main.go -a "--gf.gcfg.file=config.prod.yaml"	#指定配置文件。默认config.yaml
-gf run main.go -a "--gf.gcfg.file=config.prod.yaml http"	#只执行子命令http，即只启动http服务
+gf run main.go -a "--gf.gcfg.file=config.pgsql.yaml"	#指定配置文件。默认config.yaml
+gf run main.go -a "--gf.gcfg.file=config.pgsql.yaml http"	#只启动http服务
+./main --gf.gcfg.file=config.prod.yaml	#编译发布上线后启动，需指定正式环境配置文件
 
 # 代码自动生成（需先编译生成可执行文件。如修改api/internal/cmd/my-gen/目录下的代码，需重新编译才能生效）
 ./main myGen
