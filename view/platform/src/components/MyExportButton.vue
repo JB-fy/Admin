@@ -41,7 +41,11 @@ const exportButton = reactive({
     headerList: computed(() => {
         if (Array.isArray(props.headerList)) {
             return props.headerList.reduce((headerListTmp: { [propName: string]: string }, item: any) => {
-                item.dataKey && (headerListTmp[item.dataKey] = item.title)
+                if (typeof item === 'string') {
+                    headerListTmp[item] = tm(props.i18nPrefix + '.name.' + item)
+                } else if (item.dataKey) {
+                    headerListTmp[item.dataKey] = item.title
+                }
                 return headerListTmp
             }, {})
         }
