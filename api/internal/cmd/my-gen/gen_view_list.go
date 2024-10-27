@@ -747,6 +747,33 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 ]
             }`
 	case internal.TypeNameFileSuffix: // file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
+		viewListField.hidden.Method = internal.ReturnEmpty
+		cellRendererStr := `
+                const fileList = [props.rowData.` + v.FieldRaw + `]`
+		if v.FieldType != internal.TypeVarchar {
+			cellRendererStr = `
+                let fileList: string[]
+                if (Array.isArray(props.rowData.` + v.FieldRaw + `)) {
+                    fileList = props.rowData.` + v.FieldRaw + `
+                } else {
+                    fileList = JSON.parse(props.rowData.` + v.FieldRaw + `)
+                }`
+		}
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
+		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!props.rowData.` + v.FieldRaw + `) {
+                    return
+                }` + cellRendererStr + `
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {fileList.map((item) => {
+                                return <my-upload v-model={item} size="small" disabled={true} /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
+                    </el-scrollbar>,
+                ]
+            }`
 	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
 		viewListField.isI18nTm = true
 		viewListField.hidden.Method = internal.ReturnEmpty
@@ -895,7 +922,7 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                 if (!props.rowData.` + tplEM.FieldVar + `) {
                     return
                 }
-                let videoList: string[] = props.rowData.` + tplEM.FieldVar + `
+                let audioList: string[] = props.rowData.` + tplEM.FieldVar + `
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         <el-space direction="vertical" style="margin: 5px 10px;">
@@ -906,7 +933,28 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                     </el-scrollbar>,
                 ]
             }`
-			// case internal.TypeNameFileSuffix: // file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
+		case internal.TypeNameFileSuffix: // file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
+			if v.FieldType != internal.TypeVarchar {
+				return myGenViewList{}
+			}
+			isReturn = true
+			viewListField.hidden.Method = internal.ReturnEmpty
+			viewListField.cellRenderer.Method = internal.ReturnTypeName
+			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                if (!props.rowData.` + tplEM.FieldVar + `) {
+                    return
+                }
+                let fileList: string[] = props.rowData.` + tplEM.FieldVar + `
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {fileList.map((item) => {
+                                return <my-upload v-model={item} size="small" disabled={true} /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
+                    </el-scrollbar>,
+                ]
+            }`
 		}
 		if isReturn {
 			viewList.Add(viewListField)
