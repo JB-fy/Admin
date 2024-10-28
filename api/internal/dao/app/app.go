@@ -159,9 +159,6 @@ func (daoThis *appDao) HandleAfterField(ctx context.Context, record gdb.Record, 
 			}
 			// m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraConfig)
 			switch record[daoThis.Columns().AppType].Uint() {
-			case 0: //安卓
-				record[`download_url_to_app`] = record[daoThis.Columns().PackageFile]
-				record[`download_url_to_h5`] = record[daoThis.Columns().PackageFile]
 			case 1: //苹果
 				extraConfig := record[daoThis.Columns().ExtraConfig].Map()
 				if _, ok := extraConfig[`marketUrl`]; ok {
@@ -171,6 +168,10 @@ func (daoThis *appDao) HandleAfterField(ctx context.Context, record gdb.Record, 
 					record[`download_url_to_app`] = gvar.New(utils.GetRequestUrl(ctx, 0) + `/自定义的H5下载页`) //苹果企业签不能在APP内做更新，需要跳转网页下载更新
 					record[`download_url_to_h5`] = gvar.New(`itms-services://?action=download-manifest&url=` + gconv.String(extraConfig[`plistFile`]))
 				}
+			// case 0, 2: //安卓	//PC
+			default:
+				record[`download_url_to_app`] = record[daoThis.Columns().PackageFile]
+				record[`download_url_to_h5`] = record[daoThis.Columns().PackageFile]
 			}
 		default:
 			record[v] = gvar.New(nil)

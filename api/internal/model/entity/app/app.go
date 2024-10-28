@@ -14,7 +14,7 @@ type App struct {
 	UpdatedAt   *gtime.Time `json:"updatedAt"   orm:"updated_at"    ` // 更新时间
 	IsStop      uint        `json:"isStop"      orm:"is_stop"       ` // 停用：0否 1是
 	AppId       uint        `json:"appId"       orm:"app_id"        ` // APPID
-	AppType     uint        `json:"appType"     orm:"app_type"      ` // 类型：0安卓 1苹果
+	AppType     uint        `json:"appType"     orm:"app_type"      ` // 类型：0安卓 1苹果 2PC
 	PackageName string      `json:"packageName" orm:"package_name"  ` // 包名
 	PackageFile string      `json:"packageFile" orm:"package_file"  ` // 安装包
 	VerNo       uint        `json:"verNo"       orm:"ver_no"        ` // 版本号

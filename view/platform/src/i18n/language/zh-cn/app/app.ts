@@ -19,6 +19,7 @@ export default {
         app_type: [
             { value: 0, label: '安卓' },
             { value: 1, label: '苹果' },
+            { value: 2, label: 'PC' },
         ],
     },
     tip: {

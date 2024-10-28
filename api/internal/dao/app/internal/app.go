@@ -27,7 +27,7 @@ type AppColumns struct {
 	UpdatedAt   string // 更新时间
 	IsStop      string // 停用：0否 1是
 	AppId       string // APPID
-	AppType     string // 类型：0安卓 1苹果
+	AppType     string // 类型：0安卓 1苹果 2PC
 	PackageName string // 包名
 	PackageFile string // 安装包
 	VerNo       string // 版本号

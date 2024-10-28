@@ -107,8 +107,22 @@ const table = reactive({
             title: t('app.app.name.package_file'),
             key: 'package_file',
             align: 'center',
-            width: 200,
-            hidden: true,
+            width: 100,
+            cellRenderer: (props: any): any => {
+                if (!props.rowData.package_file) {
+                    return
+                }
+                const fileList = [props.rowData.package_file]
+                return [
+                    <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
+                        <el-space direction="vertical" style="margin: 5px 10px;">
+                            {fileList.map((item) => {
+                                return <my-upload v-model={item} size="small" disabled={true} /> //修改宽高时，可同时修改table属性row-height增加行高，则不会显示滚动条
+                            })}
+                        </el-space>
+                    </el-scrollbar>,
+                ]
+            },
         },
         {
             dataKey: 'ver_no',

@@ -19,7 +19,7 @@ type AppInfo struct {
 /*--------详情 开始--------*/
 type AppInfoReq struct {
 	g.Meta       `path:"/app/info" method:"post" tags:"APP/APP" sm:"更新和下载"`
-	AppType      *uint `json:"app_type,omitempty" v:"required|in:0,1" dc:"类型：0安卓 1苹果"`
+	AppType      *uint `json:"app_type,omitempty" v:"required|in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
 	CurrentVerNo *uint `json:"current_ver_no,omitempty" v:"between:0,4294967295" dc:"当前版本号。作用：判断APP是否需要更新，不需要返回的info为空"`
 }
 
