@@ -12,7 +12,7 @@
         vi /server/tool/cassandra-4.1.7/conf/cassandra.yaml
 # 集群名称，确保所有节点的集群名称相同
 cluster_name: 'Test Cluster'
-# 种子节点列表，用于初始化集群
+# 种子节点列表，用于当前节点与种子节点通讯，确保加入集群和状态同步
 seed_provider:
     - class_name: org.apache.cassandra.locator.SimpleSeedProvider
         parameters:
