@@ -7,13 +7,11 @@ import (
 	"context"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
-	"github.com/gogf/gf/v2/os/gfile"
 )
 
 var (
@@ -64,12 +62,17 @@ var (
 						r.Response.Header().Set(`Content-Disposition`, `attachment`) // 浏览器打开文件地址时，变为下载而不是显示
 					}
 				})
-				// 前端文件处理，无法做到nginx一样的效果：try_files $uri @backend;
-				s.BindHookHandler(`/admin/*`, ghttp.HookBeforeServe, func(r *ghttp.Request) {
-					pathArr := strings.Split(r.URL.Path, `/`)
-					path := `/` + pathArr[1] + `/` + pathArr[2]
-					if len(pathArr) > 3 && gfile.IsFile(serverRoot+path+`/index.html`) {
-						r.Response.RedirectTo(path)
+				// 无法做到nginx一样的效果：location ~ ^/admin/([^/]*) { try_files $uri /admin/$1/index.html @backend; }
+				// 	如访问/admin/platform/auth/scene时：
+				//		无后台登录Token时：
+				//			当前代码只能跳转前端入口文件，最后调用js跳转：/admin/platform/login?redirect=/
+				//			nginx能正常跳转（能调用前端入口文件）：/admin/platform/login?redirect=/auth/scene
+				//		有后台登录Token时：
+				//			当前代码只能跳转前端入口文件，访问：/admin/platform/
+				//			nginx能正常访问（能调用前端入口文件）：/admin/platform/auth/scene
+				s.BindHookHandler(`/admin/:vueDir/*vueRouterPath`, ghttp.HookBeforeServe, func(r *ghttp.Request) {
+					if r.Get(`vueRouterPath`).String() != `` {
+						r.Response.RedirectTo(`/admin/` + r.Get(`vueDir`).String())
 					}
 				})
 			}
