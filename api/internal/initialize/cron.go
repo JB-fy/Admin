@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"api/internal/consts"
+	"api/internal/utils"
 	"context"
 	"fmt"
 
@@ -10,10 +11,8 @@ import (
 )
 
 func initCron(ctx context.Context) {
-	if !g.Cfg().MustGet(ctx, `dev`).Bool() {
-		if g.Cfg().MustGet(ctx, `cronServerNetworkIp`).String() != g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String() {
-			return
-		}
+	if !utils.IsDev(ctx) && g.Cfg().MustGet(ctx, `cronServerNetworkIp`).String() != g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String() {
+		return
 	}
 
 	// myCronThis := myCron{}

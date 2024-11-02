@@ -52,7 +52,7 @@ func (emailThis *EmailOfCommon) SendCode(toEmail string, code string) (err error
 func (emailThis *EmailOfCommon) SendEmail(toEmailArr []string, message string) (err error) {
 	// 设置TLS配置
 	tlsConfig := &tls.Config{ServerName: emailThis.SmtpHost}
-	// tlsConfig.InsecureSkipVerify = true // 在开发或测试环境中可以设置为true，但在生产环境中应该验证服务器证书
+	// tlsConfig.InsecureSkipVerify = true // 在开发环境中可以设置为true，但在生产环境中应该验证服务器证书
 
 	// 连接到SMTP服务器
 	conn, err := tls.Dial(`tcp`, emailThis.SmtpHost+`:`+emailThis.SmtpPort, tlsConfig)

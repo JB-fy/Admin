@@ -80,9 +80,9 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	/*--------数据操作示例 结束--------*/
 
 	/*--------配置使用示例 开始--------*/
-	// genv.Set(`X_X`, `xx`)              // key必须由大写和_组成
-	// g.Cfg().MustGetWithEnv(ctx, `X_X`) // X_X或x_x或x.x方法都可以读取到
-	// g.Cfg().MustGet(ctx, `dev`)        // 获取配置参数
+	// genv.Set(`X_X`, `xx`)                        // key必须由大写和_组成
+	// g.Cfg().MustGetWithEnv(ctx, `X_X`)           // X_X或x_x或x.x方法都可以读取到
+	// g.Cfg().MustGet(ctx, `logger.http.isRecord`) // 获取配置参数
 	/*--------配置使用示例 结束--------*/
 
 	/*--------日志使用示例 开始--------*/

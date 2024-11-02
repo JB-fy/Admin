@@ -56,7 +56,7 @@ func NewUpload(ctx context.Context, config map[string]any) Upload {
 				currentUrl := utils.GetRequestUrl(ctx, 0)
 				for _, v := range []string{`0.0.0.0`, `127.0.0.1`} {
 					if gstr.Pos(currentUrl, v) != -1 {
-						if g.Cfg().MustGet(ctx, `dev`).Bool() {
+						if utils.IsDev(ctx) {
 							currentUrl = gstr.Replace(currentUrl, v, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String(), 1)
 						} else {
 							currentUrl = gstr.Replace(currentUrl, v, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String(), 1)

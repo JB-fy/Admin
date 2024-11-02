@@ -3,9 +3,9 @@ package router
 import (
 	"api/internal/controller"
 	"api/internal/middleware"
+	"api/internal/utils"
 	"context"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gres"
 )
@@ -47,8 +47,8 @@ func InitRouterCommon(ctx context.Context, s *ghttp.Server) {
 		controllerThis := controller.NewWx()
 		group.Bind(controllerThis.GzhNotify)
 	})
-	//测试环境用
-	if g.Cfg().MustGet(ctx, `dev`).Bool() {
+	//开发环境用
+	if utils.IsDev(ctx) {
 		s.Group(``, func(group *ghttp.RouterGroup) {
 			group.Bind(controller.NewTest()) //测试
 			// 新文档（框架文档使用的https://unpkg.com/redoc@2.0.0-rc.70/bundles/redoc.standalone.js文件可能被墙）

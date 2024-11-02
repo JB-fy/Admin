@@ -54,7 +54,7 @@ func HandlerResponse(r *ghttp.Request) {
 				code = utils.NewCode(r.GetCtx(), 29991062, ``, g.Map{`i18nValues`: []any{match[1]}})
 			} else {
 				msg := ``
-				if g.Cfg().MustGet(r.GetCtx(), `dev`).Bool() { //开发环境抛出sql错误语句
+				if utils.IsDev(r.GetCtx()) { //开发环境抛出sql错误语句
 					msg = err.Error()
 				}
 				code = utils.NewCode(r.GetCtx(), 29999999, msg)

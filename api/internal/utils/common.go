@@ -18,6 +18,11 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
+// 是否开发环境
+func IsDev(ctx context.Context) bool {
+	return g.Cfg().MustGet(ctx, `dev`).Bool()
+}
+
 // 生成错误码
 func NewCode(ctx context.Context, code int, msg string, dataOpt ...any) gcode.Code {
 	var data any
