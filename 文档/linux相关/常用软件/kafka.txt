@@ -1,0 +1,43 @@
+    1、解压安装包
+        tar -xvf kafka_2.13-3.8.1.tgz
+    2、移动到指定目录
+        mv /server/kafka_2.13-3.8.1 /server/tool/kafka_2.13-3.8.1
+    3、配置
+        vi /server/tool/kafka_2.13-3.8.1/config/kraft/server.properties
+# 节点角色
+process.roles=broker,controller
+# 节点标识
+node.id=1
+# 指定控制器（Controller）节点的列表。控制器节点负责管理集群的元数据，包括主题、分区、副本等信息。以确保控制器节点之间的高可用性和容错能力
+controller.quorum.voters=1@192.168.0.200:9093,2@192.168.1.200:9093
+# 监听的地址和端口
+listeners=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+# 客户端连接节点的地址
+advertised.listeners=PLAINTEXT://192.168.0.200:9092
+# 日志目录
+log.dirs=/server/tool/kafka_2.13-3.8.1/log
+
+    4、常用命令
+        生成集群UUID（也可自定义）：/server/tool/kafka_2.13-3.8.1/bin/kafka-storage.sh random-uuid
+        初始化元数据（所有节点都必须做）：/server/tool/kafka_2.13-3.8.1/bin/kafka-storage.sh format -t 集群UUID -c /server/tool/kafka_2.13-3.8.1/config/kraft/server.properties
+        启动：/server/tool/kafka_2.13-3.8.1/bin/kafka-server-start.sh /server/tool/kafka_2.13-3.8.1/config/kraft/server.properties
+        关闭：/server/tool/kafka_2.13-3.8.1/bin/kafka-server-stop.sh
+    5、编辑自启动文件
+        vi /etc/systemd/system/kafka_2.13-3.8.1.service
+[Unit]
+Description=kafka_2.13-3.8.1
+After=network.target
+[Service]
+Type=forking
+ExecStart=/server/tool/kafka_2.13-3.8.1/bin/kafka-server-start.sh /server/tool/kafka_2.13-3.8.1/config/kraft/server.properties
+ExecStop=/server/tool/kafka_2.13-3.8.1/bin/kafka-server-stop.sh
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
+
+    6、设置自启动
+        systemctl enable kafka_2.13-3.8.1
+    7、设置环境变量增加以下目录（参考linux常用命令）
+        /server/tool/kafka_2.13-3.8.1/bin
+    8、服务器对外开放配置文件中设置对外使用的端口（需要重启防火墙生效）
+        firewall-cmd --zone=public --add-port=9092/tcp --permanent
