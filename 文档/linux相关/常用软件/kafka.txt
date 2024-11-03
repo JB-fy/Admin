@@ -28,7 +28,7 @@ log.dirs=/server/tool/kafka_2.13-3.8.1/log
 Description=kafka_2.13-3.8.1
 After=network.target
 [Service]
-Type=forking
+Type=simple
 ExecStart=/server/tool/kafka_2.13-3.8.1/bin/kafka-server-start.sh /server/tool/kafka_2.13-3.8.1/config/kraft/server.properties
 ExecStop=/server/tool/kafka_2.13-3.8.1/bin/kafka-server-stop.sh
 PrivateTmp=true
