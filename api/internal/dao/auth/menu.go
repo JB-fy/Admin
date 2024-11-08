@@ -90,6 +90,8 @@ func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().MenuName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().MenuName:
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
+			case daoThis.Columns().MenuName + `_eq`:
+				m = m.Where(daoModel.DbTable+`.`+k, v)
 			case `p_id_path_of_old`: //父级ID路径（旧）
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().IdPath, gconv.String(v)+`-%`)
 			case `time_range_start`:
