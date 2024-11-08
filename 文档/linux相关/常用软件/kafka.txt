@@ -22,6 +22,11 @@ log.dirs=/server/tool/kafka_2.13-3.8.1/log
         初始化元数据（所有节点都必须做）：/server/tool/kafka_2.13-3.8.1/bin/kafka-storage.sh format -t 集群UUID -c /server/tool/kafka_2.13-3.8.1/config/kraft/server.properties
         启动：/server/tool/kafka_2.13-3.8.1/bin/kafka-server-start.sh /server/tool/kafka_2.13-3.8.1/config/kraft/server.properties
         关闭：/server/tool/kafka_2.13-3.8.1/bin/kafka-server-stop.sh
+
+        主题查询：/server/tool/kafka_2.13-3.8.1/bin/kafka-topics.sh --list --bootstrap-server 连接地址1,连接地址2
+        主题创建：/server/tool/kafka_2.13-3.8.1/bin/kafka-topics.sh --create --topic 主题名 --bootstrap-server 连接地址1,连接地址2 --partitions 10 --replication-factor 1
+        发布消息：/server/tool/kafka_2.13-3.8.1/bin/kafka-console-producer.sh --broker-list 连接地址1,连接地址2 --topic 主题名
+        消费消息：/server/tool/kafka_2.13-3.8.1/bin/kafka-console-consumer.sh --bootstrap-server 连接地址1,连接地址2 --topic 主题名 --from-beginning
     5、编辑自启动文件
         vi /etc/systemd/system/kafka_2.13-3.8.1.service
 [Unit]
