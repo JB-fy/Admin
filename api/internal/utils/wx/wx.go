@@ -6,6 +6,6 @@ import (
 )
 
 func NewWxGzhByPfCfg(ctx context.Context) *WxGzh {
-	config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `wxGzh`).Value(daoPlatform.Config.Columns().ConfigValue)
-	return NewWxGzh(ctx, config.Map())
+	config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `wxGzh`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
+	return NewWxGzh(ctx, config)
 }

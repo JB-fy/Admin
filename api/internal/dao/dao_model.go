@@ -769,6 +769,15 @@ func (daoModelThis *DaoModel) ValueInt64(fieldsAndWhere ...any) (int64, error) {
 	return result.Int64(), nil
 }
 
+// 封装常用方法
+func (daoModelThis *DaoModel) ValueMap(fieldsAndWhere ...any) (g.Map, error) {
+	result, err := daoModelThis.Value(fieldsAndWhere...)
+	if err != nil {
+		return nil, err
+	}
+	return result.Map(), nil
+}
+
 func (daoModelThis *DaoModel) HasField(field string) (bool, error) {
 	return daoModelThis.model.HasField(field)
 }

@@ -27,7 +27,7 @@ func NewIdCard(ctx context.Context, idCardTypeOpt ...string) IdCard {
 	switch idCardType {
 	// case `idCardOfAliyun`:
 	default:
-		config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `idCardOfAliyun`).Value(daoPlatform.Config.Columns().ConfigValue)
-		return NewIdCardOfAliyun(ctx, config.Map())
+		config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `idCardOfAliyun`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
+		return NewIdCardOfAliyun(ctx, config)
 	}
 }

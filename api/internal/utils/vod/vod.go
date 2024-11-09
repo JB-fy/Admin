@@ -24,8 +24,8 @@ func NewVod(ctx context.Context, vodTypeOpt ...string) Vod {
 	switch vodType {
 	// case `vodOfAliyun`:
 	default:
-		config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `vodOfAliyun`).Value(daoPlatform.Config.Columns().ConfigValue)
-		return NewVodOfAliyun(ctx, config.Map())
+		config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `vodOfAliyun`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
+		return NewVodOfAliyun(ctx, config)
 	}
 }
 

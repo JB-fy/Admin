@@ -21,7 +21,7 @@ func NewSms(ctx context.Context, smsTypeOpt ...string) Sms {
 	switch smsType {
 	// case `smsOfAliyun`:
 	default:
-		config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `smsOfAliyun`).Value(daoPlatform.Config.Columns().ConfigValue)
-		return NewSmsOfAliyun(ctx, config.Map())
+		config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `smsOfAliyun`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
+		return NewSmsOfAliyun(ctx, config)
 	}
 }
