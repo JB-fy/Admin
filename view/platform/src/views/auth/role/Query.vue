@@ -58,7 +58,7 @@ const queryForm = reactive({
             <my-cascader
                 v-model="queryCommon.data.menu_id"
                 :placeholder="t('auth.role.name.menu_id_arr')"
-                :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { scene_id: queryCommon.data.scene_id } } }"
+                :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { scene_id: queryCommon.data.scene_id, is_stop: 0 } } }"
                 :props="{ emitPath: false }"
             />
         </el-form-item>
