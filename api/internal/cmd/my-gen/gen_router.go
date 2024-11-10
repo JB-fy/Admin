@@ -9,11 +9,11 @@ import (
 
 // 后端路由生成
 func genRouter(option myGenOption, tpl myGenTpl) {
-	saveFile := gfile.SelfDir() + `/internal/router/` + option.SceneCode + `.go`
+	saveFile := gfile.SelfDir() + `/internal/router/` + option.SceneId + `.go`
 	tplRouter := gfile.GetContents(saveFile)
 
 	moduleName := tpl.GetModuleName(`controller`)
-	importControllerStr := `"api/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `"`
+	importControllerStr := `"api/internal/controller/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `"`
 	if gstr.Pos(tplRouter, importControllerStr) == -1 {
 		tplRouter = gstr.Replace(tplRouter, `"api/internal/middleware"`, importControllerStr+`
 	"api/internal/middleware"`, 1)

@@ -25,7 +25,7 @@ func init() {
 func (logicThis *sPlatformAdmin) verifyData(ctx context.Context, data map[string]any) (err error) {
 	if _, ok := data[`role_id_arr`]; ok && len(gconv.SliceUint(data[`role_id_arr`])) > 0 {
 		roleIdArr := gconv.SliceUint(data[`role_id_arr`])
-		sceneId, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).Value(daoAuth.Scene.Columns().SceneId)
+		sceneId, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, `platform`).Value(daoAuth.Scene.Columns().SceneId)
 		if count, _ := daoAuth.Role.CtxDaoModel(ctx).Filter(daoAuth.Role.Columns().RoleId, roleIdArr).Filter(daoAuth.Role.Columns().SceneId, sceneId).Count(); count != len(roleIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.role`)}})
 			return

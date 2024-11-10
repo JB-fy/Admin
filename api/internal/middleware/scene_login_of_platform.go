@@ -26,7 +26,7 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 		}
 
 		sceneInfo := utils.GetCtxSceneInfo(r.GetCtx())
-		tokenInfo, err := utilsToken.NewHandler(r.GetCtx(), sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneInfo[daoAuth.Scene.Columns().SceneCode].String()).Parse(token, r.GetClientIp())
+		tokenInfo, err := utilsToken.NewHandler(r.GetCtx(), sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneInfo[daoAuth.Scene.Columns().SceneId].String()).Parse(token, r.GetClientIp())
 		if err != nil {
 			if isForce {
 				r.SetError(err)

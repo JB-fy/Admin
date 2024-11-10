@@ -223,7 +223,7 @@ type ` + tpl.TableCaseCamel + `TreeRes struct {
 `
 	}
 
-	saveFile := gfile.SelfDir() + `/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/api/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	gfile.PutContents(saveFile, tplApi)
 	utils.GoFileFmt(saveFile)
 }

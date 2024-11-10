@@ -35,8 +35,8 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq)
 	}
 
 	/* sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
-	switch sceneCode {
+	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
+	switch sceneId {
 	case `app`:
 	default:
 		err = utils.NewErrorCode(ctx, 39999998, ``)
@@ -80,7 +80,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	}
 
 	var payReqData pay.PayReqData
-	switch utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneCode].String() {
+	switch utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String() {
 	case `app`:
 		loginInfo := utils.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {

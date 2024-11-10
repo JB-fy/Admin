@@ -13,5 +13,5 @@ type ActionRelToScene struct {
 	CreatedAt *gtime.Time `json:"createdAt" orm:"created_at" ` // 创建时间
 	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updated_at" ` // 更新时间
 	ActionId  uint        `json:"actionId"  orm:"action_id"  ` // 操作ID
-	SceneId   uint        `json:"sceneId"   orm:"scene_id"   ` // 场景ID
+	SceneId   string      `json:"sceneId"   orm:"scene_id"   ` // 场景ID
 }

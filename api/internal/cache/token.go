@@ -15,13 +15,13 @@ type tokenActive struct {
 	Key   string
 }
 
-func NewTokenActive(ctx context.Context, sceneCode string, loginId string) *tokenActive {
+func NewTokenActive(ctx context.Context, sceneId string, loginId string) *tokenActive {
 	//可在这里写分库逻辑
 	redis := g.Redis()
 	return &tokenActive{
 		Ctx:   ctx,
 		Redis: redis,
-		Key:   fmt.Sprintf(consts.CacheTokenActiveFormat, sceneCode, loginId),
+		Key:   fmt.Sprintf(consts.CacheTokenActiveFormat, sceneId, loginId),
 	}
 }
 
@@ -41,13 +41,13 @@ type tokenIsUnique struct {
 	Key   string
 }
 
-func NewTokenIsUnique(ctx context.Context, sceneCode string, loginId string) *tokenIsUnique {
+func NewTokenIsUnique(ctx context.Context, sceneId string, loginId string) *tokenIsUnique {
 	//可在这里写分库逻辑
 	redis := g.Redis()
 	return &tokenIsUnique{
 		Ctx:   ctx,
 		Redis: redis,
-		Key:   fmt.Sprintf(consts.CacheTokenIsUniqueFormat, sceneCode, loginId),
+		Key:   fmt.Sprintf(consts.CacheTokenIsUniqueFormat, sceneId, loginId),
 	}
 }
 

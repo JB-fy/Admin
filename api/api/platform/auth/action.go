@@ -13,7 +13,7 @@ type ActionInfo struct {
 	ActionName *string     `json:"action_name,omitempty" dc:"名称"`
 	ActionCode *string     `json:"action_code,omitempty" dc:"标识"`
 	Remark     *string     `json:"remark,omitempty" dc:"备注"`
-	SceneIdArr []uint      `json:"scene_id_arr,omitempty" dc:"场景ID"`
+	SceneIdArr []string    `json:"scene_id_arr,omitempty" dc:"场景ID"`
 	IsStop     *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt  *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt  *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
@@ -30,7 +30,7 @@ type ActionFilter struct {
 	ActionId       *uint       `json:"action_id,omitempty" v:"between:1,4294967295" dc:"操作ID"`
 	ActionName     string      `json:"action_name,omitempty" v:"max-length:30" dc:"名称"`
 	ActionCode     string      `json:"action_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
-	SceneId        *uint       `json:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
+	SceneId        string      `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
@@ -67,11 +67,11 @@ type ActionInfoRes struct {
 /*--------新增 开始--------*/
 type ActionCreateReq struct {
 	g.Meta     `path:"/action/create" method:"post" tags:"平台后台/权限管理/操作" sm:"新增"`
-	ActionName *string `json:"action_name,omitempty" v:"required|max-length:30" dc:"名称"`
-	ActionCode *string `json:"action_code,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
-	Remark     *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	SceneIdArr *[]uint `json:"scene_id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"场景ID"`
-	IsStop     *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	ActionName *string   `json:"action_name,omitempty" v:"required|max-length:30" dc:"名称"`
+	ActionCode *string   `json:"action_code,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
+	Remark     *string   `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
+	SceneIdArr *[]string `json:"scene_id_arr,omitempty" v:"required|distinct|foreach|length:1,15" dc:"场景ID"`
+	IsStop     *uint     `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------新增 结束--------*/
@@ -79,13 +79,13 @@ type ActionCreateReq struct {
 /*--------修改 开始--------*/
 type ActionUpdateReq struct {
 	g.Meta     `path:"/action/update" method:"post" tags:"平台后台/权限管理/操作" sm:"修改"`
-	Id         uint    `json:"-" filter:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr      []uint  `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	ActionName *string `json:"action_name,omitempty" filter:"-" v:"max-length:30" dc:"名称"`
-	ActionCode *string `json:"action_code,omitempty" filter:"-" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
-	Remark     *string `json:"remark,omitempty" filter:"-" v:"max-length:120" dc:"备注"`
-	SceneIdArr *[]uint `json:"scene_id_arr,omitempty" filter:"-" v:"distinct|foreach|between:1,4294967295" dc:"场景ID"`
-	IsStop     *uint   `json:"is_stop,omitempty" filter:"-" v:"in:0,1" dc:"停用：0否 1是"`
+	Id         uint      `json:"-" filter:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr      []uint    `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	ActionName *string   `json:"action_name,omitempty" filter:"-" v:"max-length:30" dc:"名称"`
+	ActionCode *string   `json:"action_code,omitempty" filter:"-" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
+	Remark     *string   `json:"remark,omitempty" filter:"-" v:"max-length:120" dc:"备注"`
+	SceneIdArr *[]string `json:"scene_id_arr,omitempty" filter:"-" v:"distinct|foreach|length:1,15" dc:"场景ID"`
+	IsStop     *uint     `json:"is_stop,omitempty" filter:"-" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

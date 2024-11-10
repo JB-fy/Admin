@@ -113,7 +113,7 @@ type myGenOption struct {
 	IsAuthAction bool       `json:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
 	CommonName   string     `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
 	IsView       bool       `json:"isView"`       //是否生成前端视图文件
-	SceneCode    string     `json:"sceneCode"`    //场景标识，必须在数据库表auth_scene已存在。示例：platform
+	SceneId      string     `json:"sceneId"`      //场景标识，必须在数据库表auth_scene已存在。示例：platform
 	IsList       bool       `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
 	IsCount      bool       `json:"isCount" `     //列表接口是否返回总数
 	IsInfo       bool       `json:"isInfo" `      //是否生成详情接口
@@ -148,7 +148,7 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 		genViewRouter(option, tpl) // 前端路由生成
 		genMenu(ctx, option, tpl)  // 菜单生成
 
-		internal.Command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneCode, `npm`, `run`, `format`) // 前端代码格式化
+		internal.Command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneId, `npm`, `run`, `format`) // 前端代码格式化
 	}
 
 	logMyGenCommand(option, append(append(tpl.Handle.ExtendTableCmdLog, tpl.Handle.MiddleTableCmdLog...), tpl.Handle.OtherRelTableCmdLog...)) // 记录myGen命令
@@ -308,17 +308,17 @@ isViewEnd:
 	}
 	if option.IsApi || option.IsView {
 		// 场景标识
-		if option.SceneCode == `` {
-			option.SceneCode = gcmd.Scan(color.BlueString(`> 请输入场景标识：`))
+		if option.SceneId == `` {
+			option.SceneId = gcmd.Scan(color.BlueString(`> 请输入场景标识：`))
 		}
 		for {
-			if option.SceneCode != `` {
-				option.SceneInfo, _ = daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, option.SceneCode).One()
+			if option.SceneId != `` {
+				option.SceneInfo, _ = daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, option.SceneId).One()
 				if !option.SceneInfo.IsEmpty() {
 					break
 				}
 			}
-			option.SceneCode = gcmd.Scan(color.RedString(`    场景标识不存在，请重新输入：`))
+			option.SceneId = gcmd.Scan(color.RedString(`    场景标识不存在，请重新输入：`))
 		}
 
 	noAllRestart:
@@ -458,7 +458,7 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 	myGenCommandArr = append(myGenCommandArr, `-isView=`+gconv.String(gconv.Uint(option.IsView)))
 	if option.IsApi || option.IsView {
 		myGenCommandArr = append(myGenCommandArr,
-			`-sceneCode=`+option.SceneCode,
+			`-sceneId=`+option.SceneId,
 			`-isList=`+gconv.String(gconv.Uint(option.IsList)),
 			`-isCount=`+gconv.String(gconv.Uint(option.IsCount)),
 			`-isInfo=`+gconv.String(gconv.Uint(option.IsInfo)),
@@ -470,7 +470,7 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 	logStr := myGenCommand + gstr.Join(append([]string{``}, tableCmdLog...), `
     `)
 
-	saveFileName := option.SceneCode
+	saveFileName := option.SceneId
 	if !(option.IsApi || option.IsView) {
 		saveFileName = `gen_dao`
 	}

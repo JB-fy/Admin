@@ -144,7 +144,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	}
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
+	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	code := grand.Digits(4)
 	switch req.Scene {
 	case 0, 1, 2, 3, 4, 5:
@@ -155,6 +155,6 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	if err != nil {
 		return
 	}
-	err = cache.NewCode(ctx, sceneCode, to, req.Scene).Set(code, 5*60)
+	err = cache.NewCode(ctx, sceneId, to, req.Scene).Set(code, 5*60)
 	return
 }

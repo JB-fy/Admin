@@ -112,7 +112,7 @@ func genController(option myGenOption, tpl myGenTpl) {
 
 import (
 	"api/api"
-	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `"
+	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `"
 	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseKebab + `"` + gstr.Join(append([]string{``}, controller.importDao...), `
 	`) + `
 	"api/internal/service"
@@ -371,7 +371,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 `
 	}
 
-	saveFile := gfile.SelfDir() + `/internal/controller/` + option.SceneCode + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/internal/controller/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	gfile.PutContents(saveFile, tplController)
 	utils.GoFileFmt(saveFile)
 }

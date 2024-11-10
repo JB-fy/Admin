@@ -49,8 +49,8 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		case `sms_code_to_bind_phone`:
 			phone := gconv.String(data[`phone`])
 			sceneInfo := utils.GetCtxSceneInfo(ctx)
-			sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
-			code, _ := cache.NewCode(ctx, sceneCode, phone, 4).Get() //场景：4绑定(手机)
+			sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
+			code, _ := cache.NewCode(ctx, sceneId, phone, 4).Get() //场景：4绑定(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -59,8 +59,8 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		case `email_code_to_bind_email`:
 			email := gconv.String(data[`email`])
 			sceneInfo := utils.GetCtxSceneInfo(ctx)
-			sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
-			code, _ := cache.NewCode(ctx, sceneCode, email, 14).Get() //场景：14绑定(邮箱)
+			sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
+			code, _ := cache.NewCode(ctx, sceneId, email, 14).Get() //场景：14绑定(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return

@@ -25,13 +25,10 @@ const queryForm = reactive({
 <template>
     <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
         <el-form-item prop="id">
-            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :precision="0" :controls="false" />
+            <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :maxlength="15" :clearable="true" />
         </el-form-item>
         <el-form-item prop="scene_name">
             <el-input v-model="queryCommon.data.scene_name" :placeholder="t('auth.scene.name.scene_name')" maxlength="30" :clearable="true" />
-        </el-form-item>
-        <el-form-item prop="scene_code">
-            <el-input v-model="queryCommon.data.scene_code" :placeholder="t('auth.scene.name.scene_code')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="is_stop">
             <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('auth.scene.name.is_stop')" :clearable="true" style="width: 86px" />

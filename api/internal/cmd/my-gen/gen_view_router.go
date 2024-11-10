@@ -8,7 +8,7 @@ import (
 
 // 前端路由生成
 func genViewRouter(option myGenOption, tpl myGenTpl) {
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/router/index.ts`
+	saveFile := gfile.SelfDir() + `/../view/` + option.SceneId + `/src/router/index.ts`
 	tplViewRouter := gfile.GetContents(saveFile)
 
 	path := `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab

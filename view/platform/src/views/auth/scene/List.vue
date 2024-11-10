@@ -88,13 +88,6 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'scene_code',
-            title: t('auth.scene.name.scene_code'),
-            key: 'scene_code',
-            align: 'center',
-            width: 150,
-        },
-        {
             dataKey: 'scene_config',
             title: t('auth.scene.name.scene_config'),
             key: 'scene_config',
@@ -204,12 +197,12 @@ const handleAdd = () => {
 }
 //批量删除
 const handleBatchDelete = () => {
-    const idArr: number[] = []
+    const idArr: string[] = []
     table.data.forEach((item: any) => item.checked && idArr.push(item.id))
     idArr.length == 0 ? ElMessage.error(t('common.tip.selectDelete')) : handleDelete(idArr)
 }
 //编辑|复制
-const handleEditCopy = (id: number, type: string = 'edit') => {
+const handleEditCopy = (id: string, type: string = 'edit') => {
     request(t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/info', { id: id }).then((res) => {
         saveCommon.data = { ...res.data.info }
         switch (type) {
@@ -225,7 +218,7 @@ const handleEditCopy = (id: number, type: string = 'edit') => {
     })
 }
 //删除
-const handleDelete = (id: number | number[]) => {
+const handleDelete = (id: string | string[]) => {
     ElMessageBox.confirm('', {
         type: 'warning',
         title: t('common.tip.configDelete'),
@@ -250,7 +243,7 @@ const handleDelete = (id: number | number[]) => {
     })
 }
 //更新
-const handleUpdate = async (id: number | number[], param: { [propName: string]: any }) => {
+const handleUpdate = async (id: string | string[], param: { [propName: string]: any }) => {
     param[Array.isArray(id) ? 'id_arr' : 'id'] = id
     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/update', param, true)
 }

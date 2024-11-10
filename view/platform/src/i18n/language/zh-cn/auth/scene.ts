@@ -1,7 +1,7 @@
 export default {
     name: {
+        scene_id: '场景ID',
         scene_name: '名称',
-        scene_code: '标识',
         scene_config: '配置',
         token_config: {
             token_type: 'Token方式',

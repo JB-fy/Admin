@@ -17,7 +17,6 @@ type Scene struct {
 	IsStop      interface{} // 停用：0否 1是
 	SceneId     interface{} // 场景ID
 	SceneName   interface{} // 名称
-	SceneCode   interface{} // 标识
 	SceneConfig interface{} // 配置。JSON格式，根据场景设置
 	Remark      interface{} // 备注
 }

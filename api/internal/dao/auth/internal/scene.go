@@ -28,7 +28,6 @@ type SceneColumns struct {
 	IsStop      string // 停用：0否 1是
 	SceneId     string // 场景ID
 	SceneName   string // 名称
-	SceneCode   string // 标识
 	SceneConfig string // 配置。JSON格式，根据场景设置
 	Remark      string // 备注
 }
@@ -40,7 +39,6 @@ var sceneColumns = SceneColumns{
 	IsStop:      "is_stop",
 	SceneId:     "scene_id",
 	SceneName:   "scene_name",
-	SceneCode:   "scene_code",
 	SceneConfig: "scene_config",
 	Remark:      "remark",
 }

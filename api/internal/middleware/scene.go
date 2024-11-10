@@ -10,12 +10,12 @@ import (
 
 func Scene(r *ghttp.Request) {
 	pathArr := strings.Split(r.URL.Path, `/`)
-	sceneCode := pathArr[1]
-	if sceneCode == `` {
+	sceneId := pathArr[1]
+	if sceneId == `` {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-	sceneInfo, _ := daoAuth.Scene.CtxDaoModel(r.GetCtx()).Filter(daoAuth.Scene.Columns().SceneCode, sceneCode).One()
+	sceneInfo, _ := daoAuth.Scene.CtxDaoModel(r.GetCtx()).Filter(daoAuth.Scene.Columns().SceneId, sceneId).One()
 	if sceneInfo.IsEmpty() {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return

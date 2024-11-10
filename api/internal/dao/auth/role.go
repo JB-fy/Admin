@@ -101,14 +101,11 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case Scene.Columns().SceneCode:
-				sceneId, _ := Scene.CtxDaoModel(m.GetCtx()).Filter(Scene.Columns().SceneCode, v).Value(Scene.Columns().SceneId)
-				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
-			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]any{`scene_code`: `场景标识`, `login_id`: 登录身份id}
+			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]any{`scene_id`: `场景标识`, `login_id`: 登录身份id}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
 				var roleIdArr []*gvar.Var
-				switch gconv.String(val[`scene_code`]) {
+				switch gconv.String(val[`scene_id`]) {
 				case `platform`:
 					// 方式1：非联表查询
 					roleIdArr, _ = RoleRelOfPlatformAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfPlatformAdmin.Columns().RoleId)
@@ -168,10 +165,8 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RoleId)
 				daoModel.AfterField.Add(v)
 			case `rel_name`:
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().SceneId)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RelId)
-				tableScene := Scene.ParseDbTable(m.GetCtx())
-				m = m.Fields(tableScene + `.` + Scene.Columns().SceneCode)
-				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
 				daoModel.AfterField.Add(v)
 			default:
 				if daoThis.ColumnArr().Contains(v) {
@@ -209,7 +204,7 @@ func (daoThis *roleDao) HandleAfterField(ctx context.Context, record gdb.Record,
 			if record[daoThis.Columns().RelId].Uint() == 0 {
 				relName = `平台`
 			} else {
-				switch record[Scene.Columns().SceneCode].String() {
+				switch record[Scene.Columns().SceneId].String() {
 				// case `platform`:	// 平台都是0
 				case `org`:
 					relName, _ = daoOrg.Org.CtxDaoModel(ctx).Filter(daoOrg.Org.Columns().OrgId, record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)

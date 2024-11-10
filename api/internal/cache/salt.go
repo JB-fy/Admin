@@ -15,15 +15,15 @@ type salt struct {
 	Key   string
 }
 
-// sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
+// sceneId 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneId规避
 // loginName 手机/邮箱/账号
-func NewSalt(ctx context.Context, sceneCode string, loginName string) *salt {
+func NewSalt(ctx context.Context, sceneId string, loginName string) *salt {
 	//可在这里写分库逻辑
 	redis := g.Redis()
 	return &salt{
 		Ctx:   ctx,
 		Redis: redis,
-		Key:   fmt.Sprintf(consts.CacheSaltFormat, sceneCode, loginName),
+		Key:   fmt.Sprintf(consts.CacheSaltFormat, sceneId, loginName),
 	}
 }
 

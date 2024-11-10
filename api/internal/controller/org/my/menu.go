@@ -23,8 +23,8 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 	field := []string{`id`, `label`, `tree`, `show_menu`}
 	filter := map[string]any{
 		`self_menu`: map[string]any{
-			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
-			`login_id`:   loginInfo[`login_id`],
+			`scene_id`: sceneInfo[daoAuth.Scene.Columns().SceneId],
+			`login_id`: loginInfo[`login_id`],
 		},
 	}
 	list, err := daoAuth.Menu.CtxDaoModel(ctx).Filters(filter).Fields(field...).ListPri()

@@ -15,6 +15,6 @@ type Role struct {
 	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
 	RoleId    uint        `json:"roleId"    orm:"role_id"    ` // 角色ID
 	RoleName  string      `json:"roleName"  orm:"role_name"  ` // 名称
-	SceneId   uint        `json:"sceneId"   orm:"scene_id"   ` // 场景ID
+	SceneId   string      `json:"sceneId"   orm:"scene_id"   ` // 场景ID
 	RelId     uint        `json:"relId"     orm:"rel_id"     ` // 关联ID。0表示平台创建，其它值根据scene_id对应不同表
 }

@@ -15,16 +15,16 @@ type code struct {
 	Key   string
 }
 
-// sceneCode 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneCode规避
+// sceneId 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneId规避
 // to 手机/邮箱
 // scene 场景
-func NewCode(ctx context.Context, sceneCode string, to string, scene uint) *code {
+func NewCode(ctx context.Context, sceneId string, to string, scene uint) *code {
 	//可在这里写分库逻辑
 	redis := g.Redis()
 	return &code{
 		Ctx:   ctx,
 		Redis: redis,
-		Key:   fmt.Sprintf(consts.CacheCodeFormat, sceneCode, to, scene),
+		Key:   fmt.Sprintf(consts.CacheCodeFormat, sceneId, to, scene),
 	}
 }
 

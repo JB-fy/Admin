@@ -42,9 +42,9 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// ghttp.RestartAllServer(ctx)  // 重启服务
 
 	/* //生成登录token（测试用）
-	sceneInfo, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneCode, `platform`).One()
+	sceneInfo, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, `platform`).One()
 	tokenInfo := token.TokenInfo{LoginId: `1`}
-	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map(), sceneInfo[daoAuth.Scene.Columns().SceneCode].String()).Create(tokenInfo)
+	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map(), sceneInfo[daoAuth.Scene.Columns().SceneId].String()).Create(tokenInfo)
 	fmt.Println(token) */
 
 	/*--------数据库使用示例 开始--------*/

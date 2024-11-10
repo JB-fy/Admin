@@ -59,10 +59,10 @@ func (handlerThis *Handler) createUploadParam() (param UploadParam) {
 		}
 	}
 	/* sceneInfo := utils.GetCtxSceneInfo(handlerThis.Ctx)
-	sceneCode := sceneInfo[daoAuth.Scene.Columns().SceneCode].String()
+	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	loginInfo := utils.GetCtxLoginInfo(handlerThis.Ctx)
 	loginId := loginInfo[`login_id`]
-	switch sceneCode {
+	switch sceneId {
 	case `platform`:
 	case `org`:
 		orgId := loginInfo[daoOrg.Admin.Columns().OrgId]

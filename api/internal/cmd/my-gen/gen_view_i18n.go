@@ -85,7 +85,7 @@ func genViewI18n(option myGenOption, tpl myGenTpl) {
 }
 `
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneCode + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `.ts`
+	saveFile := gfile.SelfDir() + `/../view/` + option.SceneId + `/src/i18n/language/zh-cn/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `.ts`
 	gfile.PutContents(saveFile, tplView)
 }
 

@@ -15,7 +15,7 @@ type Menu struct {
 	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
 	MenuId    uint        `json:"menuId"    orm:"menu_id"    ` // 菜单ID
 	MenuName  string      `json:"menuName"  orm:"menu_name"  ` // 名称
-	SceneId   uint        `json:"sceneId"   orm:"scene_id"   ` // 场景ID
+	SceneId   string      `json:"sceneId"   orm:"scene_id"   ` // 场景ID
 	Pid       uint        `json:"pid"       orm:"pid"        ` // 父ID
 	Level     uint        `json:"level"     orm:"level"      ` // 层级
 	IdPath    string      `json:"idPath"    orm:"id_path"    ` // 层级路径

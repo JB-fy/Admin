@@ -23,8 +23,8 @@ func init() {
 
 // 验证数据（create和update共用）
 func (logicThis *sAuthAction) verifyData(ctx context.Context, data map[string]any) (err error) {
-	if _, ok := data[`scene_id_arr`]; ok && len(gconv.SliceUint(data[`scene_id_arr`])) > 0 {
-		sceneIdArr := gconv.SliceUint(data[`scene_id_arr`])
+	if _, ok := data[`scene_id_arr`]; ok && len(gconv.SliceStr(data[`scene_id_arr`])) > 0 {
+		sceneIdArr := gconv.SliceStr(data[`scene_id_arr`])
 		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, sceneIdArr).Count(); count != len(sceneIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`)}})
 			return
@@ -84,7 +84,7 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any)
 func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCodeArr ...string) (isAuth bool, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	if sceneInfo[daoAuth.Scene.Columns().SceneCode].String() == `platform` && loginInfo[daoPlatform.Admin.Columns().IsSuper].Uint() == 1 { //平台超级管理员，无权限限制
+	if sceneInfo[daoAuth.Scene.Columns().SceneId].String() == `platform` && loginInfo[daoPlatform.Admin.Columns().IsSuper].Uint() == 1 { //平台超级管理员，无权限限制
 		isAuth = true
 		return
 	}
@@ -97,8 +97,8 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCodeArr ...st
 	filter := map[string]any{
 		daoAuth.Action.Columns().ActionCode: actionCodeArr,
 		`self_action`: map[string]any{
-			`scene_code`: sceneInfo[daoAuth.Scene.Columns().SceneCode],
-			`login_id`:   loginInfo[`login_id`],
+			`scene_id`: sceneInfo[daoAuth.Scene.Columns().SceneId],
+			`login_id`: loginInfo[`login_id`],
 		},
 	}
 	count, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Count()

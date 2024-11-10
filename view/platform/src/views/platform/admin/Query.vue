@@ -43,7 +43,7 @@ const queryForm = reactive({
             <el-select-v2 v-model="queryCommon.data.is_super" :options="tm('common.status.whether')" :placeholder="t('platform.admin.name.is_super')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="role_id">
-            <my-select v-model="queryCommon.data.role_id" :placeholder="t('platform.admin.name.role_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { scene_code: `platform` } } }" />
+            <my-select v-model="queryCommon.data.role_id" :placeholder="t('platform.admin.name.role_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { scene_id: `platform` } } }" />
         </el-form-item>
         <el-form-item prop="is_stop">
             <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('platform.admin.name.is_stop')" :clearable="true" style="width: 86px" />
