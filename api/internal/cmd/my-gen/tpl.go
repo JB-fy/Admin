@@ -261,7 +261,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			if !garray.NewStrArrayFrom([]string{internal.TypePrimary, internal.TypePrimaryAutoInc}).Contains(fieldTmp.FieldTypePrimary) { // 本表id字段不算
 				fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
 
-				// fieldTmp.FieldLimitInt.Min = `1`
 				handleRelIdObj := handleRelId{
 					tpl:       tpl.getRelIdTpl(ctx, tpl, fieldTmp.FieldTypeRaw, fieldTmp.FieldCaseSnakeRemove),
 					FieldName: fieldTmp.FieldName,
@@ -278,6 +277,10 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 					}
 				}
 				tpl.Handle.RelIdMap[fieldTmp.FieldRaw] = handleRelIdObj
+
+				if handleRelIdObj.tpl.Table != `` && garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(fieldTmp.FieldType) && handleRelIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
+					fieldTmp.FieldLimitInt.Min = `1`
+				}
 			}
 		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`status`, `type`, `scene`, `method`, `pos`, `position`, `gender`, `currency`}).Contains(fieldSuffix) { //status,type,scene,method,pos,position,gender,currency等后缀
 			fieldTmp.FieldTypeName = internal.TypeNameStatusSuffix

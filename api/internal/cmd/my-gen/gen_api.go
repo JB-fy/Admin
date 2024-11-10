@@ -547,17 +547,19 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		apiField.filterType.Method = internal.ReturnType
 
-		/* if !apiField.isRequired {
-			for index, rule := range apiField.saveRule.DataType {
-				if rule == `between:`+v.FieldLimitInt.Min+`,`+v.FieldLimitInt.Max {
-					apiField.saveRule.DataType[index] = `between:0,` + v.FieldLimitInt.Max
+		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
+		if relIdObj.tpl.Table != `` {
+			if !apiField.isRequired && garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(v.FieldType) && relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
+				for index, rule := range apiField.saveRule.DataType {
+					if rule == `between:`+v.FieldLimitInt.Min+`,`+v.FieldLimitInt.Max {
+						apiField.saveRule.DataType[index] = `between:0,` + v.FieldLimitInt.Max
+					}
 				}
 			}
-		} */
 
-		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
-			apiField.resOfAdd = append(apiField.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+relIdObj.SuffixCaseCamel+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relIdObj.FieldName+`"`+"`")
+			if !relIdObj.IsRedundName {
+				apiField.resOfAdd = append(apiField.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+relIdObj.SuffixCaseCamel+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relIdObj.FieldName+`"`+"`")
+			}
 		}
 	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		apiField.filterType.Method = internal.ReturnType
