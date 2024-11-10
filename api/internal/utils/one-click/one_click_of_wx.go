@@ -49,9 +49,11 @@ type UserInfoOfWx struct {
 }
 
 type RefreshTokenOfWx struct {
-	Openid      string
-	AccessToken string //授权Token
-	ExpireTime  int    //超时时间。单位：秒
+	Openid       string `json:"openid"`        //网页授权接口调用凭证,注意：此access_token与基础支持的access_token不同
+	AccessToken  string `json:"access_token"`  //授权Token
+	ExpiresIn    int    `json:"expires_in"`    //access_token接口调用凭证超时时间，单位（秒）
+	RefreshToken string `json:"refresh_token"` //用户刷新access_token
+	Scope        string `json:"scope"`         //用户授权的作用域，使用逗号（,）分隔
 }
 
 // 获取用户同意授权地址（也可以让前端自己处理。坏处：前端需要存appId，更新appId需同步修改前端）
@@ -116,11 +118,11 @@ func (oneClickThis *OneClickOfWx) UserInfo(openid, accessToken string) (userInfo
 }
 
 // 刷新access_token（需要时用）
-func (oneClickThis *OneClickOfWx) RefreshToken(refreshToken string) (accessToken AccessTokenOfWx, err error) {
+func (oneClickThis *OneClickOfWx) RefreshToken(refreshTokenStr string) (refreshToken RefreshTokenOfWx, err error) {
 	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/refresh_token`, g.Map{
 		`appid`:         oneClickThis.AppId,
 		`grant_type`:    `refresh_token`,
-		`refresh_token`: refreshToken,
+		`refresh_token`: refreshTokenStr,
 	})
 	if err != nil {
 		return
@@ -133,7 +135,7 @@ func (oneClickThis *OneClickOfWx) RefreshToken(refreshToken string) (accessToken
 		return
 	}
 
-	resData.Var().Struct(&accessToken)
+	resData.Var().Struct(&refreshToken)
 	return
 }
 
