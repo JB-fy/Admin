@@ -61,7 +61,7 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data)
             param.password ? (param.password = md5(param.password)) : delete param.password
             try {
-                if (param?.id > 0) {
+                if (param?.id) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/admin/create', param, true)

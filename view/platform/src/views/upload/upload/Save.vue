@@ -75,7 +75,7 @@ const saveForm = reactive({
             const param = removeEmptyOfObj(saveForm.data)
             param.upload_config = param['upload_config_' + param.upload_type]
             try {
-                if (param?.id > 0) {
+                if (param?.id) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/upload/upload/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/upload/upload/create', param, true)

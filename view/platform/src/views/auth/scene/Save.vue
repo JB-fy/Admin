@@ -90,7 +90,7 @@ const saveForm = reactive({
             }
             param.scene_config = Object.keys(sceneConfig).length > 0 ? JSON.stringify(sceneConfig) : ''
             try {
-                if (param?.id > 0) {
+                if (param?.id) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/create', param, true)

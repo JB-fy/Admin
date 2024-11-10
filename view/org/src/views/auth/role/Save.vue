@@ -50,7 +50,7 @@ const saveForm = reactive({
                 param.menu_id_arr = [...new Set(menuIdArr)]
             }
             try {
-                if (param?.id > 0) {
+                if (param?.id) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/role/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/auth/role/create', param, true)

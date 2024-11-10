@@ -26,7 +26,7 @@ const saveForm = reactive({
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
             try {
-                if (param?.id > 0) {
+                if (param?.id) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/pay/scene/update', param, true)
                 } else {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/pay/scene/create', param, true)
