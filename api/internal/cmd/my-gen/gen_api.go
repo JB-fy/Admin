@@ -544,22 +544,21 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.saveRule.Method = internal.ReturnUnion
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `ip`)
 	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
-	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		apiField.filterType.Method = internal.ReturnType
 
-		if !apiField.isRequired {
+		/* if !apiField.isRequired {
 			for index, rule := range apiField.saveRule.DataType {
 				if rule == `between:`+v.FieldLimitInt.Min+`,`+v.FieldLimitInt.Max {
 					apiField.saveRule.DataType[index] = `between:0,` + v.FieldLimitInt.Max
 				}
 			}
-		}
+		} */
 
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
 			apiField.resOfAdd = append(apiField.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+relIdObj.SuffixCaseCamel+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relIdObj.FieldName+`"`+"`")
 		}
-	case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
 	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		apiField.filterType.Method = internal.ReturnType
 
@@ -579,6 +578,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `in:0,1`)
 		apiField.saveRule.Method = internal.ReturnTypeName
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `in:0,1`)
+	case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
 	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		apiField.filterType.Method = internal.ReturnType
 	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
@@ -778,8 +778,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 			apiField.saveRule.Method = internal.ReturnUnion
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `ip`)
 		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
-		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
+		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			statusArr := make([]string, len(v.StatusList))
 			for index, item := range v.StatusList {
@@ -791,6 +790,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 		case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
 			apiField.saveRule.Method = internal.ReturnTypeName
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `in:0,1`)
+		case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
 		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器

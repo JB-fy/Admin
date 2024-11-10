@@ -417,14 +417,21 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.formContent.DataTypeName = `<el-color-picker v-model="saveForm.data.` + dataFieldPath + `" :show-alpha="true" />`
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = '')`
-	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		viewSaveField.dataInitAfter.Method = internal.ReturnTypeName
 		viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + dataFieldPath + ` ? saveCommon.data.` + dataFieldPath + ` : undefined`
 		viewSaveField.rule.Method = internal.ReturnTypeName
 		if !viewSaveField.isRequired {
 			viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `// { required: true, message: t('validation.required') },`)
 		}
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') },`)
+		rule := `{ type: 'integer', trigger: 'change', min: ` + v.FieldLimitInt.Min + `, max: ` + v.FieldLimitInt.Max + `, message: t('validation.select') },`
+		if v.FieldType == internal.TypeVarchar {
+			rule = `{ type: 'string', trigger: 'change', max: ` + v.FieldLimitStr + `, message: t('validation.select') },`
+		} else if v.FieldType == internal.TypeChar {
+			rule = `{ type: 'string', trigger: 'change', len: ` + v.FieldLimitStr + `, message: t('validation.select') },`
+		}
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, rule)
+
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` {
@@ -443,15 +450,6 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		}
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = 0)`
-	case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
-		viewSaveField.rule.Method = internal.ReturnTypeName
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
-		viewSaveField.formContent.Method = internal.ReturnTypeName
-		viewSaveField.formContent.DataTypeName = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :precision="0" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />`
-		if v.FieldTip != `` {
-			viewSaveField.formContent.DataTypeName += `
-                    <el-alert :title="t('` + i18nPath + `.tip.` + i18nFieldPath + `')" type="info" :show-icon="true" :closable="false" />`
-		}
 	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		viewSaveField.isI18nTm = true
 		defaultVal := gconv.String(v.Default)
@@ -480,6 +478,15 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<el-switch v-model="saveForm.data.` + dataFieldPath + `" :active-value="1" :inactive-value="0" :inline-prompt="true" :active-text="t('common.yes')" :inactive-text="t('common.no')" style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);" />`
+	case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
+		viewSaveField.rule.Method = internal.ReturnTypeName
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
+		viewSaveField.formContent.Method = internal.ReturnTypeName
+		viewSaveField.formContent.DataTypeName = `<el-input-number v-model="saveForm.data.` + dataFieldPath + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :precision="0" :value-on-clear="` + gconv.String(gconv.Int(v.Default)) + `" />`
+		if v.FieldTip != `` {
+			viewSaveField.formContent.DataTypeName += `
+                    <el-alert :title="t('` + i18nPath + `.tip.` + i18nFieldPath + `')" type="info" :show-icon="true" :closable="false" />`
+		}
 	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 		switch v.FieldType {
@@ -620,7 +627,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveField.formContent.DataTypeName = `<!-- 根据个人喜好选择组件<el-transfer>或<el-select-v2> -->
                     <el-transfer v-model="saveForm.data.` + tplEM.FieldVar + `" :data="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :props="{ key: 'value', label: 'label' }" />
                     <!-- <el-select-v2 v-model="saveForm.data.` + tplEM.FieldVar + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :multiple="true" :collapse-tags="true" :collapse-tags-tooltip="true" style="width: ` + gconv.String(170+(v.FieldShowLenMax-3)*14) + `px" /> -->`
-		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 			if relIdObj.tpl.Table != `` {
 				isReturn = true
@@ -644,7 +651,13 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
             }`
 				} else {
 					viewSaveField.rule.Method = internal.ReturnTypeName
-					viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') } },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
+					rule := `{ type: 'integer', min: ` + v.FieldLimitInt.Min + `, max: ` + v.FieldLimitInt.Max + `, message: t('validation.select') }`
+					if v.FieldType == internal.TypeVarchar {
+						rule = `{ type: 'string', max: ` + v.FieldLimitStr + `, message: t('validation.select') }`
+					} else if v.FieldType == internal.TypeChar {
+						rule = `{ type: 'string', len: ` + v.FieldLimitStr + `, message: t('validation.select') }`
+					}
+					viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: `+rule+` },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
 
 					viewSaveField.formContent.DataTypeName = `<!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
 					<my-select v-model="saveForm.data.` + tplEM.FieldVar + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" :multiple="true" />
@@ -752,12 +765,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'url', message: t('validation.url') },`)
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
 		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
-		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
-		case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
-			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
-			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
-			/* viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
-			viewSaveFieldTmp.formContent.DataTypeName = `<el-input-number :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :precision="0" />` */
+		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			viewSaveFieldTmp.isI18nTm = true
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
@@ -766,6 +774,11 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.isI18nTm = true
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'enum', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') },`)
+		case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
+			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
+			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'integer', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.between.number', { min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+` }) },`)
+			/* viewSaveFieldTmp.formContent.Method = internal.ReturnTypeName
+			viewSaveFieldTmp.formContent.DataTypeName = `<el-input-number :min="` + v.FieldLimitInt.Min + `" :max="` + v.FieldLimitInt.Max + `" :precision="0" />` */
 		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器

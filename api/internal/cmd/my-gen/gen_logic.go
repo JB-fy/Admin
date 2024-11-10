@@ -214,7 +214,7 @@ func getLogicField(tpl myGenTpl, v myGenField) (logicField myGenLogicField) {
 	daoPath := `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel
 
 	switch v.FieldTypeName {
-	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` {
 			logicField.importDao = append(logicField.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
@@ -222,8 +222,18 @@ func getLogicField(tpl myGenTpl, v myGenField) (logicField myGenLogicField) {
 				key: `name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel),
 				val: relIdObj.FieldName,
 			}
+
+			ifStr := `data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `] != nil`
+			switch v.FieldType {
+			case internal.TypeInt, internal.TypeIntU:
+				if relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
+					ifStr = `gconv.Uint(data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]) > 0`
+				}
+			case internal.TypeVarchar, internal.TypeChar:
+				ifStr = `gconv.String(data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]) != ` + "``"
+			}
 			daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
-			logicField.verifyDataStr = `if _, ok := data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]; ok && gconv.Uint(data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]) > 0 {
+			logicField.verifyDataStr = `if _, ok := data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]; ok && ` + ifStr + ` {
 		if count, _ := ` + daoPathRel + `.CtxDaoModel(ctx).Filter(` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `, data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]).Count(); count == 0 {
 			err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `, g.Map{` + "`i18nValues`" + `: []any{g.I18n().T(ctx, ` + "`" + logicField.i18nField.key + "`" + `)}})
 			return
@@ -249,7 +259,7 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 	if len(tplEM.FieldList) == 1 {
 		v := tplEM.FieldList[0]
 		switch v.FieldTypeName {
-		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 			if relIdObj.tpl.Table != `` {
 				logic.importDao = append(logic.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
@@ -259,8 +269,15 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 				}
 				logic.i18n.Add(i18nField)
 				daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
-				logic.verifyData = append(logic.verifyData, `if _, ok := data[`+"`"+tplEM.FieldVar+"`"+`]; ok && len(gconv.SliceUint(data[`+"`"+tplEM.FieldVar+"`"+`])) > 0 {
-		`+gstr.CaseCamelLower(tplEM.FieldVar)+` := gconv.SliceUint(data[`+"`"+tplEM.FieldVar+"`"+`])
+				sliceStr := `SliceUint`
+				if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(v.FieldType) {
+					sliceStr = `SliceStr`
+				} else if v.FieldType == internal.TypeInt && !relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
+					sliceStr = `SliceInt`
+				}
+				sliceStr = `gconv.` + sliceStr + `(data[` + "`" + tplEM.FieldVar + "`" + `])`
+				logic.verifyData = append(logic.verifyData, `if _, ok := data[`+"`"+tplEM.FieldVar+"`"+`]; ok && len(`+sliceStr+`) > 0 {
+		`+gstr.CaseCamelLower(tplEM.FieldVar)+` := `+sliceStr+`
 		if count, _ := `+daoPathRel+`.CtxDaoModel(ctx).Filter(`+daoPathRel+`.Columns().`+relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel+`, `+gstr.CaseCamelLower(tplEM.FieldVar)+`).Count(); count != len(`+gstr.CaseCamelLower(tplEM.FieldVar)+`) {
 			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 			return
@@ -276,7 +293,7 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 		}{}
 		for _, v := range tplEM.FieldList {
 			switch v.FieldTypeName {
-			case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+			case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 				if relIdObj.tpl.Table != `` {
 					logic.importDao = append(logic.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
@@ -287,8 +304,17 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 					logic.i18n.Add(i18nField)
 					daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 					fieldCaseCamelLower := gstr.CaseCamelLower(v.FieldCaseCamel)
-					verifyDataArr.part1 = append(verifyDataArr.part1, fieldCaseCamelLower+`Arr := []uint{}`)
-					verifyDataArr.part2 = append(verifyDataArr.part2, `if `+fieldCaseCamelLower+` := gconv.Uint(item[`+daoPathRel+`.Columns().`+v.FieldCaseCamel+`]); `+fieldCaseCamelLower+` > 0 {
+					part1 := `uint`
+					part2 := fieldCaseCamelLower + ` := gconv.Uint(item[` + daoPathRel + `.Columns().` + v.FieldCaseCamel + `]); ` + fieldCaseCamelLower + ` > 0`
+					if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(v.FieldType) {
+						part1 = `string`
+						part2 = fieldCaseCamelLower + ` := gconv.String(item[` + daoPathRel + `.Columns().` + v.FieldCaseCamel + `]); ` + fieldCaseCamelLower + ` != ` + "``"
+					} else if v.FieldType == internal.TypeInt && !relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
+						part1 = `int`
+						part2 = fieldCaseCamelLower + ` := gconv.Int(item[` + daoPathRel + `.Columns().` + v.FieldCaseCamel + `]); item[` + daoPathRel + `.Columns().` + v.FieldCaseCamel + `] != nil`
+					}
+					verifyDataArr.part1 = append(verifyDataArr.part1, fieldCaseCamelLower+`Arr := []`+part1+`{}`)
+					verifyDataArr.part2 = append(verifyDataArr.part2, `if `+part2+` {
 						`+fieldCaseCamelLower+`Arr = append(`+fieldCaseCamelLower+`Arr, `+fieldCaseCamelLower+`)
 			}`)
 					verifyDataArr.part3 = append(verifyDataArr.part3, `if len(`+fieldCaseCamelLower+`Arr) > 0 {

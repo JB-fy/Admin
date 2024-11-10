@@ -257,11 +257,11 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			fieldTmp.FieldTypeName = internal.TypeNameIdPath
 
 			tpl.Handle.Pid.IdPath = fieldTmp.FieldRaw
-		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU /* , internal.TypeVarchar, internal.TypeChar */}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
+		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 			if !garray.NewStrArrayFrom([]string{internal.TypePrimary, internal.TypePrimaryAutoInc}).Contains(fieldTmp.FieldTypePrimary) { // 本表id字段不算
 				fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
 
-				fieldTmp.FieldLimitInt.Min = `1`
+				// fieldTmp.FieldLimitInt.Min = `1`
 				handleRelIdObj := handleRelId{
 					tpl:       tpl.getRelIdTpl(ctx, tpl, fieldTmp.FieldTypeRaw, fieldTmp.FieldCaseSnakeRemove),
 					FieldName: fieldTmp.FieldName,
@@ -294,6 +294,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 					fieldTmp.FieldShowLenMax = showLen
 				}
 			}
+		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU /* , internal.TypeVarchar, internal.TypeChar */}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
+			fieldTmp.FieldTypeName = internal.TypeNameIsPrefix
+			// TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）
 		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText, internal.TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			fieldTmp.FieldTypeName = internal.TypeNameImageSuffix
 		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText, internal.TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) { //video,video_list,videoList,video_arr,videoArr等后缀
@@ -373,9 +376,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 					tpl.Handle.Pid.Level = fieldTmp.FieldRaw
 				}
-			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
-				fieldTmp.FieldTypeName = internal.TypeNameIsPrefix
-				// TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）
 			}
 		} else if garray.NewIntArrayFrom([]int{internal.TypeDatetime, internal.TypeTimestamp, internal.TypeDate, internal.TypeTime}).Contains(fieldTmp.FieldType) { //类型：datetime或date或timestamp或time
 			if garray.NewStrArrayFrom([]string{`start`}).Contains(fieldPrefix) { //start_前缀

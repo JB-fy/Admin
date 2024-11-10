@@ -226,7 +226,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
 	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 		return myGenViewQueryField{}
-	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		viewQueryField.form.Method = internal.ReturnTypeName
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` {
@@ -243,10 +243,6 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
             <!-- <my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" /> -->
             <!-- <my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree' }" :props="{ emitPath: false }" /> -->`
 		}
-	case internal.TypeNameSortSuffix: // sort,num,number,weight等后缀；	类型：int等类型；
-		return myGenViewQueryField{}
-	case internal.TypeNameNoSuffix: // no,level,rank等后缀；	类型：int等类型；
-		viewQueryField.form.Method = internal.ReturnType
 	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		viewQueryField.isI18nTm = true
 		viewQueryField.form.Method = internal.ReturnTypeName
@@ -255,6 +251,10 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 		viewQueryField.isI18nTm = true
 		viewQueryField.form.Method = internal.ReturnTypeName
 		viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('common.status.whether')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
+	case internal.TypeNameSortSuffix: // sort,num,number,weight等后缀；	类型：int等类型；
+		return myGenViewQueryField{}
+	case internal.TypeNameNoSuffix: // no,level,rank等后缀；	类型：int等类型；
+		viewQueryField.form.Method = internal.ReturnType
 	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		viewQueryField.form.Method = internal.ReturnType
 	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；

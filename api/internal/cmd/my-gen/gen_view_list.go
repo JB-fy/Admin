@@ -561,12 +561,44 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                     />,
                 ]
             }`
-	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
 			viewListField.dataKey.Method = internal.ReturnTypeName
 			viewListField.dataKey.DataTypeName = `'` + relIdObj.tpl.Handle.LabelList[0] + relIdObj.Suffix + `'`
 		}
+	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		viewListField.isI18nTm = true
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
+		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                let tagType = tm('config.const.tagType') as string[]
+                let obj = tm('` + i18nPath + `.status.` + v.FieldRaw + `') as { value: any, label: string }[]
+                let index = obj.findIndex((item) => { return item.value == props.rowData.` + v.FieldRaw + ` })
+                return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
+            }`
+	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
+		viewListField.width.Method = internal.ReturnTypeName
+		viewListField.width.DataTypeName = `100`
+		cellRendererStr := `disabled={true}`
+		if option.IsUpdate {
+			cellRendererStr = `disabled={!authAction.isUpdate}
+                        onChange={(val: number) => handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
+		}
+		viewListField.cellRenderer.Method = internal.ReturnTypeName
+		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                return [
+                    <el-switch
+                        model-value={props.rowData.` + v.FieldRaw + `}
+                        active-value={1}
+                        inactive-value={0}
+                        inline-prompt={true}
+                        active-text={t('common.yes')}
+                        inactive-text={t('common.no')}
+                        ` + cellRendererStr + `
+                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
+                    />,
+                ]
+            }`
 	case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
 		viewListField.sortable.Method = internal.ReturnTypeName
 		viewListField.sortable.DataTypeName = `true`
@@ -622,38 +654,6 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 ]
             }`
 		}
-	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-		viewListField.isI18nTm = true
-		viewListField.cellRenderer.Method = internal.ReturnTypeName
-		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
-                let tagType = tm('config.const.tagType') as string[]
-                let obj = tm('` + i18nPath + `.status.` + v.FieldRaw + `') as { value: any, label: string }[]
-                let index = obj.findIndex((item) => { return item.value == props.rowData.` + v.FieldRaw + ` })
-                return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
-            }`
-	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
-		viewListField.width.Method = internal.ReturnTypeName
-		viewListField.width.DataTypeName = `100`
-		cellRendererStr := `disabled={true}`
-		if option.IsUpdate {
-			cellRendererStr = `disabled={!authAction.isUpdate}
-                        onChange={(val: number) => handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
-		}
-		viewListField.cellRenderer.Method = internal.ReturnTypeName
-		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
-                return [
-                    <el-switch
-                        model-value={props.rowData.` + v.FieldRaw + `}
-                        active-value={1}
-                        inactive-value={0}
-                        inline-prompt={true}
-                        active-text={t('common.yes')}
-                        inactive-text={t('common.no')}
-                        ` + cellRendererStr + `
-                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
-                    />,
-                ]
-            }`
 	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 	case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
@@ -860,9 +860,9 @@ func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (
                     </el-scrollbar>,
                 ]
             }`
-		case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 			return myGenViewList{}
-		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型；
+		case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 			return myGenViewList{}
 		case internal.TypeNameImageSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text
 			if v.FieldType != internal.TypeVarchar {
