@@ -70,7 +70,7 @@ type ActionCreateReq struct {
 	ActionName *string   `json:"action_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	ActionCode *string   `json:"action_code,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string   `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	SceneIdArr *[]string `json:"scene_id_arr,omitempty" v:"required|distinct|foreach|length:1,15" dc:"场景ID"`
+	SceneIdArr *[]string `json:"scene_id_arr,omitempty" v:"required|distinct|foreach|max-length:15" dc:"场景ID"`
 	IsStop     *uint     `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
@@ -84,7 +84,7 @@ type ActionUpdateReq struct {
 	ActionName *string   `json:"action_name,omitempty" filter:"-" v:"max-length:30" dc:"名称"`
 	ActionCode *string   `json:"action_code,omitempty" filter:"-" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string   `json:"remark,omitempty" filter:"-" v:"max-length:120" dc:"备注"`
-	SceneIdArr *[]string `json:"scene_id_arr,omitempty" filter:"-" v:"distinct|foreach|length:1,15" dc:"场景ID"`
+	SceneIdArr *[]string `json:"scene_id_arr,omitempty" filter:"-" v:"distinct|foreach|max-length:15" dc:"场景ID"`
 	IsStop     *uint     `json:"is_stop,omitempty" filter:"-" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
