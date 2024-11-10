@@ -10,7 +10,7 @@ import (
 
 // 自动生成菜单
 func genMenu(ctx context.Context, option myGenOption, tpl myGenTpl) {
-	sceneId := option.SceneInfo[daoAuth.Scene.Columns().SceneId].Uint()
+	sceneId := option.SceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	menuUrl := `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab
 	menuName := option.CommonName
 	menuNameOfEn := tpl.TableCaseCamel
