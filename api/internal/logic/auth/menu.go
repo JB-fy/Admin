@@ -24,7 +24,7 @@ func init() {
 
 // 验证数据（create和update共用）
 func (logicThis *sAuthMenu) verifyData(ctx context.Context, data map[string]any) (err error) {
-	if _, ok := data[daoAuth.Menu.Columns().SceneId]; ok && gconv.Uint(data[daoAuth.Menu.Columns().SceneId]) > 0 {
+	if _, ok := data[daoAuth.Menu.Columns().SceneId]; ok && gconv.String(data[daoAuth.Menu.Columns().SceneId]) != `` {
 		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, data[daoAuth.Menu.Columns().SceneId]).Count(); count == 0 {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`)}})
 			return

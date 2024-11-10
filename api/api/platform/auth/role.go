@@ -11,7 +11,7 @@ type RoleInfo struct {
 	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	RoleId      *uint       `json:"role_id,omitempty" dc:"角色ID"`
 	RoleName    *string     `json:"role_name,omitempty" dc:"名称"`
-	SceneId     *uint       `json:"scene_id,omitempty" dc:"场景ID"`
+	SceneId     *string     `json:"scene_id,omitempty" dc:"场景ID"`
 	RelId       *uint       `json:"rel_id,omitempty" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
 	ActionIdArr []uint      `json:"action_id_arr,omitempty" dc:"操作ID"`
 	MenuIdArr   []uint      `json:"menu_id_arr,omitempty" dc:"菜单ID"`
@@ -32,7 +32,7 @@ type RoleFilter struct {
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	RoleId         *uint       `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
 	RoleName       string      `json:"role_name,omitempty" v:"max-length:30" dc:"名称"`
-	SceneId        *uint       `json:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
+	SceneId        string      `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
 	RelId          *uint       `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
 	ActionId       *uint       `json:"action_id,omitempty" v:"between:1,4294967295" dc:"操作ID"`
 	MenuId         *uint       `json:"menu_id,omitempty" v:"between:1,4294967295" dc:"菜单ID"`
@@ -73,7 +73,7 @@ type RoleInfoRes struct {
 type RoleCreateReq struct {
 	g.Meta   `path:"/role/create" method:"post" tags:"平台后台/权限管理/角色" sm:"新增"`
 	RoleName *string `json:"role_name,omitempty" v:"required|max-length:30" dc:"名称"`
-	SceneId  *uint   `json:"scene_id,omitempty" v:"required|between:1,4294967295" dc:"场景ID"`
+	SceneId  *string `json:"scene_id,omitempty" v:"required|max-length:15" dc:"场景ID"`
 	// RelId       *uint   `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
 	ActionIdArr *[]uint `json:"action_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"操作ID"`
 	MenuIdArr   *[]uint `json:"menu_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"菜单ID"`
@@ -88,7 +88,7 @@ type RoleUpdateReq struct {
 	Id       uint    `json:"-" filter:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
 	IdArr    []uint  `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	RoleName *string `json:"role_name,omitempty" filter:"-" v:"max-length:30" dc:"名称"`
-	SceneId  *uint   `json:"scene_id,omitempty" filter:"-" v:"between:1,4294967295" dc:"场景ID"`
+	SceneId  *string `json:"scene_id,omitempty" filter:"-" v:"max-length:15" dc:"场景ID"`
 	// RelId       *uint   `json:"rel_id,omitempty" filter:"-" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
 	ActionIdArr *[]uint `json:"action_id_arr,omitempty" filter:"-" v:"distinct|foreach|between:1,4294967295" dc:"操作ID"`
 	MenuIdArr   *[]uint `json:"menu_id_arr,omitempty" filter:"-" v:"distinct|foreach|between:1,4294967295" dc:"菜单ID"`

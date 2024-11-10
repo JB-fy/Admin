@@ -19,7 +19,7 @@ const saveForm = reactive({
         ],
         scene_id: [
             { required: true, message: t('validation.required') },
-            { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
+            { type: 'string', trigger: 'change', max: 15, message: t('validation.select') },
         ],
         /* rel_id: [
             // { required: true, message: t('validation.required') },

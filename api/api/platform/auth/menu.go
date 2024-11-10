@@ -11,7 +11,7 @@ type MenuInfo struct {
 	Label      *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	MenuId     *uint       `json:"menu_id,omitempty" dc:"菜单ID"`
 	MenuName   *string     `json:"menu_name,omitempty" dc:"名称"`
-	SceneId    *uint       `json:"scene_id,omitempty" dc:"场景ID"`
+	SceneId    *string     `json:"scene_id,omitempty" dc:"场景ID"`
 	Pid        *uint       `json:"pid,omitempty" dc:"父ID"`
 	Level      *uint       `json:"level,omitempty" dc:"层级"`
 	IdPath     *string     `json:"id_path,omitempty" dc:"层级路径"`
@@ -38,7 +38,7 @@ type MenuFilter struct {
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	MenuId         *uint       `json:"menu_id,omitempty" v:"between:1,4294967295" dc:"菜单ID"`
 	MenuName       string      `json:"menu_name,omitempty" v:"max-length:30" dc:"名称"`
-	SceneId        *uint       `json:"scene_id,omitempty" v:"between:1,4294967295" dc:"场景ID"`
+	SceneId        string      `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
 	Pid            *uint       `json:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
 	Level          *uint       `json:"level,omitempty" v:"between:1,255" dc:"层级"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -78,7 +78,7 @@ type MenuInfoRes struct {
 type MenuCreateReq struct {
 	g.Meta    `path:"/menu/create" method:"post" tags:"平台后台/权限管理/菜单" sm:"新增"`
 	MenuName  *string `json:"menu_name,omitempty" v:"required|max-length:30" dc:"名称"`
-	SceneId   *uint   `json:"scene_id,omitempty" v:"required|between:1,4294967295" dc:"场景ID"`
+	SceneId   *string `json:"scene_id,omitempty" v:"required|length:1,15" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
 	MenuIcon  *string `json:"menu_icon,omitempty" v:"max-length:30" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string `json:"menu_url,omitempty" v:"max-length:120" dc:"链接"`
@@ -95,7 +95,7 @@ type MenuUpdateReq struct {
 	Id        uint    `json:"-" filter:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
 	IdArr     []uint  `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	MenuName  *string `json:"menu_name,omitempty" filter:"-" v:"max-length:30" dc:"名称"`
-	SceneId   *uint   `json:"scene_id,omitempty" filter:"-" v:"between:1,4294967295" dc:"场景ID"`
+	SceneId   *string `json:"scene_id,omitempty" filter:"-" v:"length:1,15" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" filter:"-" v:"between:0,4294967295" dc:"父ID"`
 	MenuIcon  *string `json:"menu_icon,omitempty" filter:"-" v:"max-length:30" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
 	MenuUrl   *string `json:"menu_url,omitempty" filter:"-" v:"max-length:120" dc:"链接"`
