@@ -113,7 +113,6 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 	/*--------根据字段主键类型处理 开始--------*/
 	switch v.FieldTypePrimary {
 	case internal.TypePrimary: // 独立主键
-		return myGenViewI18nField{}
 	case internal.TypePrimaryAutoInc: // 独立主键（自增）
 		return myGenViewI18nField{}
 	case internal.TypePrimaryMany: // 联合主键
