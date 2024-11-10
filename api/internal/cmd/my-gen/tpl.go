@@ -600,7 +600,10 @@ func (myGenTplThis *myGenTpl) IsFindField(field myGenField, find any) (isFind bo
 }
 
 // 判断字段是否与表主键一致
-func (myGenTplThis *myGenTpl) IsSamePrimary(tpl myGenTpl, field string) bool {
+func (myGenTplThis *myGenTpl) IsSamePrimary(tpl myGenTpl, isAutoInc bool, fieldTypeRaw, field string) bool {
+	if isAutoInc || tpl.Handle.Id.List[0].FieldTypeRaw != fieldTypeRaw {
+		return false
+	}
 	primaryKeyArr := []string{tpl.Handle.Id.List[0].FieldCaseSnake}
 	if primaryKeyArr[0] == `id` {
 		primaryKeyArr = append(primaryKeyArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
@@ -828,13 +831,10 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		}
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, key := range extendTpl.KeyList {
-			if key.IsAutoInc {
-				continue
-			}
 			if len(key.FieldArr) != 1 {
 				continue
 			}
-			if !myGenTplThis.IsSamePrimary(tpl, key.FieldArr[0]) {
+			if !myGenTplThis.IsSamePrimary(tpl, key.IsAutoInc, key.FieldTypeRaw, key.FieldArr[0]) {
 				continue
 			}
 			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, extendTpl, key.FieldArr[0])
@@ -958,15 +958,12 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 
 		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, key := range middleTpl.KeyList {
-			if key.IsAutoInc {
-				continue
-			}
 			if !key.IsUnique { // 必须唯一
 				continue
 			}
 			keyField := ``
 			for _, keyFieldTmp := range key.FieldArr {
-				if myGenTplThis.IsSamePrimary(tpl, keyFieldTmp) {
+				if myGenTplThis.IsSamePrimary(tpl, key.IsAutoInc, key.FieldTypeRaw, keyFieldTmp) {
 					keyField = keyFieldTmp
 					break
 				}
@@ -1058,10 +1055,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 
 		otherRelTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, field := range otherRelTpl.FieldList {
-			if field.IsAutoInc {
-				continue
-			}
-			if !myGenTplThis.IsSamePrimary(tpl, field.FieldCaseSnakeRemove) {
+			if !myGenTplThis.IsSamePrimary(tpl, field.IsAutoInc, field.FieldTypeRaw, field.FieldCaseSnakeRemove) {
 				continue
 			}
 			isOtherRel := true

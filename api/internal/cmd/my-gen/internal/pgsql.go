@@ -101,7 +101,8 @@ func (dbHandler pgsql) GetKeyList(ctx context.Context, group, table string) (key
 				}
 				key.FieldArr = append(key.FieldArr, field.FieldRaw)
 				if field.IsAutoInc {
-					key.IsAutoInc = true
+					key.IsAutoInc = field.IsAutoInc
+					key.FieldTypeRaw = field.FieldTypeRaw
 				}
 			}
 		}

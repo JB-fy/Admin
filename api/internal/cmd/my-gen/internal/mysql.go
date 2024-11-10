@@ -75,7 +75,8 @@ func (dbHandler mysql) GetKeyList(ctx context.Context, group, table string) (key
 		if len(key.FieldArr) == 1 {
 			for _, field := range fieldList {
 				if key.FieldArr[0] == field.FieldRaw && field.IsAutoInc {
-					key.IsAutoInc = true
+					key.IsAutoInc = field.IsAutoInc
+					key.FieldTypeRaw = field.FieldTypeRaw
 					break
 				}
 			}

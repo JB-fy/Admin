@@ -37,10 +37,11 @@ type MyGenField struct {
 }
 
 type MyGenKey struct {
-	FieldArr  []string // 字段数组。联合索引有多字段，需按顺序存入
-	IsPrimary bool     // 是否主键
-	IsUnique  bool     // 是否唯一
-	IsAutoInc bool     // 是否自增
+	FieldArr     []string // 字段数组。联合索引有多字段，需按顺序存入
+	IsPrimary    bool     // 是否主键
+	IsUnique     bool     // 是否唯一
+	IsAutoInc    bool     // 是否自增
+	FieldTypeRaw string   // 字段类型（原始）
 }
 
 type MyGenFieldLimitInt struct {
