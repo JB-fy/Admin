@@ -62,7 +62,14 @@ func (dbHandler mysql) GetKeyList(ctx context.Context, group, table string) (key
 	}
 	for _, keyName := range keyNameList {
 		key := MyGenKey{}
-		key.FieldArr = append(key.FieldArr, fieldArrMap[keyName]...)
+		for _, v := range fieldArrMap[keyName] {
+			for _, field := range fieldList {
+				if v == field.FieldRaw {
+					key.FieldList = append(key.FieldList, field)
+					break
+				}
+			}
+		}
 		if keyName == `PRIMARY` {
 			key.IsPrimary = true
 		}
@@ -70,15 +77,6 @@ func (dbHandler mysql) GetKeyList(ctx context.Context, group, table string) (key
 			if keyName == v[`Key_name`].String() {
 				key.IsUnique = !v[`Non_unique`].Bool()
 				break
-			}
-		}
-		if len(key.FieldArr) == 1 {
-			for _, field := range fieldList {
-				if key.FieldArr[0] == field.FieldRaw && field.IsAutoInc {
-					key.IsAutoInc = field.IsAutoInc
-					key.FieldTypeRaw = field.FieldTypeRaw
-					break
-				}
 			}
 		}
 		keyList = append(keyList, key)

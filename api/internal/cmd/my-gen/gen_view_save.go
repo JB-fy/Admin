@@ -353,6 +353,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		return myGenViewSaveField{}
 	case internal.TypePrimaryMany: // 联合主键
 	case internal.TypePrimaryManyAutoInc: // 联合主键（自增）
+		return myGenViewSaveField{}
 	}
 	/*--------根据字段主键类型处理 结束--------*/
 

@@ -96,13 +96,9 @@ func (dbHandler pgsql) GetKeyList(ctx context.Context, group, table string) (key
 		keyFieldList, _ := g.DB(group).GetAll(ctx, `SELECT * FROM pg_attribute WHERE attrelid = `+v[`indexrelid`].String()+` ORDER BY attnum`)
 		for _, keyField := range keyFieldList {
 			for _, field := range fieldList {
-				if keyField[`attname`].String() != field.FieldRaw {
-					continue
-				}
-				key.FieldArr = append(key.FieldArr, field.FieldRaw)
-				if field.IsAutoInc {
-					key.IsAutoInc = field.IsAutoInc
-					key.FieldTypeRaw = field.FieldTypeRaw
+				if keyField[`attname`].String() == field.FieldRaw {
+					key.FieldList = append(key.FieldList, field)
+					break
 				}
 			}
 		}

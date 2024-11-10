@@ -212,23 +212,30 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 		/*--------确定字段主键类型 开始--------*/
 		for _, key := range tpl.KeyList {
-			if !garray.NewStrArrayFrom(key.FieldArr).Contains(fieldTmp.FieldRaw) {
+			isContinue := true
+			for _, field := range key.FieldList {
+				if fieldTmp.FieldRaw == field.FieldRaw {
+					isContinue = false
+					break
+				}
+			}
+			if isContinue {
 				continue
 			}
-			if key.IsUnique && len(key.FieldArr) == 1 {
+			if key.IsUnique && len(key.FieldList) == 1 {
 				fieldTmp.IsUnique = true
 			}
 			if !key.IsPrimary {
 				continue
 			}
-			if len(key.FieldArr) == 1 {
+			if len(key.FieldList) == 1 {
 				fieldTmp.FieldTypePrimary = internal.TypePrimary
-				if key.IsAutoInc {
+				if fieldTmp.IsAutoInc {
 					fieldTmp.FieldTypePrimary = internal.TypePrimaryAutoInc
 				}
 			} else {
 				fieldTmp.FieldTypePrimary = internal.TypePrimaryMany
-				if key.IsAutoInc {
+				if fieldTmp.IsAutoInc {
 					fieldTmp.FieldTypePrimary = internal.TypePrimaryManyAutoInc
 				}
 			}
@@ -250,6 +257,28 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			fieldTmp.FieldTypeName = internal.TypeNameIdPath
 
 			tpl.Handle.Pid.IdPath = fieldTmp.FieldRaw
+		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU /* , internal.TypeVarchar, internal.TypeChar */}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
+			if !garray.NewStrArrayFrom([]string{internal.TypePrimary, internal.TypePrimaryAutoInc}).Contains(fieldTmp.FieldTypePrimary) { // 本表id字段不算
+				fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
+
+				fieldTmp.FieldLimitInt.Min = `1`
+				handleRelIdObj := handleRelId{
+					tpl:       tpl.getRelIdTpl(ctx, tpl, fieldTmp.FieldTypeRaw, fieldTmp.FieldCaseSnakeRemove),
+					FieldName: fieldTmp.FieldName,
+				}
+				if gstr.ToUpper(gstr.SubStr(handleRelIdObj.FieldName, -2)) == `ID` {
+					handleRelIdObj.FieldName = gstr.SubStr(handleRelIdObj.FieldName, 0, -2)
+				}
+				if pos := gstr.Pos(fieldTmp.FieldCaseSnake, `_of_`); pos != -1 {
+					handleRelIdObj.SuffixCaseSnake = gstr.SubStr(fieldTmp.FieldCaseSnake, pos)
+					handleRelIdObj.SuffixCaseCamel = gstr.CaseCamel(handleRelIdObj.SuffixCaseSnake)
+					handleRelIdObj.Suffix = handleRelIdObj.SuffixCaseSnake
+					if fieldTmp.FieldRaw != fieldTmp.FieldCaseSnake {
+						handleRelIdObj.Suffix = handleRelIdObj.SuffixCaseCamel
+					}
+				}
+				tpl.Handle.RelIdMap[fieldTmp.FieldRaw] = handleRelIdObj
+			}
 		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`status`, `type`, `scene`, `method`, `pos`, `position`, `gender`, `currency`}).Contains(fieldSuffix) { //status,type,scene,method,pos,position,gender,currency等后缀
 			fieldTmp.FieldTypeName = internal.TypeNameStatusSuffix
 
@@ -344,28 +373,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 					tpl.Handle.Pid.Level = fieldTmp.FieldRaw
 				}
-			} else if garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-				if fieldTmp.FieldTypePrimary != internal.TypePrimaryAutoInc /* && fieldTmp.FieldTypePrimary != internal.TypePrimary */ { // 本表id字段不算
-					fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
-
-					fieldTmp.FieldLimitInt.Min = `1`
-					handleRelIdObj := handleRelId{
-						tpl:       tpl.getRelIdTpl(ctx, tpl, fieldTmp.FieldRaw),
-						FieldName: fieldTmp.FieldName,
-					}
-					if gstr.ToUpper(gstr.SubStr(handleRelIdObj.FieldName, -2)) == `ID` {
-						handleRelIdObj.FieldName = gstr.SubStr(handleRelIdObj.FieldName, 0, -2)
-					}
-					if pos := gstr.Pos(fieldTmp.FieldCaseSnake, `_of_`); pos != -1 {
-						handleRelIdObj.SuffixCaseSnake = gstr.SubStr(fieldTmp.FieldCaseSnake, pos)
-						handleRelIdObj.SuffixCaseCamel = gstr.CaseCamel(handleRelIdObj.SuffixCaseSnake)
-						handleRelIdObj.Suffix = handleRelIdObj.SuffixCaseSnake
-						if fieldTmp.FieldRaw != fieldTmp.FieldCaseSnake {
-							handleRelIdObj.Suffix = handleRelIdObj.SuffixCaseCamel
-						}
-					}
-					tpl.Handle.RelIdMap[fieldTmp.FieldRaw] = handleRelIdObj
-				}
 			} else if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
 				fieldTmp.FieldTypeName = internal.TypeNameIsPrefix
 				// TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）
@@ -428,9 +435,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			continue
 		}
 		tpl.Handle.Id.IsPrimary = true
-		for _, field := range key.FieldArr {
+		for _, field := range key.FieldList {
 			for _, v := range fieldList {
-				if v.FieldRaw == field {
+				if v.FieldRaw == field.FieldRaw {
 					tpl.Handle.Id.List = append(tpl.Handle.Id.List, v)
 					break
 				}
@@ -612,10 +619,8 @@ func (myGenTplThis *myGenTpl) IsSamePrimary(tpl myGenTpl, isAutoInc bool, fieldT
 }
 
 // 获取id后缀字段关联的表信息
-func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, field string) (relTpl myGenTpl) {
-	fieldCaseSnake := gstr.CaseSnake(field)
-	fieldCaseSnakeOfRemove := gstr.Split(fieldCaseSnake, `_of_`)[0]
-	tableSuffix := gstr.TrimRightStr(fieldCaseSnakeOfRemove, `_id`, 1)
+func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fieldTypeRaw, fieldCaseSnakeRemove string) (relTpl myGenTpl) {
+	tableSuffix := gstr.TrimRightStr(fieldCaseSnakeRemove, `_id`, 1)
 	/*--------确定关联表 开始--------*/
 	// 按以下优先级确定关联表
 	type mayBe struct {
@@ -639,7 +644,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	isSamePrimaryFunc := func(table string) bool {
 		tableKeyList := tpl.DbHandler.GetKeyList(ctx, tpl.Group, table)
 		for _, v := range tableKeyList {
-			if v.IsPrimary && len(v.FieldArr) == 1 && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeOfRemove}).Contains(gstr.CaseSnake(v.FieldArr[0])) {
+			if v.IsPrimary && len(v.FieldList) == 1 && v.FieldList[0].FieldTypeRaw == fieldTypeRaw && garray.NewStrArrayFrom([]string{`id`, fieldCaseSnakeRemove}).Contains(gstr.CaseSnake(v.FieldList[0].FieldRaw)) {
 				return true
 			}
 		}
@@ -831,18 +836,18 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		}
 		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
 		for _, key := range extendTpl.KeyList {
-			if len(key.FieldArr) != 1 {
+			if len(key.FieldList) != 1 {
 				continue
 			}
-			if !myGenTplThis.IsSamePrimary(tpl, key.IsAutoInc, key.FieldTypeRaw, key.FieldArr[0]) {
+			if !myGenTplThis.IsSamePrimary(tpl, key.FieldList[0].IsAutoInc, key.FieldList[0].FieldTypeRaw, key.FieldList[0].FieldRaw) {
 				continue
 			}
-			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, extendTpl, key.FieldArr[0])
+			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, extendTpl, key.FieldList[0].FieldRaw)
 			if len(handleExtendMiddleObj.FieldList) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}
 			if key.IsPrimary { //主键
-				if !key.IsAutoInc { //不自增
+				if !key.FieldList[0].IsAutoInc { //不自增
 					handleExtendMiddleObj.TableType = internal.TableTypeExtendOne
 				}
 			} else {
@@ -857,7 +862,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 			case internal.TableTypeExtendOne:
 				isExtendOne := true
 				fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
-				isExtendOneStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对一)，关联字段(` + key.FieldArr[0] + `)，请确认？默认(yes)：`))
+				isExtendOneStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对一)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
 			isExtendOneEnd:
 				for {
 					switch isExtendOneStr {
@@ -868,17 +873,17 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 						isExtendOne = false
 						break isExtendOneEnd
 					default:
-						isExtendOneStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对一)，关联字段(` + key.FieldArr[0] + `)，请确认？默认(yes)：`))
+						isExtendOneStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对一)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
 					}
 				}
 				if isExtendOne {
 					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
 				}
-				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对一)`, extendTpl.Table, key.FieldArr[0], isExtendOne))
+				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对一)`, extendTpl.Table, key.FieldList[0].FieldRaw, isExtendOne))
 			case internal.TableTypeExtendMany:
 				isExtendMany := true
 				fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
-				isExtendManyStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对多)，关联字段(` + key.FieldArr[0] + `)，请确认？默认(yes)：`))
+				isExtendManyStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对多)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
 			isExtendManyEnd:
 				for {
 					switch isExtendManyStr {
@@ -889,7 +894,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 						isExtendMany = false
 						break isExtendManyEnd
 					default:
-						isExtendManyStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对多)，关联字段(` + key.FieldArr[0] + `)，请确认？默认(yes)：`))
+						isExtendManyStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对多)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
 					}
 				}
 				if isExtendMany {
@@ -900,7 +905,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 					}
 					extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
 				}
-				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对多)`, extendTpl.Table, key.FieldArr[0], isExtendMany))
+				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对多)`, extendTpl.Table, key.FieldList[0].FieldRaw, isExtendMany))
 			}
 			break
 		}
@@ -962,9 +967,9 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 				continue
 			}
 			keyField := ``
-			for _, keyFieldTmp := range key.FieldArr {
-				if myGenTplThis.IsSamePrimary(tpl, key.IsAutoInc, key.FieldTypeRaw, keyFieldTmp) {
-					keyField = keyFieldTmp
+			for _, keyFieldTmp := range key.FieldList {
+				if myGenTplThis.IsSamePrimary(tpl, keyFieldTmp.IsAutoInc, keyFieldTmp.FieldTypeRaw, keyFieldTmp.FieldRaw) {
+					keyField = keyFieldTmp.FieldRaw
 					break
 				}
 			}
@@ -978,9 +983,9 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			if len(handleExtendMiddleObj.FieldListOfIdSuffix) == 0 { //没有其它表的关联id字段，不是中间表
 				continue
 			}
-			if len(key.FieldArr) == 1 {
+			if len(key.FieldList) == 1 {
 				if key.IsPrimary { //主键
-					if !key.IsAutoInc { //不自增
+					if !key.FieldList[0].IsAutoInc { //不自增
 						handleExtendMiddleObj.TableType = internal.TableTypeMiddleOne
 					}
 				} else { //唯一索引
@@ -988,8 +993,8 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 				}
 			} else {
 				isAllId := true
-				for _, v := range key.FieldArr {
-					vArr := gstr.Split(gstr.CaseSnake(v), `_`)
+				for _, v := range key.FieldList {
+					vArr := gstr.Split(gstr.CaseSnake(v.FieldRaw), `_`)
 					if vArr[len(vArr)-1] != `id` {
 						isAllId = false
 					}
