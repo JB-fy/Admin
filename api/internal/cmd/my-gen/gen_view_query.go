@@ -181,9 +181,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	/*--------根据字段主键类型处理 开始--------*/
 	switch v.FieldTypePrimary {
 	case internal.TypePrimary: // 独立主键
-		if v.FieldRaw == `id` {
-			return myGenViewQueryField{}
-		}
+		return myGenViewQueryField{}
 	case internal.TypePrimaryAutoInc: // 独立主键（自增）
 		return myGenViewQueryField{}
 	case internal.TypePrimaryMany: // 联合主键

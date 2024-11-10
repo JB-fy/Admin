@@ -455,9 +455,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	/*--------根据字段主键类型处理 开始--------*/
 	switch v.FieldTypePrimary {
 	case internal.TypePrimary: // 独立主键
-		if v.FieldRaw == `id` {
-			return myGenViewListField{}
-		}
+		return myGenViewListField{}
 	case internal.TypePrimaryAutoInc: // 独立主键（自增）
 		return myGenViewListField{}
 	case internal.TypePrimaryMany: // 联合主键
