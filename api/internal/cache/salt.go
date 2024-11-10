@@ -15,7 +15,7 @@ type salt struct {
 	Key   string
 }
 
-// sceneId 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneId规避
+// sceneId 场景ID。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneId规避
 // loginName 手机/邮箱/账号
 func NewSalt(ctx context.Context, sceneId string, loginName string) *salt {
 	//可在这里写分库逻辑

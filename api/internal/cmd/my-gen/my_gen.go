@@ -113,7 +113,7 @@ type myGenOption struct {
 	IsAuthAction bool       `json:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
 	CommonName   string     `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
 	IsView       bool       `json:"isView"`       //是否生成前端视图文件
-	SceneId      string     `json:"sceneId"`      //场景标识，必须在数据库表auth_scene已存在。示例：platform
+	SceneId      string     `json:"sceneId"`      //场景ID，必须在数据库表auth_scene已存在。示例：platform
 	IsList       bool       `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
 	IsCount      bool       `json:"isCount" `     //列表接口是否返回总数
 	IsInfo       bool       `json:"isInfo" `      //是否生成详情接口
@@ -307,9 +307,9 @@ isViewEnd:
 		}
 	}
 	if option.IsApi || option.IsView {
-		// 场景标识
+		// 场景ID
 		if option.SceneId == `` {
-			option.SceneId = gcmd.Scan(color.BlueString(`> 请输入场景标识：`))
+			option.SceneId = gcmd.Scan(color.BlueString(`> 请输入场景ID：`))
 		}
 		for {
 			if option.SceneId != `` {
@@ -318,7 +318,7 @@ isViewEnd:
 					break
 				}
 			}
-			option.SceneId = gcmd.Scan(color.RedString(`    场景标识不存在，请重新输入：`))
+			option.SceneId = gcmd.Scan(color.RedString(`    场景ID不存在，请重新输入：`))
 		}
 
 	noAllRestart:

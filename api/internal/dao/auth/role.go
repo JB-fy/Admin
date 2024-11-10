@@ -101,7 +101,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]any{`scene_id`: `场景标识`, `login_id`: 登录身份id}
+			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]any{`scene_id`: `场景ID`, `login_id`: 登录身份id}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
 				var roleIdArr []*gvar.Var

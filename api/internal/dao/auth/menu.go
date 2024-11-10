@@ -98,7 +98,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `self_menu`: //获取当前登录身份可用的菜单。参数：map[string]any{`scene_id`: `场景标识`, `login_id`: 登录身份id, `is_super`: 是否超管（平台超级管理员用）}
+			case `self_menu`: //获取当前登录身份可用的菜单。参数：map[string]any{`scene_id`: `场景ID`, `login_id`: 登录身份id, `is_super`: 是否超管（平台超级管理员用）}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
 				if gconv.String(val[`scene_id`]) == `platform` && gconv.Uint(val[`is_super`]) == 1 { //平台超级管理员

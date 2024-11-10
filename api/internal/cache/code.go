@@ -15,7 +15,7 @@ type code struct {
 	Key   string
 }
 
-// sceneId 场景标识。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneId规避
+// sceneId 场景ID。注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneId规避
 // to 手机/邮箱
 // scene 场景
 func NewCode(ctx context.Context, sceneId string, to string, scene uint) *code {
