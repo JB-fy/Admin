@@ -28,6 +28,7 @@ type myGenViewSaveField struct {
 	dataInitBefore internal.MyGenDataStrHandler
 	dataInitAfter  internal.MyGenDataStrHandler
 	isRequired     bool
+	ifStr          string
 	rule           internal.MyGenDataSliceHandler
 	formContent    internal.MyGenDataStrHandler
 	formHandle     internal.MyGenDataStrHandler
@@ -57,7 +58,11 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 			case internal.TableTypeExtendMany, internal.TableTypeMiddleMany:
 				rule = append([]string{`{ required: true, message: t('` + i18nPath + `.name.` + i18nFieldPath + `.` + field + `') + t('validation.required') },`}, rule...)
 			default:
-				rule = append([]string{`{ required: true, message: t('validation.required') },`}, rule...)
+				if viewSaveField.ifStr != `` {
+					rule = append([]string{`{ required: computed((): boolean => ` + viewSaveField.ifStr + `), message: t('validation.required') },`}, rule...)
+				} else {
+					rule = append([]string{`{ required: true, message: t('validation.required') },`}, rule...)
+				}
 			}
 		}
 	}
@@ -73,6 +78,8 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
                 </el-form-item>`
 	if fieldIf != `` {
 		formItem = gstr.Replace(formItem, ` `, ` v-if="`+fieldIf+`" `, 1)
+	} else if viewSaveField.ifStr != `` {
+		formItem = gstr.Replace(formItem, ` `, ` v-if="`+viewSaveField.ifStr+`" `, 1)
 	}
 	viewSaveThis.formItem = append(viewSaveThis.formItem, formItem)
 	switch tableType {
@@ -349,6 +356,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 	/*--------根据字段主键类型处理 开始--------*/
 	switch v.FieldTypePrimary {
 	case internal.TypePrimary: // 独立主键
+		viewSaveField.ifStr = `!saveForm.data.id`
 	case internal.TypePrimaryAutoInc: // 独立主键（自增）
 		return myGenViewSaveField{}
 	case internal.TypePrimaryMany: // 联合主键

@@ -444,6 +444,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 			return myGenApiField{}
 		}
 		apiField.filterType.Method = internal.ReturnType
+		apiField.updateType.Method = internal.ReturnEmpty
 		// 创建和更新按数据类型和命名类型处理。但这种主键一般会在程序内封装ID生成逻辑（可在代码生成后修改）
 	case internal.TypePrimaryAutoInc: // 独立主键（自增）
 		if v.FieldRaw == `id` {
