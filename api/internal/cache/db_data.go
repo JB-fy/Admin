@@ -115,7 +115,7 @@ func (cacheThis *dbData) GetOrSetMany(idArr []string, field ...string) (list gdb
 			err = errTmp
 			return
 		}
-		if noExistOfDb { //既然是缓存数据库数据，就要根数据库一样，查不到数据，就没有数据
+		if noExistOfDb { //既然缓存的是数据库数据，就要和数据库一样，无数据时，不返回
 			continue
 		}
 		var info gdb.Record
@@ -133,7 +133,7 @@ func (cacheThis *dbData) GetOrSetPluck(idArr []string, field ...string) (record 
 			err = errTmp
 			return
 		}
-		if noExistOfDb { //既然是缓存数据库数据，就要根数据库一样，查不到数据，就没有数据
+		if noExistOfDb { //既然缓存的是数据库数据，就要和数据库一样，无数据时，不返回
 			continue
 		}
 		record[id] = value
