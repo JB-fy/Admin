@@ -5,6 +5,7 @@
 package platform
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/platform/internal"
 	"context"
@@ -360,11 +361,13 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, configKeyArr ...string) (config gdb.Record, err error) {
-	return daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().ConfigKey, configKeyArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
+	// return daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().ConfigKey, configKeyArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
+	return cache.NewDbData(ctx, daoThis).GetOrSetPluck(configKeyArr, daoThis.Columns().ConfigValue)
 }
 
 // 保存配置
 func (daoThis *configDao) Save(ctx context.Context, config map[string]any) (err error) {
+	configKeyArr := []string{}
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 	err = daoModelThis.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {
@@ -375,8 +378,13 @@ func (daoThis *configDao) Save(ctx context.Context, config map[string]any) (err 
 			if err != nil {
 				return
 			}
+			configKeyArr = append(configKeyArr, k)
 		}
 		return
 	})
+	if err != nil {
+		return
+	}
+	cache.NewDbData(ctx, daoThis).Del(configKeyArr...)
 	return
 }

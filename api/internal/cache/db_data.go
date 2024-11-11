@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gogf/gf/v2/container/gvar"
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -37,12 +39,14 @@ func NewDbData(ctx context.Context, dao dao.DaoInterface) *dbData {
 var (
 	dbDataMuMap sync.Map //存放所有缓存KEY的锁（当前服务器用）
 	// （不同服务器竞争redis锁用）依据以下两个时间设置：运行速度 + 缓存写入到能读取之间的时间
-	numLock = 3                      //获取锁的重试次数。作用：当获取锁的服务器因报错，无法做缓存写入时，允许其它服务器重新获取锁，以保证缓存写入成功
-	numRead = 5                      //读取缓存的重试次数。作用：当未获取锁的服务器获取缓存时数据为空时，可以重试多次
-	oneTime = 200 * time.Millisecond //读取缓存重试间隔时间
+	dbDataIsSetKeySuffix       = `_isSet`               //redis锁缓存Key后缀。与原来的缓存KEY拼接
+	dbDataIsSetKeyTTL    int64 = 3                      //redis锁缓存Key时间
+	dbDataNumLock              = 3                      //获取锁的重试次数。作用：当获取锁的服务器因报错，无法做缓存写入时，允许其它服务器重新获取锁，以保证缓存写入成功
+	dbDataNumRead              = 5                      //读取缓存的重试次数。作用：当未获取锁的服务器获取缓存时数据为空时，可以重试多次
+	dbDataOneTime              = 200 * time.Millisecond //读取缓存重试间隔时间
 )
 
-func (cacheThis *dbData) GetOrSet(id string, field ...string) (value string, err error) {
+func (cacheThis *dbData) GetOrSet(id string, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
 	cacheThis.DaoModel = cacheThis.Dao.CtxDaoModel(cacheThis.Ctx)
 	cacheThis.Id = id
 	cacheThis.Key = fmt.Sprintf(consts.CacheDbDataFormat, cacheThis.DaoModel.DbGroup, cacheThis.DaoModel.DbTable, cacheThis.Id)
@@ -51,7 +55,7 @@ func (cacheThis *dbData) GetOrSet(id string, field ...string) (value string, err
 	if err != nil {
 		return
 	}
-	if value != `` {
+	if value.String() != `` {
 		return
 	}
 
@@ -62,30 +66,34 @@ func (cacheThis *dbData) GetOrSet(id string, field ...string) (value string, err
 	defer dbDataMu.Unlock()
 
 	// 防止不同服务器并发
-	isSetKey := cacheThis.Key + `_isSet`
+	isSetKey := cacheThis.Key + dbDataIsSetKeySuffix
 	var isSet int64 = 0
-	for i := 0; i < numLock; i++ {
+	for i := 0; i < dbDataNumLock; i++ {
 		isSet, err = cacheThis.Redis.Incr(cacheThis.Ctx, isSetKey)
 		if err != nil {
 			return
 		}
-
 		if isSet == 1 {
-			value, err = cacheThis.set(field...)
-			if err != nil {
-				cacheThis.Redis.Del(cacheThis.Ctx, isSetKey) //报错时删除可设置缓存KEY，允许其它服务器重新尝试设置缓存
+			value, noExistOfDb, err = cacheThis.set(field...)
+			if noExistOfDb {
+				cacheThis.Redis.Del(cacheThis.Ctx, isSetKey) //数据库不存在时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 				return
 			}
-			cacheThis.Redis.Expire(cacheThis.Ctx, isSetKey, 3)
+			if err != nil {
+				cacheThis.Redis.Del(cacheThis.Ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
+				return
+			}
+			cacheThis.Redis.Expire(cacheThis.Ctx, isSetKey, dbDataIsSetKeyTTL)
 			return
 		}
+
 		// 等待读取数据
-		for i := 0; i < numRead; i++ {
+		for i := 0; i < dbDataNumRead; i++ {
 			value, _ = cacheThis.get()
-			if value != `` {
+			if value.String() != `` {
 				return
 			}
-			time.Sleep(oneTime)
+			time.Sleep(dbDataOneTime)
 		}
 	}
 	/*
@@ -97,14 +105,40 @@ func (cacheThis *dbData) GetOrSet(id string, field ...string) (value string, err
 	return
 }
 
-func (cacheThis *dbData) GetOrSetMany(idArr []string, field ...string) (valueArr []string, err error) {
+type DbDataValue struct {
+	Value       *gvar.Var
+	NoExistOfDb bool
+}
+
+func (cacheThis *dbData) GetOrSetMany(idArr []string, field ...string) (list gdb.Result, err error) {
 	for _, id := range idArr {
-		value, errTmp := cacheThis.GetOrSet(id, field...)
+		value, noExistOfDb, errTmp := cacheThis.GetOrSet(id, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
 		}
-		valueArr = append(valueArr, value)
+		if noExistOfDb {
+			continue
+		}
+		var info gdb.Record
+		value.Scan(&info)
+		list = append(list, info)
+	}
+	return
+}
+
+func (cacheThis *dbData) GetOrSetPluck(idArr []string, field ...string) (record gdb.Record, err error) {
+	record = gdb.Record{}
+	for _, id := range idArr {
+		value, noExistOfDb, errTmp := cacheThis.GetOrSet(id, field...)
+		if errTmp != nil {
+			err = errTmp
+			return
+		}
+		if noExistOfDb {
+			continue
+		}
+		record[id] = value
 	}
 	return
 }
@@ -119,29 +153,28 @@ func (cacheThis *dbData) Del(idArr ...string) (row int64, err error) {
 	return
 }
 
-func (cacheThis *dbData) set(field ...string) (value string, err error) {
-	if len(field) == 1 {
-		value, err = cacheThis.DaoModel.Filter(`id`, cacheThis.Id).ValueStr(field[0])
-		if err != nil {
-			return
-		}
-	} else {
-		info, errTmp := cacheThis.DaoModel.Filter(`id`, cacheThis.Id).Fields(field...).One()
-		if errTmp != nil {
-			err = errTmp
-			return
-		}
-		value = info.Json()
-	}
-	_, err = cacheThis.Redis.Set(cacheThis.Ctx, cacheThis.Key, value)
-	return
-}
-
-func (cacheThis *dbData) get() (value string, err error) {
-	valueTmp, err := cacheThis.Redis.Get(cacheThis.Ctx, cacheThis.Key)
+func (cacheThis *dbData) set(field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
+	info, err := cacheThis.DaoModel.Filter(`id`, cacheThis.Id).Fields(field...).One()
 	if err != nil {
 		return
 	}
-	value = valueTmp.String()
+	if info.IsEmpty() { //数据不存在，不缓存
+		noExistOfDb = true
+		return
+	}
+	if len(field) == 1 {
+		value = info[field[0]]
+	} else {
+		value = gvar.New(info.Json())
+	}
+	_, err = cacheThis.Redis.Set(cacheThis.Ctx, cacheThis.Key, value.String())
+	return
+}
+
+func (cacheThis *dbData) get() (value *gvar.Var, err error) {
+	value, err = cacheThis.Redis.Get(cacheThis.Ctx, cacheThis.Key)
+	/* if err != nil {
+		return
+	} */
 	return
 }
