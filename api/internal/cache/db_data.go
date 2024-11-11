@@ -23,7 +23,6 @@ type dbData struct {
 	Id       string
 }
 
-// 删除操作时，id可不传
 func NewDbData(ctx context.Context, dao dao.DaoInterface) *dbData {
 	//可在这里写分库逻辑
 	redis := g.Redis()
@@ -95,6 +94,18 @@ func (cacheThis *dbData) GetOrSet(id string, field ...string) (value string, err
 			2：redis服务负载过高，需要及时做优化了。解决方案：扩容或分库
 	*/
 	err = errors.New(`尝试多次查询缓存失败：` + cacheThis.Key)
+	return
+}
+
+func (cacheThis *dbData) GetOrSetMany(idArr []string, field ...string) (valueArr []string, err error) {
+	for _, id := range idArr {
+		value, errTmp := cacheThis.GetOrSet(id, field...)
+		if errTmp != nil {
+			err = errTmp
+			return
+		}
+		valueArr = append(valueArr, value)
+	}
 	return
 }
 

@@ -1,13 +1,10 @@
 package middleware
 
 import (
-	"api/internal/cache"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
 	"strings"
 
-	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -18,13 +15,11 @@ func Scene(r *ghttp.Request) {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-	value, _ := cache.NewDbData(r.GetCtx(), &daoAuth.Scene).GetOrSet(sceneId, daoAuth.Scene.Columns().SceneId, daoAuth.Scene.Columns().SceneConfig, daoAuth.Scene.Columns().IsStop)
-	if value == `` {
+	sceneInfo, _ := daoAuth.Scene.GetInfoFromCache(r.GetCtx(), sceneId)
+	if sceneInfo.IsEmpty() {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-	var sceneInfo gdb.Record
-	gjson.New(value).Scan(&sceneInfo)
 	if sceneInfo[daoAuth.Scene.Columns().IsStop].Uint() == 1 {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999997, ``))
 		return

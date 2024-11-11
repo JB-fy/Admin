@@ -15,6 +15,7 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -387,3 +388,12 @@ func (daoThis *sceneDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 }
 
 // Fill with you ideas below.
+
+func (daoThis *sceneDao) GetInfoFromCache(ctx context.Context, id string) (info gdb.Record, err error) {
+	value, err := cache.NewDbData(ctx, daoThis).GetOrSet(id, daoThis.Columns().SceneId, daoThis.Columns().SceneConfig, daoThis.Columns().IsStop)
+	if err != nil {
+		return
+	}
+	gjson.New(value).Scan(&info)
+	return
+}
