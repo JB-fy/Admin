@@ -51,11 +51,11 @@ func (cacheThis *dbData) GetOrSet(id string, field ...string) (value *gvar.Var, 
 	cacheThis.Id = id
 	cacheThis.Key = fmt.Sprintf(consts.CacheDbDataFormat, cacheThis.DaoModel.DbGroup, cacheThis.DaoModel.DbTable, cacheThis.Id)
 
-	value, err = cacheThis.get()
+	value, noExistOfCache, err := cacheThis.get()
 	if err != nil {
 		return
 	}
-	if value.String() != `` {
+	if !noExistOfCache {
 		return
 	}
 
@@ -89,8 +89,11 @@ func (cacheThis *dbData) GetOrSet(id string, field ...string) (value *gvar.Var, 
 
 		// 等待读取数据
 		for i := 0; i < dbDataNumRead; i++ {
-			value, _ = cacheThis.get()
-			if value.String() != `` {
+			value, noExistOfCache, err = cacheThis.get()
+			if err != nil {
+				return
+			}
+			if !noExistOfCache {
 				return
 			}
 			time.Sleep(dbDataOneTime)
@@ -171,10 +174,22 @@ func (cacheThis *dbData) set(field ...string) (value *gvar.Var, noExistOfDb bool
 	return
 }
 
-func (cacheThis *dbData) get() (value *gvar.Var, err error) {
+func (cacheThis *dbData) get() (value *gvar.Var, noExistOfCache bool, err error) {
 	value, err = cacheThis.Redis.Get(cacheThis.Ctx, cacheThis.Key)
-	/* if err != nil {
+	if err != nil {
 		return
-	} */
+	}
+	if value.String() != `` {
+		return
+	}
+	//为空时增加判断，数据库数据本身就是空字符串，但已缓存在数据库
+	exists, err := cacheThis.Redis.Exists(cacheThis.Ctx, cacheThis.Key)
+	if err != nil {
+		return
+	}
+	if exists > 0 {
+		return
+	}
+	noExistOfCache = true
 	return
 }
