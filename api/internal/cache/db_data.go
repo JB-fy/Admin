@@ -108,11 +108,6 @@ func (cacheThis *dbData) GetOrSet(id string, field ...string) (value *gvar.Var, 
 	return
 }
 
-type DbDataValue struct {
-	Value       *gvar.Var
-	NoExistOfDb bool
-}
-
 func (cacheThis *dbData) GetOrSetMany(idArr []string, field ...string) (list gdb.Result, err error) {
 	for _, id := range idArr {
 		value, noExistOfDb, errTmp := cacheThis.GetOrSet(id, field...)
@@ -120,7 +115,7 @@ func (cacheThis *dbData) GetOrSetMany(idArr []string, field ...string) (list gdb
 			err = errTmp
 			return
 		}
-		if noExistOfDb {
+		if noExistOfDb { //既然是缓存数据库数据，就要根数据库一样，查不到数据，就没有数据
 			continue
 		}
 		var info gdb.Record
@@ -138,7 +133,7 @@ func (cacheThis *dbData) GetOrSetPluck(idArr []string, field ...string) (record 
 			err = errTmp
 			return
 		}
-		if noExistOfDb {
+		if noExistOfDb { //既然是缓存数据库数据，就要根数据库一样，查不到数据，就没有数据
 			continue
 		}
 		record[id] = value
