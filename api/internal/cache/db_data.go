@@ -14,27 +14,23 @@ import (
 )
 
 type dbData struct {
-	Ctx      context.Context
-	Redis    *gredis.Redis
-	Dao      dao.DaoInterface
+	Ctx   context.Context
+	Redis *gredis.Redis
+	Dao   dao.DaoInterface
+	// 以下三个参数只在调用GetOrSet方法时初始化
 	DaoModel *dao.DaoModel
 	Key      string
 	Id       string
 }
 
 // 删除操作时，id可不传
-func NewDbData(ctx context.Context, dao dao.DaoInterface, id ...string) *dbData {
+func NewDbData(ctx context.Context, dao dao.DaoInterface) *dbData {
 	//可在这里写分库逻辑
 	redis := g.Redis()
 	chcheObj := &dbData{
 		Ctx:   ctx,
 		Redis: redis,
 		Dao:   dao,
-	}
-	if len(id) > 0 {
-		chcheObj.DaoModel = chcheObj.Dao.CtxDaoModel(chcheObj.Ctx)
-		chcheObj.Id = id[0]
-		chcheObj.Key = fmt.Sprintf(consts.CacheDbDataFormat, chcheObj.DaoModel.DbGroup, chcheObj.DaoModel.DbTable, chcheObj.Id)
 	}
 	return chcheObj
 }
@@ -47,7 +43,11 @@ var (
 	oneTime = 200 * time.Millisecond //读取缓存重试间隔时间
 )
 
-func (cacheThis *dbData) GetOrSet(field ...string) (value string, err error) {
+func (cacheThis *dbData) GetOrSet(id string, field ...string) (value string, err error) {
+	cacheThis.DaoModel = cacheThis.Dao.CtxDaoModel(cacheThis.Ctx)
+	cacheThis.Id = id
+	cacheThis.Key = fmt.Sprintf(consts.CacheDbDataFormat, cacheThis.DaoModel.DbGroup, cacheThis.DaoModel.DbTable, cacheThis.Id)
+
 	value, err = cacheThis.get()
 	if err != nil {
 		return

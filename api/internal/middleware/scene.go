@@ -18,7 +18,7 @@ func Scene(r *ghttp.Request) {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-	value, _ := cache.NewDbData(r.GetCtx(), &daoAuth.Scene, sceneId).GetOrSet(daoAuth.Scene.Columns().SceneId, daoAuth.Scene.Columns().SceneConfig, daoAuth.Scene.Columns().IsStop)
+	value, _ := cache.NewDbData(r.GetCtx(), &daoAuth.Scene).GetOrSet(sceneId, daoAuth.Scene.Columns().SceneId, daoAuth.Scene.Columns().SceneConfig, daoAuth.Scene.Columns().IsStop)
 	if value == `` {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
