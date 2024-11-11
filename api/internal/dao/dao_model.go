@@ -644,7 +644,7 @@ func (daoModelThis *DaoModel) ArrayStr(fieldsAndWhere ...any) ([]string, error) 
 	if err != nil {
 		return nil, err
 	}
-	return gconv.SliceStr(result), nil
+	return gconv.Strings(result), nil
 }
 
 // 封装常用方法

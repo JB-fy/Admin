@@ -303,11 +303,12 @@ func (daoThis *adminDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 			}
 		}
 		m = m.Data(updateData)
-		if len(daoModel.AfterUpdate) > 0 {
-			m = m.Hook(daoThis.HookUpdate(daoModel))
-			if len(updateData) == 0 {
-				daoModel.IsOnlyAfterUpdate = true
-			}
+		if len(daoModel.AfterUpdate) == 0 {
+			return m
+		}
+		m = m.Hook(daoThis.HookUpdate(daoModel))
+		if len(updateData) == 0 {
+			daoModel.IsOnlyAfterUpdate = true
 		}
 		return m
 	}
@@ -330,7 +331,7 @@ func (daoThis *adminDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				switch k {
 				case `role_id_arr`:
 					// daoIndex.SaveArrRelManyWithSort(ctx, &daoAuth.RoleRelOfPlatformAdmin, daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
-					valArr := gconv.SliceStr(v)
+					valArr := gconv.Strings(v)
 					for _, id := range daoModel.IdArr {
 						daoIndex.SaveArrRelMany(ctx, &daoAuth.RoleRelOfPlatformAdmin, daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId, id, valArr)
 					}

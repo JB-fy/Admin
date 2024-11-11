@@ -1,13 +1,15 @@
 package consts
 
 var (
+	ConstCtxSceneInfoName = `sceneInfo`
+	ConstCtxLoginInfoName = `loginInfo`
+
+	CacheDbDataFormat = `dbData:%s:%s:%s` //数据库数据缓存key。参数：db分组，db表名，ID
+
 	CacheSaltFormat          = `salt:%s:%s`          //密码盐缓存key。参数：场景ID，手机/邮箱/账号/邮箱
 	CacheCodeFormat          = `code:%s:%s_%d`       //验证码缓存key。参数：场景ID，手机/邮箱，场景
 	CacheTokenActiveFormat   = `tokenActive:%s:%s`   //判断Token失活缓存key。参数：场景ID，登录用户ID
 	CacheTokenIsUniqueFormat = `tokenIsUnique:%s:%s` //判断Token唯一缓存key。参数：场景ID，登录用户ID
-
-	ConstCtxSceneInfoName = `sceneInfo`
-	ConstCtxLoginInfoName = `loginInfo`
 
 	CacheWxGzhAccessToken = `wxGzhAccessToken:%s` //微信公众号授权Token缓存key。参数：微信公众号AppId
 )

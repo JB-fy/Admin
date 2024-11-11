@@ -325,11 +325,12 @@ func (daoThis *roleDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 			}
 		}
 		m = m.Data(updateData)
-		if len(daoModel.AfterUpdate) > 0 {
-			m = m.Hook(daoThis.HookUpdate(daoModel))
-			if len(updateData) == 0 {
-				daoModel.IsOnlyAfterUpdate = true
-			}
+		if len(daoModel.AfterUpdate) == 0 {
+			return m
+		}
+		m = m.Hook(daoThis.HookUpdate(daoModel))
+		if len(updateData) == 0 {
+			daoModel.IsOnlyAfterUpdate = true
 		}
 		return m
 	}
@@ -352,13 +353,13 @@ func (daoThis *roleDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				switch k {
 				case `action_id_arr`:
 					// daoIndex.SaveArrRelManyWithSort(ctx, &RoleRelToAction, RoleRelToAction.Columns().RoleId, RoleRelToAction.Columns().ActionId, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
-					valArr := gconv.SliceStr(v)
+					valArr := gconv.Strings(v)
 					for _, id := range daoModel.IdArr {
 						daoIndex.SaveArrRelMany(ctx, &RoleRelToAction, RoleRelToAction.Columns().RoleId, RoleRelToAction.Columns().ActionId, id, valArr)
 					}
 				case `menu_id_arr`:
 					// daoIndex.SaveArrRelManyWithSort(ctx, &RoleRelToMenu, RoleRelToMenu.Columns().RoleId, RoleRelToMenu.Columns().MenuId, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
-					valArr := gconv.SliceStr(v)
+					valArr := gconv.Strings(v)
 					for _, id := range daoModel.IdArr {
 						daoIndex.SaveArrRelMany(ctx, &RoleRelToMenu, RoleRelToMenu.Columns().RoleId, RoleRelToMenu.Columns().MenuId, id, valArr)
 					}

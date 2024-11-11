@@ -375,7 +375,7 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
-					idArr = gconv.SliceStr(v)
+					idArr = gconv.Strings(v)
 				}
 				inStrArr := []string{}
 				for _, id := range idArr {
@@ -385,7 +385,7 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 		dao.filterParse = append(dao.filterParse, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+"`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
-					idArr = gconv.SliceStr(v)
+					idArr = gconv.Strings(v)
 				}
 				inStrArr := []string{}
 				for _, id := range idArr {
@@ -1065,7 +1065,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 					`+tplEM.daoPath+`.CtxDaoModel(ctx).Data(insertList).Insert()`)
 		dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+tplEM.FieldVar+"`"+`:
 					// daoIndex.SaveArrRelManyWithSort(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, `+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
-					valArr := gconv.SliceStr(v)
+					valArr := gconv.Strings(v)
 					for _, id := range daoModel.IdArr {
 						daoIndex.SaveArrRelMany(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, `+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`, id, valArr )
 					}`)

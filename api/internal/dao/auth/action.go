@@ -280,11 +280,12 @@ func (daoThis *actionDao) ParseUpdate(update map[string]any, daoModel *daoIndex.
 			}
 		}
 		m = m.Data(updateData)
-		if len(daoModel.AfterUpdate) > 0 {
-			m = m.Hook(daoThis.HookUpdate(daoModel))
-			if len(updateData) == 0 {
-				daoModel.IsOnlyAfterUpdate = true
-			}
+		if len(daoModel.AfterUpdate) == 0 {
+			return m
+		}
+		m = m.Hook(daoThis.HookUpdate(daoModel))
+		if len(updateData) == 0 {
+			daoModel.IsOnlyAfterUpdate = true
 		}
 		return m
 	}
@@ -307,7 +308,7 @@ func (daoThis *actionDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandle
 				switch k {
 				case `scene_id_arr`:
 					// daoIndex.SaveArrRelManyWithSort(ctx, &ActionRelToScene, ActionRelToScene.Columns().ActionId, ActionRelToScene.Columns().SceneId, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
-					valArr := gconv.SliceStr(v)
+					valArr := gconv.Strings(v)
 					for _, id := range daoModel.IdArr {
 						daoIndex.SaveArrRelMany(ctx, &ActionRelToScene, ActionRelToScene.Columns().ActionId, ActionRelToScene.Columns().SceneId, id, valArr)
 					}

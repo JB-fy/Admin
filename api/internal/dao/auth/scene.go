@@ -5,6 +5,7 @@
 package auth
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/auth/internal"
 	"context"
@@ -244,11 +245,12 @@ func (daoThis *sceneDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 			}
 		}
 		m = m.Data(updateData)
-		if len(daoModel.AfterUpdate) > 0 {
-			m = m.Hook(daoThis.HookUpdate(daoModel))
-			if len(updateData) == 0 {
-				daoModel.IsOnlyAfterUpdate = true
-			}
+		/* if len(daoModel.AfterUpdate) == 0 {	//强制后置处理，清理缓存
+			return m
+		} */
+		m = m.Hook(daoThis.HookUpdate(daoModel))
+		if len(updateData) == 0 {
+			daoModel.IsOnlyAfterUpdate = true
 		}
 		return m
 	}
@@ -280,6 +282,8 @@ func (daoThis *sceneDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 					}
 				}
 			} */
+
+			cache.NewDbData(ctx, daoThis).Del(gconv.Strings(daoModel.IdArr)...)
 			return
 		},
 	}
@@ -316,6 +320,8 @@ func (daoThis *sceneDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().SceneId, daoModel.IdArr).Delete()
 			Menu.CtxDaoModel(ctx).Filter(Menu.Columns().SceneId, daoModel.IdArr).Delete()
 			Role.CtxDaoModel(ctx).Filter(Role.Columns().SceneId, daoModel.IdArr).Delete() */
+
+			cache.NewDbData(ctx, daoThis).Del(gconv.Strings(daoModel.IdArr)...)
 			return
 		},
 	}

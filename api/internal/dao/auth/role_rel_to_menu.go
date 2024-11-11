@@ -213,11 +213,12 @@ func (daoThis *roleRelToMenuDao) ParseUpdate(update map[string]any, daoModel *da
 			}
 		}
 		m = m.Data(updateData)
-		if len(daoModel.AfterUpdate) > 0 {
-			m = m.Hook(daoThis.HookUpdate(daoModel))
-			if len(updateData) == 0 {
-				daoModel.IsOnlyAfterUpdate = true
-			}
+		if len(daoModel.AfterUpdate) == 0 {
+			return m
+		}
+		m = m.Hook(daoThis.HookUpdate(daoModel))
+		if len(updateData) == 0 {
+			daoModel.IsOnlyAfterUpdate = true
 		}
 		return m
 	}
