@@ -8,11 +8,16 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
+        name_type: 0,
         app_type: 0,
         ...saveCommon.data,
         extra_config: saveCommon.data.extra_config ? JSON.parse(saveCommon.data.extra_config) : {},
     } as { [propName: string]: any },
     rules: {
+        name_type: [
+            { required: true, message: t('validation.required') },
+            { type: 'enum', trigger: 'change', enum: (tm('app.app.status.name_type') as any).map((item: any) => item.value), message: t('validation.select') },
+        ],
         app_type: [
             { required: true, message: t('validation.required') },
             { type: 'enum', trigger: 'change', enum: (tm('app.app.status.app_type') as any).map((item: any) => item.value), message: t('validation.select') },
@@ -98,6 +103,13 @@ const saveDrawer = reactive({
     <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <el-scrollbar>
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
+                <el-form-item :label="t('app.app.name.name_type')" prop="name_type">
+                    <el-radio-group v-model="saveForm.data.name_type">
+                        <el-radio v-for="(item, index) in (tm('app.app.status.name_type') as any)" :key="index" :value="item.value">
+                            {{ item.label }}
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
                 <el-form-item :label="t('app.app.name.app_type')" prop="app_type">
                     <el-radio-group v-model="saveForm.data.app_type" @change="() => (saveForm.data.extra_config = {})">
                         <el-radio v-for="(item, index) in (tm('app.app.status.app_type') as any)" :key="index" :value="item.value">

@@ -65,7 +65,7 @@ func (daoThis *appDao) ParseId(daoModel *daoIndex.DaoModel) string {
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
 func (daoThis *appDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + daoThis.Columns().AppType
+	return daoModel.DbTable + `.` + daoThis.Columns().NameType
 }
 
 // 解析filter
@@ -86,7 +86,7 @@ func (daoThis *appDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Dao
 					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().AppId, v)
 				}
 			case `label`:
-				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().AppType, `%`+gconv.String(v)+`%`)
+				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().NameType, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().PackageName:
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().VerName:

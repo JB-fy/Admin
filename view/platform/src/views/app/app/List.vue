@@ -38,6 +38,21 @@ const table = reactive({
             },
         },
         {
+            dataKey: 'name_type',
+            title: t('app.app.name.name_type'),
+            key: 'name_type',
+            align: 'center',
+            width: 100,
+            cellRenderer: (props: any): any => {
+                let tagType = tm('config.const.tagType') as string[]
+                let obj = tm('app.app.status.name_type') as { value: any; label: string }[]
+                let index = obj.findIndex((item) => {
+                    return item.value == props.rowData.name_type
+                })
+                return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
+            },
+        },
+        {
             dataKey: 'app_type',
             title: t('app.app.name.app_type'),
             key: 'app_type',

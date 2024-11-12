@@ -1,5 +1,6 @@
 export default {
     name: {
+        name_type: '名称',
         app_type: '类型',
         package_name: '包名',
         package_file: '安装包',
@@ -16,6 +17,7 @@ export default {
         is_stop: '停用',
     },
     status: {
+        name_type: [{ value: 0, label: 'APP' }],
         app_type: [
             { value: 0, label: '安卓' },
             { value: 1, label: '苹果' },

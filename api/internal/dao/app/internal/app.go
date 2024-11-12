@@ -27,6 +27,7 @@ type AppColumns struct {
 	UpdatedAt   string // 更新时间
 	IsStop      string // 停用：0否 1是
 	AppId       string // APPID
+	NameType    string // 名称：0APP。有两种以上APP时自行扩展
 	AppType     string // 类型：0安卓 1苹果 2PC
 	PackageName string // 包名
 	PackageFile string // 安装包
@@ -44,6 +45,7 @@ var appColumns = AppColumns{
 	UpdatedAt:   "updated_at",
 	IsStop:      "is_stop",
 	AppId:       "app_id",
+	NameType:    "name_type",
 	AppType:     "app_type",
 	PackageName: "package_name",
 	PackageFile: "package_file",

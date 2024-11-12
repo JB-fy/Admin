@@ -16,6 +16,7 @@ type App struct {
 	UpdatedAt   *gtime.Time // 更新时间
 	IsStop      interface{} // 停用：0否 1是
 	AppId       interface{} // APPID
+	NameType    interface{} // 名称：0APP。有两种以上APP时自行扩展
 	AppType     interface{} // 类型：0安卓 1苹果 2PC
 	PackageName interface{} // 包名
 	PackageFile interface{} // 安装包

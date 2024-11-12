@@ -10,6 +10,7 @@ type AppInfo struct {
 	Id          *uint       `json:"id,omitempty" dc:"ID"`
 	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	AppId       *uint       `json:"app_id,omitempty" dc:"APPID"`
+	NameType    *uint       `json:"name_type,omitempty" dc:"名称：0APP。有两种以上APP时自行扩展"`
 	AppType     *uint       `json:"app_type,omitempty" dc:"类型：0安卓 1苹果 2PC"`
 	PackageName *string     `json:"package_name,omitempty" dc:"包名"`
 	PackageFile *string     `json:"package_file,omitempty" dc:"安装包"`
@@ -33,6 +34,7 @@ type AppFilter struct {
 	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	AppId          *uint       `json:"app_id,omitempty" v:"between:1,4294967295" dc:"APPID"`
+	NameType       *uint       `json:"name_type,omitempty" v:"in:0" dc:"名称：0APP。有两种以上APP时自行扩展"`
 	AppType        *uint       `json:"app_type,omitempty" v:"in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
 	VerName        string      `json:"ver_name,omitempty" v:"max-length:30" dc:"版本名称"`
 	IsForcePrev    *uint       `json:"is_force_prev,omitempty" v:"in:0,1" dc:"强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关"`
@@ -72,6 +74,7 @@ type AppInfoRes struct {
 /*--------新增 开始--------*/
 type AppCreateReq struct {
 	g.Meta      `path:"/app/create" method:"post" tags:"平台后台/系统管理/APP" sm:"新增"`
+	NameType    *uint   `json:"name_type,omitempty" v:"required|in:0" dc:"名称：0APP。有两种以上APP时自行扩展"`
 	AppType     *uint   `json:"app_type,omitempty" v:"required|in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
 	PackageName *string `json:"package_name,omitempty" v:"required|max-length:60" dc:"包名"`
 	PackageFile *string `json:"package_file,omitempty" v:"required|max-length:200|url" dc:"安装包"`
@@ -91,6 +94,7 @@ type AppUpdateReq struct {
 	g.Meta      `path:"/app/update" method:"post" tags:"平台后台/系统管理/APP" sm:"修改"`
 	Id          uint    `json:"-" filter:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
 	IdArr       []uint  `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	NameType    *uint   `json:"name_type,omitempty" filter:"-" v:"in:0" dc:"名称：0APP。有两种以上APP时自行扩展"`
 	AppType     *uint   `json:"app_type,omitempty" filter:"-" v:"in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
 	PackageName *string `json:"package_name,omitempty" filter:"-" v:"max-length:60" dc:"包名"`
 	PackageFile *string `json:"package_file,omitempty" filter:"-" v:"max-length:200|url" dc:"安装包"`
