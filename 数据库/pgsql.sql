@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 11/11/2024 08:16:51
+ Date: 12/11/2024 23:51:57
 */
 
 
@@ -179,6 +179,7 @@ CREATE TABLE "public"."app" (
   "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "is_stop" int2 NOT NULL DEFAULT 0,
   "app_id" int4 NOT NULL DEFAULT nextval('app_app_id_seq'::regclass),
+  "name_type" int2 NOT NULL DEFAULT 0,
   "app_type" int2 NOT NULL DEFAULT 0,
   "package_name" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "package_file" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
@@ -194,6 +195,7 @@ COMMENT ON COLUMN "public"."app"."created_at" IS '创建时间';
 COMMENT ON COLUMN "public"."app"."updated_at" IS '更新时间';
 COMMENT ON COLUMN "public"."app"."is_stop" IS '停用：0否 1是';
 COMMENT ON COLUMN "public"."app"."app_id" IS 'APPID';
+COMMENT ON COLUMN "public"."app"."name_type" IS '名称：0APP。有两种以上APP时自行扩展';
 COMMENT ON COLUMN "public"."app"."app_type" IS '类型：0安卓 1苹果 2PC';
 COMMENT ON COLUMN "public"."app"."package_name" IS '包名';
 COMMENT ON COLUMN "public"."app"."package_file" IS '安装包';
@@ -1124,7 +1126,8 @@ SELECT setval('"public"."users_user_id_seq"', 1, false);
 -- ----------------------------
 -- Indexes structure for table app
 -- ----------------------------
-CREATE UNIQUE INDEX "app_app_type_ver_no_idx" ON "public"."app" USING btree (
+CREATE UNIQUE INDEX "app_name_type_app_type_ver_no_idx" ON "public"."app" USING btree (
+  "name_type" "pg_catalog"."int2_ops" ASC NULLS LAST,
   "app_type" "pg_catalog"."int2_ops" ASC NULLS LAST,
   "ver_no" "pg_catalog"."int4_ops" ASC NULLS LAST
 );
