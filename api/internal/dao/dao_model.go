@@ -248,6 +248,10 @@ func (daoModelThis *DaoModel) Filter(key string, val any) *DaoModel {
 	return daoModelThis.Filters(map[string]any{key: val})
 }
 
+func (daoModelThis *DaoModel) FilterPri(id any) *DaoModel {
+	return daoModelThis.Filters(map[string]any{`id`: id})
+}
+
 func (daoModelThis *DaoModel) Filters(filter map[string]any) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseFilter(filter, daoModelThis))
 	return daoModelThis

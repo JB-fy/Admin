@@ -313,7 +313,7 @@ isViewEnd:
 		}
 		for {
 			if option.SceneId != `` {
-				option.SceneInfo, _ = daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, option.SceneId).One()
+				option.SceneInfo, _ = daoAuth.Scene.GetInfoFromCache(ctx, option.SceneId)
 				if !option.SceneInfo.IsEmpty() {
 					break
 				}
