@@ -46,7 +46,7 @@ var (
 	dbDataOneTime              = 200 * time.Millisecond //读取缓存重试间隔时间
 )
 
-func (cacheThis *dbData) GetOrSet(id string, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
+func (cacheThis *dbData) GetOrSet(id string, ttl int64, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
 	cacheThis.DaoModel = cacheThis.Dao.CtxDaoModel(cacheThis.Ctx)
 	cacheThis.Id = id
 	cacheThis.Key = fmt.Sprintf(consts.CacheDbDataFormat, cacheThis.DaoModel.DbGroup, cacheThis.DaoModel.DbTable, cacheThis.Id)
@@ -74,7 +74,7 @@ func (cacheThis *dbData) GetOrSet(id string, field ...string) (value *gvar.Var, 
 			return
 		}
 		if isSet == 1 {
-			value, noExistOfDb, err = cacheThis.set(field...)
+			value, noExistOfDb, err = cacheThis.set(ttl, field...)
 			if noExistOfDb {
 				cacheThis.Redis.Del(cacheThis.Ctx, isSetKey) //数据库不存在时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 				return
@@ -108,9 +108,9 @@ func (cacheThis *dbData) GetOrSet(id string, field ...string) (value *gvar.Var, 
 	return
 }
 
-func (cacheThis *dbData) GetOrSetMany(idArr []string, field ...string) (list gdb.Result, err error) {
+func (cacheThis *dbData) GetOrSetMany(idArr []string, ttl int64, field ...string) (list gdb.Result, err error) {
 	for _, id := range idArr {
-		value, noExistOfDb, errTmp := cacheThis.GetOrSet(id, field...)
+		value, noExistOfDb, errTmp := cacheThis.GetOrSet(id, ttl, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
@@ -125,10 +125,10 @@ func (cacheThis *dbData) GetOrSetMany(idArr []string, field ...string) (list gdb
 	return
 }
 
-func (cacheThis *dbData) GetOrSetPluck(idArr []string, field ...string) (record gdb.Record, err error) {
+func (cacheThis *dbData) GetOrSetPluck(idArr []string, ttl int64, field ...string) (record gdb.Record, err error) {
 	record = gdb.Record{}
 	for _, id := range idArr {
-		value, noExistOfDb, errTmp := cacheThis.GetOrSet(id, field...)
+		value, noExistOfDb, errTmp := cacheThis.GetOrSet(id, ttl, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
@@ -151,7 +151,7 @@ func (cacheThis *dbData) Del(idArr ...string) (row int64, err error) {
 	return
 }
 
-func (cacheThis *dbData) set(field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
+func (cacheThis *dbData) set(ttl int64, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
 	info, err := cacheThis.DaoModel.Filter(`id`, cacheThis.Id).Fields(field...).One()
 	if err != nil {
 		return
@@ -165,7 +165,11 @@ func (cacheThis *dbData) set(field ...string) (value *gvar.Var, noExistOfDb bool
 	} else {
 		value = gvar.New(info.Json())
 	}
-	_, err = cacheThis.Redis.Set(cacheThis.Ctx, cacheThis.Key, value.String())
+	if ttl > 0 {
+		err = cacheThis.Redis.SetEX(cacheThis.Ctx, cacheThis.Key, value.String(), ttl)
+	} else {
+		_, err = cacheThis.Redis.Set(cacheThis.Ctx, cacheThis.Key, value.String())
+	}
 	return
 }
 

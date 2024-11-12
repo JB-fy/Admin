@@ -389,7 +389,7 @@ func (daoThis *sceneDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 // Fill with you ideas below.
 
 func (daoThis *sceneDao) GetInfoFromCache(ctx context.Context, id string) (info gdb.Record, err error) {
-	value, _, err := cache.NewDbData(ctx, daoThis).GetOrSet(id, daoThis.Columns().SceneId, daoThis.Columns().SceneConfig, daoThis.Columns().IsStop)
+	value, _, err := cache.NewDbData(ctx, daoThis).GetOrSet(id, 6*30*24*60*60, daoThis.Columns().SceneId, daoThis.Columns().SceneConfig, daoThis.Columns().IsStop)
 	if err != nil {
 		return
 	}
