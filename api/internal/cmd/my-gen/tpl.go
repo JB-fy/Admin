@@ -624,7 +624,7 @@ func (myGenTplThis *myGenTpl) IsSamePrimary(tpl myGenTpl, isAutoInc bool, fieldT
 // 获取id后缀字段关联的表信息
 func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, field myGenField) (relTpl myGenTpl) {
 	tableSuffix := gstr.TrimRightStr(field.FieldCaseSnakeRemove, `_id`, 1)
-	/*--------确定关联表 开始--------*/
+
 	removePrefixAloneTmp := tpl.RemovePrefixAlone //moduleDir
 	if removePrefixAloneTmp == `` {               //同模块当主表是user,good等无下划线时，找同模块关联表时，表前缀为：当前主表 + `_`
 		removePrefixAloneTmp = gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1) + `_`
@@ -638,6 +638,31 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		}
 		return false
 	}
+	getTableTplFunc := func(table string) (relTpl myGenTpl) {
+		removePrefixCommon := ``
+		removePrefixAlone := ``
+		if table != `` {
+			if gstr.Pos(table, tpl.RemovePrefixCommon) == 0 {
+				removePrefixCommon = tpl.RemovePrefixCommon
+			}
+			if gstr.Pos(table, tpl.RemovePrefix) == 0 {
+				removePrefixAlone = tpl.RemovePrefixAlone
+			}
+			if removePrefixAlone == `` {
+				// 当去掉公共前缀后，还存在分隔符`_`时，第一个分隔符之前的部分设置为removePrefixAlone
+				tableRemove := gstr.TrimLeftStr(table, removePrefixCommon, 1)
+				if pos := gstr.Pos(tableRemove, `_`); pos != -1 {
+					removePrefixAlone = gstr.SubStr(tableRemove, 0, pos+1)
+				}
+			}
+
+			relTpl = createTpl(ctx, tpl.Group, table, removePrefixCommon, removePrefixAlone, false)
+			relTpl.gfGenDao(false) //dao文件生成
+		}
+		return
+	}
+
+	/*--------确定关联表 开始--------*/
 	// 按以下优先级确定关联表
 	type mayBe struct {
 		table1 string   // 同模块，全部前缀 + 表后缀一致。规则：tpl.RemovePrefix + tableSuffix
@@ -702,75 +727,71 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		}
 	}
 
-	table := mayBeObj.table1 //同模块存在匹配表，则无需确认其它表
-	if table == `` {
-		mayBeTableArr := []string{}
-		mayBeTableArr = append(mayBeTableArr, mayBeObj.table2...)
-		if mayBeObj.table3 != `` {
-			mayBeTableArr = append(mayBeTableArr, mayBeObj.table3)
-		}
-		if mayBeObj.table4 != `` {
-			mayBeTableArr = append(mayBeTableArr, mayBeObj.table4)
-		}
-		mayBeTableArr = append(mayBeTableArr, mayBeObj.table5...)
-		//复数命名匹配
-		if mayBeObjS.table1 != `` {
-			mayBeTableArr = append(mayBeTableArr, mayBeObjS.table1)
-		}
-		mayBeTableArr = append(mayBeTableArr, mayBeObjS.table2...)
-		if mayBeObjS.table3 != `` {
-			mayBeTableArr = append(mayBeTableArr, mayBeObjS.table3)
-		}
-		if mayBeObjS.table4 != `` {
-			mayBeTableArr = append(mayBeTableArr, mayBeObjS.table4)
-		}
-		mayBeTableArr = append(mayBeTableArr, mayBeObjS.table5...)
+	if mayBeObj.table1 != `` { //同模块存在匹配表，无需再确认其它表
+		relTpl = getTableTplFunc(mayBeObj.table1)
+		return
+	}
 
-		if len(mayBeTableArr) == 1 {
-			table = mayBeTableArr[0]
-		} else if len(mayBeTableArr) > 1 {
-			scanInfo := append([]any{}, color.HiYellowString(`表(`+tpl.Table+`)的id后缀字段(`+field.FieldRaw+`)匹配到多个表：`+"\n"))
-			for index, mayBeTable := range mayBeTableArr {
-				scanInfo = append(scanInfo, color.HiYellowString(`  `+gconv.String(index)+`：`+mayBeTable+"\n"))
-			}
-			scanInfo = append(scanInfo, color.HiYellowString(`  -1：都不匹配`+"\n"))
-			scanInfo = append(scanInfo, color.BlueString(`> 请输入正确的表序号？默认(0)：`))
-			indexStr := gcmd.Scan(scanInfo...)
-		isRelEnd:
-			for {
-				index := gconv.Int(indexStr)
-				if index < len(mayBeTableArr) {
-					if index >= 0 {
-						table = mayBeTableArr[index]
-					}
-					break isRelEnd
+	mayBeTableArr := []string{}
+	mayBeTableArr = append(mayBeTableArr, mayBeObj.table2...)
+	if mayBeObj.table3 != `` {
+		mayBeTableArr = append(mayBeTableArr, mayBeObj.table3)
+	}
+	if mayBeObj.table4 != `` {
+		mayBeTableArr = append(mayBeTableArr, mayBeObj.table4)
+	}
+	mayBeTableArr = append(mayBeTableArr, mayBeObj.table5...)
+	//复数命名匹配
+	if mayBeObjS.table1 != `` {
+		mayBeTableArr = append(mayBeTableArr, mayBeObjS.table1)
+	}
+	mayBeTableArr = append(mayBeTableArr, mayBeObjS.table2...)
+	if mayBeObjS.table3 != `` {
+		mayBeTableArr = append(mayBeTableArr, mayBeObjS.table3)
+	}
+	if mayBeObjS.table4 != `` {
+		mayBeTableArr = append(mayBeTableArr, mayBeObjS.table4)
+	}
+	mayBeTableArr = append(mayBeTableArr, mayBeObjS.table5...)
+
+	if len(mayBeTableArr) == 0 {
+		return
+	}
+	if len(mayBeTableArr) == 1 {
+		relTpl = getTableTplFunc(mayBeTableArr[0])
+		return
+	}
+	//当中间表内的id后缀字段匹配不到同模块的表时，增加以下判断
+	for _, relStr := range []string{`_rel_of_`, `_rel_to_`} {
+		if gstr.Pos(tpl.Table, relStr) != -1 {
+			for _, v := range mayBeTableArr {
+				if gstr.Pos(tpl.Table, relStr+v) != -1 { //后面关联表和当前表一样时，无需再确认其它表
+					relTpl = getTableTplFunc(v)
+					return
 				}
-				indexStr = gcmd.Scan(color.BlueString(`> 输入错误，请重新输入？默认(0)：`))
 			}
 		}
+	}
+
+	scanInfo := append([]any{}, color.HiYellowString(`表(`+tpl.Table+`)的id后缀字段(`+field.FieldRaw+`)匹配到多个表：`+"\n"))
+	for index, mayBeTable := range mayBeTableArr {
+		scanInfo = append(scanInfo, color.HiYellowString(`  `+gconv.String(index)+`：`+mayBeTable+"\n"))
+	}
+	scanInfo = append(scanInfo, color.HiYellowString(`  -1：都不匹配`+"\n"), color.BlueString(`> 请输入正确的表序号？默认(0)：`))
+	indexStr := gcmd.Scan(scanInfo...)
+isRelEnd:
+	for {
+		index := gconv.Int(indexStr)
+		if index < len(mayBeTableArr) {
+			if index >= 0 {
+				relTpl = getTableTplFunc(mayBeTableArr[index])
+				return
+			}
+			break isRelEnd
+		}
+		indexStr = gcmd.Scan(color.BlueString(`> 输入错误，请重新输入？默认(0)：`))
 	}
 	/*--------确定关联表 结束--------*/
-
-	removePrefixCommon := ``
-	removePrefixAlone := ``
-	if table != `` {
-		if gstr.Pos(table, tpl.RemovePrefixCommon) == 0 {
-			removePrefixCommon = tpl.RemovePrefixCommon
-		}
-		if gstr.Pos(table, tpl.RemovePrefix) == 0 {
-			removePrefixAlone = tpl.RemovePrefixAlone
-		}
-		if removePrefixAlone == `` {
-			// 当去掉公共前缀后，还存在分隔符`_`时，第一个分隔符之前的部分设置为removePrefixAlone
-			tableRemove := gstr.TrimLeftStr(table, removePrefixCommon, 1)
-			if pos := gstr.Pos(tableRemove, `_`); pos != -1 {
-				removePrefixAlone = gstr.SubStr(tableRemove, 0, pos+1)
-			}
-		}
-
-		relTpl = createTpl(ctx, tpl.Group, table, removePrefixCommon, removePrefixAlone, false)
-		relTpl.gfGenDao(false) //dao文件生成
-	}
 	return
 }
 
