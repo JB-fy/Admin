@@ -126,7 +126,7 @@ type myGenOption struct {
 // 生成代码
 func Run(ctx context.Context, parser *gcmd.Parser) {
 	option := createOption(ctx, parser)
-	tpl := createTpl(ctx, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true)
+	tpl := createTpl(ctx, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true, false)
 
 	genDao(tpl) // dao模板生成
 

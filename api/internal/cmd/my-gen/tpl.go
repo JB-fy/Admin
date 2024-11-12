@@ -134,7 +134,7 @@ type handleOtherRel struct {
 }
 
 // 创建模板参数
-func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string, isTop bool) (tpl myGenTpl) {
+func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isFromOtherRel bool) (tpl myGenTpl) {
 	tpl = myGenTpl{
 		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
@@ -258,7 +258,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 			tpl.Handle.Pid.IdPath = fieldTmp.FieldRaw
 		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
-			if !garray.NewStrArrayFrom([]string{internal.TypePrimary, internal.TypePrimaryAutoInc}).Contains(fieldTmp.FieldTypePrimary) { // 本表id字段不算
+			if !isFromOtherRel && !garray.NewStrArrayFrom([]string{internal.TypePrimary, internal.TypePrimaryAutoInc}).Contains(fieldTmp.FieldTypePrimary) { // 本表id字段不算
 				fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
 
 				handleRelIdObj := handleRelId{
@@ -656,7 +656,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 				}
 			}
 
-			relTpl = createTpl(ctx, tpl.Group, table, removePrefixCommon, removePrefixAlone, false)
+			relTpl = createTpl(ctx, tpl.Group, table, removePrefixCommon, removePrefixAlone, false, false)
 			relTpl.gfGenDao(false) //dao文件生成
 		}
 		return
@@ -865,7 +865,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 		if gstr.Pos(v, tpl.Table+`_`) != 0 { // 不符合扩展表命名（主表名_xxxx）的跳过
 			continue
 		}
-		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
+		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, key := range extendTpl.KeyList {
 			if len(key.FieldList) != 1 {
 				continue
@@ -882,6 +882,16 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 					handleExtendMiddleObj.TableType = internal.TableTypeExtendOne
 				}
 			} else {
+				isExistPrimary := false
+				for _, key := range extendTpl.KeyList {
+					if key.IsPrimary {
+						isExistPrimary = true
+						break
+					}
+				}
+				if isExistPrimary { //存在其它主键时，不算做扩展表
+					continue
+				}
 				if key.IsUnique { //唯一索引
 					handleExtendMiddleObj.TableType = internal.TableTypeExtendOne
 				} else { //普通索引
@@ -992,7 +1002,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			}
 		}
 
-		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
+		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, key := range middleTpl.KeyList {
 			if !key.IsUnique { // 必须唯一
 				continue
@@ -1089,7 +1099,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 			continue
 		} */
 
-		otherRelTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false)
+		otherRelTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false, true)
 		for _, field := range otherRelTpl.FieldList {
 			if !myGenTplThis.IsSamePrimary(tpl, field.IsAutoInc, field.FieldTypeRaw, field.FieldCaseSnakeRemove) {
 				continue
