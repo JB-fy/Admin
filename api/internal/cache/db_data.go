@@ -152,7 +152,7 @@ func (cacheThis *dbData) Del(idArr ...string) (row int64, err error) {
 }
 
 func (cacheThis *dbData) set(ttl int64, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
-	info, err := cacheThis.DaoModel.Filter(`id`, cacheThis.Id).Fields(field...).One()
+	info, err := cacheThis.DaoModel.FilterPri(cacheThis.Id).Fields(field...).One()
 	if err != nil {
 		return
 	}

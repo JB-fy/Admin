@@ -99,7 +99,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]any, d
 			}
 		} else {
 			for _, id := range daoModelThis.IdArr {
-				oldInfo, _ := daoModelThis.CloneNew().Filter(`id`, id).One()
+				oldInfo, _ := daoModelThis.CloneNew().FilterPri(id).One()
 				filterTmp[daoAuth.ActionRelToScene.Columns().SceneId] = oldInfo[daoAuth.Role.Columns().SceneId]
 				if count, _ := daoAuth.ActionRelToScene.CtxDaoModel(ctx).Filters(filterTmp).Count(); count != len(actionIdArr) {
 					err = utils.NewErrorCode(ctx, 89999998, ``)
@@ -115,7 +115,7 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]any, d
 		if _, ok := data[`scene_id`]; ok {
 			filterTmp[daoAuth.Menu.Columns().SceneId] = data[`scene_id`]
 		} else {
-			sceneIdArr, _ := daoModelThis.CloneNew().Filter(`id`, daoModelThis.IdArr).ArrayUint(daoAuth.Role.Columns().SceneId)
+			sceneIdArr, _ := daoModelThis.CloneNew().FilterPri(daoModelThis.IdArr).ArrayUint(daoAuth.Role.Columns().SceneId)
 			if garray.NewArrayFrom(gconv.SliceAny(sceneIdArr)).Unique().Len() != 1 {
 				err = utils.NewErrorCode(ctx, 89999998, ``) //因菜单所属场景ID只能一个，故只能允许相同场景ID下的角色一起修改菜单
 				return

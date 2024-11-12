@@ -225,7 +225,7 @@ func (daoThis *privacyDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandl
 			/* for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `xxxx`:
-					daoModel.CloneNew().Filter(`id`, id).HookUpdate(g.Map{k: v}).Update()
+					daoModel.CloneNew().FilterPri(id).HookUpdate(g.Map{k: v}).Update()
 				}
 			} */
 			return
@@ -290,7 +290,7 @@ func (daoThis *privacyDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandl
 				switch k {
 				case `xxxx`:
 					for _, id := range daoModel.IdArr {
-						daoModel.CloneNew().Filter(`id`, id).HookUpdate(g.Map{k: v}).Update()
+						daoModel.CloneNew().FilterPri(id).HookUpdate(g.Map{k: v}).Update()
 					}
 				}
 			} */
