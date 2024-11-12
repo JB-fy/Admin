@@ -1,1 +1,0 @@
-./main myGen -dbGroup=default -dbTable=app -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=APP -isView=0 -sceneId=app -isList=0 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0

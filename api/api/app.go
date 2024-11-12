@@ -1,4 +1,4 @@
-package app
+package api
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
@@ -16,9 +16,9 @@ type AppInfo struct {
 	DownloadUrlToH5  *string `json:"download_url_to_h5,omitempty" dc:"下载地址。H5用"`
 }
 
-/*--------详情 开始--------*/
+/*--------更新检测 开始--------*/
 type AppInfoReq struct {
-	g.Meta       `path:"/app/info" method:"post" tags:"APP/APP" sm:"更新和下载"`
+	g.Meta       `path:"/app/info" method:"post" tags:"APP" sm:"更新检测"`
 	AppType      *uint `json:"app_type,omitempty" v:"required|in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
 	CurrentVerNo *uint `json:"current_ver_no,omitempty" v:"between:0,4294967295" dc:"当前版本号。作用：判断APP是否需要更新，不需要返回的info为空"`
 }
@@ -27,4 +27,4 @@ type AppInfoRes struct {
 	Info AppInfo `json:"info" dc:"详情。当不需要更新时，返回空对象"`
 }
 
-/*--------详情 结束--------*/
+/*--------更新检测 结束--------*/

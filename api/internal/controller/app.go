@@ -1,7 +1,7 @@
-package app
+package controller
 
 import (
-	apiApp "api/api/app/app"
+	"api/api"
 	daoApp "api/internal/dao/app"
 	"api/internal/utils"
 	"context"
@@ -25,7 +25,7 @@ func NewApp() *App {
 }
 
 // 详情
-func (controllerThis *App) Info(ctx context.Context, req *apiApp.AppInfoReq) (res *apiApp.AppInfoRes, err error) {
+func (controllerThis *App) Info(ctx context.Context, req *api.AppInfoReq) (res *api.AppInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	filter[daoApp.App.Columns().IsStop] = 0
@@ -48,7 +48,7 @@ func (controllerThis *App) Info(ctx context.Context, req *apiApp.AppInfoReq) (re
 		return
 	}
 
-	res = &apiApp.AppInfoRes{}
+	res = &api.AppInfoRes{}
 	info.Struct(&res.Info)
 	return
 }

@@ -41,6 +41,10 @@ func InitRouterCommon(ctx context.Context, s *ghttp.Server) {
 			group.Bind(controllerThis.Notify)
 		})
 	})
+	//APP更新检测
+	s.Group(`/app`, func(group *ghttp.RouterGroup) {
+		group.Bind(controller.NewApp())
+	})
 	//微信
 	s.Group(`/wx`, func(group *ghttp.RouterGroup) {
 		group.Middleware(middleware.BodyRepeatable(true))

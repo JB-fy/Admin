@@ -3,7 +3,6 @@ package router
 import (
 	"api/internal/controller"
 	controllerIndex "api/internal/controller/app"
-	"api/internal/controller/app/app"
 	"api/internal/controller/app/my"
 	"api/internal/controller/app/platform"
 	"api/internal/middleware"
@@ -33,10 +32,6 @@ func InitRouterApp(ctx context.Context, s *ghttp.Server) {
 
 			group.Group(`/platform`, func(group *ghttp.RouterGroup) {
 				group.Bind(platform.NewConfig())
-			})
-
-			group.Group(`/app`, func(group *ghttp.RouterGroup) {
-				group.Bind(app.NewApp())
 			})
 		})
 
