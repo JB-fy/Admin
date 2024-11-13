@@ -11,16 +11,6 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-func NewHandler(ctx context.Context, scene string, uploadId uint) *Handler {
-	handlerObj := Handler{
-		Ctx:      ctx,
-		Scene:    scene,
-		UploadId: uploadId,
-	}
-	handlerObj.initUpload()
-	return &handlerObj
-}
-
 type Handler struct {
 	Ctx      context.Context
 	Scene    string //上传场景。default默认。根据自身需求扩展，用于确定上传通道和上传参数
@@ -28,23 +18,30 @@ type Handler struct {
 	upload   Upload
 }
 
-func (handlerThis *Handler) initUpload() {
+func NewHandler(ctx context.Context, scene string, uploadId uint) *Handler {
+	handlerObj := &Handler{
+		Ctx:      ctx,
+		Scene:    scene,
+		UploadId: uploadId,
+	}
+
 	uploadFilter := g.Map{}
-	if handlerThis.UploadId > 0 {
-		uploadFilter[daoUpload.Upload.Columns().UploadId] = handlerThis.UploadId
+	if handlerObj.UploadId > 0 {
+		uploadFilter[daoUpload.Upload.Columns().UploadId] = handlerObj.UploadId
 	} else {
 		uploadFilter[daoUpload.Upload.Columns().IsDefault] = 1
 	}
-	uploadInfo, _ := daoUpload.Upload.CtxDaoModel(handlerThis.Ctx).Filters(uploadFilter).One()
+	uploadInfo, _ := daoUpload.Upload.CtxDaoModel(handlerObj.Ctx).Filters(uploadFilter).One()
 
 	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
 	config[`uploadType`] = uploadInfo[daoUpload.Upload.Columns().UploadType]
 	config[`uploadId`] = uploadInfo[daoUpload.Upload.Columns().UploadId]
 	if gconv.Bool(config[`isNotify`]) {
-		config[`callbackUrl`] = utils.GetRequestUrl(handlerThis.Ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
+		config[`callbackUrl`] = utils.GetRequestUrl(handlerObj.Ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
 	}
+	handlerObj.upload = NewUpload(handlerObj.Ctx, config)
 
-	handlerThis.upload = NewUpload(handlerThis.Ctx, config)
+	return handlerObj
 }
 
 func (handlerThis *Handler) createUploadParam() (param UploadParam) {
