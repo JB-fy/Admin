@@ -32,12 +32,12 @@ type PayOfWx struct {
 }
 
 func NewPayOfWx(ctx context.Context, config map[string]any) *PayOfWx {
-	payObj := PayOfWx{Ctx: ctx}
-	gconv.Struct(config, &payObj)
+	payObj := &PayOfWx{Ctx: ctx}
+	gconv.Struct(config, payObj)
 	if payObj.AppId == `` || payObj.Mchid == `` || payObj.SerialNo == `` || payObj.APIv3Key == `` || payObj.PrivateKey == `` || payObj.NotifyUrl == `` {
 		panic(`缺少配置：支付-微信`)
 	}
-	return &payObj
+	return payObj
 }
 
 func (payThis *PayOfWx) App(payReqData PayReqData) (payResData PayResData, err error) {

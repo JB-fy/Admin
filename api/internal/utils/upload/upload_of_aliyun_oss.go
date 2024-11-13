@@ -39,12 +39,12 @@ type UploadOfAliyunOss struct {
 }
 
 func NewUploadOfAliyunOss(ctx context.Context, config map[string]any) *UploadOfAliyunOss {
-	uploadObj := UploadOfAliyunOss{Ctx: ctx}
-	gconv.Struct(config, &uploadObj)
+	uploadObj := &UploadOfAliyunOss{Ctx: ctx}
+	gconv.Struct(config, uploadObj)
 	if uploadObj.Host == `` || uploadObj.Bucket == `` || uploadObj.AccessKeyId == `` || uploadObj.AccessKeySecret == `` || uploadObj.CallbackUrl == `` || uploadObj.Endpoint == `` || uploadObj.RoleArn == `` {
 		panic(`缺少配置：上传-阿里云OSS`)
 	}
-	return &uploadObj
+	return uploadObj
 }
 
 type UploadOfAliyunOssCallback struct {

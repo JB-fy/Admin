@@ -23,15 +23,15 @@ type EmailOfCommon struct {
 }
 
 func NewEmailOfCommon(ctx context.Context, config map[string]any) *EmailOfCommon {
-	emailObj := EmailOfCommon{Ctx: ctx}
-	gconv.Struct(config, &emailObj)
+	emailObj := &EmailOfCommon{Ctx: ctx}
+	gconv.Struct(config, emailObj)
 	/* if emailObj.Code.Subject == `` || emailObj.Code.Template == `` {
 		panic(`缺少插件配置：邮箱-验证码模板`)
 	} */
 	if emailObj.SmtpHost == `` || emailObj.SmtpPort == `` || emailObj.FromEmail == `` || emailObj.Password == `` {
 		panic(`缺少插件配置：邮箱-通用`)
 	}
-	return &emailObj
+	return emailObj
 }
 
 func (emailThis *EmailOfCommon) SendCode(toEmail string, code string) (err error) {

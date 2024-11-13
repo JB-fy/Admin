@@ -19,29 +19,29 @@ type VodOfAliyun struct {
 }
 
 func NewVodOfAliyun(ctx context.Context, config map[string]any) *VodOfAliyun {
-	vodObj := VodOfAliyun{Ctx: ctx}
-	gconv.Struct(config, &vodObj)
+	vodObj := &VodOfAliyun{Ctx: ctx}
+	gconv.Struct(config, vodObj)
 	if vodObj.AccessKeyId == `` || vodObj.AccessKeySecret == `` || vodObj.Endpoint == `` || vodObj.RoleArn == `` {
 		panic(`缺少插件配置：视频点播-阿里云`)
 	}
-	return &vodObj
+	return vodObj
 }
 
 // 获取Sts Token
-func (uploadThis *VodOfAliyun) Sts(param VodParam) (stsInfo map[string]any, err error) {
+func (vodThis *VodOfAliyun) Sts(param VodParam) (stsInfo map[string]any, err error) {
 	config := &openapi.Config{
-		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
-		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),
-		Endpoint:        tea.String(uploadThis.Endpoint),
+		AccessKeyId:     tea.String(vodThis.AccessKeyId),
+		AccessKeySecret: tea.String(vodThis.AccessKeySecret),
+		Endpoint:        tea.String(vodThis.Endpoint),
 	}
 	assumeRoleRequest := &sts20150401.AssumeRoleRequest{
 		DurationSeconds: tea.Int64(param.ExpireTime),
 		//写入权限：{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
 		//读取权限：{"Statement": [{"Action": ["oss:GetObject"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
 		Policy:          tea.String(`{"Statement": [{"Action": ["vod:*"],"Effect": "Allow","Resource": "*"}],"Version": "1"}`),
-		RoleArn:         tea.String(uploadThis.RoleArn),
+		RoleArn:         tea.String(vodThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_vod`),
 	}
-	stsInfo, err = common.CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
+	stsInfo, err = common.CreateStsToken(vodThis.Ctx, config, assumeRoleRequest)
 	return
 }

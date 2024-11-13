@@ -22,15 +22,15 @@ type SmsOfAliyun struct {
 }
 
 func NewSmsOfAliyun(ctx context.Context, config map[string]any) *SmsOfAliyun {
-	smsObj := SmsOfAliyun{Ctx: ctx}
-	gconv.Struct(config, &smsObj)
+	smsObj := &SmsOfAliyun{Ctx: ctx}
+	gconv.Struct(config, smsObj)
 	if smsObj.AccessKeyId == `` || smsObj.AccessKeySecret == `` || smsObj.Endpoint == `` {
 		panic(`缺少插件配置：短信-阿里云`)
 	}
 	/* if smsObj.SignName == `` || smsObj.TemplateCode == `` {
 		panic(`缺少插件配置：短信-阿里云短信模板`)
 	} */
-	return &smsObj
+	return smsObj
 }
 
 func (smsThis *SmsOfAliyun) SendCode(phone string, code string) (err error) {

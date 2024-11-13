@@ -24,12 +24,12 @@ type PushOfTx struct {
 }
 
 func NewPushOfTx(ctx context.Context, config map[string]any) *PushOfTx {
-	pushObj := PushOfTx{Ctx: ctx}
-	gconv.Struct(config, &pushObj)
+	pushObj := &PushOfTx{Ctx: ctx}
+	gconv.Struct(config, pushObj)
 	if pushObj.Host == `` || pushObj.AccessID == 0 || pushObj.SecretKey == `` {
 		panic(`缺少插件配置：推送-腾讯移动推送`)
 	}
-	return &pushObj
+	return pushObj
 }
 
 func (pushThis *PushOfTx) Push(param PushParam) (err error) {

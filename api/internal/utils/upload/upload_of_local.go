@@ -32,12 +32,12 @@ type UploadOfLocal struct {
 }
 
 func NewUploadOfLocal(ctx context.Context, config map[string]any) *UploadOfLocal {
-	uploadObj := UploadOfLocal{Ctx: ctx}
-	gconv.Struct(config, &uploadObj)
+	uploadObj := &UploadOfLocal{Ctx: ctx}
+	gconv.Struct(config, uploadObj)
 	if uploadObj.UploadId == 0 || uploadObj.Url == `` || uploadObj.SignKey == `` || uploadObj.FileSaveDir == `` || uploadObj.FileUrlPrefix == `` {
 		panic(`缺少配置：上传-本地`)
 	}
-	return &uploadObj
+	return uploadObj
 }
 
 // 本地上传

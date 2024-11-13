@@ -34,13 +34,13 @@ type WxGzh struct {
 }
 
 func NewWxGzh(ctx context.Context, config map[string]any) *WxGzh {
-	wxGzhObj := WxGzh{Ctx: ctx}
-	gconv.Struct(config, &wxGzhObj)
+	wxGzhObj := &WxGzh{Ctx: ctx}
+	gconv.Struct(config, wxGzhObj)
 	if wxGzhObj.AppId == `` || wxGzhObj.Secret == `` || wxGzhObj.Token == `` || wxGzhObj.EncodingAESKey == `` {
 		panic(`缺少插件配置：微信-公众号`)
 	}
 	wxGzhObj.AESKey, _ = base64.StdEncoding.DecodeString(wxGzhObj.EncodingAESKey + `=`)
-	return &wxGzhObj
+	return wxGzhObj
 }
 
 type CDATAText struct {

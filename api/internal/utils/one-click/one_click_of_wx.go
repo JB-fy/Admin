@@ -18,12 +18,12 @@ type OneClickOfWx struct {
 }
 
 func NewOneClickOfWx(ctx context.Context, config map[string]any) *OneClickOfWx {
-	oneClickObj := OneClickOfWx{Ctx: ctx}
-	gconv.Struct(config, &oneClickObj)
+	oneClickObj := &OneClickOfWx{Ctx: ctx}
+	gconv.Struct(config, oneClickObj)
 	if oneClickObj.Host == `` || oneClickObj.AppId == `` || oneClickObj.Secret == `` {
 		panic(`缺少插件配置：一键登录-微信`)
 	}
-	return &oneClickObj
+	return oneClickObj
 }
 
 type AccessTokenOfWx struct {

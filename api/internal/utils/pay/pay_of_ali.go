@@ -19,12 +19,12 @@ type PayOfAli struct {
 }
 
 func NewPayOfAli(ctx context.Context, config map[string]any) *PayOfAli {
-	payObj := PayOfAli{Ctx: ctx}
-	gconv.Struct(config, &payObj)
+	payObj := &PayOfAli{Ctx: ctx}
+	gconv.Struct(config, payObj)
 	if payObj.AppId == `` || payObj.PrivateKey == `` || payObj.PublicKey == `` || payObj.NotifyUrl == `` {
 		panic(`缺少配置：支付-支付宝`)
 	}
-	return &payObj
+	return payObj
 }
 
 func (payThis *PayOfAli) App(payReqData PayReqData) (payResData PayResData, err error) {
