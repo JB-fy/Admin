@@ -6,6 +6,7 @@ package utils
 
 import (
 	"os/exec"
+	"reflect"
 
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -82,5 +83,28 @@ func BaseToDecimal(numStr string, base int) (decimal int /* , err error */) {
 		}
 		decimal = decimal*base + remainder
 	}
+	return
+}
+
+// 从结构体中获取对应字段的值
+func GetValFromStruct(Obj any, name string) (val any) {
+	v := reflect.ValueOf(Obj)
+
+	for {
+		if v.Kind() != reflect.Ptr {
+			break
+		}
+		v = v.Elem()
+	}
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
+
+	field := v.FieldByName(name)
+	if !field.IsValid() {
+		return nil
+	}
+
+	val = field.Interface()
 	return
 }
