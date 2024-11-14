@@ -87,7 +87,7 @@ func BaseToDecimal(numStr string, base int) (decimal int /* , err error */) {
 }
 
 // 从结构体中获取对应字段的值
-func GetValFromStruct(Obj any, name string) (val any) {
+func GetValueFromStruct(Obj any, name string) (val any) {
 	v := reflect.ValueOf(Obj)
 
 	for {
