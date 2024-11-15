@@ -13,7 +13,7 @@ var (
 	oneClickOfWxMu  sync.Mutex
 )
 
-func NewOneClickOfWxByPfCfg(ctx context.Context) (oneClickOfWx *OneClickOfWx) {
+func NewOneClickOfWxHandler(ctx context.Context) (oneClickOfWx *OneClickOfWx) {
 	config := daoPlatform.Config.GetOne(ctx, `oneClickOfWx`).Map()
 
 	oneClickOfWxKey := gmd5.MustEncrypt(config)
@@ -38,7 +38,7 @@ var (
 	oneClickOfYidunMu  sync.Mutex
 )
 
-func NewOneClickOfYidunByPfCfg(ctx context.Context, configOpt ...map[string]any) (oneClickOfYidun *OneClickOfYidun) {
+func NewOneClickOfYidunHandler(ctx context.Context, configOpt ...map[string]any) (oneClickOfYidun *OneClickOfYidun) {
 	config := daoPlatform.Config.GetOne(ctx, `oneClickOfYidun`).Map()
 
 	oneClickOfYidunKey := gmd5.MustEncrypt(config)
