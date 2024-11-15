@@ -20,7 +20,7 @@ type Handler struct {
 func NewHandler(ctx context.Context, config map[string]any, sceneId string) *Handler {
 	handlerObj := &Handler{
 		Ctx:     ctx,
-		Token:   NewToken(ctx, config),
+		Token:   NewToken(config),
 		SceneId: sceneId,
 	}
 	gconv.Struct(config, handlerObj)
@@ -28,7 +28,7 @@ func NewHandler(ctx context.Context, config map[string]any, sceneId string) *Han
 }
 
 func (handlerThis *Handler) Create(tokenInfo TokenInfo) (token string, err error) {
-	token, err = handlerThis.Token.Create(tokenInfo)
+	token, err = handlerThis.Token.Create(handlerThis.Ctx, tokenInfo)
 	if err != nil {
 		return
 	}
@@ -45,7 +45,7 @@ func (handlerThis *Handler) Create(tokenInfo TokenInfo) (token string, err error
 
 // 不验证IP时，ip传空
 func (handlerThis *Handler) Parse(token string, ip string) (tokenInfo TokenInfo, err error) {
-	tokenInfo, err = handlerThis.Token.Parse(token)
+	tokenInfo, err = handlerThis.Token.Parse(handlerThis.Ctx, token)
 	if err != nil {
 		err = utils.NewErrorCode(handlerThis.Ctx, 39994001, err.Error())
 		return

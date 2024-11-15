@@ -66,7 +66,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	case 4:
 		err = sms.NewSms(ctx).SendCode(to, code)
 	case 14:
-		err = email.NewEmail(ctx).SendCode(to, code)
+		err = email.NewHandler(ctx).SendCode(to, code)
 	}
 	if err != nil {
 		return

@@ -1,29 +1,42 @@
 package email
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
+	"sync"
+
+	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type Email interface {
-	SendCode(toEmail string, code string) (err error)
-	SendEmail(toEmailArr []string, message string) (err error)
+	SendEmail(ctx context.Context, message string, toEmailArr ...string) (err error)
+	GetFromEmail() (fromEmail string)
 }
 
-func NewEmail(ctx context.Context, emailTypeOpt ...string) Email {
-	emailType := ``
-	if len(emailTypeOpt) > 0 {
-		emailType = emailTypeOpt[0]
-	} else {
-		emailType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `emailType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
+var (
+	emailMap = map[string]Email{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	emailMu  sync.Mutex
+)
+
+func NewEmail(config map[string]any) (email Email) {
+	emailKey := gmd5.MustEncrypt(config)
+
+	ok := false
+	if email, ok = emailMap[emailKey]; ok { //先读一次（不加锁）
+		return
+	}
+	emailMu.Lock()
+	defer emailMu.Unlock()
+	if email, ok = emailMap[emailKey]; ok { // 再读一次（加锁），防止重复初始化
+		return
 	}
 
-	switch emailType {
+	switch gconv.String(config[`email_type`]) {
 	// case `emailOfCommon`:
 	default:
-		configTmp, _ := daoPlatform.Config.Get(ctx, `emailCode`, `emailOfCommon`)
-		config := configTmp[`emailOfCommon`].Map()
-		config[`code`] = configTmp[`emailCode`].Map()
-		return NewEmailOfCommon(ctx, config)
+		email = NewEmailOfCommon(config)
 	}
+	emailMap[emailKey] = email
+	return
+
 }

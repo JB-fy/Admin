@@ -24,7 +24,6 @@ import (
 		公钥命令：openssl ec -in ecc-private-key.pem -pubout -out ecc-public-key.pem
 */
 type TokenOfJwt struct {
-	Ctx        context.Context
 	ExpireTime uint   `json:"expire_time"`
 	SignType   string `json:"sign_type"`
 	PrivateKey string `json:"private_key"`
@@ -32,13 +31,10 @@ type TokenOfJwt struct {
 	SignMethod jwt.SigningMethod
 }
 
-func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
-	tokenObj := &TokenOfJwt{
-		Ctx:        ctx,
-		SignMethod: jwt.SigningMethodHS256,
-	}
+func NewTokenOfJwt(config map[string]any) *TokenOfJwt {
+	tokenObj := &TokenOfJwt{}
 	gconv.Struct(config, tokenObj)
-	if tokenObj.ExpireTime == 0 || tokenObj.SignType == `` || tokenObj.PrivateKey == `` || (tokenObj.PublicKey == `` && garray.NewStrArrayFrom([]string{`RS256`, `RS384`, `RS512`}).Contains(tokenObj.SignType)) {
+	if tokenObj.ExpireTime == 0 || tokenObj.SignType == `` || tokenObj.PrivateKey == `` || (tokenObj.PublicKey == `` && !garray.NewStrArrayFrom([]string{`HS256`, `HS384`, `HS512`}).Contains(tokenObj.SignType)) {
 		panic(`缺少配置：token-Jwt`)
 	}
 
@@ -55,6 +51,8 @@ func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
 	}
 	if signMethod, ok := signMethodMap[tokenObj.SignType]; ok {
 		tokenObj.SignMethod = signMethod
+	} else {
+		tokenObj.SignMethod = jwt.SigningMethodHS256
 	}
 	return tokenObj
 }
@@ -64,7 +62,7 @@ type tokenOfJwtClaims struct {
 	IP string `json:"ip"`
 }
 
-func (tokenThis *TokenOfJwt) Create(tokenInfo TokenInfo) (token string, err error) {
+func (tokenThis *TokenOfJwt) Create(ctx context.Context, tokenInfo TokenInfo) (token string, err error) {
 	privateKeyFunc := func() (privateKey any) {
 		switch tokenThis.SignMethod {
 		case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:
@@ -85,7 +83,7 @@ func (tokenThis *TokenOfJwt) Create(tokenInfo TokenInfo) (token string, err erro
 	return
 }
 
-func (tokenThis *TokenOfJwt) Parse(token string) (tokenInfo TokenInfo, err error) {
+func (tokenThis *TokenOfJwt) Parse(ctx context.Context, token string) (tokenInfo TokenInfo, err error) {
 	jwtToken, err := jwt.ParseWithClaims(token, &tokenOfJwtClaims{}, func(jwtToken *jwt.Token) (any, error) {
 		switch jwtToken.Method {
 		case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:

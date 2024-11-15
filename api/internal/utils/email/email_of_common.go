@@ -3,53 +3,75 @@ package email
 import (
 	"context"
 	"crypto/tls"
-	"errors"
 	"net/smtp"
 
-	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type EmailOfCommon struct {
-	Ctx       context.Context
 	SmtpHost  string `json:"smtpHost"`
 	SmtpPort  string `json:"smtpPort"`
 	FromEmail string `json:"fromEmail"`
 	Password  string `json:"password"`
-	Code      struct {
-		Subject  string `json:"subject"`
-		Template string `json:"template"`
-	} `json:"code"`
+	// client    *smtp.Client //非并发安全的客户端，不能在初始化时生成
+	// clientMu  sync.Mutex   //互斥锁。确实需要复用客户端时，必须在发送时上锁
 }
 
-func NewEmailOfCommon(ctx context.Context, config map[string]any) *EmailOfCommon {
-	emailObj := &EmailOfCommon{Ctx: ctx}
+func NewEmailOfCommon(config map[string]any) *EmailOfCommon {
+	emailObj := &EmailOfCommon{}
 	gconv.Struct(config, emailObj)
-	/* if emailObj.Code.Subject == `` || emailObj.Code.Template == `` {
-		panic(`缺少插件配置：邮箱-验证码模板`)
-	} */
 	if emailObj.SmtpHost == `` || emailObj.SmtpPort == `` || emailObj.FromEmail == `` || emailObj.Password == `` {
 		panic(`缺少插件配置：邮箱-通用`)
 	}
+	/* // 设置TLS配置
+	tlsConfig := &tls.Config{ServerName: emailObj.SmtpHost}
+	// tlsConfig.InsecureSkipVerify = true // 在开发环境中可以设置为true，但在生产环境中应该验证服务器证书
+
+	// 连接到SMTP服务器
+	conn, err := tls.Dial(`tcp`, emailObj.SmtpHost+`:`+emailObj.SmtpPort, tlsConfig)
+	if err != nil {
+		panic(`连接到SMTP服务器错误：` + err.Error())
+	}
+	// defer conn.Close()
+
+	// 创建SMTP客户端
+	client, err := smtp.NewClient(conn, emailObj.SmtpHost)
+	if err != nil {
+		panic(`创建SMTP客户端错误：` + err.Error())
+	}
+	// defer client.Quit()
+
+	// 设置SMTP的认证信息
+	auth := smtp.PlainAuth(``, emailObj.FromEmail, emailObj.Password, emailObj.SmtpHost)
+	err = client.Auth(auth)
+	if err != nil {
+		panic(`SMTP的认证信息错误：` + err.Error())
+	}
+
+	// 发送邮件
+	err = client.Mail(emailObj.FromEmail)
+	if err != nil {
+		panic(`设置邮件发送人错误：` + err.Error())
+	}
+	emailObj.client = client */
 	return emailObj
 }
 
-func (emailThis *EmailOfCommon) SendCode(toEmail string, code string) (err error) {
-	if emailThis.Code.Subject == `` || emailThis.Code.Template == `` {
-		err = errors.New(`缺少插件配置：邮箱-验证码模板`)
-		return
-	}
-	messageArr := []string{
-		`From: ` + emailThis.FromEmail,
-		`To: ` + toEmail,
-		`Subject: ` + emailThis.Code.Subject,
-		gstr.Replace(emailThis.Code.Template, `{code}`, code),
-	}
-	err = emailThis.SendEmail([]string{toEmail}, gstr.Join(messageArr, "\r\n"))
-	return
-}
+func (emailThis *EmailOfCommon) SendEmail(ctx context.Context, message string, toEmailArr ...string) (err error) { // 发送邮件
+	/* // 复用客户端时需上锁
+	emailThis.clientMu.Lock()
+	defer emailThis.clientMu.Unlock()
 
-func (emailThis *EmailOfCommon) SendEmail(toEmailArr []string, message string) (err error) {
+	for _, toEmail := range toEmailArr {
+		if err = emailThis.client.Rcpt(toEmail); err != nil {
+			return
+		}
+	}
+	w, err := emailThis.client.Data()
+	if err != nil {
+		return
+	} */
+
 	// 设置TLS配置
 	tlsConfig := &tls.Config{ServerName: emailThis.SmtpHost}
 	// tlsConfig.InsecureSkipVerify = true // 在开发环境中可以设置为true，但在生产环境中应该验证服务器证书
@@ -75,10 +97,11 @@ func (emailThis *EmailOfCommon) SendEmail(toEmailArr []string, message string) (
 		return
 	}
 
-	// 发送邮件
+	//设置邮件发送人
 	if err = client.Mail(emailThis.FromEmail); err != nil {
 		return
 	}
+	// 发送邮件
 	for _, toEmail := range toEmailArr {
 		if err = client.Rcpt(toEmail); err != nil {
 			return
@@ -88,10 +111,15 @@ func (emailThis *EmailOfCommon) SendEmail(toEmailArr []string, message string) (
 	if err != nil {
 		return
 	}
+
 	_, err = w.Write([]byte(message))
 	if err != nil {
 		return
 	}
 	err = w.Close()
 	return
+}
+
+func (emailThis *EmailOfCommon) GetFromEmail() string {
+	return emailThis.FromEmail
 }
