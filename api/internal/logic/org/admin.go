@@ -24,7 +24,7 @@ func init() {
 // 验证数据（create和update共用）
 func (logicThis *sOrgAdmin) verifyData(ctx context.Context, data map[string]any) (err error) {
 	if _, ok := data[daoOrg.Admin.Columns().OrgId]; ok && gconv.Uint(data[daoOrg.Admin.Columns().OrgId]) > 0 {
-		if count, _ := daoOrg.Org.CtxDaoModel(ctx).Filter(daoOrg.Org.Columns().OrgId, data[daoOrg.Admin.Columns().OrgId]).Count(); count == 0 {
+		if count, _ := daoOrg.Org.CtxDaoModel(ctx).FilterPri(data[daoOrg.Admin.Columns().OrgId]).Count(); count == 0 {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.org.org`)}})
 			return
 		}
@@ -32,8 +32,7 @@ func (logicThis *sOrgAdmin) verifyData(ctx context.Context, data map[string]any)
 
 	if _, ok := data[`role_id_arr`]; ok && len(gconv.SliceUint(data[`role_id_arr`])) > 0 {
 		roleIdArr := gconv.SliceUint(data[`role_id_arr`])
-		sceneId, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, `org`).Value(daoAuth.Scene.Columns().SceneId)
-		if count, _ := daoAuth.Role.CtxDaoModel(ctx).Filter(daoAuth.Role.Columns().RoleId, roleIdArr).Filter(daoAuth.Role.Columns().SceneId, sceneId).Count(); count != len(roleIdArr) {
+		if count, _ := daoAuth.Role.CtxDaoModel(ctx).FilterPri(roleIdArr).Filter(daoAuth.Role.Columns().SceneId, `org`).Count(); count != len(roleIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.role`)}})
 			return
 		}

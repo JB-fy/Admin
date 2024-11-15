@@ -23,14 +23,14 @@ func init() {
 // 验证数据（create和update共用）
 func (logicThis *sPayChannel) verifyData(ctx context.Context, data map[string]any) (err error) {
 	if _, ok := data[daoPay.Channel.Columns().SceneId]; ok && gconv.Uint(data[daoPay.Channel.Columns().SceneId]) > 0 {
-		if count, _ := daoPay.Scene.CtxDaoModel(ctx).Filter(daoPay.Scene.Columns().SceneId, data[daoPay.Channel.Columns().SceneId]).Count(); count == 0 {
+		if count, _ := daoPay.Scene.CtxDaoModel(ctx).FilterPri(data[daoPay.Channel.Columns().SceneId]).Count(); count == 0 {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pay.scene`)}})
 			return
 		}
 	}
 
 	if _, ok := data[daoPay.Channel.Columns().PayId]; ok && gconv.Uint(data[daoPay.Channel.Columns().PayId]) > 0 {
-		if count, _ := daoPay.Pay.CtxDaoModel(ctx).Filter(daoPay.Pay.Columns().PayId, data[daoPay.Channel.Columns().PayId]).Count(); count == 0 {
+		if count, _ := daoPay.Pay.CtxDaoModel(ctx).FilterPri(data[daoPay.Channel.Columns().PayId]).Count(); count == 0 {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pay.pay`)}})
 			return
 		}

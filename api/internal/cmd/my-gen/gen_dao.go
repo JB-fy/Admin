@@ -561,7 +561,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			daoField.insertParse.DataTypeName = append(daoField.insertParse.DataTypeName, `case `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v).One()
+					pInfo, _ := daoModel.CloneNew().FilterPri(v).One()
 					daoModel.AfterInsert[`+"`"+selfUpdateStr+"`"+`] = map[string]any{
 						`+"`"+pIdPathStr+"`"+`: pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`].String(),
 						`+"`"+pLevelStr+"`"+`:   pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`].Uint(),
@@ -576,7 +576,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			daoField.insertHook.Method = internal.ReturnTypeName
 			daoField.insertHook.DataTypeName = append(daoField.insertHook.DataTypeName, `case `+"`"+selfUpdateStr+"`"+`: //更新自身的ID路径和层级。参数：map[string]any{`+"`"+pIdPathStr+"`"+`: `+"`父级ID路径`"+`, `+"`"+pLevelStr+"`"+`: `+"`父级层级`"+`}
 					val := v.(map[string]any)
-					daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, id).HookUpdate(map[string]any{
+					daoModel.CloneNew().FilterPri(id).HookUpdate(map[string]any{
 						`+daoPath+`.Columns().IdPath: gconv.String(val[`+"`"+pIdPathStr+"`"+`]) + `+"`-`"+` + gconv.String(id),
 						`+daoPath+`.Columns().Level:  gconv.Uint(val[`+"`"+pLevelStr+"`"+`]) + 1,
 					}).Update()`)
@@ -594,7 +594,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				pIdPath := `+"`0`"+`
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v).One()
+					pInfo, _ := daoModel.CloneNew().FilterPri(v).One()
 					pIdPath = pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`].String()
 					pLevel = pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`].Uint()
 				}

@@ -361,14 +361,14 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 
 // 获取单个配置
 func (daoThis *configDao) GetOne(ctx context.Context, configKey string) (configValue *gvar.Var) {
-	// configValue, _ = daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().ConfigKey, configKey).Value(daoThis.Columns().ConfigValue)
+	// configValue, _ = daoThis.CtxDaoModel(ctx).FilterPri(configKey).Value(daoThis.Columns().ConfigValue)
 	configValue, _, _ = cache.NewDbData(ctx, daoThis).GetOrSet(configKey, 6*30*24*60*60, daoThis.Columns().ConfigValue)
 	return
 }
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, configKeyArr ...string) (config gdb.Record, err error) {
-	// return daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().ConfigKey, configKeyArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
+	// return daoThis.CtxDaoModel(ctx).FilterPri(configKeyArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
 	return cache.NewDbData(ctx, daoThis).GetOrSetPluck(configKeyArr, 6*30*24*60*60, daoThis.Columns().ConfigValue)
 }
 

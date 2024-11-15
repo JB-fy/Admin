@@ -256,7 +256,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]any, daoModel *daoIndex.Da
 			case daoThis.Columns().Pid:
 				insertData[k] = v
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoModel.CloneNew().Filter(daoThis.Columns().MenuId, v).One()
+					pInfo, _ := daoModel.CloneNew().FilterPri(v).One()
 					daoModel.AfterInsert[`self_update`] = map[string]any{
 						`p_id_path`: pInfo[daoThis.Columns().IdPath].String(),
 						`p_level`:   pInfo[daoThis.Columns().Level].Uint(),
@@ -300,7 +300,7 @@ func (daoThis *menuDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				switch k {
 				case `self_update`: //更新自身的ID路径和层级。参数：map[string]any{`p_id_path`: `父级ID路径`, `p_level`: `父级层级`}
 					val := v.(map[string]any)
-					daoModel.CloneNew().Filter(daoThis.Columns().MenuId, id).HookUpdate(map[string]any{
+					daoModel.CloneNew().FilterPri(id).HookUpdate(map[string]any{
 						daoThis.Columns().IdPath: gconv.String(val[`p_id_path`]) + `-` + gconv.String(id),
 						daoThis.Columns().Level:  gconv.Uint(val[`p_level`]) + 1,
 					}).Update()
@@ -322,7 +322,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 				pIdPath := `0`
 				var pLevel uint = 0
 				if gconv.Uint(v) > 0 {
-					pInfo, _ := daoModel.CloneNew().Filter(daoThis.Columns().MenuId, v).One()
+					pInfo, _ := daoModel.CloneNew().FilterPri(v).One()
 					pIdPath = pInfo[daoThis.Columns().IdPath].String()
 					pLevel = pInfo[daoThis.Columns().Level].Uint()
 				}

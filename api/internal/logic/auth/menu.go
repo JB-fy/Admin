@@ -25,7 +25,7 @@ func init() {
 // 验证数据（create和update共用）
 func (logicThis *sAuthMenu) verifyData(ctx context.Context, data map[string]any) (err error) {
 	if _, ok := data[daoAuth.Menu.Columns().SceneId]; ok && gconv.String(data[daoAuth.Menu.Columns().SceneId]) != `` {
-		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, data[daoAuth.Menu.Columns().SceneId]).Count(); count == 0 {
+		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).FilterPri(data[daoAuth.Menu.Columns().SceneId]).Count(); count == 0 {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`)}})
 			return
 		}
@@ -41,7 +41,7 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]any) (id
 	daoModelThis := daoAuth.Menu.CtxDaoModel(ctx)
 
 	if _, ok := data[daoAuth.Menu.Columns().Pid]; ok && gconv.Uint(data[daoAuth.Menu.Columns().Pid]) > 0 {
-		pInfo, _ := daoModelThis.CloneNew().Filter(daoAuth.Menu.Columns().MenuId, data[daoAuth.Menu.Columns().Pid]).One()
+		pInfo, _ := daoModelThis.CloneNew().FilterPri(data[daoAuth.Menu.Columns().Pid]).One()
 		if pInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pid`)}})
 			return
@@ -70,7 +70,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]any, d
 			err = utils.NewErrorCode(ctx, 29999996, ``)
 			return
 		}
-		pInfo, _ := daoModelThis.CloneNew().Filter(daoAuth.Menu.Columns().MenuId, data[daoAuth.Menu.Columns().Pid]).One()
+		pInfo, _ := daoModelThis.CloneNew().FilterPri(data[daoAuth.Menu.Columns().Pid]).One()
 		if pInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pid`)}})
 			return

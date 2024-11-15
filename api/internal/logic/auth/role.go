@@ -24,7 +24,7 @@ func init() {
 // 验证数据（create和update共用）
 func (logicThis *sAuthRole) verifyData(ctx context.Context, data map[string]any) (err error) {
 	if _, ok := data[daoAuth.Role.Columns().SceneId]; ok && gconv.String(data[daoAuth.Role.Columns().SceneId]) != `` {
-		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, data[daoAuth.Role.Columns().SceneId]).Count(); count == 0 {
+		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).FilterPri(data[daoAuth.Role.Columns().SceneId]).Count(); count == 0 {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`)}})
 			return
 		}
@@ -32,7 +32,7 @@ func (logicThis *sAuthRole) verifyData(ctx context.Context, data map[string]any)
 
 	/* if _, ok := data[`action_id_arr`]; ok && len(gconv.SliceUint(data[`action_id_arr`])) > 0 {
 		actionIdArr := gconv.SliceUint(data[`action_id_arr`])
-		if count, _ := daoAuth.Action.CtxDaoModel(ctx).Filter(daoAuth.Action.Columns().ActionId, actionIdArr).Count(); count != len(actionIdArr) {
+		if count, _ := daoAuth.Action.CtxDaoModel(ctx).FilterPri(actionIdArr).Count(); count != len(actionIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.action`)}})
 			return
 		}
@@ -40,7 +40,7 @@ func (logicThis *sAuthRole) verifyData(ctx context.Context, data map[string]any)
 
 	if _, ok := data[`menu_id_arr`]; ok && len(gconv.SliceUint(data[`menu_id_arr`])) > 0 {
 		menuIdArr := gconv.SliceUint(data[`menu_id_arr`])
-		if count, _ := daoAuth.Menu.CtxDaoModel(ctx).Filter(daoAuth.Menu.Columns().MenuId, menuIdArr).Count(); count != len(menuIdArr) {
+		if count, _ := daoAuth.Menu.CtxDaoModel(ctx).FilterPri(menuIdArr).Count(); count != len(menuIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.menu`)}})
 			return
 		}

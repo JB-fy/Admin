@@ -67,7 +67,7 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 		}
 		logic.i18n.Add(i18nField)
 		logic.create = append(logic.create, `if _, ok := data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; ok && gconv.Uint(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]) > 0 {
-		pInfo, _ := daoModelThis.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]).One()
+		pInfo, _ := daoModelThis.CloneNew().FilterPri(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]).One()
 		if pInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 			return
@@ -89,7 +89,7 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 			err = utils.NewErrorCode(ctx, 29999996, `+"``"+`)
 			return
 		}
-		pInfo, _ := daoModelThis.CloneNew().Filter(`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]).One()
+		pInfo, _ := daoModelThis.CloneNew().FilterPri(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]).One()
 		if pInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 			return
@@ -234,7 +234,7 @@ func getLogicField(tpl myGenTpl, v myGenField) (logicField myGenLogicField) {
 			}
 			daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 			logicField.verifyDataStr = `if _, ok := data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]; ok && ` + ifStr + ` {
-		if count, _ := ` + daoPathRel + `.CtxDaoModel(ctx).Filter(` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `, data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]).Count(); count == 0 {
+		if count, _ := ` + daoPathRel + `.CtxDaoModel(ctx).FilterPri(data[` + daoPath + `.Columns().` + v.FieldCaseCamel + `]).Count(); count == 0 {
 			err = utils.NewErrorCode(ctx, 29999997, ` + "``" + `, g.Map{` + "`i18nValues`" + `: []any{g.I18n().T(ctx, ` + "`" + logicField.i18nField.key + "`" + `)}})
 			return
 		}
@@ -278,7 +278,7 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 				sliceStr = `gconv.` + sliceStr + `(data[` + "`" + tplEM.FieldVar + "`" + `])`
 				logic.verifyData = append(logic.verifyData, `if _, ok := data[`+"`"+tplEM.FieldVar+"`"+`]; ok && len(`+sliceStr+`) > 0 {
 		`+gstr.CaseCamelLower(tplEM.FieldVar)+` := `+sliceStr+`
-		if count, _ := `+daoPathRel+`.CtxDaoModel(ctx).Filter(`+daoPathRel+`.Columns().`+relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel+`, `+gstr.CaseCamelLower(tplEM.FieldVar)+`).Count(); count != len(`+gstr.CaseCamelLower(tplEM.FieldVar)+`) {
+		if count, _ := `+daoPathRel+`.CtxDaoModel(ctx).FilterPri(`+gstr.CaseCamelLower(tplEM.FieldVar)+`).Count(); count != len(`+gstr.CaseCamelLower(tplEM.FieldVar)+`) {
 			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 			return
 		}

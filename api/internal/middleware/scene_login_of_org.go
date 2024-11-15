@@ -35,7 +35,7 @@ func SceneLoginOfOrg(isForce bool) func(r *ghttp.Request) {
 		/**--------验证token 结束--------**/
 
 		/**--------获取登录用户信息并验证 开始--------**/
-		info, _ := daoOrg.Admin.CtxDaoModel(r.GetCtx()).Filter(daoOrg.Admin.Columns().AdminId, tokenInfo.LoginId).One()
+		info, _ := daoOrg.Admin.CtxDaoModel(r.GetCtx()).FilterPri(tokenInfo.LoginId).One()
 		if info.IsEmpty() {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994100, ``))

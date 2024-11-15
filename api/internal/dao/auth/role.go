@@ -207,7 +207,7 @@ func (daoThis *roleDao) HandleAfterField(ctx context.Context, record gdb.Record,
 				switch record[Scene.Columns().SceneId].String() {
 				// case `platform`:	// 平台都是0
 				case `org`:
-					relName, _ = daoOrg.Org.CtxDaoModel(ctx).Filter(daoOrg.Org.Columns().OrgId, record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)
+					relName, _ = daoOrg.Org.CtxDaoModel(ctx).FilterPri(record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)
 				}
 			}
 			record[v] = gvar.New(relName)

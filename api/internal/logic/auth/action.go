@@ -25,7 +25,7 @@ func init() {
 func (logicThis *sAuthAction) verifyData(ctx context.Context, data map[string]any) (err error) {
 	if _, ok := data[`scene_id_arr`]; ok && len(gconv.Strings(data[`scene_id_arr`])) > 0 {
 		sceneIdArr := gconv.Strings(data[`scene_id_arr`])
-		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).Filter(daoAuth.Scene.Columns().SceneId, sceneIdArr).Count(); count != len(sceneIdArr) {
+		if count, _ := daoAuth.Scene.CtxDaoModel(ctx).FilterPri(sceneIdArr).Count(); count != len(sceneIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`)}})
 			return
 		}
