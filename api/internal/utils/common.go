@@ -26,14 +26,14 @@ func IsDev(ctx context.Context) bool {
 // 生成错误码
 func NewCode(ctx context.Context, code int, msg string, dataOpt ...any) gcode.Code {
 	var data any
-	if len(dataOpt) > 0 && dataOpt[0] != nil {
+	if len(dataOpt) > 0 {
 		data = dataOpt[0]
 	}
 	if msg == `` {
 		msg = g.I18n().T(ctx, `code.`+gconv.String(code))
 		if dataTmp, ok := data.(map[string]any); ok {
-			if _, ok := dataTmp[`i18nValues`]; ok {
-				msg = fmt.Sprintf(msg, gconv.SliceAny(dataTmp[`i18nValues`])...)
+			if i18nValues, ok := dataTmp[`i18nValues`]; ok {
+				msg = fmt.Sprintf(msg, gconv.SliceAny(i18nValues)...)
 				delete(dataTmp, `i18nValues`)
 			}
 		}
