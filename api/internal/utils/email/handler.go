@@ -43,9 +43,8 @@ type CodeTemplate struct {
 }
 
 func (handlerThis *Handler) SendCode(toEmail string, code string) (err error) {
-	config, _ := daoPlatform.Config.Get(handlerThis.Ctx, `emailCode`)
 	codeTemplate := &CodeTemplate{}
-	gconv.Struct(config[`emailCode`].Map(), codeTemplate)
+	gconv.Struct(daoPlatform.Config.GetOne(handlerThis.Ctx, `emailCode`).Map(), codeTemplate)
 	if codeTemplate.Subject == `` || codeTemplate.Template == `` {
 		err = errors.New(`缺少配置：邮箱-验证码模板`)
 		return
