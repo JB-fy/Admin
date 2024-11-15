@@ -11,14 +11,13 @@ import (
 )
 
 type OneClickOfWx struct {
-	Ctx    context.Context
 	Host   string `json:"host"`
 	AppId  string `json:"appId"`
 	Secret string `json:"secret"`
 }
 
-func NewOneClickOfWx(ctx context.Context, config map[string]any) *OneClickOfWx {
-	oneClickObj := &OneClickOfWx{Ctx: ctx}
+func NewOneClickOfWx(config map[string]any) *OneClickOfWx {
+	oneClickObj := &OneClickOfWx{}
 	gconv.Struct(config, oneClickObj)
 	if oneClickObj.Host == `` || oneClickObj.AppId == `` || oneClickObj.Secret == `` {
 		panic(`缺少插件配置：一键登录-微信`)
@@ -73,8 +72,8 @@ func (oneClickThis *OneClickOfWx) CodeUrl(redirectUri string, scope string, stat
 }
 
 // 通过code换取网页授权access_token（code由前端自己获取）
-func (oneClickThis *OneClickOfWx) AccessToken(code string) (accessToken AccessTokenOfWx, err error) {
-	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/access_token`, g.Map{
+func (oneClickThis *OneClickOfWx) AccessToken(ctx context.Context, code string) (accessToken AccessTokenOfWx, err error) {
+	res, err := g.Client().Get(ctx, oneClickThis.Host+`/sns/oauth2/access_token`, g.Map{
 		`appid`:      oneClickThis.AppId,
 		`secret`:     oneClickThis.Secret,
 		`code`:       code,
@@ -96,8 +95,8 @@ func (oneClickThis *OneClickOfWx) AccessToken(code string) (accessToken AccessTo
 }
 
 // 拉取用户信息(需scope为 snsapi_userinfo)
-func (oneClickThis *OneClickOfWx) UserInfo(openid, accessToken string) (userInfo UserInfoOfWx, err error) {
-	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/userinfo`, g.Map{
+func (oneClickThis *OneClickOfWx) UserInfo(ctx context.Context, openid, accessToken string) (userInfo UserInfoOfWx, err error) {
+	res, err := g.Client().Get(ctx, oneClickThis.Host+`/sns/userinfo`, g.Map{
 		`access_token`: accessToken,
 		`openid`:       openid,
 		`lang`:         `zh_CN`,
@@ -118,8 +117,8 @@ func (oneClickThis *OneClickOfWx) UserInfo(openid, accessToken string) (userInfo
 }
 
 // 刷新access_token（需要时用）
-func (oneClickThis *OneClickOfWx) RefreshToken(refreshTokenStr string) (refreshToken RefreshTokenOfWx, err error) {
-	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/oauth2/refresh_token`, g.Map{
+func (oneClickThis *OneClickOfWx) RefreshToken(ctx context.Context, refreshTokenStr string) (refreshToken RefreshTokenOfWx, err error) {
+	res, err := g.Client().Get(ctx, oneClickThis.Host+`/sns/oauth2/refresh_token`, g.Map{
 		`appid`:         oneClickThis.AppId,
 		`grant_type`:    `refresh_token`,
 		`refresh_token`: refreshTokenStr,
@@ -140,8 +139,8 @@ func (oneClickThis *OneClickOfWx) RefreshToken(refreshTokenStr string) (refreshT
 }
 
 // 授权验证（需要时用）
-func (oneClickThis *OneClickOfWx) Auth(openid, accessToken string) (err error) {
-	res, err := g.Client().Get(oneClickThis.Ctx, oneClickThis.Host+`/sns/auth`, g.Map{
+func (oneClickThis *OneClickOfWx) Auth(ctx context.Context, openid, accessToken string) (err error) {
+	res, err := g.Client().Get(ctx, oneClickThis.Host+`/sns/auth`, g.Map{
 		`access_token`: accessToken,
 		`openid`:       openid,
 		`lang`:         `zh_CN`,

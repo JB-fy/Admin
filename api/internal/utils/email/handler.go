@@ -22,14 +22,14 @@ func NewHandler(ctx context.Context, emailTypeOpt ...string) *Handler {
 	if len(emailTypeOpt) > 0 {
 		emailType = emailTypeOpt[0]
 	} else {
-		emailType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `emailType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
+		emailType = daoPlatform.Config.GetOne(ctx, `emailType`).String()
 	}
 
 	var config g.Map
 	switch emailType {
 	// case `emailOfCommon`:
 	default:
-		config, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `emailOfCommon`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
+		config = daoPlatform.Config.GetOne(ctx, `emailOfCommon`).Map()
 	}
 
 	config[`emailType`] = emailType

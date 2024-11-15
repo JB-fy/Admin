@@ -20,14 +20,14 @@ func NewHandler(ctx context.Context, deviceType uint, pushTypeOpt ...string) *Ha
 	if len(pushTypeOpt) > 0 {
 		pushType = pushTypeOpt[0]
 	} else {
-		pushType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `pushType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
+		pushType = daoPlatform.Config.GetOne(ctx, `pushType`).String()
 	}
 
 	var config g.Map
 	switch pushType {
 	// case `pushOfTx`:	//腾讯移动推送
 	default:
-		config, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `pushOfTx`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
+		config = daoPlatform.Config.GetOne(ctx, `pushOfTx`).Map()
 		switch deviceType {
 		case 1: //IOS
 			config[`accessID`] = config[`accessIDOfIos`]

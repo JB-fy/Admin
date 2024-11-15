@@ -19,14 +19,14 @@ func NewHandler(ctx context.Context, smsTypeOpt ...string) *Handler {
 	if len(smsTypeOpt) > 0 {
 		smsType = smsTypeOpt[0]
 	} else {
-		smsType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `smsType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
+		smsType = daoPlatform.Config.GetOne(ctx, `smsType`).String()
 	}
 
 	var config g.Map
 	switch smsType {
 	// case `smsOfAliyun`:
 	default:
-		config, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `smsOfAliyun`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
+		config = daoPlatform.Config.GetOne(ctx, `smsOfAliyun`).Map()
 	}
 
 	config[`smsType`] = smsType

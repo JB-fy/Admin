@@ -23,14 +23,14 @@ func NewHandler(ctx context.Context, scene string, vodTypeOpt ...string) *Handle
 	if len(vodTypeOpt) > 0 {
 		vodType = vodTypeOpt[0]
 	} else {
-		vodType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `vodType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
+		vodType = daoPlatform.Config.GetOne(ctx, `vodType`).String()
 	}
 
 	var config g.Map
 	switch vodType {
 	// case `vodOfAliyun`:
 	default:
-		config, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `vodOfAliyun`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
+		config = daoPlatform.Config.GetOne(ctx, `vodOfAliyun`).Map()
 	}
 
 	config[`vodType`] = vodType

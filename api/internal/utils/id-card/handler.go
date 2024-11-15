@@ -19,14 +19,14 @@ func NewHandler(ctx context.Context, idCardTypeOpt ...string) *Handler {
 	if len(idCardTypeOpt) > 0 {
 		idCardType = idCardTypeOpt[0]
 	} else {
-		idCardType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `idCardType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
+		idCardType = daoPlatform.Config.GetOne(ctx, `idCardType`).String()
 	}
 
 	var config g.Map
 	switch idCardType {
 	// case `idCardOfAliyun`:
 	default:
-		config, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `idCardOfAliyun`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
+		config = daoPlatform.Config.GetOne(ctx, `idCardOfAliyun`).Map()
 	}
 
 	config[`idCardType`] = idCardType

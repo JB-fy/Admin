@@ -14,7 +14,7 @@ var (
 )
 
 func NewWxGzhHandler(ctx context.Context) (wxGzh *WxGzh) {
-	config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `wxGzh`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
+	config := daoPlatform.Config.GetOne(ctx, `wxGzh`).Map()
 
 	wxGzhKey := gmd5.MustEncrypt(config)
 
@@ -30,5 +30,5 @@ func NewWxGzhHandler(ctx context.Context) (wxGzh *WxGzh) {
 
 	wxGzh = NewWxGzh(config)
 	wxGzhMap[wxGzhKey] = wxGzh
-	return NewWxGzh(config)
+	return
 }

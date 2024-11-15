@@ -1,7 +1,6 @@
 package one_click
 
 import (
-	"context"
 	"errors"
 
 	"github.com/gogf/gf/v2/util/gconv"
@@ -9,14 +8,13 @@ import (
 )
 
 type OneClickOfYidun struct {
-	Ctx        context.Context
 	SecretId   string `json:"secretId"`
 	SecretKey  string `json:"secretKey"`
 	BusinessId string `json:"businessId"`
 }
 
-func NewOneClickOfYidun(ctx context.Context, config map[string]any) *OneClickOfYidun {
-	oneClickObj := &OneClickOfYidun{Ctx: ctx}
+func NewOneClickOfYidun(config map[string]any) *OneClickOfYidun {
+	oneClickObj := &OneClickOfYidun{}
 	gconv.Struct(config, oneClickObj)
 	if oneClickObj.SecretId == `` || oneClickObj.SecretKey == `` || oneClickObj.BusinessId == `` {
 		panic(`缺少插件配置：一键登录-易盾`)
