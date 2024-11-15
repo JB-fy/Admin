@@ -305,20 +305,20 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 					daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 					fieldCaseCamelLower := gstr.CaseCamelLower(v.FieldCaseCamel)
 					part1 := `uint`
-					part2 := fieldCaseCamelLower + ` := gconv.Uint(item[` + daoPathRel + `.Columns().` + v.FieldCaseCamel + `]); ` + fieldCaseCamelLower + ` > 0`
+					part2 := fieldCaseCamelLower + ` := gconv.Uint(item[` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `]); ` + fieldCaseCamelLower + ` > 0`
 					if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(v.FieldType) {
 						part1 = `string`
-						part2 = fieldCaseCamelLower + ` := gconv.String(item[` + daoPathRel + `.Columns().` + v.FieldCaseCamel + `]); ` + fieldCaseCamelLower + ` != ` + "``"
+						part2 = fieldCaseCamelLower + ` := gconv.String(item[` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `]); ` + fieldCaseCamelLower + ` != ` + "``"
 					} else if v.FieldType == internal.TypeInt && !relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
 						part1 = `int`
-						part2 = fieldCaseCamelLower + ` := gconv.Int(item[` + daoPathRel + `.Columns().` + v.FieldCaseCamel + `]); item[` + daoPathRel + `.Columns().` + v.FieldCaseCamel + `] != nil`
+						part2 = fieldCaseCamelLower + ` := gconv.Int(item[` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `]); item[` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `] != nil`
 					}
 					verifyDataArr.part1 = append(verifyDataArr.part1, fieldCaseCamelLower+`Arr := []`+part1+`{}`)
 					verifyDataArr.part2 = append(verifyDataArr.part2, `if `+part2+` {
 						`+fieldCaseCamelLower+`Arr = append(`+fieldCaseCamelLower+`Arr, `+fieldCaseCamelLower+`)
 			}`)
 					verifyDataArr.part3 = append(verifyDataArr.part3, `if len(`+fieldCaseCamelLower+`Arr) > 0 {
-			if count, _ := `+daoPathRel+`.CtxDaoModel(ctx).Filter(`+daoPathRel+`.Columns().`+v.FieldCaseCamel+`, `+fieldCaseCamelLower+`Arr).Count(); count != len(`+fieldCaseCamelLower+`Arr) {
+			if count, _ := `+daoPathRel+`.CtxDaoModel(ctx).FilterPri(`+fieldCaseCamelLower+`Arr).Count(); count != len(`+fieldCaseCamelLower+`Arr) {
 				err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 				return
 			}
