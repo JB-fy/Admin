@@ -23,7 +23,6 @@ import (
 )
 
 type UploadOfLocal struct {
-	Ctx           context.Context
 	UploadId      uint   `json:"uploadId"`
 	Url           string `json:"url"`
 	SignKey       string `json:"signKey"`
@@ -31,8 +30,8 @@ type UploadOfLocal struct {
 	FileUrlPrefix string `json:"fileUrlPrefix"`
 }
 
-func NewUploadOfLocal(ctx context.Context, config map[string]any) *UploadOfLocal {
-	uploadObj := &UploadOfLocal{Ctx: ctx}
+func NewUploadOfLocal(config map[string]any) *UploadOfLocal {
+	uploadObj := &UploadOfLocal{}
 	gconv.Struct(config, uploadObj)
 	if uploadObj.UploadId == 0 || uploadObj.Url == `` || uploadObj.SignKey == `` || uploadObj.FileSaveDir == `` || uploadObj.FileUrlPrefix == `` {
 		panic(`缺少配置：上传-本地`)
@@ -41,7 +40,7 @@ func NewUploadOfLocal(ctx context.Context, config map[string]any) *UploadOfLocal
 }
 
 // 本地上传
-func (uploadThis *UploadOfLocal) Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (uploadThis *UploadOfLocal) Upload(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	dir := r.Get(`dir`).String()
 	expire := r.Get(`expire`).Int64()
 	minSize := r.Get(`min_size`).Int64()
@@ -62,7 +61,7 @@ func (uploadThis *UploadOfLocal) Upload(r *ghttp.Request) (notifyInfo NotifyInfo
 		`max_size`:  maxSize,
 		`rand`:      rand,
 	}
-	if sign != uploadThis.CreateSign(signData) {
+	if sign != uploadThis.sign(signData) {
 		err = errors.New(`签名错误`)
 		return
 	}
@@ -129,7 +128,7 @@ func (uploadThis *UploadOfLocal) Upload(r *ghttp.Request) (notifyInfo NotifyInfo
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo SignInfo, err error) {
+func (uploadThis *UploadOfLocal) Sign(ctx context.Context, param UploadParam) (signInfo SignInfo, err error) {
 	signInfo = SignInfo{
 		UploadUrl: uploadThis.Url,
 		Host:      uploadThis.FileUrlPrefix,
@@ -146,29 +145,29 @@ func (uploadThis *UploadOfLocal) Sign(param UploadParam) (signInfo SignInfo, err
 		`max_size`:  param.MaxSize,
 		`rand`:      grand.S(8),
 	}
-	uploadData[`sign`] = uploadThis.CreateSign(uploadData)
+	uploadData[`sign`] = uploadThis.sign(uploadData)
 
 	signInfo.UploadData = uploadData
 	return
 }
 
 // 获取配置信息（APP直传前调用）
-func (uploadThis *UploadOfLocal) Config(param UploadParam) (config map[string]any, err error) {
+func (uploadThis *UploadOfLocal) Config(ctx context.Context, param UploadParam) (config map[string]any, err error) {
 	return
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *UploadOfLocal) Sts(param UploadParam) (stsInfo map[string]any, err error) {
+func (uploadThis *UploadOfLocal) Sts(ctx context.Context, param UploadParam) (stsInfo map[string]any, err error) {
 	return
 }
 
 // 回调
-func (uploadThis *UploadOfLocal) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (uploadThis *UploadOfLocal) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	return
 }
 
 // 生成签名
-func (uploadThis *UploadOfLocal) CreateSign(data map[string]any) (sign string) {
+func (uploadThis *UploadOfLocal) sign(data map[string]any) (sign string) {
 	keyArr := []string{}
 	for k := range data {
 		keyArr = append(keyArr, k)

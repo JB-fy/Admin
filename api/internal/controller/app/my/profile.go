@@ -161,7 +161,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			idCardInfo, errTmp := id_card.NewIdCard(ctx).Auth(gconv.String(data[`id_card_name`]), gconv.String(data[`id_card_no`]))
+			idCardInfo, errTmp := id_card.NewHandler(ctx).Auth(gconv.String(data[`id_card_name`]), gconv.String(data[`id_card_no`]))
 			if errTmp != nil {
 				err = errTmp
 				return

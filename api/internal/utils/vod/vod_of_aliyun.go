@@ -42,6 +42,6 @@ func (vodThis *VodOfAliyun) Sts(param VodParam) (stsInfo map[string]any, err err
 		RoleArn:         tea.String(vodThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_vod`),
 	}
-	stsInfo, err = common.CreateStsToken(vodThis.Ctx, config, assumeRoleRequest)
+	stsInfo, err = common.CreateStsToken(config, assumeRoleRequest)
 	return
 }

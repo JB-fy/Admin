@@ -1,13 +1,9 @@
 package upload
 
 import (
-	"api/internal/consts"
-	"api/internal/utils"
 	"context"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -37,42 +33,19 @@ type NotifyInfo struct {
 }
 
 type Upload interface {
-	Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error)  // 本地上传
-	Sign(param UploadParam) (signInfo SignInfo, err error)       // 获取签名（H5直传用）
-	Config(param UploadParam) (config map[string]any, err error) // 获取配置信息（APP直传前调用）
-	Sts(param UploadParam) (stsInfo map[string]any, err error)   // 获取Sts Token（APP直传用）
-	Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error)  // 回调
+	Upload(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error)  // 本地上传
+	Sign(ctx context.Context, param UploadParam) (signInfo SignInfo, err error)       // 获取签名（H5直传用）
+	Config(ctx context.Context, param UploadParam) (config map[string]any, err error) // 获取配置信息（APP直传前调用）
+	Sts(ctx context.Context, param UploadParam) (stsInfo map[string]any, err error)   // 获取Sts Token（APP直传用）
+	Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error)  // 回调
 }
 
-func NewUpload(ctx context.Context, config map[string]any) Upload {
+func NewUpload(config map[string]any) Upload {
 	switch gconv.Uint(config[`uploadType`]) {
 	case 1: //阿里云OSS
-		return NewUploadOfAliyunOss(ctx, config)
+		return NewUploadOfAliyunOss(config)
 	// case 0: //本地
 	default:
-		handleUrl := func(strRaw string) (str string) {
-			str = strRaw
-			if gstr.Pos(str, `http`) != 0 {
-				currentUrl := utils.GetRequestUrl(ctx, 0)
-				for _, v := range []string{`0.0.0.0`, `127.0.0.1`} {
-					if gstr.Pos(currentUrl, v) != -1 {
-						if utils.IsDev(ctx) {
-							currentUrl = gstr.Replace(currentUrl, v, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String(), 1)
-						} else {
-							currentUrl = gstr.Replace(currentUrl, v, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String(), 1)
-						}
-						break
-					}
-				}
-				if str != `` && gstr.Pos(str, `/`) != 0 {
-					str = `/` + str
-				}
-				str = currentUrl + str
-			}
-			return
-		}
-		config[`url`] = handleUrl(gconv.String(config[`url`]))
-		config[`fileUrlPrefix`] = handleUrl(gconv.String(config[`fileUrlPrefix`]))
-		return NewUploadOfLocal(ctx, config)
+		return NewUploadOfLocal(config)
 	}
 }

@@ -29,11 +29,10 @@ func NewHandler(ctx context.Context, emailTypeOpt ...string) *Handler {
 	switch emailType {
 	// case `emailOfCommon`:
 	default:
-		configTmp, _ := daoPlatform.Config.Get(ctx, `emailOfCommon`)
-		config = configTmp[`emailOfCommon`].Map()
+		config, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `emailOfCommon`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
 	}
 
-	config[`email_type`] = emailType
+	config[`emailType`] = emailType
 	handlerObj.Email = NewEmail(config)
 	return handlerObj
 }

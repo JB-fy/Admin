@@ -31,7 +31,7 @@ func NewEmail(config map[string]any) (email Email) {
 		return
 	}
 
-	switch gconv.String(config[`email_type`]) {
+	switch gconv.String(config[`emailType`]) {
 	// case `emailOfCommon`:
 	default:
 		email = NewEmailOfCommon(config)

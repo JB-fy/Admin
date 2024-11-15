@@ -28,7 +28,6 @@ import (
 )
 
 type UploadOfAliyunOss struct {
-	Ctx             context.Context
 	Host            string `json:"host"`
 	Bucket          string `json:"bucket"`
 	AccessKeyId     string `json:"accessKeyId"`
@@ -38,8 +37,8 @@ type UploadOfAliyunOss struct {
 	CallbackUrl     string `json:"callbackUrl"`
 }
 
-func NewUploadOfAliyunOss(ctx context.Context, config map[string]any) *UploadOfAliyunOss {
-	uploadObj := &UploadOfAliyunOss{Ctx: ctx}
+func NewUploadOfAliyunOss(config map[string]any) *UploadOfAliyunOss {
+	uploadObj := &UploadOfAliyunOss{}
 	gconv.Struct(config, uploadObj)
 	if uploadObj.Host == `` || uploadObj.Bucket == `` || uploadObj.AccessKeyId == `` || uploadObj.AccessKeySecret == `` || uploadObj.CallbackUrl == `` || uploadObj.Endpoint == `` || uploadObj.RoleArn == `` {
 		panic(`缺少配置：上传-阿里云OSS`)
@@ -54,13 +53,13 @@ type UploadOfAliyunOssCallback struct {
 }
 
 // 本地上传
-func (uploadThis *UploadOfAliyunOss) Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (uploadThis *UploadOfAliyunOss) Upload(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	return
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo SignInfo, err error) {
-	bucketHost := uploadThis.GetBucketHost()
+func (uploadThis *UploadOfAliyunOss) Sign(ctx context.Context, param UploadParam) (signInfo SignInfo, err error) {
+	bucketHost := uploadThis.getBucketHost()
 
 	signInfo = SignInfo{
 		UploadUrl: bucketHost,
@@ -70,11 +69,11 @@ func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo SignInfo,
 		IsRes:     0,
 	}
 
-	policyBase64 := uploadThis.CreatePolicyBase64(param)
+	policyBase64 := uploadThis.createPolicyBase64(param)
 	uploadData := map[string]any{
 		`OSSAccessKeyId`:        uploadThis.AccessKeyId,
 		`policy`:                string(policyBase64),
-		`signature`:             uploadThis.CreateSign(policyBase64),
+		`signature`:             uploadThis.sign(policyBase64),
 		`success_action_status`: `200`, //让服务端返回200,不然，默认会返回204
 	}
 	//是否回调
@@ -84,7 +83,7 @@ func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo SignInfo,
 			Body:     `filename=${object}&size=${size}&mime_type=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
 			BodyType: `application/x-www-form-urlencoded`,
 		}
-		uploadData[`callback`] = uploadThis.CreateCallbackStr(callback)
+		uploadData[`callback`] = uploadThis.createCallbackStr(callback)
 		signInfo.IsRes = 1
 	}
 
@@ -93,7 +92,7 @@ func (uploadThis *UploadOfAliyunOss) Sign(param UploadParam) (signInfo SignInfo,
 }
 
 // 获取配置信息（APP直传前调用）
-func (uploadThis *UploadOfAliyunOss) Config(param UploadParam) (config map[string]any, err error) {
+func (uploadThis *UploadOfAliyunOss) Config(ctx context.Context, param UploadParam) (config map[string]any, err error) {
 	config = map[string]any{
 		`endpoint`: uploadThis.Host,
 		`bucket`:   uploadThis.Bucket,
@@ -109,7 +108,7 @@ func (uploadThis *UploadOfAliyunOss) Config(param UploadParam) (config map[strin
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *UploadOfAliyunOss) Sts(param UploadParam) (stsInfo map[string]any, err error) {
+func (uploadThis *UploadOfAliyunOss) Sts(ctx context.Context, param UploadParam) (stsInfo map[string]any, err error) {
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
 		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),
@@ -121,12 +120,12 @@ func (uploadThis *UploadOfAliyunOss) Sts(param UploadParam) (stsInfo map[string]
 		RoleArn:         tea.String(uploadThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_oss`),
 	}
-	stsInfo, err = common.CreateStsToken(uploadThis.Ctx, config, assumeRoleRequest)
+	stsInfo, err = common.CreateStsToken(config, assumeRoleRequest)
 	return
 }
 
 // 回调
-func (uploadThis *UploadOfAliyunOss) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (uploadThis *UploadOfAliyunOss) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	filename := r.Get(`filename`).String()
 	notifyInfo.Width = r.Get(`width`).Uint()
 	notifyInfo.Height = r.Get(`height`).Uint()
@@ -193,7 +192,7 @@ func (uploadThis *UploadOfAliyunOss) Notify(r *ghttp.Request) (notifyInfo Notify
 		return
 	}
 
-	notifyInfo.Url = uploadThis.GetBucketHost() + `/` + filename
+	notifyInfo.Url = uploadThis.getBucketHost() + `/` + filename
 	//有时文件信息放地址后面，一起保存在数据库中会更好。比如：苹果手机做瀑布流时需要知道图片宽高，这时就能直接从地址中解析获取
 	urlQueryArr := []string{}
 	if notifyInfo.Width > 0 {
@@ -215,7 +214,7 @@ func (uploadThis *UploadOfAliyunOss) Notify(r *ghttp.Request) (notifyInfo Notify
 }
 
 // 生成签名（web前端直传用）
-func (uploadThis *UploadOfAliyunOss) CreateSign(policyBase64 string) (sign string) {
+func (uploadThis *UploadOfAliyunOss) sign(policyBase64 string) (sign string) {
 	h := hmac.New(func() hash.Hash { return sha1.New() }, []byte(uploadThis.AccessKeySecret))
 	io.WriteString(h, policyBase64)
 	signBase64 := base64.StdEncoding.EncodeToString(h.Sum(nil))
@@ -224,9 +223,9 @@ func (uploadThis *UploadOfAliyunOss) CreateSign(policyBase64 string) (sign strin
 }
 
 // 生成PolicyBase64（web前端直传用）
-func (uploadThis *UploadOfAliyunOss) CreatePolicyBase64(param UploadParam) (policyBase64 string) {
+func (uploadThis *UploadOfAliyunOss) createPolicyBase64(param UploadParam) (policyBase64 string) {
 	policyMap := map[string]any{
-		`expiration`: uploadThis.GetGmtIso8601(param.Expire),
+		`expiration`: uploadThis.getGmtIso8601(param.Expire),
 		`conditions`: [][]any{
 			{`content-length-range`, param.MinSize, param.MaxSize},
 			{`starts-with`, `$key`, param.Dir},
@@ -239,7 +238,7 @@ func (uploadThis *UploadOfAliyunOss) CreatePolicyBase64(param UploadParam) (poli
 }
 
 // 生成回调字符串（web前端直传用）
-func (uploadThis *UploadOfAliyunOss) CreateCallbackStr(callback UploadOfAliyunOssCallback) string {
+func (uploadThis *UploadOfAliyunOss) createCallbackStr(callback UploadOfAliyunOssCallback) string {
 	callbackParam := map[string]any{
 		`callbackUrl`:      callback.Url,
 		`callbackBody`:     callback.Body,
@@ -251,7 +250,7 @@ func (uploadThis *UploadOfAliyunOss) CreateCallbackStr(callback UploadOfAliyunOs
 }
 
 // 获取bucketHost
-func (uploadThis *UploadOfAliyunOss) GetBucketHost() string {
+func (uploadThis *UploadOfAliyunOss) getBucketHost() string {
 	scheme := `https://`
 	if gstr.Pos(uploadThis.Host, `https://`) == -1 {
 		scheme = `http://`
@@ -259,7 +258,7 @@ func (uploadThis *UploadOfAliyunOss) GetBucketHost() string {
 	return gstr.Replace(uploadThis.Host, scheme, scheme+uploadThis.Bucket+`.`, 1)
 }
 
-func (uploadThis *UploadOfAliyunOss) GetGmtIso8601(expireEnd int64) string {
+func (uploadThis *UploadOfAliyunOss) getGmtIso8601(expireEnd int64) string {
 	var tokenExpire = time.Unix(expireEnd, 0).UTC().Format(`2006-01-02T15:04:05Z`)
 	return tokenExpire
 }

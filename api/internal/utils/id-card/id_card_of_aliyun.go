@@ -14,19 +14,21 @@ type IdCardOfAliyun struct {
 	Ctx     context.Context
 	Url     string `json:"url"`
 	Appcode string `json:"appcode"`
+	client  *gclient.Client
 }
 
-func NewIdCardOfAliyun(ctx context.Context, config map[string]any) *IdCardOfAliyun {
-	idCardObj := &IdCardOfAliyun{Ctx: ctx}
+func NewIdCardOfAliyun(config map[string]any) *IdCardOfAliyun {
+	idCardObj := &IdCardOfAliyun{}
 	gconv.Struct(config, idCardObj)
 	if idCardObj.Url == `` || idCardObj.Appcode == `` {
 		panic(`缺少插件配置：实名认证-阿里云`)
 	}
+	idCardObj.client = g.Client().SetHeaderMap(g.MapStrStr{`Authorization`: `APPCODE ` + idCardObj.Appcode})
 	return idCardObj
 }
 
-func (idCardThis *IdCardOfAliyun) Auth(idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error) {
-	res, err := idCardThis.CreateClient().Get(idCardThis.Ctx, idCardThis.Url, g.Map{
+func (idCardThis *IdCardOfAliyun) Auth(ctx context.Context, idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error) {
+	res, err := idCardThis.client.Get(idCardThis.Ctx, idCardThis.Url, g.Map{
 		`cardno`: idCardNo,
 		`name`:   idCardName,
 	})
@@ -57,10 +59,5 @@ func (idCardThis *IdCardOfAliyun) Auth(idCardName string, idCardNo string) (idCa
 	idCardInfo.Address = gconv.String(idCardInfoMap[`address`])
 	// idCardInfo.Birthday = gtime.NewFromStr(gconv.String(idCardInfoMap[`birthday`]))
 	idCardInfo.Birthday = gconv.String(idCardInfoMap[`birthday`])
-	return
-}
-
-func (idCardThis *IdCardOfAliyun) CreateClient() (client *gclient.Client) {
-	client = g.Client().SetHeaderMap(g.MapStrStr{`Authorization`: `APPCODE ` + idCardThis.Appcode})
 	return
 }

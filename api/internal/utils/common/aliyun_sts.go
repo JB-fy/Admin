@@ -7,11 +7,10 @@ import (
 	sts20150401 "github.com/alibabacloud-go/sts-20150401/v2/client"
 	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
-	"golang.org/x/net/context"
 )
 
 // 生成Sts Token
-func CreateStsToken(ctx context.Context, config *openapi.Config, assumeRoleRequest *sts20150401.AssumeRoleRequest) (stsInfo map[string]any, err error) {
+func CreateStsToken(config *openapi.Config, assumeRoleRequest *sts20150401.AssumeRoleRequest) (stsInfo map[string]any, err error) {
 	/* config := &openapi.Config{
 		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
 		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),

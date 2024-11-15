@@ -1,6 +1,7 @@
 package upload
 
 import (
+	"api/internal/consts"
 	daoUpload "api/internal/dao/upload"
 	"api/internal/utils"
 	"context"
@@ -8,6 +9,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -34,13 +36,41 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) *Handler {
 	uploadInfo, _ := daoUpload.Upload.CtxDaoModel(handlerObj.Ctx).Filters(uploadFilter).One()
 
 	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
-	config[`uploadType`] = uploadInfo[daoUpload.Upload.Columns().UploadType]
 	config[`uploadId`] = uploadInfo[daoUpload.Upload.Columns().UploadId]
 	if gconv.Bool(config[`isNotify`]) {
 		config[`callbackUrl`] = utils.GetRequestUrl(handlerObj.Ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
 	}
-	handlerObj.upload = NewUpload(handlerObj.Ctx, config)
+	switch uploadInfo[daoUpload.Upload.Columns().UploadType].Uint() {
+	case 1: //阿里云OSS
+	// case 0: //本地
+	default:
+		handleUrl := func(strRaw string) (str string) {
+			str = strRaw
+			if gstr.Pos(str, `http`) != 0 {
+				currentUrl := utils.GetRequestUrl(ctx, 0)
+				for _, v := range []string{`0.0.0.0`, `127.0.0.1`} {
+					if gstr.Pos(currentUrl, v) != -1 {
+						if utils.IsDev(ctx) {
+							currentUrl = gstr.Replace(currentUrl, v, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String(), 1)
+						} else {
+							currentUrl = gstr.Replace(currentUrl, v, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String(), 1)
+						}
+						break
+					}
+				}
+				if str != `` && gstr.Pos(str, `/`) != 0 {
+					str = `/` + str
+				}
+				str = currentUrl + str
+			}
+			return
+		}
+		config[`url`] = handleUrl(gconv.String(config[`url`]))
+		config[`fileUrlPrefix`] = handleUrl(gconv.String(config[`fileUrlPrefix`]))
+	}
 
+	config[`uploadType`] = uploadInfo[daoUpload.Upload.Columns().UploadType]
+	handlerObj.upload = NewUpload(config)
 	return handlerObj
 }
 
@@ -70,21 +100,21 @@ func (handlerThis *Handler) createUploadParam() (param UploadParam) {
 }
 
 func (handlerThis *Handler) Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
-	return handlerThis.upload.Upload(r)
+	return handlerThis.upload.Upload(handlerThis.Ctx, r)
 }
 
 func (handlerThis *Handler) Sign() (signInfo SignInfo, err error) {
-	return handlerThis.upload.Sign(handlerThis.createUploadParam())
+	return handlerThis.upload.Sign(handlerThis.Ctx, handlerThis.createUploadParam())
 }
 
 func (handlerThis *Handler) Config() (config map[string]any, err error) {
-	return handlerThis.upload.Config(handlerThis.createUploadParam())
+	return handlerThis.upload.Config(handlerThis.Ctx, handlerThis.createUploadParam())
 }
 
 func (handlerThis *Handler) Sts() (stsInfo map[string]any, err error) {
-	return handlerThis.upload.Sts(handlerThis.createUploadParam())
+	return handlerThis.upload.Sts(handlerThis.Ctx, handlerThis.createUploadParam())
 }
 
 func (handlerThis *Handler) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
-	return handlerThis.upload.Notify(r)
+	return handlerThis.upload.Notify(handlerThis.Ctx, r)
 }
