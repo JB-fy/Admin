@@ -126,11 +126,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		}
 	}
 
-	tokenInfo := token.TokenInfo{
-		LoginId: info[daoUsers.Users.Columns().UserId].String(),
-		IP:      g.RequestFromCtx(ctx).GetClientIp(),
-	}
-	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneId).Create(tokenInfo)
+	token, err := token.NewHandler(ctx).Create(info[daoUsers.Users.Columns().UserId].String())
 	if err != nil {
 		return
 	}
@@ -192,11 +188,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		return
 	}
 
-	tokenInfo := token.TokenInfo{
-		LoginId: gconv.String(userId),
-		IP:      g.RequestFromCtx(ctx).GetClientIp(),
-	}
-	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneId).Create(tokenInfo)
+	token, err := token.NewHandler(ctx).Create(gconv.String(userId))
 	if err != nil {
 		return
 	}
@@ -298,12 +290,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 		daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Update(saveData) //一般情况下用户昵称，性别等字段不会每次登录都随第三方变动
 	} */
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	tokenInfo := token.TokenInfo{
-		LoginId: gconv.String(userId),
-		IP:      g.RequestFromCtx(ctx).GetClientIp(),
-	}
-	token, err := token.NewHandler(ctx, sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneInfo[daoAuth.Scene.Columns().SceneId].String()).Create(tokenInfo)
+	token, err := token.NewHandler(ctx).Create(gconv.String(userId))
 	if err != nil {
 		return
 	}

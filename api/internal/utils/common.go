@@ -66,12 +66,9 @@ func SetCtxSceneInfo(r *ghttp.Request, info gdb.Record) {
 }
 
 // 获取场景信息
-func GetCtxSceneInfo(ctx context.Context) gdb.Record {
-	tmp := ctx.Value(consts.ConstCtxSceneInfoName)
-	if tmp == nil {
-		return nil
-	}
-	return tmp.(gdb.Record)
+func GetCtxSceneInfo(ctx context.Context) (info gdb.Record) {
+	info, _ = ctx.Value(consts.ConstCtxSceneInfoName).(gdb.Record)
+	return
 }
 
 // 设置登录身份信息
@@ -80,12 +77,9 @@ func SetCtxLoginInfo(r *ghttp.Request, info gdb.Record) {
 }
 
 // 获取登录身份信息
-func GetCtxLoginInfo(ctx context.Context) gdb.Record {
-	tmp := ctx.Value(consts.ConstCtxLoginInfoName)
-	if tmp == nil {
-		return nil
-	}
-	return tmp.(gdb.Record)
+func GetCtxLoginInfo(ctx context.Context) (info gdb.Record) {
+	info, _ = ctx.Value(consts.ConstCtxLoginInfoName).(gdb.Record)
+	return
 }
 
 // 获取当前请求Url

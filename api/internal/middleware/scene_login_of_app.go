@@ -1,13 +1,11 @@
 package middleware
 
 import (
-	daoAuth "api/internal/dao/auth"
 	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
 	utilsToken "api/internal/utils/token"
 
 	"github.com/gogf/gf/v2/container/gvar"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -25,8 +23,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 			return
 		}
 
-		sceneInfo := utils.GetCtxSceneInfo(r.GetCtx())
-		tokenInfo, err := utilsToken.NewHandler(r.GetCtx(), sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map), sceneInfo[daoAuth.Scene.Columns().SceneId].String()).Parse(token, r.GetClientIp())
+		tokenInfo, err := utilsToken.NewHandler(r.GetCtx()).Parse(token)
 		if err != nil {
 			if isForce {
 				r.SetError(err)
