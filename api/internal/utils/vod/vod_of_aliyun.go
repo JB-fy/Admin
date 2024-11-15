@@ -11,15 +11,14 @@ import (
 )
 
 type VodOfAliyun struct {
-	Ctx             context.Context
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`
 	Endpoint        string `json:"endpoint"`
 	RoleArn         string `json:"roleArn"`
 }
 
-func NewVodOfAliyun(ctx context.Context, config map[string]any) *VodOfAliyun {
-	vodObj := &VodOfAliyun{Ctx: ctx}
+func NewVodOfAliyun(config map[string]any) *VodOfAliyun {
+	vodObj := &VodOfAliyun{}
 	gconv.Struct(config, vodObj)
 	if vodObj.AccessKeyId == `` || vodObj.AccessKeySecret == `` || vodObj.Endpoint == `` || vodObj.RoleArn == `` {
 		panic(`缺少插件配置：视频点播-阿里云`)
@@ -28,7 +27,7 @@ func NewVodOfAliyun(ctx context.Context, config map[string]any) *VodOfAliyun {
 }
 
 // 获取Sts Token
-func (vodThis *VodOfAliyun) Sts(param VodParam) (stsInfo map[string]any, err error) {
+func (vodThis *VodOfAliyun) Sts(ctx context.Context, param VodParam) (stsInfo map[string]any, err error) {
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(vodThis.AccessKeyId),
 		AccessKeySecret: tea.String(vodThis.AccessKeySecret),

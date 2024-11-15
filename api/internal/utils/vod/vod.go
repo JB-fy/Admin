@@ -1,8 +1,11 @@
 package vod
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
+	"sync"
+
+	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type VodParam struct {
@@ -10,28 +13,32 @@ type VodParam struct {
 }
 
 type Vod interface {
-	Sts(param VodParam) (stsInfo map[string]any, err error) // 获取Sts Token
+	Sts(ctx context.Context, param VodParam) (stsInfo map[string]any, err error) // 获取Sts Token
 }
 
-func NewVod(ctx context.Context, vodTypeOpt ...string) Vod {
-	vodType := ``
-	if len(vodTypeOpt) > 0 {
-		vodType = vodTypeOpt[0]
-	} else {
-		vodType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `vodType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
+var (
+	vodMap = map[string]Vod{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	vodMu  sync.Mutex
+)
+
+func NewVod(config map[string]any) (vod Vod) {
+	vodKey := gmd5.MustEncrypt(config)
+
+	ok := false
+	if vod, ok = vodMap[vodKey]; ok { //先读一次（不加锁）
+		return
+	}
+	vodMu.Lock()
+	defer vodMu.Unlock()
+	if vod, ok = vodMap[vodKey]; ok { // 再读一次（加锁），防止重复初始化
+		return
 	}
 
-	switch vodType {
+	switch gconv.String(config[`vodType`]) {
 	// case `vodOfAliyun`:
 	default:
-		config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `vodOfAliyun`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
-		return NewVodOfAliyun(ctx, config)
+		vod = NewVodOfAliyun(config)
 	}
-}
-
-func CreateVodParam() (param VodParam) {
-	param = VodParam{
-		ExpireTime: 50 * 60,
-	}
+	vodMap[vodKey] = vod
 	return
 }

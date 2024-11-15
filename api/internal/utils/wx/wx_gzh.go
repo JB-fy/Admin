@@ -24,7 +24,6 @@ import (
 )
 
 type WxGzh struct {
-	Ctx            context.Context
 	Host           string `json:"host"`
 	AppId          string `json:"appId"`
 	Secret         string `json:"secret"`
@@ -33,8 +32,8 @@ type WxGzh struct {
 	AESKey         []byte
 }
 
-func NewWxGzh(ctx context.Context, config map[string]any) *WxGzh {
-	wxGzhObj := &WxGzh{Ctx: ctx}
+func NewWxGzh(config map[string]any) *WxGzh {
+	wxGzhObj := &WxGzh{}
 	gconv.Struct(config, wxGzhObj)
 	if wxGzhObj.AppId == `` || wxGzhObj.Secret == `` || wxGzhObj.Token == `` || wxGzhObj.EncodingAESKey == `` {
 		panic(`缺少插件配置：微信-公众号`)
@@ -94,10 +93,6 @@ type Notify struct {
 	Url         string
 }
 
-func (wxGzhThis *WxGzh) Value2CDATA(v string) CDATAText {
-	return CDATAText{`<![CDATA[` + v + `]]>`}
-}
-
 // 获取签名
 func (wxGzhThis *WxGzh) Sign(timestamp, nonce string) (sign string) {
 	arr := []string{wxGzhThis.Token, timestamp, nonce}
@@ -126,58 +121,6 @@ func (wxGzhThis *WxGzh) GetEncryptReqBody(r *ghttp.Request) (encryptReqBody *Enc
 	body := r.GetBody()
 	encryptReqBody = &EncryptReqBody{}
 	xml.Unmarshal(body, encryptReqBody)
-	return
-}
-
-func (wxGzhThis *WxGzh) PKCS7Pad(message []byte, blocksize int) (padded []byte, err error) {
-	if blocksize < 2 {
-		err = errors.New(`block size is too small(minimum is 2 bytes)`)
-		return
-	}
-	if blocksize > 255 {
-		err = errors.New(`block size is too long(maxmum is 255 bytes)`)
-		return
-	}
-
-	// calculate padding length
-	padlen := blocksize - len(message)%blocksize
-	if padlen == 0 {
-		padlen = blocksize
-	}
-
-	// define PKCS7 padding blockbody
-	padding := bytes.Repeat([]byte{byte(padlen)}, padlen)
-
-	// apply padding
-	padded = append(message, padding...)
-	return
-}
-
-// aes加密
-func (wxGzhThis *WxGzh) AesEncrypt(msgByte []byte) (encrypt string, err error) {
-	k := len(wxGzhThis.AESKey)
-	if len(msgByte)%k != 0 {
-		msgByte, err = wxGzhThis.PKCS7Pad(msgByte, k)
-		if err != nil {
-			return
-		}
-	}
-
-	block, err := aes.NewCipher(wxGzhThis.AESKey)
-	if err != nil {
-		return
-	}
-
-	iv := make([]byte, aes.BlockSize)
-	_, err = io.ReadFull(rand.Reader, iv)
-	if err != nil {
-		return
-	}
-
-	cipherData := make([]byte, len(msgByte))
-	blockMode := cipher.NewCBCEncrypter(block, iv)
-	blockMode.CryptBlocks(cipherData, msgByte)
-	encrypt = base64.StdEncoding.EncodeToString(cipherData)
 	return
 }
 
@@ -218,10 +161,10 @@ func (wxGzhThis *WxGzh) EncryptMsg(fromUserName, toUserName, timestamp, msgType 
 		MsgType      CDATAText
 	}
 	msgOfCommon := MsgOfCommon{
-		FromUserName: wxGzhThis.Value2CDATA(fromUserName),
-		ToUserName:   wxGzhThis.Value2CDATA(toUserName),
+		FromUserName: wxGzhThis.value2CDATA(fromUserName),
+		ToUserName:   wxGzhThis.value2CDATA(toUserName),
 		CreateTime:   timestamp,
-		MsgType:      wxGzhThis.Value2CDATA(msgType),
+		MsgType:      wxGzhThis.value2CDATA(msgType),
 	}
 
 	msgBody := []byte{}
@@ -233,7 +176,7 @@ func (wxGzhThis *WxGzh) EncryptMsg(fromUserName, toUserName, timestamp, msgType 
 		}
 		msgBody, err = xml.MarshalIndent(&MsgOfText{
 			MsgOfCommon: msgOfCommon,
-			Content:     wxGzhThis.Value2CDATA(gconv.String(msg)),
+			Content:     wxGzhThis.value2CDATA(gconv.String(msg)),
 		}, ``, `    `)
 		if err != nil {
 			return
@@ -247,7 +190,7 @@ func (wxGzhThis *WxGzh) EncryptMsg(fromUserName, toUserName, timestamp, msgType 
 	}
 
 	plainData := bytes.Join([][]byte{[]byte(grand.S(16)), buf.Bytes(), msgBody, []byte(wxGzhThis.AppId)}, nil)
-	encrypt, err = wxGzhThis.AesEncrypt(plainData)
+	encrypt, err = wxGzhThis.aesEncrypt(plainData)
 	return
 }
 
@@ -278,10 +221,10 @@ func (wxGzhThis *WxGzh) NotifyRes(r *ghttp.Request, fromUserName, toUserName, no
 		return
 	}
 	encryptResBody := &EncryptResBody{}
-	encryptResBody.Encrypt = wxGzhThis.Value2CDATA(encrypt)
-	encryptResBody.MsgSignature = wxGzhThis.Value2CDATA(wxGzhThis.MsgSign(timestamp, nonce, encrypt))
+	encryptResBody.Encrypt = wxGzhThis.value2CDATA(encrypt)
+	encryptResBody.MsgSignature = wxGzhThis.value2CDATA(wxGzhThis.MsgSign(timestamp, nonce, encrypt))
 	encryptResBody.TimeStamp = timestamp
-	encryptResBody.Nonce = wxGzhThis.Value2CDATA(nonce)
+	encryptResBody.Nonce = wxGzhThis.value2CDATA(nonce)
 	notifyResBody, errTmp := xml.MarshalIndent(encryptResBody, ``, `    `)
 	if errTmp != nil {
 		err = errTmp
@@ -297,8 +240,8 @@ type WxGzhAccessToken struct {
 }
 
 // 获取access_token（需要在公众号内设置IP白名单）
-func (wxGzhThis *WxGzh) AccessToken() (accessToken WxGzhAccessToken, err error) {
-	res, err := g.Client().Get(wxGzhThis.Ctx, wxGzhThis.Host+`/cgi-bin/token`, g.Map{
+func (wxGzhThis *WxGzh) AccessToken(ctx context.Context) (accessToken WxGzhAccessToken, err error) {
+	res, err := g.Client().Get(ctx, wxGzhThis.Host+`/cgi-bin/token`, g.Map{
 		`grant_type`: `client_credential`,
 		`appid`:      wxGzhThis.AppId,
 		`secret`:     wxGzhThis.Secret,
@@ -333,8 +276,8 @@ type WxGzhUserInfo struct {
 }
 
 // 获取用户基本信息
-func (wxGzhThis *WxGzh) UserInfo(accessToken, openid string) (userInfo WxGzhUserInfo, err error) {
-	res, err := g.Client().Get(wxGzhThis.Ctx, wxGzhThis.Host+`/cgi-bin/user/info`, g.Map{
+func (wxGzhThis *WxGzh) UserInfo(ctx context.Context, accessToken, openid string) (userInfo WxGzhUserInfo, err error) {
+	res, err := g.Client().Get(ctx, wxGzhThis.Host+`/cgi-bin/user/info`, g.Map{
 		`access_token`: accessToken,
 		`openid`:       openid,
 		`lang`:         `zh_CN`,
@@ -364,8 +307,8 @@ type WxGzhUserGet struct {
 }
 
 // 获取用户列表
-func (wxGzhThis *WxGzh) UserGet(accessToken, nextOpenid string) (userGet WxGzhUserGet, err error) {
-	res, err := g.Client().Get(wxGzhThis.Ctx, wxGzhThis.Host+`/cgi-bin/user/get`, g.Map{
+func (wxGzhThis *WxGzh) UserGet(ctx context.Context, accessToken, nextOpenid string) (userGet WxGzhUserGet, err error) {
+	res, err := g.Client().Get(ctx, wxGzhThis.Host+`/cgi-bin/user/get`, g.Map{
 		`access_token`: accessToken,
 		`next_openid`:  nextOpenid,
 	})
@@ -381,5 +324,61 @@ func (wxGzhThis *WxGzh) UserGet(accessToken, nextOpenid string) (userGet WxGzhUs
 	}
 
 	resData.Var().Struct(&userGet)
+	return
+}
+
+func (wxGzhThis *WxGzh) value2CDATA(v string) CDATAText {
+	return CDATAText{`<![CDATA[` + v + `]]>`}
+}
+
+func (wxGzhThis *WxGzh) pKCS7Pad(message []byte, blocksize int) (padded []byte, err error) {
+	if blocksize < 2 {
+		err = errors.New(`block size is too small(minimum is 2 bytes)`)
+		return
+	}
+	if blocksize > 255 {
+		err = errors.New(`block size is too long(maxmum is 255 bytes)`)
+		return
+	}
+
+	// calculate padding length
+	padlen := blocksize - len(message)%blocksize
+	if padlen == 0 {
+		padlen = blocksize
+	}
+
+	// define PKCS7 padding blockbody
+	padding := bytes.Repeat([]byte{byte(padlen)}, padlen)
+
+	// apply padding
+	padded = append(message, padding...)
+	return
+}
+
+// aes加密
+func (wxGzhThis *WxGzh) aesEncrypt(msgByte []byte) (encrypt string, err error) {
+	k := len(wxGzhThis.AESKey)
+	if len(msgByte)%k != 0 {
+		msgByte, err = wxGzhThis.pKCS7Pad(msgByte, k)
+		if err != nil {
+			return
+		}
+	}
+
+	block, err := aes.NewCipher(wxGzhThis.AESKey)
+	if err != nil {
+		return
+	}
+
+	iv := make([]byte, aes.BlockSize)
+	_, err = io.ReadFull(rand.Reader, iv)
+	if err != nil {
+		return
+	}
+
+	cipherData := make([]byte, len(msgByte))
+	blockMode := cipher.NewCBCEncrypter(block, iv)
+	blockMode.CryptBlocks(cipherData, msgByte)
+	encrypt = base64.StdEncoding.EncodeToString(cipherData)
 	return
 }
