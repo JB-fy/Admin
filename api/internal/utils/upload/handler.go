@@ -74,6 +74,26 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) *Handler {
 	return handlerObj
 }
 
+func (handlerThis *Handler) Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+	return handlerThis.upload.Upload(handlerThis.Ctx, r)
+}
+
+func (handlerThis *Handler) Sign() (signInfo SignInfo, err error) {
+	return handlerThis.upload.Sign(handlerThis.Ctx, handlerThis.createUploadParam())
+}
+
+func (handlerThis *Handler) Config() (config map[string]any, err error) {
+	return handlerThis.upload.Config(handlerThis.Ctx, handlerThis.createUploadParam())
+}
+
+func (handlerThis *Handler) Sts() (stsInfo map[string]any, err error) {
+	return handlerThis.upload.Sts(handlerThis.Ctx, handlerThis.createUploadParam())
+}
+
+func (handlerThis *Handler) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+	return handlerThis.upload.Notify(handlerThis.Ctx, r)
+}
+
 func (handlerThis *Handler) createUploadParam() (param UploadParam) {
 	switch handlerThis.Scene {
 	default:
@@ -97,24 +117,4 @@ func (handlerThis *Handler) createUploadParam() (param UploadParam) {
 	default:
 	} */
 	return
-}
-
-func (handlerThis *Handler) Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
-	return handlerThis.upload.Upload(handlerThis.Ctx, r)
-}
-
-func (handlerThis *Handler) Sign() (signInfo SignInfo, err error) {
-	return handlerThis.upload.Sign(handlerThis.Ctx, handlerThis.createUploadParam())
-}
-
-func (handlerThis *Handler) Config() (config map[string]any, err error) {
-	return handlerThis.upload.Config(handlerThis.Ctx, handlerThis.createUploadParam())
-}
-
-func (handlerThis *Handler) Sts() (stsInfo map[string]any, err error) {
-	return handlerThis.upload.Sts(handlerThis.Ctx, handlerThis.createUploadParam())
-}
-
-func (handlerThis *Handler) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
-	return handlerThis.upload.Notify(handlerThis.Ctx, r)
 }

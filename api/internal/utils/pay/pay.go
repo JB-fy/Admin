@@ -1,12 +1,12 @@
 package pay
 
 import (
-	daoPay "api/internal/dao/pay"
-	"api/internal/utils"
 	"context"
+	"sync"
 
-	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 /* type Device string
@@ -38,23 +38,39 @@ type NotifyInfo struct {
 }
 
 type Pay interface {
-	App(payReqData PayReqData) (payResData PayResData, err error)    // App支付
-	H5(payReqData PayReqData) (payResData PayResData, err error)     // H5支付
-	QRCode(payReqData PayReqData) (payResData PayResData, err error) // 扫码支付
-	Jsapi(payReqData PayReqData) (payResData PayResData, err error)  // 小程序支付
-	Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error)      // 回调验证
-	NotifyRes(r *ghttp.Request, failMsg string)                      // 回调响应
+	App(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error)    // App支付
+	H5(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error)     // H5支付
+	QRCode(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) // 扫码支付
+	Jsapi(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error)  // 小程序支付
+	Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error)      // 回调验证
+	NotifyRes(ctx context.Context, r *ghttp.Request, failMsg string)                      // 回调响应
 }
 
-func NewPay(ctx context.Context, payInfo gdb.Record) Pay {
-	config := payInfo[daoPay.Pay.Columns().PayConfig].Map()
-	config[`notifyUrl`] = utils.GetRequestUrl(ctx, 0) + `/pay/notify/` + payInfo[daoPay.Pay.Columns().PayId].String()
+var (
+	payMap = map[string]Pay{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	payMu  sync.Mutex
+)
 
-	switch payInfo[daoPay.Pay.Columns().PayType].Uint() {
+func NewPay(config map[string]any) (pay Pay) {
+	payKey := gmd5.MustEncrypt(config)
+
+	ok := false
+	if pay, ok = payMap[payKey]; ok { //先读一次（不加锁）
+		return
+	}
+	payMu.Lock()
+	defer payMu.Unlock()
+	if pay, ok = payMap[payKey]; ok { // 再读一次（加锁），防止重复初始化
+		return
+	}
+
+	switch gconv.Uint(config[`payType`]) {
 	case 1: //微信
-		return NewPayOfWx(ctx, config)
+		pay = NewPayOfWx(config)
 	// case 0: //支付宝
 	default:
-		return NewPayOfAli(ctx, config)
+		pay = NewPayOfAli(config)
 	}
+	payMap[payKey] = pay
+	return
 }

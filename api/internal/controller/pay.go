@@ -117,7 +117,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	} */
 	/**--------订单验证和设置支付数据 结束--------**/
 
-	payObj := pay.NewPay(ctx, payInfo)
+	payObj := pay.NewHandler(ctx, payInfo)
 	var payResData pay.PayResData
 	switch channelInfo[daoPay.Channel.Columns().PayMethod].Uint() {
 	case 0: //APP支付
@@ -156,7 +156,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 		err = utils.NewErrorCode(ctx, 30010000, ``)
 		return
 	}
-	payObj := pay.NewPay(ctx, payInfo)
+	payObj := pay.NewHandler(ctx, payInfo)
 
 	r := g.RequestFromCtx(ctx)
 	notifyInfo, err := payObj.Notify(r)

@@ -10,7 +10,6 @@ import (
 )
 
 type PayOfAli struct {
-	Ctx        context.Context
 	AppId      string `json:"appId"`
 	PrivateKey string `json:"privateKey"`
 	PublicKey  string `json:"publicKey"`
@@ -18,8 +17,8 @@ type PayOfAli struct {
 	NotifyUrl  string `json:"notifyUrl"`
 }
 
-func NewPayOfAli(ctx context.Context, config map[string]any) *PayOfAli {
-	payObj := &PayOfAli{Ctx: ctx}
+func NewPayOfAli(config map[string]any) *PayOfAli {
+	payObj := &PayOfAli{}
 	gconv.Struct(config, payObj)
 	if payObj.AppId == `` || payObj.PrivateKey == `` || payObj.PublicKey == `` || payObj.NotifyUrl == `` {
 		panic(`缺少配置：支付-支付宝`)
@@ -27,7 +26,7 @@ func NewPayOfAli(ctx context.Context, config map[string]any) *PayOfAli {
 	return payObj
 }
 
-func (payThis *PayOfAli) App(payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *PayOfAli) App(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -51,7 +50,7 @@ func (payThis *PayOfAli) App(payReqData PayReqData) (payResData PayResData, err 
 	return
 }
 
-func (payThis *PayOfAli) H5(payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *PayOfAli) H5(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -78,7 +77,7 @@ func (payThis *PayOfAli) H5(payReqData PayReqData) (payResData PayResData, err e
 	return
 }
 
-func (payThis *PayOfAli) QRCode(payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *PayOfAli) QRCode(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -106,7 +105,7 @@ func (payThis *PayOfAli) QRCode(payReqData PayReqData) (payResData PayResData, e
 	return
 }
 
-func (payThis *PayOfAli) Jsapi(payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *PayOfAli) Jsapi(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -142,7 +141,7 @@ func (payThis *PayOfAli) Jsapi(payReqData PayReqData) (payResData PayResData, er
 	return
 }
 
-func (payThis *PayOfAli) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (payThis *PayOfAli) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -163,7 +162,7 @@ func (payThis *PayOfAli) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err er
 	return
 }
 
-func (payThis *PayOfAli) NotifyRes(r *ghttp.Request, failMsg string) {
+func (payThis *PayOfAli) NotifyRes(ctx context.Context, r *ghttp.Request, failMsg string) {
 	resData := `success` //success:	成功；fail：失败
 	if failMsg != `` {
 		resData = `fail`

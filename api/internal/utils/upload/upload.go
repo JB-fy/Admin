@@ -2,7 +2,9 @@ package upload
 
 import (
 	"context"
+	"sync"
 
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -40,12 +42,31 @@ type Upload interface {
 	Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error)  // 回调
 }
 
-func NewUpload(config map[string]any) Upload {
+var (
+	uploadMap = map[string]Upload{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	uploadMu  sync.Mutex
+)
+
+func NewUpload(config map[string]any) (upload Upload) {
+	uploadKey := gmd5.MustEncrypt(config)
+
+	ok := false
+	if upload, ok = uploadMap[uploadKey]; ok { //先读一次（不加锁）
+		return
+	}
+	uploadMu.Lock()
+	defer uploadMu.Unlock()
+	if upload, ok = uploadMap[uploadKey]; ok { // 再读一次（加锁），防止重复初始化
+		return
+	}
+
 	switch gconv.Uint(config[`uploadType`]) {
 	case 1: //阿里云OSS
-		return NewUploadOfAliyunOss(config)
+		upload = NewUploadOfAliyunOss(config)
 	// case 0: //本地
 	default:
-		return NewUploadOfLocal(config)
+		upload = NewUploadOfLocal(config)
 	}
+	uploadMap[uploadKey] = upload
+	return
 }

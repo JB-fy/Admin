@@ -31,8 +31,8 @@ type PayOfWx struct {
 	NotifyUrl  string `json:"notifyUrl"`
 }
 
-func NewPayOfWx(ctx context.Context, config map[string]any) *PayOfWx {
-	payObj := &PayOfWx{Ctx: ctx}
+func NewPayOfWx(config map[string]any) *PayOfWx {
+	payObj := &PayOfWx{}
 	gconv.Struct(config, payObj)
 	if payObj.AppId == `` || payObj.Mchid == `` || payObj.SerialNo == `` || payObj.APIv3Key == `` || payObj.PrivateKey == `` || payObj.NotifyUrl == `` {
 		panic(`缺少配置：支付-微信`)
@@ -40,20 +40,20 @@ func NewPayOfWx(ctx context.Context, config map[string]any) *PayOfWx {
 	return payObj
 }
 
-func (payThis *PayOfWx) App(payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *PayOfWx) App(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	client, err := core.NewClient(payThis.Ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
+	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
 
 	// 发送请求
 	svc := app.AppApiService{Client: client}
-	resp, result, err := svc.Prepay(payThis.Ctx,
+	resp, result, err := svc.Prepay(ctx,
 		app.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
@@ -77,13 +77,13 @@ func (payThis *PayOfWx) App(payReqData PayReqData) (payResData PayResData, err e
 	return
 }
 
-func (payThis *PayOfWx) H5(payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *PayOfWx) H5(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	client, err := core.NewClient(payThis.Ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
+	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
@@ -96,7 +96,7 @@ func (payThis *PayOfWx) H5(payReqData PayReqData) (payResData PayResData, err er
 	} */
 	// 发送请求
 	svc := h5.H5ApiService{Client: client}
-	resp, result, err := svc.Prepay(payThis.Ctx,
+	resp, result, err := svc.Prepay(ctx,
 		h5.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
@@ -130,20 +130,20 @@ func (payThis *PayOfWx) H5(payReqData PayReqData) (payResData PayResData, err er
 	return
 }
 
-func (payThis *PayOfWx) QRCode(payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *PayOfWx) QRCode(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	client, err := core.NewClient(payThis.Ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
+	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
 
 	// 发送请求
 	svc := native.NativeApiService{Client: client}
-	resp, result, err := svc.Prepay(payThis.Ctx,
+	resp, result, err := svc.Prepay(ctx,
 		native.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
@@ -167,20 +167,20 @@ func (payThis *PayOfWx) QRCode(payReqData PayReqData) (payResData PayResData, er
 	return
 }
 
-func (payThis *PayOfWx) Jsapi(payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *PayOfWx) Jsapi(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	client, err := core.NewClient(payThis.Ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
+	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
 
 	// 发送请求
 	svc := jsapi.JsapiApiService{Client: client}
-	resp, result, err := svc.Prepay(payThis.Ctx,
+	resp, result, err := svc.Prepay(ctx,
 		jsapi.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
@@ -207,14 +207,14 @@ func (payThis *PayOfWx) Jsapi(payReqData PayReqData) (payResData PayResData, err
 	return
 }
 
-func (payThis *PayOfWx) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (payThis *PayOfWx) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
 	}
 
 	// 1. 使用 `RegisterDownloaderWithPrivateKey` 注册下载器
-	err = downloader.MgrInstance().RegisterDownloaderWithPrivateKey(payThis.Ctx, privateKey, payThis.SerialNo, payThis.Mchid, payThis.APIv3Key)
+	err = downloader.MgrInstance().RegisterDownloaderWithPrivateKey(ctx, privateKey, payThis.SerialNo, payThis.Mchid, payThis.APIv3Key)
 	if err != nil {
 		return
 	}
@@ -224,7 +224,7 @@ func (payThis *PayOfWx) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err err
 	handler := notify.NewNotifyHandler(payThis.APIv3Key, verifiers.NewSHA256WithRSAVerifier(certificateVisitor))
 
 	transaction := new(payments.Transaction)
-	_ /* notifyReq */, err = handler.ParseNotifyRequest(payThis.Ctx, r.Request, transaction)
+	_ /* notifyReq */, err = handler.ParseNotifyRequest(ctx, r.Request, transaction)
 	if err != nil {
 		return
 	}
@@ -238,7 +238,7 @@ func (payThis *PayOfWx) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err err
 	return
 }
 
-func (payThis *PayOfWx) NotifyRes(r *ghttp.Request, failMsg string) {
+func (payThis *PayOfWx) NotifyRes(ctx context.Context, r *ghttp.Request, failMsg string) {
 	resData := map[string]string{
 		`code`:    `SUCCESS`, //错误码，SUCCESS为清算机构接收成功，其他错误码为失败。
 		`message`: ``,        //返回信息，如非空，为错误原因。

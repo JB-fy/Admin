@@ -38,5 +38,4 @@ func NewEmail(config map[string]any) (email Email) {
 	}
 	emailMap[emailKey] = email
 	return
-
 }

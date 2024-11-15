@@ -1,8 +1,11 @@
 package push
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
+	"sync"
+
+	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 /* //tx_tpns(腾讯移动推送）标签推送规则格式
@@ -48,35 +51,33 @@ type TagParam struct {
 }
 
 type Push interface {
-	Push(param PushParam) (err error)
-	TagHandle(param TagParam) (err error)
+	PushMsg(ctx context.Context, param PushParam) (err error)
+	TagHandle(ctx context.Context, param TagParam) (err error)
 }
 
-// 设备类型：0安卓 1苹果 2苹果电脑
-func NewPush(ctx context.Context, deviceType uint, pushTypeOpt ...string) Push {
-	pushType := ``
-	if len(pushTypeOpt) > 0 {
-		pushType = pushTypeOpt[0]
-	} else {
-		pushType, _ = daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `pushType`).ValueStr(daoPlatform.Config.Columns().ConfigValue)
+var (
+	pushMap = map[string]Push{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	pushMu  sync.Mutex
+)
+
+func NewPush(config map[string]any) (push Push) {
+	pushKey := gmd5.MustEncrypt(config)
+
+	ok := false
+	if push, ok = pushMap[pushKey]; ok { //先读一次（不加锁）
+		return
+	}
+	pushMu.Lock()
+	defer pushMu.Unlock()
+	if push, ok = pushMap[pushKey]; ok { // 再读一次（加锁），防止重复初始化
+		return
 	}
 
-	switch pushType {
+	switch gconv.String(config[`pushType`]) {
 	// case `pushOfTx`:	//腾讯移动推送
 	default:
-		config, _ := daoPlatform.Config.CtxDaoModel(ctx).Filter(daoPlatform.Config.Columns().ConfigKey, `pushOfTx`).ValueMap(daoPlatform.Config.Columns().ConfigValue)
-		switch deviceType {
-		case 1: //IOS
-			config[`accessID`] = config[`accessIDOfIos`]
-			config[`secretKey`] = config[`secretKeyOfIos`]
-		case 2: //MacOS
-			config[`accessID`] = config[`accessIDOfMacOS`]
-			config[`secretKey`] = config[`secretKeyOfMacOS`]
-		// case 0: //安卓
-		default:
-			config[`accessID`] = config[`accessIDOfAndroid`]
-			config[`secretKey`] = config[`secretKeyOfAndroid`]
-		}
-		return NewPushOfTx(ctx, config)
+		push = NewPushOfTx(config)
 	}
+	pushMap[pushKey] = push
+	return
 }

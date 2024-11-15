@@ -17,14 +17,13 @@ import (
 )
 
 type PushOfTx struct {
-	Ctx       context.Context
 	Host      string `json:"host"`
 	AccessID  uint32 `json:"accessID"`
 	SecretKey string `json:"secretKey"`
 }
 
-func NewPushOfTx(ctx context.Context, config map[string]any) *PushOfTx {
-	pushObj := &PushOfTx{Ctx: ctx}
+func NewPushOfTx(config map[string]any) *PushOfTx {
+	pushObj := &PushOfTx{}
 	gconv.Struct(config, pushObj)
 	if pushObj.Host == `` || pushObj.AccessID == 0 || pushObj.SecretKey == `` {
 		panic(`缺少插件配置：推送-腾讯移动推送`)
@@ -32,7 +31,7 @@ func NewPushOfTx(ctx context.Context, config map[string]any) *PushOfTx {
 	return pushObj
 }
 
-func (pushThis *PushOfTx) Push(param PushParam) (err error) {
+func (pushThis *PushOfTx) PushMsg(ctx context.Context, param PushParam) (err error) {
 	reqData := g.Map{}
 	reqData[`environment`] = `product`
 	if param.IsDev {
@@ -86,7 +85,7 @@ func (pushThis *PushOfTx) Push(param PushParam) (err error) {
 	reqData[`message`] = message
 
 	reqDataJson := gjson.MustEncodeString(reqData)
-	res, err := pushThis.NewHttpClient(reqDataJson).Post(pushThis.Ctx, pushThis.Host+`/v3/push/app`, reqDataJson)
+	res, err := pushThis.NewHttpClient(reqDataJson).Post(ctx, pushThis.Host+`/v3/push/app`, reqDataJson)
 	if err != nil {
 		return
 	}
@@ -104,7 +103,7 @@ func (pushThis *PushOfTx) Push(param PushParam) (err error) {
 	return
 }
 
-func (pushThis *PushOfTx) TagHandle(param TagParam) (err error) {
+func (pushThis *PushOfTx) TagHandle(ctx context.Context, param TagParam) (err error) {
 	lenOfTagList := len(param.TagList)
 	lenOfTokenList := len(param.TokenList)
 	if lenOfTagList > 1 && lenOfTokenList > 1 {
@@ -137,7 +136,7 @@ func (pushThis *PushOfTx) TagHandle(param TagParam) (err error) {
 	}
 
 	reqDataJson := gjson.MustEncodeString(reqData)
-	res, err := pushThis.NewHttpClient(reqDataJson).Post(pushThis.Ctx, pushThis.Host+`/v3/device/tag`, reqDataJson)
+	res, err := pushThis.NewHttpClient(reqDataJson).Post(ctx, pushThis.Host+`/v3/device/tag`, reqDataJson)
 	if err != nil {
 		return
 	}
