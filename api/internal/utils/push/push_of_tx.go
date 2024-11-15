@@ -8,6 +8,8 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
@@ -20,6 +22,7 @@ type PushOfTx struct {
 	Host      string `json:"host"`
 	AccessID  uint32 `json:"accessID"`
 	SecretKey string `json:"secretKey"`
+	client    *gclient.Client
 }
 
 func NewPushOfTx(config map[string]any) *PushOfTx {
@@ -28,6 +31,27 @@ func NewPushOfTx(config map[string]any) *PushOfTx {
 	if pushObj.Host == `` || pushObj.AccessID == 0 || pushObj.SecretKey == `` {
 		panic(`缺少插件配置：推送-腾讯移动推送`)
 	}
+	/* // Basic Auth 认证
+	pushObj.client = g.Client().SetHeaderMap(g.MapStrStr{
+		`Content-Type`:  `application/json`,
+		`Authorization`: `Basic ` + base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf(`%d:%s`, pushObj.AccessID, pushObj.SecretKey))),
+	}) */
+
+	//签名认证（推荐）。注意：pushObj.client只初始化一次，请求前不能含有动态数据，否则会造成全局污染。所以动态请求头TimeStamp和Sign必须在中间件中处理，中间件内的r *http.Request参数是请求前临时生成的并且唯一，故不会污染全局
+	pushObj.client = g.Client().SetHeaderMap(g.MapStrStr{
+		`Content-Type`: `application/json`,
+		`AccessId`:     gconv.String(pushObj.AccessID),
+	})
+	pushObj.client.Use(func(c *gclient.Client, r *http.Request) (resp *gclient.Response, err error) {
+		timeStamp := gtime.Now().Unix()
+		bodyBytes, _ := io.ReadAll(r.Body)
+		reqDataJson := string(bodyBytes)
+		r.Header.Set(`TimeStamp`, gconv.String(timeStamp))
+		r.Header.Set(`Sign`, pushObj.sign(timeStamp, reqDataJson))
+
+		resp, err = c.Next(r)
+		return resp, err
+	})
 	return pushObj
 }
 
@@ -85,7 +109,7 @@ func (pushThis *PushOfTx) PushMsg(ctx context.Context, param PushParam) (err err
 	reqData[`message`] = message
 
 	reqDataJson := gjson.MustEncodeString(reqData)
-	res, err := pushThis.NewHttpClient(reqDataJson).Post(ctx, pushThis.Host+`/v3/push/app`, reqDataJson)
+	res, err := pushThis.client.Post(ctx, pushThis.Host+`/v3/push/app`, reqDataJson)
 	if err != nil {
 		return
 	}
@@ -136,7 +160,7 @@ func (pushThis *PushOfTx) TagHandle(ctx context.Context, param TagParam) (err er
 	}
 
 	reqDataJson := gjson.MustEncodeString(reqData)
-	res, err := pushThis.NewHttpClient(reqDataJson).Post(ctx, pushThis.Host+`/v3/device/tag`, reqDataJson)
+	res, err := pushThis.client.Post(ctx, pushThis.Host+`/v3/device/tag`, reqDataJson)
 	if err != nil {
 		return
 	}
@@ -154,25 +178,7 @@ func (pushThis *PushOfTx) TagHandle(ctx context.Context, param TagParam) (err er
 	return
 }
 
-func (pushThis *PushOfTx) NewHttpClient(reqDataJson string) (client *gclient.Client) {
-	/* // Basic Auth 认证
-	client = g.Client().SetHeaderMap(g.MapStrStr{
-		`Content-Type`:  `application/json`,
-		`Authorization`: `Basic ` + base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf(`%d:%s`, pushThis.AccessID, pushThis.SecretKey))),
-	}) */
-
-	//签名认证（推荐）
-	timeStamp := gtime.Now().Unix()
-	client = g.Client().SetHeaderMap(g.MapStrStr{
-		`Content-Type`: `application/json`,
-		`AccessId`:     gconv.String(pushThis.AccessID),
-		`TimeStamp`:    gconv.String(timeStamp),
-		`Sign`:         pushThis.CreateSign(timeStamp, reqDataJson),
-	})
-	return
-}
-
-func (pushThis *PushOfTx) CreateSign(timeStamp int64, reqDataJson string) (sign string) {
+func (pushThis *PushOfTx) sign(timeStamp int64, reqDataJson string) (sign string) {
 	h := hmac.New(sha256.New, []byte(pushThis.SecretKey))
 	h.Write([]byte(fmt.Sprintf(`%d%d%s`, timeStamp, pushThis.AccessID, reqDataJson)))
 	sha := hex.EncodeToString(h.Sum(nil))

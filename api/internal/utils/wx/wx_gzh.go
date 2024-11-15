@@ -17,6 +17,7 @@ import (
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/gclient"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -30,6 +31,7 @@ type WxGzh struct {
 	Token          string `json:"token"`
 	EncodingAESKey string `json:"encodingAESKey"`
 	AESKey         []byte
+	client         *gclient.Client
 }
 
 func NewWxGzh(config map[string]any) *WxGzh {
@@ -39,6 +41,7 @@ func NewWxGzh(config map[string]any) *WxGzh {
 		panic(`缺少插件配置：微信-公众号`)
 	}
 	wxGzhObj.AESKey, _ = base64.StdEncoding.DecodeString(wxGzhObj.EncodingAESKey + `=`)
+	wxGzhObj.client = g.Client()
 	return wxGzhObj
 }
 
@@ -114,7 +117,7 @@ func (wxGzhThis *WxGzh) MsgSign(timestamp, nonce, encrypt string) (sign string) 
 }
 
 func (wxGzhThis *WxGzh) GetEncryptReqBody(r *ghttp.Request) (encryptReqBody *EncryptReqBody) {
-	/* body, err := ioutil.ReadAll(r.Body)
+	/* body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return
 	} */
@@ -241,7 +244,7 @@ type WxGzhAccessToken struct {
 
 // 获取access_token（需要在公众号内设置IP白名单）
 func (wxGzhThis *WxGzh) AccessToken(ctx context.Context) (accessToken WxGzhAccessToken, err error) {
-	res, err := g.Client().Get(ctx, wxGzhThis.Host+`/cgi-bin/token`, g.Map{
+	res, err := wxGzhThis.client.Get(ctx, wxGzhThis.Host+`/cgi-bin/token`, g.Map{
 		`grant_type`: `client_credential`,
 		`appid`:      wxGzhThis.AppId,
 		`secret`:     wxGzhThis.Secret,
@@ -277,7 +280,7 @@ type WxGzhUserInfo struct {
 
 // 获取用户基本信息
 func (wxGzhThis *WxGzh) UserInfo(ctx context.Context, accessToken, openid string) (userInfo WxGzhUserInfo, err error) {
-	res, err := g.Client().Get(ctx, wxGzhThis.Host+`/cgi-bin/user/info`, g.Map{
+	res, err := wxGzhThis.client.Get(ctx, wxGzhThis.Host+`/cgi-bin/user/info`, g.Map{
 		`access_token`: accessToken,
 		`openid`:       openid,
 		`lang`:         `zh_CN`,
@@ -308,7 +311,7 @@ type WxGzhUserGet struct {
 
 // 获取用户列表
 func (wxGzhThis *WxGzh) UserGet(ctx context.Context, accessToken, nextOpenid string) (userGet WxGzhUserGet, err error) {
-	res, err := g.Client().Get(ctx, wxGzhThis.Host+`/cgi-bin/user/get`, g.Map{
+	res, err := wxGzhThis.client.Get(ctx, wxGzhThis.Host+`/cgi-bin/user/get`, g.Map{
 		`access_token`: accessToken,
 		`next_openid`:  nextOpenid,
 	})
