@@ -13,7 +13,6 @@ import (
 )
 
 type SmsOfAliyun struct {
-	Ctx             context.Context
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`
 	Endpoint        string `json:"endpoint"`
@@ -21,8 +20,8 @@ type SmsOfAliyun struct {
 	TemplateCode    string `json:"templateCode"`
 }
 
-func NewSmsOfAliyun(ctx context.Context, config map[string]any) *SmsOfAliyun {
-	smsObj := &SmsOfAliyun{Ctx: ctx}
+func NewSmsOfAliyun(config map[string]any) *SmsOfAliyun {
+	smsObj := &SmsOfAliyun{}
 	gconv.Struct(config, smsObj)
 	if smsObj.AccessKeyId == `` || smsObj.AccessKeySecret == `` || smsObj.Endpoint == `` {
 		panic(`缺少插件配置：短信-阿里云`)
@@ -33,16 +32,16 @@ func NewSmsOfAliyun(ctx context.Context, config map[string]any) *SmsOfAliyun {
 	return smsObj
 }
 
-func (smsThis *SmsOfAliyun) SendCode(phone string, code string) (err error) {
+func (smsThis *SmsOfAliyun) SendCode(ctx context.Context, phone string, code string) (err error) {
 	if smsThis.SignName == `` || smsThis.TemplateCode == `` {
 		err = errors.New(`缺少插件配置：短信-阿里云短信模板`)
 		return
 	}
-	err = smsThis.SendSms([]string{phone}, `{"code": "`+code+`"}`, smsThis.SignName, smsThis.TemplateCode)
+	err = smsThis.SendSms(ctx, []string{phone}, `{"code": "`+code+`"}`, smsThis.SignName, smsThis.TemplateCode)
 	return
 }
 
-func (smsThis *SmsOfAliyun) SendSms(phoneArr []string, message string, paramOpt ...any) (err error) {
+func (smsThis *SmsOfAliyun) SendSms(ctx context.Context, phoneArr []string, message string, paramOpt ...any) (err error) {
 	if len(paramOpt) < 2 {
 		err = errors.New(`缺少签名和模板参数`)
 		return

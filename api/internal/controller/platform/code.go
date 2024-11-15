@@ -64,7 +64,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	code := grand.Digits(4)
 	switch req.Scene {
 	case 4:
-		err = sms.NewSms(ctx).SendCode(to, code)
+		err = sms.NewHandler(ctx).SendCode(to, code)
 	case 14:
 		err = email.NewHandler(ctx).SendCode(to, code)
 	}
