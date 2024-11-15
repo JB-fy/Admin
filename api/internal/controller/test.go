@@ -17,27 +17,6 @@ func NewTest() *Test {
 }
 
 func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, err error) {
-	/* // HookSelect方法内启用协程且进行多次Value()方法调用或内部调用过Value()方法的Sum()等方法，有概率数据返回为空（当Limit越多时出现概率越高）
-	daoAuth.Action.Ctx(ctx).Hook(gdb.HookHandler{
-		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
-			result, err = in.Next(ctx)
-			if err != nil {
-				return
-			}
-			var wg sync.WaitGroup
-			for _, record := range result {
-				wg.Add(1)
-				go func(record gdb.Record) {
-					defer wg.Done()
-					fmt.Println(daoAuth.Action.Ctx(ctx).Where(daoAuth.Action.Columns().ActionId, record[daoAuth.Action.Columns().ActionId]).Value(daoAuth.Action.Columns().ActionId))
-					fmt.Println(daoAuth.Action.Ctx(ctx).Where(daoAuth.Action.Columns().ActionId, record[daoAuth.Action.Columns().ActionId]).Value(daoAuth.Action.Columns().ActionName))
-				}(record)
-			}
-			wg.Wait()
-			return
-		},
-	}).Limit(20).All() */
-
 	// time.Sleep(10 * time.Second) // 睡眠几秒
 	// ghttp.RestartAllServer(ctx)  // 重启服务
 
@@ -62,8 +41,6 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	/*--------数据操作示例 开始--------*/
 	// g.Validator().Rules(`required|length:1,10|regex:^[\p{L}\p{M}\p{N}_-]+$`).Messages(`必须|最长10个字|昵称不允许特殊字符`).Data(`aaaa`).Run(ctx) // 单独验证
-
-	// garray.NewStrArrayFrom([]string{`a`, `b`, `c`}).Contains(`a`) // 是否含有元素
 
 	/* // Map并集
 	// gmap.NewStrAnyMapFrom(g.Map{`a`: 1, `b`: 2}).Merge(gmap.NewStrAnyMapFrom(g.Map{`a`: 4, `c`: 3})).Map() // 这样直接写会报错。需要分多个步骤编写
