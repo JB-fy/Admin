@@ -122,6 +122,18 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	}(gctx.NeverDone(ctx)) */
 	/*--------常用协程示例 结束--------*/
 
+	/*--------管道示例 开始--------*/
+	/* var ch = make(chan g.Map)
+	go func() {
+		for {
+			item := <-ch
+			gutil.Dump(item)
+			time.Sleep(3 * time.Second)
+		}
+	}()
+	ch <- g.Map{} */
+	/*--------管道示例 结束--------*/
+
 	// g.RequestFromCtx(ctx).Response.Status = http.StatusMultipleChoices
 	// err = utils.NewErrorCode(ctx, 99999999, ``)
 	// err = errors.New(``)	//与上面返回结果一样。在api/internal/middleware/handler_response.go中会统一处理成99999999错误码
