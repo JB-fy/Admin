@@ -14,11 +14,11 @@ const Common = defineAsyncComponent(() => import('./app/Common.vue'))
 const { t } = useI18n()
 const adminStore = useAdminStore()
 
-const isRead = adminStore.IsAction('platformConfigRead')
-const isSave = adminStore.IsAction('platformConfigSave')
+const isRead = adminStore.IsAction('orgConfigRead')
+const isSave = adminStore.IsAction('orgConfigSave')
 const authAction: { [propName: string]: boolean } = {
-    isCommonRead: isRead || adminStore.IsAction('platformConfigCommonRead'),
-    isCommonSave: isSave || adminStore.IsAction('platformConfigCommonSave'),
+    isCommonRead: isRead || adminStore.IsAction('orgConfigCommonRead'),
+    isCommonSave: isSave || adminStore.IsAction('orgConfigCommonSave'),
 }
 provide('authAction', authAction)
 const notReadAll = !authAction.isCommonRead
@@ -29,7 +29,7 @@ const notReadAll = !authAction.isCommonRead
     <el-container v-else class="common-container">
         <el-main>
             <el-tabs type="border-card" tab-position="top">
-                <el-tab-pane v-if="authAction.isCommonRead" :label="t('platform.config.app.label.common')" :lazy="true"><common /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isCommonRead" :label="t('org.config.app.label.common')" :lazy="true"><common /></el-tab-pane>
             </el-tabs>
         </el-main>
     </el-container>

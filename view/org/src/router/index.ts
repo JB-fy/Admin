@@ -68,6 +68,15 @@ const initRouteList = [
                 },
                 meta: { isAuth: true, keepAlive: true, componentName: '/org/admin' },
             },
+            {
+                path: '/org/config/app',
+                component: async () => {
+                    const component = await import('@/views/org/config/App.vue')
+                    component.default.name = '/org/config/app'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/org/config/app' },
+            },
             /*--------前端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
             {
                 path: '/profile',

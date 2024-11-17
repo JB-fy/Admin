@@ -53,6 +53,7 @@ func InitRouterOrg(ctx context.Context, s *ghttp.Server) {
 
 			group.Group(`/org`, func(group *ghttp.RouterGroup) {
 				group.Bind(org.NewAdmin())
+				group.Bind(org.NewConfig())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/
