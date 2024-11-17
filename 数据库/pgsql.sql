@@ -1,10 +1,10 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : 本地-PostgreSQL
+ Source Server         : Postgresql-1.6.2
  Source Server Type    : PostgreSQL
  Source Server Version : 160002 (160002)
- Source Host           : 192.168.1.200:5432
+ Source Host           : 192.168.0.200:5432
  Source Catalog        : admin
  Source Schema         : public
 
@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 17/11/2024 18:02:09
+ Date: 17/11/2024 18:47:40
 */
 
 
@@ -698,6 +698,7 @@ COMMENT ON COLUMN "public"."org_config"."updated_at" IS '更新时间';
 COMMENT ON COLUMN "public"."org_config"."org_id" IS '机构ID';
 COMMENT ON COLUMN "public"."org_config"."config_key" IS '配置键';
 COMMENT ON COLUMN "public"."org_config"."config_value" IS '配置值';
+COMMENT ON TABLE "public"."org_config" IS '机构配置表';
 
 -- ----------------------------
 -- Records of org_config

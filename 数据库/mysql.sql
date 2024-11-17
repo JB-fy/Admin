@@ -1,17 +1,17 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : 本地-Mysql8
+ Source Server         : Mysql-8.0.33
  Source Server Type    : MySQL
  Source Server Version : 80033 (8.0.33)
- Source Host           : 192.168.1.200:3306
+ Source Host           : 192.168.0.200:3306
  Source Schema         : admin
 
  Target Server Type    : MySQL
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 17/11/2024 18:02:22
+ Date: 17/11/2024 18:48:13
 */
 
 SET NAMES utf8mb4;
