@@ -102,7 +102,7 @@ const initRouteList = [
                     component.default.name = '/platform/config/app'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/platform' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/platform/config/app' },
             },
             {
                 path: '/platform/config/plugin',
