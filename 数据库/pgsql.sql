@@ -1,10 +1,10 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : Postgresql-1.6.2
+ Source Server         : 本地-PostgreSQL
  Source Server Type    : PostgreSQL
  Source Server Version : 160002 (160002)
- Source Host           : 192.168.0.200:5432
+ Source Host           : 192.168.1.200:5432
  Source Catalog        : admin
  Source Schema         : public
 
@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 12/11/2024 23:51:57
+ Date: 17/11/2024 18:02:09
 */
 
 
@@ -305,6 +305,10 @@ INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 66, '权限管理-机构管理员-新增', 'orgAdminCreate', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 67, '权限管理-机构管理员-编辑', 'orgAdminUpdate', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 68, '权限管理-机构管理员-删除', 'orgAdminDelete', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 69, '配置中心-查看', 'orgConfigRead', '可任意读取机构配置表');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 70, '配置中心-保存', 'orgConfigSave', '可任意保存机构配置表');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 71, '应用配置-常用-查看', 'orgConfigCommonRead', '只能读取机构配置表中的某些配置。对应前端页面：配置中心-应用配置-常用');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 72, '应用配置-常用-保存', 'orgConfigCommonSave', '只能保存机构配置表中的某些配置。对应前端页面：配置中心-应用配置-常用');
 
 -- ----------------------------
 -- Table structure for auth_action_rel_to_scene
@@ -402,6 +406,10 @@ INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 67, 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 68, 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 68, 'platform');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 69, 'org');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 70, 'org');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 71, 'org');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 72, 'org');
 
 -- ----------------------------
 -- Table structure for auth_menu
@@ -467,6 +475,8 @@ INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:0
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 24, '权限管理', 'org', 0, 1, '0-24', 'autoicon-ep-menu', '', '{"i18n": {"title": {"en": "", "zh-cn": "权限管理"}}}', 10);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 25, '角色', 'org', 24, 2, '0-24-25', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 26, '管理员', 'org', 24, 2, '0-24-26', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "管理员"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 27, '配置中心', 'org', 0, 1, '0-27', 'autoicon-ep-setting', '', '{"i18n": {"title": {"en": "Config Center", "zh-cn": "配置中心"}}}', 20);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 28, '应用配置', 'org', 27, 2, '0-27-28', 'autoicon-ep-set-up', '/org/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -669,6 +679,28 @@ COMMENT ON TABLE "public"."org_admin" IS '机构管理员表';
 
 -- ----------------------------
 -- Records of org_admin
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for org_config
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."org_config";
+CREATE TABLE "public"."org_config" (
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "org_id" int4 NOT NULL DEFAULT 0,
+  "config_key" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "config_value" text COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::text
+)
+;
+COMMENT ON COLUMN "public"."org_config"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."org_config"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."org_config"."org_id" IS '机构ID';
+COMMENT ON COLUMN "public"."org_config"."config_key" IS '配置键';
+COMMENT ON COLUMN "public"."org_config"."config_value" IS '配置值';
+
+-- ----------------------------
+-- Records of org_config
 -- ----------------------------
 
 -- ----------------------------
@@ -1287,6 +1319,11 @@ CREATE UNIQUE INDEX "org_admin_org_id_phone_idx" ON "public"."org_admin" USING b
 -- Primary Key structure for table org_admin
 -- ----------------------------
 ALTER TABLE "public"."org_admin" ADD CONSTRAINT "org_admin_pkey" PRIMARY KEY ("admin_id");
+
+-- ----------------------------
+-- Primary Key structure for table org_config
+-- ----------------------------
+ALTER TABLE "public"."org_config" ADD CONSTRAINT "org_config_pkey" PRIMARY KEY ("org_id", "config_key");
 
 -- ----------------------------
 -- Primary Key structure for table pay
