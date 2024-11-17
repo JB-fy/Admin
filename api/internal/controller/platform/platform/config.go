@@ -43,12 +43,11 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 			case `wxGzh`:
 				actionCodeSet.Add(`platformConfigWxRead`)
 			}
-			_, err = service.AuthAction().CheckAuth(ctx, actionCodeSet.Slice()...)
-			if err != nil {
-				return
-			}
 		}
-		return
+		_, err = service.AuthAction().CheckAuth(ctx, actionCodeSet.Slice()...)
+		if err != nil {
+			return
+		}
 	}
 	/**--------权限验证 结束--------**/
 
@@ -95,12 +94,11 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 			case `wxGzh`:
 				actionCodeSet.Add(`platformConfigWxSave`)
 			}
-			_, err = service.AuthAction().CheckAuth(ctx, actionCodeSet.Slice()...)
-			if err != nil {
-				return
-			}
 		}
-		return
+		_, err = service.AuthAction().CheckAuth(ctx, actionCodeSet.Slice()...)
+		if err != nil {
+			return
+		}
 	}
 	/**--------权限验证 结束--------**/
 
