@@ -542,7 +542,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			if tpl.IsFindField(v, afterField) && !afterFieldArr.Contains(v.FieldRaw) {
 				tpl.FieldListOfAfter2 = append(tpl.FieldListOfAfter2, v)
 				afterFieldArr.Append(v.FieldRaw)
-				break
 			}
 		}
 	}
@@ -551,7 +550,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			if tpl.IsFindField(v, afterField) && !afterFieldArr.Contains(v.FieldRaw) {
 				tpl.FieldListOfAfter1 = append(tpl.FieldListOfAfter1, v)
 				afterFieldArr.Append(v.FieldRaw)
-				break
 			}
 		}
 	}
