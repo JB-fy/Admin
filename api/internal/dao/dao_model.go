@@ -702,6 +702,22 @@ func (daoModelThis *DaoModel) PluckStr(field string, key string) (gdb.Record, er
 }
 
 // 封装常用方法
+func (daoModelThis *DaoModel) PluckStrStr(field string, key string) (g.MapStrStr, error) {
+	list, err := daoModelThis.Fields(field, key).All()
+	if err != nil {
+		return nil, err
+	}
+	if list.IsEmpty() {
+		return nil, nil
+	}
+	result := make(g.MapStrStr, len(list))
+	for _, v := range list {
+		result[v[key].String()] = v[field].String()
+	}
+	return result, nil
+}
+
+// 封装常用方法
 func (daoModelThis *DaoModel) PluckUint(field string, key string) (map[uint]gdb.Value, error) {
 	list, err := daoModelThis.Fields(field, key).All()
 	if err != nil {
