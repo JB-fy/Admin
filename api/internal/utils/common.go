@@ -8,12 +8,14 @@ import (
 	"api/internal/consts"
 	"context"
 	"fmt"
+	"net/url"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -93,6 +95,20 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 	case 2: //http(s)://www.xxxx.com/test?a=1&b=2
 		url = r.GetUrl()
 	}
+	return
+}
+
+// 获取上传文件的内容（必须先上传到当前服务器）
+func GetUploadFileContent(ctx context.Context, fileUrl string, serverOpt ...string) (content string) {
+	serverRoot := `server`
+	if len(serverOpt) > 0 && serverOpt[0] != `` {
+		serverRoot = serverOpt[0]
+	}
+	serverRoot += `.serverRoot`
+
+	urlObj, _ := url.Parse(fileUrl)
+	file := g.Cfg().MustGet(ctx, serverRoot).String() + urlObj.Path
+	content = gfile.GetContents(file)
 	return
 }
 
