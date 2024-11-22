@@ -81,7 +81,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			code, _ := cache.NewCode(ctx, sceneId, phone, 3).Get() //场景：3密码修改(手机)
+			code, _ := cache.Code.Get(ctx, sceneId, phone, 3) //场景：3密码修改(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -94,7 +94,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 
 			phone := gconv.String(data[`phone`])
-			code, _ := cache.NewCode(ctx, sceneId, phone, 4).Get() //场景：4绑定(手机)
+			code, _ := cache.Code.Get(ctx, sceneId, phone, 4) //场景：4绑定(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -107,7 +107,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			code, _ := cache.NewCode(ctx, sceneId, phone, 5).Get() //场景：5解绑(手机)
+			code, _ := cache.Code.Get(ctx, sceneId, phone, 5) //场景：5解绑(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -121,7 +121,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			code, _ := cache.NewCode(ctx, sceneId, email, 13).Get() //场景：13密码修改(邮箱)
+			code, _ := cache.Code.Get(ctx, sceneId, email, 13) //场景：13密码修改(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -134,7 +134,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			}
 
 			email := gconv.String(data[`email`])
-			code, _ := cache.NewCode(ctx, sceneId, email, 14).Get() //场景：14绑定(邮箱)
+			code, _ := cache.Code.Get(ctx, sceneId, email, 14) //场景：14绑定(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -147,7 +147,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 
-			code, _ := cache.NewCode(ctx, sceneId, email, 15).Get() //场景：15解绑(邮箱)
+			code, _ := cache.Code.Get(ctx, sceneId, email, 15) //场景：15解绑(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return

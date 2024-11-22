@@ -71,6 +71,6 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	if err != nil {
 		return
 	}
-	err = cache.NewCode(ctx, sceneId, to, req.Scene).Set(code, 5*60)
+	err = cache.Code.Set(ctx, sceneId, to, req.Scene, code, 5*60)
 	return
 }

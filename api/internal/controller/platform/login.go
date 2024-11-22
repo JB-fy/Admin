@@ -48,7 +48,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	saltDynamic := grand.S(8)
-	err = cache.NewSalt(ctx, sceneId, req.LoginName).Set(saltDynamic, 5)
+	err = cache.Salt.Set(ctx, sceneId, req.LoginName, saltDynamic, 5)
 	if err != nil {
 		return
 	}
@@ -82,7 +82,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
-	salt, _ := cache.NewSalt(ctx, sceneId, req.LoginName).Get()
+	salt, _ := cache.Salt.Get(ctx, sceneId, req.LoginName)
 	if salt == `` || gmd5.MustEncrypt(info[daoPlatform.Admin.Columns().Password].String()+salt) != req.Password {
 		err = utils.NewErrorCode(ctx, 39990001, ``)
 		return

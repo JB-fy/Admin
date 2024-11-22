@@ -46,11 +46,11 @@ func (handlerThis *Handler) Create(loginId string) (token string, err error) {
 	}
 
 	if handlerThis.ActiveTime > 0 {
-		cache.NewTokenActive(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId).Set(handlerThis.ActiveTime)
+		cache.TokenActive.Set(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, handlerThis.ActiveTime)
 	}
 
 	if handlerThis.IsUnique {
-		cache.NewTokenIsUnique(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId).Set(token, handlerThis.Token.GetExpireTime())
+		cache.TokenIsUnique.Set(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, token, handlerThis.Token.GetExpireTime())
 	}
 	return
 }
@@ -67,16 +67,15 @@ func (handlerThis *Handler) Parse(token string) (tokenInfo TokenInfo, err error)
 	}
 
 	if handlerThis.ActiveTime > 0 {
-		cacheTokenActive := cache.NewTokenActive(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId)
-		if isExists, _ := cacheTokenActive.Get(); isExists == 0 {
+		if isExists, _ := cache.TokenActive.Get(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId); isExists == 0 {
 			err = utils.NewErrorCode(handlerThis.Ctx, 39994002, ``)
 			return
 		}
-		cacheTokenActive.Set(handlerThis.ActiveTime)
+		cache.TokenActive.Set(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, handlerThis.ActiveTime)
 	}
 
 	if handlerThis.IsUnique {
-		if checkToken, _ := cache.NewTokenIsUnique(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId).Get(); checkToken != token {
+		if checkToken, _ := cache.TokenIsUnique.Get(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId); checkToken != token {
 			err = utils.NewErrorCode(handlerThis.Ctx, 39994003, ``)
 			return
 		}

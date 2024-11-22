@@ -13,9 +13,9 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 )
 
-type dbDataLocal struct{}
-
 var DbDataLocal = dbDataLocal{}
+
+type dbDataLocal struct{}
 
 func (cacheThis *dbDataLocal) key(daoModel *dao.DaoModel, key string) string {
 	return fmt.Sprintf(consts.DB_DATA_FORMAT, gstr.ToUpper(daoModel.DbGroup), gstr.ToUpper(daoModel.DbTable), gstr.ToUpper(key))

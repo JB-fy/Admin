@@ -381,7 +381,7 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 // 获取单个配置
 func (daoThis *configDao) GetOne(ctx context.Context, orgId string, configKey string) (configValue *gvar.Var) {
 	// configValue, _ = daoThis.CtxDaoModel(ctx).FilterPri(orgId+`|`+configKey).Value(daoThis.Columns().ConfigValue)
-	configValue, _, _ = cache.NewDbData(ctx, daoThis).GetOrSet(orgId+`|`+configKey, 6*30*24*60*60, daoThis.Columns().ConfigValue)
+	configValue, _, _ = cache.DbData.GetOrSet(ctx, daoThis, orgId+`|`+configKey, 6*30*24*60*60, daoThis.Columns().ConfigValue)
 	return
 }
 
@@ -392,7 +392,7 @@ func (daoThis *configDao) Get(ctx context.Context, orgId string, configKeyArr ..
 		idArr = append(idArr, orgId+`|`+configKey)
 	}
 	// configTmp, err := daoThis.CtxDaoModel(ctx).FilterPri(idArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
-	configTmp, err := cache.NewDbData(ctx, daoThis).GetOrSetPluck(idArr, 6*30*24*60*60, daoThis.Columns().ConfigValue)
+	configTmp, err := cache.DbData.GetOrSetPluck(ctx, daoThis, idArr, 6*30*24*60*60, daoThis.Columns().ConfigValue)
 	if err != nil {
 		return
 	}
@@ -424,6 +424,6 @@ func (daoThis *configDao) Save(ctx context.Context, orgId string, config map[str
 	if err != nil {
 		return
 	}
-	cache.NewDbData(ctx, daoThis).Del(idArr...)
+	cache.DbData.Del(ctx, daoThis, idArr...)
 	return
 }

@@ -57,7 +57,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	saltDynamic := grand.S(8)
-	err = cache.NewSalt(ctx, sceneId, req.LoginName).Set(saltDynamic, 5)
+	err = cache.Salt.Set(ctx, sceneId, req.LoginName, saltDynamic, 5)
 	if err != nil {
 		return
 	}
@@ -97,7 +97,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
 		}
-		salt, _ := cache.NewSalt(ctx, sceneId, req.LoginName).Get()
+		salt, _ := cache.Salt.Get(ctx, sceneId, req.LoginName)
 		if salt == `` || gmd5.MustEncrypt(password+salt) != req.Password {
 			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
@@ -108,7 +108,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			err = utils.NewErrorCode(ctx, 39991003, ``)
 			return
 		}
-		code, _ := cache.NewCode(ctx, sceneId, phone, 0).Get() //场景：0登录(手机)
+		code, _ := cache.Code.Get(ctx, sceneId, phone, 0) //场景：0登录(手机)
 		if code == `` || code != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
@@ -119,7 +119,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			err = utils.NewErrorCode(ctx, 39991013, ``)
 			return
 		}
-		code, _ := cache.NewCode(ctx, sceneId, email, 10).Get() //场景：10登录(邮箱)
+		code, _ := cache.Code.Get(ctx, sceneId, email, 10) //场景：10登录(邮箱)
 		if code == `` || code != req.EmailCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
@@ -141,7 +141,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	if req.Phone != `` {
-		code, _ := cache.NewCode(ctx, sceneId, req.Phone, 1).Get() //场景：1注册(手机)
+		code, _ := cache.Code.Get(ctx, sceneId, req.Phone, 1) //场景：1注册(手机)
 		if code == `` || code != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
@@ -156,7 +156,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[daoUsers.Users.Columns().Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
 	}
 	if req.Email != `` {
-		code, _ := cache.NewCode(ctx, sceneId, req.Email, 11).Get() //场景：11注册(邮箱)
+		code, _ := cache.Code.Get(ctx, sceneId, req.Email, 11) //场景：11注册(邮箱)
 		if code == `` || code != req.EmailCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
@@ -203,14 +203,14 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	filter := g.Map{}
 	if req.Phone != `` {
-		code, _ := cache.NewCode(ctx, sceneId, req.Phone, 2).Get() //场景：2密码找回(手机)
+		code, _ := cache.Code.Get(ctx, sceneId, req.Phone, 2) //场景：2密码找回(手机)
 		if code == `` || code != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
 		}
 		filter[daoUsers.Users.Columns().Phone] = req.Phone
 	} else if req.Email != `` {
-		code, _ := cache.NewCode(ctx, sceneId, req.Email, 12).Get() //场景：12密码找回(邮箱)
+		code, _ := cache.Code.Get(ctx, sceneId, req.Email, 12) //场景：12密码找回(邮箱)
 		if code == `` || code != req.EmailCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
