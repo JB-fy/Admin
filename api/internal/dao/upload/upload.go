@@ -186,7 +186,9 @@ func (daoThis *uploadDao) ParseInsert(insert map[string]any, daoModel *daoIndex.
 			switch k {
 			case daoThis.Columns().IsDefault:
 				insertData[k] = v
-				daoModel.AfterInsert[k] = v
+				if gconv.Uint(v) == 1 {
+					daoModel.AfterInsert[k] = nil
+				}
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					insertData[k] = v
@@ -211,12 +213,10 @@ func (daoThis *uploadDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			}
 			id, _ := result.LastInsertId()
 
-			for k, v := range daoModel.AfterInsert {
+			for k := range daoModel.AfterInsert {
 				switch k {
 				case daoThis.Columns().IsDefault:
-					if gconv.Uint(v) == 1 {
-						daoModel.CloneNew().Filter(`exc_id`, id).HookUpdate(g.Map{daoThis.Columns().IsDefault: 0}).Update()
-					}
+					daoModel.CloneNew().Filter(`exc_id`, id).HookUpdate(g.Map{daoThis.Columns().IsDefault: 0}).Update()
 				}
 			}
 			return
@@ -232,7 +232,9 @@ func (daoThis *uploadDao) ParseUpdate(update map[string]any, daoModel *daoIndex.
 			switch k {
 			case daoThis.Columns().IsDefault:
 				updateData[k] = v
-				daoModel.AfterUpdate[k] = v
+				if gconv.Uint(v) == 1 {
+					daoModel.AfterUpdate[k] = v
+				}
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					updateData[k] = v
@@ -269,15 +271,15 @@ func (daoThis *uploadDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandle
 				return
 			}
 
-			for k, v := range daoModel.AfterUpdate {
+			for k := range daoModel.AfterUpdate {
 				switch k {
 				/* case `xxxx`:
 				for _, id := range daoModel.IdArr {
 					daoModel.CloneNew().FilterPri(id).HookUpdate(g.Map{k: v}).Update()
 				} */
 				case daoThis.Columns().IsDefault:
-					if gconv.Uint(v) == 1 {
-						daoModel.CloneNew().Filter(`exc_id`, daoModel.IdArr).HookUpdate(g.Map{daoThis.Columns().IsDefault: 0}).Update()
+					for _, id := range daoModel.IdArr {
+						daoModel.CloneNew().Filter(`exc_id`, id).HookUpdate(g.Map{daoThis.Columns().IsDefault: 0}).Update()
 					}
 				}
 			}
