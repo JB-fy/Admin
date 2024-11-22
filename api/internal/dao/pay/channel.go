@@ -371,7 +371,7 @@ func (daoThis *channelDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMod
 
 // Fill with you ideas below.
 
-func (daoThis *channelDao) CacheSet(ctx context.Context) (err error) {
+func (daoThis *channelDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
 	list, _ := daoModel.Fields(daoThis.Columns().ChannelId, daoThis.Columns().ChannelName, daoThis.Columns().ChannelIcon, daoThis.Columns().SceneId, daoThis.Columns().PayId, daoThis.Columns().PayMethod, daoThis.Columns().IsStop).OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
 	mapList := map[string]gdb.Result{}
@@ -386,7 +386,6 @@ func (daoThis *channelDao) CacheSet(ctx context.Context) (err error) {
 	for sceneId, list := range mapList {
 		cache.DbDataLocal.Set(ctx, daoModel, `scene`+sceneId, list.Json())
 	}
-	return
 }
 
 func (daoThis *channelDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {

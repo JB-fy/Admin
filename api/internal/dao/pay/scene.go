@@ -358,13 +358,12 @@ func (daoThis *sceneDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 
 // Fill with you ideas below.
 
-func (daoThis *sceneDao) CacheSet(ctx context.Context) (err error) {
+func (daoThis *sceneDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
 	list, _ := daoModel.Fields(daoThis.Columns().SceneId, daoThis.Columns().SceneName, daoThis.Columns().IsStop).All()
 	for _, info := range list {
 		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().SceneId].String(), info.Json())
 	}
-	return
 }
 
 func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {

@@ -16,8 +16,14 @@ import (
 
 func initCron(ctx context.Context) {
 	myCronThis := myCron{}
-	myCronThis.SetEnv(ctx)                                      //必须先执行一次，在内存中初始化环境变量
-	gcron.Add(ctx, `0 */15 * * * *`, myCronThis.SetEnv, `Test`) //15分钟更新一次。所有服务器都需要启动该定时器
+	/*--------数据库中某些配置表极少修改，统一缓存在本机内存中，能极大增加服务器性能，减少数据库压力（注意：服务启动时，就必须先运行一次，缓存到内存中） 开始--------*/
+	daoAuth.Scene.CacheSet(ctx)
+	gcron.AddSingleton(ctx, `50 0 3 * * *`, daoAuth.Scene.CacheSet, `AuthSceneCacheSet`) //每天晚上3点刷新一次
+	daoUpload.Upload.CacheSet(ctx)
+	gcron.AddSingleton(ctx, `40 */30 * * * *`, daoUpload.Upload.CacheSet, `UploadCacheSet`) //每30分钟刷新一次
+	myCronThis.PayCacheSet(ctx)
+	gcron.AddSingleton(ctx, `30 */15 * * * *`, myCronThis.PayCacheSet, `PayPayCacheSet`) //每15分钟刷新一次
+	/*--------数据库中某些配置表极少修改，统一缓存在本机内存中，能极大增加服务器性能，减少数据库压力（注意：服务启动时，就必须先运行一次，缓存到内存中） 结束--------*/
 
 	if !utils.IsDev(ctx) && g.Cfg().MustGet(ctx, `cronServerNetworkIp`).String() != g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String() {
 		return
@@ -28,11 +34,7 @@ func initCron(ctx context.Context) {
 
 type myCron struct{}
 
-func (myCron) SetEnv(ctx context.Context) {
-	daoAuth.Scene.CacheSet(ctx)
-
-	daoUpload.Upload.CacheSet(ctx)
-
+func (myCron) PayCacheSet(ctx context.Context) {
 	daoPay.Scene.CacheSet(ctx)
 	daoPay.Channel.CacheSet(ctx)
 	daoPay.Pay.CacheSet(ctx)

@@ -369,7 +369,7 @@ func (daoThis *uploadDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 
 // Fill with you ideas below.
 
-func (daoThis *uploadDao) CacheSet(ctx context.Context) (err error) {
+func (daoThis *uploadDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
 	list, _ := daoModel.Fields(daoThis.Columns().UploadId, daoThis.Columns().UploadType, daoThis.Columns().UploadConfig).All()
 	for _, info := range list {
@@ -379,7 +379,6 @@ func (daoThis *uploadDao) CacheSet(ctx context.Context) (err error) {
 	daoModel = daoThis.CtxDaoModel(ctx)
 	info, _ := daoModel.Fields(daoThis.Columns().UploadId, daoThis.Columns().UploadType, daoThis.Columns().UploadConfig).OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
 	cache.DbDataLocal.Set(ctx, daoModel, `default`, info.Json())
-	return
 }
 
 func (daoThis *uploadDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
