@@ -15,7 +15,7 @@ func Scene(r *ghttp.Request) {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return
 	}
-	sceneInfo, _ := daoAuth.Scene.GetInfoFromCache(r.GetCtx(), sceneId)
+	sceneInfo, _ := daoAuth.Scene.CacheGet(r.GetCtx(), sceneId)
 	if sceneInfo.IsEmpty() {
 		r.SetError(utils.NewErrorCode(r.GetCtx(), 39999998, ``))
 		return

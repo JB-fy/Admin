@@ -17,4 +17,6 @@ var (
 var (
 	SERVER_NETWORK_IP = `SERVER_NETWORK_IP` //外网ip
 	SERVER_LOCAL_IP   = `SERVER_LOCAL_IP`   //内网ip
+
+	DB_DATA_FORMAT = `DB_DATA_%s_%s_%s` //数据库数据本机缓存key。参数：db分组，db表名，ID或其它唯一标识
 )

@@ -282,8 +282,6 @@ func (daoThis *sceneDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 					}
 				}
 			} */
-
-			cache.NewDbData(ctx, daoThis).Del(gconv.Strings(daoModel.IdArr)...)
 			return
 		},
 	}
@@ -320,8 +318,6 @@ func (daoThis *sceneDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().SceneId, daoModel.IdArr).Delete()
 			Menu.CtxDaoModel(ctx).Filter(Menu.Columns().SceneId, daoModel.IdArr).Delete()
 			Role.CtxDaoModel(ctx).Filter(Role.Columns().SceneId, daoModel.IdArr).Delete() */
-
-			cache.NewDbData(ctx, daoThis).Del(gconv.Strings(daoModel.IdArr)...)
 			return
 		},
 	}
@@ -388,11 +384,15 @@ func (daoThis *sceneDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 
 // Fill with you ideas below.
 
-func (daoThis *sceneDao) GetInfoFromCache(ctx context.Context, id string) (info gdb.Record, err error) {
-	value, _, err := cache.NewDbData(ctx, daoThis).GetOrSet(id, 6*30*24*60*60, daoThis.Columns().SceneId, daoThis.Columns().SceneName, daoThis.Columns().SceneConfig, daoThis.Columns().IsStop)
-	if err != nil {
-		return
+func (daoThis *sceneDao) CacheSet(ctx context.Context) (err error) {
+	daoModel := daoThis.CtxDaoModel(ctx)
+	sceneList, _ := daoModel.All()
+	for _, info := range sceneList {
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().SceneId].String(), info.Json())
 	}
-	value.Scan(&info)
 	return
+}
+
+func (daoThis *sceneDao) CacheGet(ctx context.Context, id string) (info gdb.Record, err error) {
+	return cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
 }

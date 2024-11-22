@@ -5,6 +5,7 @@
 package upload
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/upload/internal"
 	"context"
@@ -367,3 +368,26 @@ func (daoThis *uploadDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 }
 
 // Fill with you ideas below.
+
+func (daoThis *uploadDao) CacheSet(ctx context.Context) (err error) {
+	daoModel := daoThis.CtxDaoModel(ctx)
+	uploadList, _ := daoModel.All()
+	for _, info := range uploadList {
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().UploadId].String(), info.Json())
+	}
+
+	info, _ := daoThis.CtxDaoModel(ctx).OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
+	cache.DbDataLocal.Set(ctx, daoModel, `default`, info.Json())
+	return
+}
+
+func (daoThis *uploadDao) CacheGet(ctx context.Context, id uint) (info gdb.Record, err error) {
+	var key string
+	if id > 0 {
+		key = gconv.String(id)
+	} else {
+		key = `default`
+	}
+	info, err = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), key)
+	return
+}

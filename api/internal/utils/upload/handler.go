@@ -27,13 +27,7 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) *Handler {
 		UploadId: uploadId,
 	}
 
-	uploadFilter := g.Map{}
-	if handlerObj.UploadId > 0 {
-		uploadFilter[daoUpload.Upload.Columns().UploadId] = handlerObj.UploadId
-	} else {
-		uploadFilter[daoUpload.Upload.Columns().IsDefault] = 1
-	}
-	uploadInfo, _ := daoUpload.Upload.CtxDaoModel(handlerObj.Ctx).Filters(uploadFilter).One()
+	uploadInfo, _ := daoUpload.Upload.CacheGet(handlerObj.Ctx, handlerObj.UploadId)
 
 	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
 	config[`uploadId`] = uploadInfo[daoUpload.Upload.Columns().UploadId]
