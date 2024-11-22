@@ -3,7 +3,6 @@ package controller
 import (
 	"api/api"
 
-	// daoAuth "api/internal/dao/auth"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -17,6 +16,11 @@ func NewTest() *Test {
 }
 
 func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, err error) {
+	// 数据库中作为配置表的数据，可根据自身需要使用以下方式读取数据
+	// daoAuth.Scene.CtxDaoModel(ctx).FilterPri(`platform`).One()                 //不推荐：数据库实时读取
+	// cache.DbData.GetOrSet(ctx, &daoAuth.Scene, `platform`, 30*60)              //推荐-数据修改需要立即同步缓存的表：缓存在redis，数据修改可做到立即同步缓存，只需数据修改时删除缓存即可。如在dao层文件的后置更新和后置删除中补充缓存删除代码：cache.DbData.Del(ctx, &daoAuth.Scene, `platform`)
+	// cache.DbDataLocal.GetInfo(ctx, daoAuth.Scene.CtxDaoModel(ctx), `platform`) //推荐-数据修改无需立即同步缓存的表：服务启动时，缓存在本机内存中，数据库修改，只能等待各个服务器定时器触发才能同步缓存
+
 	// time.Sleep(10 * time.Second) // 睡眠几秒
 	// ghttp.RestartAllServer(ctx)  // 重启服务
 
