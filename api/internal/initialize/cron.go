@@ -3,6 +3,7 @@ package initialize
 import (
 	"api/internal/consts"
 	daoAuth "api/internal/dao/auth"
+	daoPay "api/internal/dao/pay"
 	daoUpload "api/internal/dao/upload"
 	"api/internal/utils"
 	"context"
@@ -31,6 +32,10 @@ func (myCron) SetEnv(ctx context.Context) {
 	daoAuth.Scene.CacheSet(ctx)
 
 	daoUpload.Upload.CacheSet(ctx)
+
+	daoPay.Scene.CacheSet(ctx)
+	daoPay.Channel.CacheSet(ctx)
+	daoPay.Pay.CacheSet(ctx)
 }
 
 func (myCron) Test(ctx context.Context) {

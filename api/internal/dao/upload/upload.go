@@ -371,17 +371,18 @@ func (daoThis *uploadDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 
 func (daoThis *uploadDao) CacheSet(ctx context.Context) (err error) {
 	daoModel := daoThis.CtxDaoModel(ctx)
-	uploadList, _ := daoModel.All()
-	for _, info := range uploadList {
+	list, _ := daoModel.Fields(daoThis.Columns().UploadId, daoThis.Columns().UploadType, daoThis.Columns().UploadConfig).All()
+	for _, info := range list {
 		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().UploadId].String(), info.Json())
 	}
 
-	info, _ := daoThis.CtxDaoModel(ctx).OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
+	daoModel = daoThis.CtxDaoModel(ctx)
+	info, _ := daoModel.Fields(daoThis.Columns().UploadId, daoThis.Columns().UploadType, daoThis.Columns().UploadConfig).OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
 	cache.DbDataLocal.Set(ctx, daoModel, `default`, info.Json())
 	return
 }
 
-func (daoThis *uploadDao) CacheGet(ctx context.Context, id uint) (info gdb.Record, err error) {
+func (daoThis *uploadDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
 	var key string
 	if id > 0 {
 		key = gconv.String(id)

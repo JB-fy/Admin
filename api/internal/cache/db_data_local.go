@@ -39,3 +39,12 @@ func (cacheThis *dbDataLocal) GetInfo(ctx context.Context, daoModel *dao.DaoMode
 	value.Scan(&info)
 	return
 }
+
+func (cacheThis *dbDataLocal) GetList(ctx context.Context, daoModel *dao.DaoModel, key string) (list gdb.Result, err error) {
+	value, err := cacheThis.Get(ctx, daoModel, key)
+	if err != nil {
+		return
+	}
+	value.Scan(&list)
+	return
+}

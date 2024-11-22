@@ -27,7 +27,7 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) *Handler {
 		UploadId: uploadId,
 	}
 
-	uploadInfo, _ := daoUpload.Upload.CacheGet(handlerObj.Ctx, handlerObj.UploadId)
+	uploadInfo, _ := daoUpload.Upload.CacheGetInfo(handlerObj.Ctx, handlerObj.UploadId)
 
 	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
 	config[`uploadId`] = uploadInfo[daoUpload.Upload.Columns().UploadId]

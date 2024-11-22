@@ -24,7 +24,7 @@ func NewPay() *Pay {
 
 // 列表
 func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq) (res *api.PayChannelListRes, err error) {
-	paySceneInfo, _ := daoPay.Scene.CtxDaoModel(ctx).FilterPri(req.SceneId).One()
+	paySceneInfo, _ := daoPay.Scene.CacheGetInfo(ctx, req.SceneId)
 	if paySceneInfo.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 30011000, ``)
 		return
@@ -43,7 +43,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq)
 		return
 	} */
 
-	list, err := daoPay.Channel.CtxDaoModel(ctx).Filter(daoPay.Channel.Columns().SceneId, req.SceneId).OrderDesc(daoPay.Channel.Columns().Sort).OrderAsc(daoPay.Channel.Columns().ChannelId).ListPri()
+	list, err := daoPay.Channel.CacheGetList(ctx, req.SceneId)
 	if err != nil {
 		return
 	}
@@ -55,7 +55,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq)
 
 // 支付
 func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *api.PayPayRes, err error) {
-	channelInfo, _ := daoPay.Channel.CtxDaoModel(ctx).FilterPri(req.ChannelId).One()
+	channelInfo, _ := daoPay.Channel.CacheGetInfo(ctx, req.ChannelId)
 	if channelInfo.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 30012000, ``)
 		return
@@ -64,7 +64,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		err = utils.NewErrorCode(ctx, 30012001, ``)
 		return
 	}
-	payInfo, _ := daoPay.Pay.CtxDaoModel(ctx).FilterPri(channelInfo[daoPay.Channel.Columns().PayId]).One()
+	payInfo, _ := daoPay.Pay.CacheGetInfo(ctx, channelInfo[daoPay.Channel.Columns().PayId].Uint())
 	if payInfo.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 30010000, ``)
 		return
@@ -151,7 +151,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 
 // 回调
 func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (res *api.CommonNoDataRes, err error) {
-	payInfo, _ := daoPay.Pay.CtxDaoModel(ctx).FilterPri(req.PayId).One()
+	payInfo, _ := daoPay.Pay.CacheGetInfo(ctx, req.PayId)
 	if payInfo.IsEmpty() {
 		err = utils.NewErrorCode(ctx, 30010000, ``)
 		return

@@ -5,6 +5,7 @@
 package pay
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/pay/internal"
 	"context"
@@ -369,3 +370,31 @@ func (daoThis *channelDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMod
 }
 
 // Fill with you ideas below.
+
+func (daoThis *channelDao) CacheSet(ctx context.Context) (err error) {
+	daoModel := daoThis.CtxDaoModel(ctx)
+	list, _ := daoModel.Fields(daoThis.Columns().ChannelId, daoThis.Columns().ChannelName, daoThis.Columns().ChannelIcon, daoThis.Columns().SceneId, daoThis.Columns().PayId, daoThis.Columns().PayMethod, daoThis.Columns().IsStop).OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
+	mapList := map[string]gdb.Result{}
+	for _, info := range list {
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().ChannelId].String(), info.Json())
+		sceneId := info[daoThis.Columns().SceneId].String()
+		if _, ok := mapList[sceneId]; !ok {
+			mapList[sceneId] = gdb.Result{}
+		}
+		mapList[sceneId] = append(mapList[sceneId], info)
+	}
+	for sceneId, list := range mapList {
+		cache.DbDataLocal.Set(ctx, daoModel, `scene`+sceneId, list.Json())
+	}
+	return
+}
+
+func (daoThis *channelDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
+	info, err = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+	return
+}
+
+func (daoThis *channelDao) CacheGetList(ctx context.Context, sceneId uint) (list gdb.Result, err error) {
+	list, err = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene`+gconv.String(sceneId))
+	return
+}

@@ -5,6 +5,7 @@
 package pay
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/pay/internal"
 	"context"
@@ -356,3 +357,17 @@ func (daoThis *sceneDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 }
 
 // Fill with you ideas below.
+
+func (daoThis *sceneDao) CacheSet(ctx context.Context) (err error) {
+	daoModel := daoThis.CtxDaoModel(ctx)
+	list, _ := daoModel.Fields(daoThis.Columns().SceneId, daoThis.Columns().SceneName, daoThis.Columns().IsStop).All()
+	for _, info := range list {
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().SceneId].String(), info.Json())
+	}
+	return
+}
+
+func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
+	info, err = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+	return
+}
