@@ -374,16 +374,16 @@ func (daoThis *channelDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMod
 func (daoThis *channelDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
 	list, _ := daoModel.Fields(daoThis.Columns().ChannelId, daoThis.Columns().ChannelName, daoThis.Columns().ChannelIcon, daoThis.Columns().SceneId, daoThis.Columns().PayId, daoThis.Columns().PayMethod, daoThis.Columns().IsStop).OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
-	mapList := map[string]gdb.Result{}
+	listMap := map[string]gdb.Result{}
 	for _, info := range list {
 		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().ChannelId].String(), info.Json())
 		sceneId := info[daoThis.Columns().SceneId].String()
-		if _, ok := mapList[sceneId]; !ok {
-			mapList[sceneId] = gdb.Result{}
+		if _, ok := listMap[sceneId]; !ok {
+			listMap[sceneId] = gdb.Result{}
 		}
-		mapList[sceneId] = append(mapList[sceneId], info)
+		listMap[sceneId] = append(listMap[sceneId], info)
 	}
-	for sceneId, list := range mapList {
+	for sceneId, list := range listMap {
 		cache.DbDataLocal.Set(ctx, daoModel, `scene`+sceneId, list.Json())
 	}
 }
