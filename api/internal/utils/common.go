@@ -107,7 +107,7 @@ func GetFileBytes(ctx context.Context, fileUrl string, serverOpt ...string) (fil
 		hostIp = g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String()
 	}
 	if hostIp != `` && gstr.Pos(fileUrl, hostIp) != -1 {
-		return GetUploadFileBytes(ctx, fileUrl, serverOpt...)
+		return GetFileBytesByLocal(ctx, fileUrl, serverOpt...)
 	}
 
 	// 远程文件下载
@@ -122,7 +122,7 @@ func GetFileBytes(ctx context.Context, fileUrl string, serverOpt ...string) (fil
 }
 
 // 获取文件内容（确定文件在当前服务器时使用）
-func GetUploadFileBytes(ctx context.Context, fileUrl string, serverOpt ...string) (fileBytes []byte, err error) {
+func GetFileBytesByLocal(ctx context.Context, fileUrl string, serverOpt ...string) (fileBytes []byte, err error) {
 	serverRoot := `server`
 	if len(serverOpt) > 0 && serverOpt[0] != `` {
 		serverRoot = serverOpt[0]
