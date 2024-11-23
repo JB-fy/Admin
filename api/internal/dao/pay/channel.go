@@ -384,7 +384,7 @@ func (daoThis *channelDao) CacheSet(ctx context.Context) {
 		listMap[sceneId] = append(listMap[sceneId], info)
 	}
 	for sceneId, list := range listMap {
-		cache.DbDataLocal.Set(ctx, daoModel, `scene`+sceneId, list.Json())
+		cache.DbDataLocal.Set(ctx, daoModel, `scene_id_`+sceneId, list.Json())
 	}
 }
 
@@ -394,6 +394,6 @@ func (daoThis *channelDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.
 }
 
 func (daoThis *channelDao) CacheGetList(ctx context.Context, sceneId uint) (list gdb.Result, err error) {
-	list, err = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene`+gconv.String(sceneId))
+	list, err = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+gconv.String(sceneId))
 	return
 }
