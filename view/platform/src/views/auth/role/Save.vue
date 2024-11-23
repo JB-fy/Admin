@@ -26,7 +26,7 @@ const saveForm = reactive({
             { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
         ], */
         action_id_arr: [
-            { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, max: 4294967295, message: t('validation.select') } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
+            { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'string', max: 30, message: t('validation.select') } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
         menu_id_arr: [{ type: 'array', trigger: 'change', message: t('validation.select') }],
         is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
@@ -104,7 +104,7 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <!-- <el-form-item :label="t('auth.role.name.rel_id')" prop="rel_id"> -->
                 <!-- 可选择组件<my-select>或<my-cascader>使用，但需手动确认关联表，并修改接口路径 -->
-                <!-- <el-input-number v-model="saveForm.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :min="1" :max="4294967295" :precision="0" :controls="false" :value-on-clear="0" /> -->
+                <!-- <el-input-number v-model="saveForm.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :min="0" :max="4294967295" :precision="0" :controls="false" :value-on-clear="0" /> -->
                 <!-- <my-select v-model="saveForm.data.rel_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/list' }" /> -->
                 <!-- <my-cascader v-model="saveForm.data.rel_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/tree' }" :props="{ emitPath: false }" /> -->
                 <!-- </el-form-item> -->

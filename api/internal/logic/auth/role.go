@@ -30,16 +30,16 @@ func (logicThis *sAuthRole) verifyData(ctx context.Context, data map[string]any)
 		}
 	}
 
-	/* if _, ok := data[`action_id_arr`]; ok && len(gconv.SliceUint(data[`action_id_arr`])) > 0 {
-		actionIdArr := gconv.SliceUint(data[`action_id_arr`])
+	/* if _, ok := data[`action_id_arr`]; ok && len(gconv.Strings(data[`action_id_arr`])) > 0 {
+		actionIdArr := gconv.Strings(data[`action_id_arr`])
 		if count, _ := daoAuth.Action.CtxDaoModel(ctx).FilterPri(actionIdArr).Count(); count != len(actionIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.action`)}})
 			return
 		}
 	}
 
-	if _, ok := data[`menu_id_arr`]; ok && len(gconv.SliceUint(data[`menu_id_arr`])) > 0 {
-		menuIdArr := gconv.SliceUint(data[`menu_id_arr`])
+	if _, ok := data[`menu_id_arr`]; ok && len(gconv.Uints(data[`menu_id_arr`])) > 0 {
+		menuIdArr := gconv.Uints(data[`menu_id_arr`])
 		if count, _ := daoAuth.Menu.CtxDaoModel(ctx).FilterPri(menuIdArr).Count(); count != len(menuIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.menu`)}})
 			return
@@ -55,16 +55,16 @@ func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]any) (id
 	}
 	daoModelThis := daoAuth.Role.CtxDaoModel(ctx)
 
-	if _, ok := data[`action_id_arr`]; ok && len(gconv.SliceUint(data[`action_id_arr`])) > 0 {
-		actionIdArr := gconv.SliceUint(data[`action_id_arr`])
+	if _, ok := data[`action_id_arr`]; ok && len(gconv.Strings(data[`action_id_arr`])) > 0 {
+		actionIdArr := gconv.Strings(data[`action_id_arr`])
 		if count, _ := daoAuth.ActionRelToScene.CtxDaoModel(ctx).Filters(g.Map{daoAuth.ActionRelToScene.Columns().ActionId: actionIdArr, daoAuth.ActionRelToScene.Columns().SceneId: data[`scene_id`]}).Count(); count != len(actionIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.action`)}})
 			return
 		}
 	}
 
-	if _, ok := data[`menu_id_arr`]; ok && len(gconv.SliceUint(data[`menu_id_arr`])) > 0 {
-		menuIdArr := gconv.SliceUint(data[`menu_id_arr`])
+	if _, ok := data[`menu_id_arr`]; ok && len(gconv.Uints(data[`menu_id_arr`])) > 0 {
+		menuIdArr := gconv.Uints(data[`menu_id_arr`])
 		if count, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{daoAuth.Menu.Columns().MenuId: menuIdArr, daoAuth.Menu.Columns().SceneId: data[`scene_id`]}).Count(); count != len(menuIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.menu`)}})
 			return
@@ -88,8 +88,8 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]any, d
 		return
 	}
 
-	if _, ok := data[`action_id_arr`]; ok && len(gconv.SliceUint(data[`action_id_arr`])) > 0 {
-		actionIdArr := gconv.SliceUint(data[`action_id_arr`])
+	if _, ok := data[`action_id_arr`]; ok && len(gconv.Strings(data[`action_id_arr`])) > 0 {
+		actionIdArr := gconv.Strings(data[`action_id_arr`])
 		filterTmp := g.Map{daoAuth.ActionRelToScene.Columns().ActionId: actionIdArr}
 		if _, ok := data[`scene_id`]; ok {
 			filterTmp[daoAuth.ActionRelToScene.Columns().SceneId] = data[`scene_id`]
@@ -109,8 +109,8 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]any, d
 		}
 	}
 
-	if _, ok := data[`menu_id_arr`]; ok && len(gconv.SliceUint(data[`menu_id_arr`])) > 0 {
-		menuIdArr := gconv.SliceUint(data[`menu_id_arr`])
+	if _, ok := data[`menu_id_arr`]; ok && len(gconv.Uints(data[`menu_id_arr`])) > 0 {
+		menuIdArr := gconv.Uints(data[`menu_id_arr`])
 		filterTmp := g.Map{daoAuth.Menu.Columns().MenuId: menuIdArr}
 		if _, ok := data[`scene_id`]; ok {
 			filterTmp[daoAuth.Menu.Columns().SceneId] = data[`scene_id`]

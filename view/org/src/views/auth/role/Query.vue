@@ -32,10 +32,13 @@ const queryForm = reactive({
         </el-form-item>
         <!-- <el-form-item prop="scene_id">
             <my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.role.name.scene_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
-        </el-form-item>
-        <el-form-item prop="rel_id">
-            <my-select v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/list' }" />
         </el-form-item> -->
+        <!-- <el-form-item prop="rel_id"> -->
+        <!-- 可选择组件<my-select>或<my-cascader>使用，但需手动确认关联表，并修改接口路径 -->
+        <!-- <el-input-number v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :min="0" :max="4294967295" :precision="0" :controls="false" /> -->
+        <!-- <my-select v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/list' }" /> -->
+        <!-- <my-cascader v-model="queryCommon.data.rel_id" :placeholder="t('auth.role.name.rel_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/rel/tree' }" :props="{ emitPath: false }" /> -->
+        <!-- </el-form-item> -->
         <el-form-item prop="action_id">
             <my-select v-model="queryCommon.data.action_id" :placeholder="t('auth.role.name.action_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/my/action/list' }" />
         </el-form-item>
