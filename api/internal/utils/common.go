@@ -98,9 +98,7 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 	return
 }
 
-var getFileClient = g.Client()
-
-// 获取文件内容
+// 获取文件内容（通用）
 func GetFileBytes(ctx context.Context, fileUrl string, serverOpt ...string) (fileBytes []byte, err error) {
 	hostIp := g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String()
 	if IsDev(ctx) {
@@ -109,19 +107,10 @@ func GetFileBytes(ctx context.Context, fileUrl string, serverOpt ...string) (fil
 	if hostIp != `` && gstr.Pos(fileUrl, hostIp) != -1 {
 		return GetFileBytesByLocal(ctx, fileUrl, serverOpt...)
 	}
-
-	// 远程文件下载
-	res, err := getFileClient.Get(ctx, fileUrl)
-	if err != nil {
-		return
-	}
-	defer res.Close()
-
-	fileBytes = res.ReadAll()
-	return
+	return GetFileBytesByRemote(ctx, fileUrl)
 }
 
-// 获取文件内容（确定文件在当前服务器时使用）
+// 获取文件内容（本地文件）
 func GetFileBytesByLocal(ctx context.Context, fileUrl string, serverOpt ...string) (fileBytes []byte, err error) {
 	serverRoot := `server`
 	if len(serverOpt) > 0 && serverOpt[0] != `` {
@@ -132,6 +121,20 @@ func GetFileBytesByLocal(ctx context.Context, fileUrl string, serverOpt ...strin
 	urlObj, err := url.Parse(fileUrl)
 	file := g.Cfg().MustGet(ctx, serverRoot).String() + urlObj.Path
 	fileBytes = gfile.GetBytes(file)
+	return
+}
+
+var getFileClient = g.Client()
+
+// 获取文件内容（远程文件）
+func GetFileBytesByRemote(ctx context.Context, fileUrl string) (fileBytes []byte, err error) {
+	res, err := getFileClient.Get(ctx, fileUrl)
+	if err != nil {
+		return
+	}
+	defer res.Close()
+
+	fileBytes = res.ReadAll()
 	return
 }
 
