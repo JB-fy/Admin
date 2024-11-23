@@ -98,17 +98,40 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 	return
 }
 
-// 获取上传文件的内容（必须先上传到当前服务器）
-func GetUploadFileContent(ctx context.Context, fileUrl string, serverOpt ...string) (content string) {
+var getFileClient = g.Client()
+
+// 获取文件内容
+func GetFileBytes(ctx context.Context, fileUrl string, serverOpt ...string) (fileBytes []byte, err error) {
+	hostIp := g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String()
+	if IsDev(ctx) {
+		hostIp = g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String()
+	}
+	if hostIp != `` && gstr.Pos(fileUrl, hostIp) != -1 {
+		return GetUploadFileBytes(ctx, fileUrl, serverOpt...)
+	}
+
+	// 远程文件下载
+	res, err := getFileClient.Get(ctx, fileUrl)
+	if err != nil {
+		return
+	}
+	defer res.Close()
+
+	fileBytes = res.ReadAll()
+	return
+}
+
+// 获取文件内容（确定文件在当前服务器时使用）
+func GetUploadFileBytes(ctx context.Context, fileUrl string, serverOpt ...string) (fileBytes []byte, err error) {
 	serverRoot := `server`
 	if len(serverOpt) > 0 && serverOpt[0] != `` {
 		serverRoot = serverOpt[0]
 	}
 	serverRoot += `.serverRoot`
 
-	urlObj, _ := url.Parse(fileUrl)
+	urlObj, err := url.Parse(fileUrl)
 	file := g.Cfg().MustGet(ctx, serverRoot).String() + urlObj.Path
-	content = gfile.GetContents(file)
+	fileBytes = gfile.GetBytes(file)
 	return
 }
 
