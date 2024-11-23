@@ -105,7 +105,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, val[`scene_id`])
 					continue
 				}
-				roleIdArr, _ := Role.CtxDaoModel(m.GetCtx()).Fields(Role.Columns().RoleId).Filter(`self_role`, val).Array()
+				roleIdArr, _ := Role.CtxDaoModel(m.GetCtx()).Filter(`self_role`, val).Fields(Role.Columns().RoleId).Array()
 				if len(roleIdArr) == 0 {
 					m = m.Where(`1 = 0`)
 					continue
