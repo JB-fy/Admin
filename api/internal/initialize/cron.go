@@ -22,7 +22,7 @@ func initCron(ctx context.Context) {
 	daoUpload.Upload.CacheSet(ctx)
 	gcron.AddSingleton(ctx, `40 */30 * * * *`, daoUpload.Upload.CacheSet, `UploadCacheSet`) //每30分钟刷新一次
 	myCronThis.PayCacheSet(ctx)
-	gcron.AddSingleton(ctx, `30 */15 * * * *`, myCronThis.PayCacheSet, `PayPayCacheSet`) //每15分钟刷新一次
+	gcron.AddSingleton(ctx, `30 */15 * * * *`, myCronThis.PayCacheSet, `PayCacheSet`) //每15分钟刷新一次
 	/*--------数据库中某些配置表极少修改，统一缓存在本机内存中，能极大增加服务器性能，减少数据库压力（注意：服务启动时，就必须先运行一次，缓存到内存中） 结束--------*/
 
 	// 部分定时任务不允许全部服务器都开启，只有指定IP的服务器才能开启。比如任务存在数据库先读后改的逻辑时，多服务器同时开启任务，会存在重复处理的问题
