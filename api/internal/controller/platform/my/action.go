@@ -19,7 +19,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 
-	field := []string{`id`, `label`, daoAuth.Action.Columns().ActionCode}
+	field := []string{`id`, `label`}
 	filter := map[string]any{
 		`self_action`: map[string]any{
 			`scene_id`: sceneInfo[daoAuth.Scene.Columns().SceneId],

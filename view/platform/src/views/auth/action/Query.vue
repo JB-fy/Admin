@@ -25,13 +25,10 @@ const queryForm = reactive({
 <template>
     <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
         <el-form-item prop="id">
-            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :precision="0" :controls="false" />
+            <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="action_name">
             <el-input v-model="queryCommon.data.action_name" :placeholder="t('auth.action.name.action_name')" maxlength="30" :clearable="true" />
-        </el-form-item>
-        <el-form-item prop="action_code">
-            <el-input v-model="queryCommon.data.action_code" :placeholder="t('auth.action.name.action_code')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="scene_id">
             <my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.action.name.scene_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />

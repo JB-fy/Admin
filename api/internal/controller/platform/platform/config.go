@@ -23,28 +23,28 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `platformConfigRead`)
 	if !isAuth {
-		actionCodeSet := gset.NewStrSet()
+		actionIdSet := gset.NewStrSet()
 		for _, configKey := range *req.ConfigKeyArr {
 			switch configKey {
 			case `hotSearch`, `userAgreement`, `privacyAgreement`:
-				actionCodeSet.Add(`platformConfigCommonRead`)
+				actionIdSet.Add(`platformConfigCommonRead`)
 			case `smsType`, `smsOfAliyun`:
-				actionCodeSet.Add(`platformConfigSmsRead`)
+				actionIdSet.Add(`platformConfigSmsRead`)
 			case `emailCode`, `emailType`, `emailOfCommon`:
-				actionCodeSet.Add(`platformConfigEmailRead`)
+				actionIdSet.Add(`platformConfigEmailRead`)
 			case `idCardType`, `idCardOfAliyun`:
-				actionCodeSet.Add(`platformConfigIdCardRead`)
+				actionIdSet.Add(`platformConfigIdCardRead`)
 			case `oneClickOfWx`, `oneClickOfYidun`:
-				actionCodeSet.Add(`platformConfigOneClickRead`)
+				actionIdSet.Add(`platformConfigOneClickRead`)
 			case `pushType`, `pushOfTx`:
-				actionCodeSet.Add(`platformConfigPushRead`)
+				actionIdSet.Add(`platformConfigPushRead`)
 			case `vodType`, `vodOfAliyun`:
-				actionCodeSet.Add(`platformConfigVodRead`)
+				actionIdSet.Add(`platformConfigVodRead`)
 			case `wxGzh`:
-				actionCodeSet.Add(`platformConfigWxRead`)
+				actionIdSet.Add(`platformConfigWxRead`)
 			}
 		}
-		_, err = service.AuthAction().CheckAuth(ctx, actionCodeSet.Slice()...)
+		_, err = service.AuthAction().CheckAuth(ctx, actionIdSet.Slice()...)
 		if err != nil {
 			return
 		}
@@ -74,28 +74,28 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `platformConfigSave`)
 	if !isAuth {
-		actionCodeSet := gset.NewStrSet()
+		actionIdSet := gset.NewStrSet()
 		for configKey := range config {
 			switch configKey {
 			case `hotSearch`, `userAgreement`, `privacyAgreement`:
-				actionCodeSet.Add(`platformConfigCommonSave`)
+				actionIdSet.Add(`platformConfigCommonSave`)
 			case `smsType`, `smsOfAliyun`:
-				actionCodeSet.Add(`platformConfigSmsSave`)
+				actionIdSet.Add(`platformConfigSmsSave`)
 			case `emailCode`, `emailType`, `emailOfCommon`:
-				actionCodeSet.Add(`platformConfigEmailSave`)
+				actionIdSet.Add(`platformConfigEmailSave`)
 			case `idCardType`, `idCardOfAliyun`:
-				actionCodeSet.Add(`platformConfigIdCardSave`)
+				actionIdSet.Add(`platformConfigIdCardSave`)
 			case `oneClickOfWx`, `oneClickOfYidun`:
-				actionCodeSet.Add(`platformConfigOneClickSave`)
+				actionIdSet.Add(`platformConfigOneClickSave`)
 			case `pushType`, `pushOfTx`:
-				actionCodeSet.Add(`platformConfigPushSave`)
+				actionIdSet.Add(`platformConfigPushSave`)
 			case `vodType`, `vodOfAliyun`:
-				actionCodeSet.Add(`platformConfigVodSave`)
+				actionIdSet.Add(`platformConfigVodSave`)
 			case `wxGzh`:
-				actionCodeSet.Add(`platformConfigWxSave`)
+				actionIdSet.Add(`platformConfigWxSave`)
 			}
 		}
-		_, err = service.AuthAction().CheckAuth(ctx, actionCodeSet.Slice()...)
+		_, err = service.AuthAction().CheckAuth(ctx, actionIdSet.Slice()...)
 		if err != nil {
 			return
 		}

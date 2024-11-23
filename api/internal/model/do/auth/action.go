@@ -17,6 +17,5 @@ type Action struct {
 	IsStop     interface{} // 停用：0否 1是
 	ActionId   interface{} // 操作ID
 	ActionName interface{} // 名称
-	ActionCode interface{} // 标识
 	Remark     interface{} // 备注
 }

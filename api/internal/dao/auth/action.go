@@ -221,6 +221,8 @@ func (daoThis *actionDao) ParseInsert(insert map[string]any, daoModel *daoIndex.
 		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
+			case `id`:
+				insertData[daoThis.Columns().ActionId] = v
 			case `scene_id_arr`:
 				daoModel.AfterInsert[k] = v
 			default:
@@ -271,6 +273,8 @@ func (daoThis *actionDao) ParseUpdate(update map[string]any, daoModel *daoIndex.
 		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
+			case `id`:
+				updateData[daoThis.Columns().ActionId] = v
 			case `scene_id_arr`:
 				daoModel.AfterUpdate[k] = v
 			default:

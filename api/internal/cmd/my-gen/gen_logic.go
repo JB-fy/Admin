@@ -269,15 +269,15 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 				}
 				logic.i18n.Add(i18nField)
 				daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
-				sliceStr := `SliceUint`
+				sliceFuncStr := `Uints`
 				if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(v.FieldType) {
-					sliceStr = `SliceStr`
+					sliceFuncStr = `Strings`
 				} else if v.FieldType == internal.TypeInt && !relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
-					sliceStr = `SliceInt`
+					sliceFuncStr = `Ints`
 				}
-				sliceStr = `gconv.` + sliceStr + `(data[` + "`" + tplEM.FieldVar + "`" + `])`
-				logic.verifyData = append(logic.verifyData, `if _, ok := data[`+"`"+tplEM.FieldVar+"`"+`]; ok && len(`+sliceStr+`) > 0 {
-		`+gstr.CaseCamelLower(tplEM.FieldVar)+` := `+sliceStr+`
+				sliceFuncStr = `gconv.` + sliceFuncStr + `(data[` + "`" + tplEM.FieldVar + "`" + `])`
+				logic.verifyData = append(logic.verifyData, `if _, ok := data[`+"`"+tplEM.FieldVar+"`"+`]; ok && len(`+sliceFuncStr+`) > 0 {
+		`+gstr.CaseCamelLower(tplEM.FieldVar)+` := `+sliceFuncStr+`
 		if count, _ := `+daoPathRel+`.CtxDaoModel(ctx).FilterPri(`+gstr.CaseCamelLower(tplEM.FieldVar)+`).Count(); count != len(`+gstr.CaseCamelLower(tplEM.FieldVar)+`) {
 			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
 			return

@@ -7,11 +7,10 @@ import (
 
 // 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
 type ActionInfo struct {
-	Id         *uint       `json:"id,omitempty" dc:"ID"`
+	Id         *string     `json:"id,omitempty" dc:"ID"`
 	Label      *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	ActionId   *uint       `json:"action_id,omitempty" dc:"操作ID"`
+	ActionId   *string     `json:"action_id,omitempty" dc:"操作ID"`
 	ActionName *string     `json:"action_name,omitempty" dc:"名称"`
-	ActionCode *string     `json:"action_code,omitempty" dc:"标识"`
 	Remark     *string     `json:"remark,omitempty" dc:"备注"`
 	SceneIdArr []string    `json:"scene_id_arr,omitempty" dc:"场景ID"`
 	IsStop     *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
@@ -20,16 +19,15 @@ type ActionInfo struct {
 }
 
 type ActionFilter struct {
-	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
-	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
-	ExcIdArr       []uint      `json:"exc_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"排除ID数组"`
+	Id             string      `json:"id,omitempty" v:"max-length:30" dc:"ID"`
+	IdArr          []string    `json:"id_arr,omitempty" v:"distinct|foreach|length:1,30" dc:"ID数组"`
+	ExcId          string      `json:"exc_id,omitempty" v:"max-length:30" dc:"排除ID"`
+	ExcIdArr       []string    `json:"exc_id_arr,omitempty" v:"distinct|foreach|length:1,30" dc:"排除ID数组"`
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	ActionId       *uint       `json:"action_id,omitempty" v:"between:1,4294967295" dc:"操作ID"`
+	ActionId       string      `json:"action_id,omitempty" v:"max-length:30" dc:"操作ID"`
 	ActionName     string      `json:"action_name,omitempty" v:"max-length:30" dc:"名称"`
-	ActionCode     string      `json:"action_code,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	SceneId        string      `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
@@ -55,7 +53,7 @@ type ActionListRes struct {
 type ActionInfoReq struct {
 	g.Meta `path:"/action/info" method:"post" tags:"平台后台/权限管理/操作" sm:"详情"`
 	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Id     uint     `json:"id" v:"required|between:1,4294967295" dc:"ID"`
+	Id     string   `json:"id" v:"required|max-length:30" dc:"ID"`
 }
 
 type ActionInfoRes struct {
@@ -67,8 +65,8 @@ type ActionInfoRes struct {
 /*--------新增 开始--------*/
 type ActionCreateReq struct {
 	g.Meta     `path:"/action/create" method:"post" tags:"平台后台/权限管理/操作" sm:"新增"`
+	ActionId   *string   `json:"action_id,omitempty" v:"required|max-length:30" dc:"操作ID"`
 	ActionName *string   `json:"action_name,omitempty" v:"required|max-length:30" dc:"名称"`
-	ActionCode *string   `json:"action_code,omitempty" v:"required|max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string   `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	SceneIdArr *[]string `json:"scene_id_arr,omitempty" v:"required|distinct|foreach|max-length:15" dc:"场景ID"`
 	IsStop     *uint     `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -79,10 +77,9 @@ type ActionCreateReq struct {
 /*--------修改 开始--------*/
 type ActionUpdateReq struct {
 	g.Meta     `path:"/action/update" method:"post" tags:"平台后台/权限管理/操作" sm:"修改"`
-	Id         uint      `json:"-" filter:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr      []uint    `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	Id         string    `json:"-" filter:"id,omitempty" v:"required-without:IdArr|length:1,30" dc:"ID"`
+	IdArr      []string  `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,30" dc:"ID数组"`
 	ActionName *string   `json:"action_name,omitempty" filter:"-" v:"max-length:30" dc:"名称"`
-	ActionCode *string   `json:"action_code,omitempty" filter:"-" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标识"`
 	Remark     *string   `json:"remark,omitempty" filter:"-" v:"max-length:120" dc:"备注"`
 	SceneIdArr *[]string `json:"scene_id_arr,omitempty" filter:"-" v:"distinct|foreach|max-length:15" dc:"场景ID"`
 	IsStop     *uint     `json:"is_stop,omitempty" filter:"-" v:"in:0,1" dc:"停用：0否 1是"`
@@ -93,8 +90,8 @@ type ActionUpdateReq struct {
 /*--------删除 开始--------*/
 type ActionDeleteReq struct {
 	g.Meta `path:"/action/del" method:"post" tags:"平台后台/权限管理/操作" sm:"删除"`
-	Id     uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr  []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	Id     string   `json:"id,omitempty" v:"required-without:IdArr|length:1,30" dc:"ID"`
+	IdArr  []string `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,30" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

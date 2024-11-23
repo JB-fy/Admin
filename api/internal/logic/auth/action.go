@@ -81,7 +81,7 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any)
 }
 
 // 判断操作权限
-func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCodeArr ...string) (isAuth bool, err error) {
+func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionIdArr ...string) (isAuth bool, err error) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	if sceneInfo[daoAuth.Scene.Columns().SceneId].String() == `platform` && loginInfo[daoPlatform.Admin.Columns().IsSuper].Uint() == 1 { //平台超级管理员，无权限限制
@@ -89,20 +89,20 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionCodeArr ...st
 		return
 	}
 
-	if len(actionCodeArr) == 0 {
+	if len(actionIdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 39999996, ``)
 		return
 	}
 
 	filter := map[string]any{
-		daoAuth.Action.Columns().ActionCode: actionCodeArr,
+		daoAuth.Action.Columns().ActionId: actionIdArr,
 		`self_action`: map[string]any{
 			`scene_id`: sceneInfo[daoAuth.Scene.Columns().SceneId],
 			`login_id`: loginInfo[`login_id`],
 		},
 	}
 	count, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Count()
-	if count != len(actionCodeArr) {
+	if count != len(actionIdArr) {
 		err = utils.NewErrorCode(ctx, 39999996, ``)
 		return
 	}

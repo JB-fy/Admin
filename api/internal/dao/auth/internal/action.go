@@ -28,7 +28,6 @@ type ActionColumns struct {
 	IsStop     string // 停用：0否 1是
 	ActionId   string // 操作ID
 	ActionName string // 名称
-	ActionCode string // 标识
 	Remark     string // 备注
 }
 
@@ -39,7 +38,6 @@ var actionColumns = ActionColumns{
 	IsStop:     "is_stop",
 	ActionId:   "action_id",
 	ActionName: "action_name",
-	ActionCode: "action_code",
 	Remark:     "remark",
 }
 

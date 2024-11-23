@@ -180,7 +180,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 		tmpFieldName, _ := gregex.MatchString(`[^\n\r\.。:：\(（]*`, fieldTmp.Comment)
 		fieldTmp.FieldName = gstr.Trim(tmpFieldName[0])
-		fieldTmp.FieldDesc = gstr.Trim(gstr.ReplaceByArray(fieldTmp.Comment, g.SliceStr{
+		fieldTmp.FieldDesc = gstr.Trim(gstr.ReplaceByArray(fieldTmp.Comment, []string{
 			"\n", ` `,
 			"\r", ` `,
 			`"`, `\"`,
@@ -195,7 +195,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		if gstr.Pos(tmpFieldTip, `（`) == 0 {
 			tmpFieldTip = gstr.TrimRightStr(gstr.TrimLeftStr(tmpFieldTip, `（`, 1), `）`, 1)
 		}
-		fieldTmp.FieldTip = gstr.ReplaceByArray(tmpFieldTip, g.SliceStr{
+		fieldTmp.FieldTip = gstr.ReplaceByArray(tmpFieldTip, []string{
 			`\"`, `"`,
 			`}`, `' + "{'}'}" + '`,
 			`{"`, `' + "{'{'}" + '"`,

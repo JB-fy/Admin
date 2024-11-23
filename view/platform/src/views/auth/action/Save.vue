@@ -11,14 +11,13 @@ const saveForm = reactive({
         ...saveCommon.data,
     } as { [propName: string]: any },
     rules: {
+        action_id: [
+            { required: computed((): boolean => !saveForm.data.id), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+        ],
         action_name: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-        ],
-        action_code: [
-            { required: true, message: t('validation.required') },
-            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
-            { type: 'string', trigger: 'blur', pattern: /^[\p{L}\p{N}_-]+$/u, message: t('validation.alpha_dash') },
         ],
         remark: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
         scene_id_arr: [
@@ -71,12 +70,12 @@ const saveDrawer = reactive({
     <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <el-scrollbar>
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
+                <el-form-item v-if="!saveForm.data.id" :label="t('auth.action.name.action_id')" prop="action_id">
+                    <el-input v-model="saveForm.data.action_id" :placeholder="t('auth.action.name.action_id')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
                 <el-form-item :label="t('auth.action.name.action_name')" prop="action_name">
                     <el-input v-model="saveForm.data.action_name" :placeholder="t('auth.action.name.action_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
-                </el-form-item>
-                <el-form-item :label="t('auth.action.name.action_code')" prop="action_code">
-                    <el-input v-model="saveForm.data.action_code" :placeholder="t('auth.action.name.action_code')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('auth.action.name.remark')" prop="remark">
                     <el-input v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />

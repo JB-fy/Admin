@@ -23,14 +23,14 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiOrg.ConfigGetReq)
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `orgConfigRead`)
 	if !isAuth {
-		actionCodeSet := gset.NewStrSet()
+		actionIdSet := gset.NewStrSet()
 		for _, configKey := range *req.ConfigKeyArr {
 			switch configKey {
 			case `hotSearch`:
-				actionCodeSet.Add(`orgConfigCommonRead`)
+				actionIdSet.Add(`orgConfigCommonRead`)
 			}
 		}
-		_, err = service.AuthAction().CheckAuth(ctx, actionCodeSet.Slice()...)
+		_, err = service.AuthAction().CheckAuth(ctx, actionIdSet.Slice()...)
 		if err != nil {
 			return
 		}
@@ -61,14 +61,14 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiOrg.ConfigSaveRe
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `orgConfigSave`)
 	if !isAuth {
-		actionCodeSet := gset.NewStrSet()
+		actionIdSet := gset.NewStrSet()
 		for configKey := range config {
 			switch configKey {
 			case `hotSearch`:
-				actionCodeSet.Add(`orgConfigCommonSave`)
+				actionIdSet.Add(`orgConfigCommonSave`)
 			}
 		}
-		_, err = service.AuthAction().CheckAuth(ctx, actionCodeSet.Slice()...)
+		_, err = service.AuthAction().CheckAuth(ctx, actionIdSet.Slice()...)
 		if err != nil {
 			return
 		}
