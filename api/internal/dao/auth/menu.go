@@ -5,6 +5,7 @@
 package auth
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/auth/internal"
 	"context"
@@ -105,7 +106,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, val[`scene_id`])
 					continue
 				}
-				roleIdArr, _ := Role.CtxDaoModel(m.GetCtx()).Filter(`self_role`, val).Fields(Role.Columns().RoleId).Array()
+				roleIdArr, _ := Role.CtxDaoModel(m.GetCtx()).Filter(`self_role`, val).Array(Role.Columns().RoleId)
 				if len(roleIdArr) == 0 {
 					m = m.Where(`1 = 0`)
 					continue
@@ -521,3 +522,62 @@ func (daoThis *menuDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 }
 
 // Fill with you ideas below.
+
+func (daoThis *menuDao) CacheSet(ctx context.Context) {
+	daoModel := daoThis.CtxDaoModel(ctx)
+	list, _ := daoModel.Fields(daoThis.Columns().MenuId, daoThis.Columns().MenuName, daoThis.Columns().SceneId, daoThis.Columns().IsStop, `id`, `label`, `tree`, `show_menu`).All()
+	listMap := map[string]gdb.Result{}
+	for _, info := range list {
+		sceneId := info[daoThis.Columns().SceneId].String()
+		delete(info, daoThis.Columns().SceneId)
+		if _, ok := listMap[sceneId]; !ok {
+			listMap[sceneId] = gdb.Result{}
+		}
+		listMap[sceneId] = append(listMap[sceneId], info)
+	}
+	for sceneId, list := range listMap {
+		cache.DbDataLocal.Set(ctx, daoModel, `scene_id_`+sceneId, list.Json())
+	}
+}
+
+func (daoThis *menuDao) CacheGetList(ctx context.Context, sceneId string) (list gdb.Result, err error) {
+	list, err = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId)
+	return
+}
+
+func (daoThis *menuDao) CacheGetListOfNoStop(ctx context.Context, sceneId string) (list gdb.Result, err error) {
+	listOfAll, err := daoThis.CacheGetList(ctx, sceneId)
+	if err != nil {
+		return
+	}
+	for _, info := range listOfAll {
+		if info[daoThis.Columns().IsStop].Uint() == 0 {
+			list = append(list, info)
+		}
+	}
+	return
+}
+
+func (daoThis *menuDao) CacheGetListOfSelf(ctx context.Context, sceneId string, loginId *gvar.Var) (list gdb.Result, err error) {
+	listTmp, err := daoThis.CacheGetListOfNoStop(ctx, sceneId)
+	if err != nil {
+		return
+	}
+	roleIdArr, err := Role.GetRoleIdArrOfSelf(ctx, sceneId, loginId)
+	if err != nil || len(roleIdArr) == 0 {
+		return
+	}
+	menuIdArr, err := Role.CacheGetMenuIdArr(ctx, gconv.Strings(roleIdArr)...)
+	if err != nil || len(menuIdArr) == 0 {
+		return
+	}
+	for _, menuId := range menuIdArr {
+		for _, info := range listTmp {
+			if menuId == info[daoThis.Columns().MenuId].Uint() {
+				list = append(list, info)
+				break
+			}
+		}
+	}
+	return
+}

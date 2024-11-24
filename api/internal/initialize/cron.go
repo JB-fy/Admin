@@ -19,8 +19,15 @@ func initCron(ctx context.Context) {
 	/*--------数据库中某些配置表极少修改，统一缓存在本机内存中，能极大增加服务器性能，减少数据库压力（注意：服务启动时，就必须先运行一次，缓存到内存中） 开始--------*/
 	daoAuth.Scene.CacheSet(ctx)
 	gcron.AddSingleton(ctx, `50 0 3 * * *`, daoAuth.Scene.CacheSet, `AuthSceneCacheSet`) //每天晚上3点刷新一次
+	// 表数据很小，无需这样做，且会导致数据修改无法立即生效。确实需要减轻数据库压力时可以使用
+	// daoAuth.Menu.CacheSet(ctx)
+	// gcron.AddSingleton(ctx, `50 */15 * * * *`, daoAuth.Menu.CacheSet, `AuthMenuCacheSet`) //每15分钟刷新一次
+	// daoAuth.Action.CacheSet(ctx)
+	// gcron.AddSingleton(ctx, `50 */15 * * * *`, daoAuth.Action.CacheSet, `AuthActionCacheSet`) //每15分钟刷新一次
+
 	daoUpload.Upload.CacheSet(ctx)
 	gcron.AddSingleton(ctx, `40 */30 * * * *`, daoUpload.Upload.CacheSet, `UploadCacheSet`) //每30分钟刷新一次
+
 	myCronThis.PayCacheSet(ctx)
 	gcron.AddSingleton(ctx, `30 */15 * * * *`, myCronThis.PayCacheSet, `PayCacheSet`) //每15分钟刷新一次
 	/*--------数据库中某些配置表极少修改，统一缓存在本机内存中，能极大增加服务器性能，减少数据库压力（注意：服务启动时，就必须先运行一次，缓存到内存中） 结束--------*/

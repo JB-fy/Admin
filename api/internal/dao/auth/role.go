@@ -17,6 +17,7 @@ import (
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -527,5 +528,10 @@ func (daoThis *roleDao) CacheGetMenuIdArr(ctx context.Context, idArr ...string) 
 		}
 	}
 	menuIdArr = gconv.Uints(menuIdArrG.Unique())
+	return
+}
+
+func (daoThis *roleDao) GetRoleIdArrOfSelf(ctx context.Context, sceneId string, loginId *gvar.Var) (roleIdArr []uint, err error) {
+	roleIdArr, err = daoThis.CtxDaoModel(ctx).Filter(`self_role`, g.Map{`scene_id`: sceneId, `login_id`: loginId}).ArrayUint(daoThis.Columns().RoleId)
 	return
 }
