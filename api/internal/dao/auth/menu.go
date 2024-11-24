@@ -110,13 +110,15 @@ func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 					m = m.Where(`1 = 0`)
 					continue
 				}
-				// 方式1：非联表查询
-				menuIdArr, _ := RoleRelToMenu.CtxDaoModel(m.GetCtx()).Filter(RoleRelToMenu.Columns().RoleId, roleIdArr).Distinct().Array(RoleRelToMenu.Columns().MenuId)
-				/* // 方式2：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
+				/* // 方式1：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
 				tableRoleRelToMenu := RoleRelToMenu.ParseDbTable(m.GetCtx())
 				m = m.Where(tableRoleRelToMenu+`.`+RoleRelToMenu.Columns().RoleId, roleIdArr)
 				m = m.Handler(daoThis.ParseJoin(tableRoleRelToMenu, daoModel))
-				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().MenuId) */
+				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
+				// 方式2：非联表查询
+				menuIdArr, _ := RoleRelToMenu.CtxDaoModel(m.GetCtx()).Filter(RoleRelToMenu.Columns().RoleId, roleIdArr).Distinct().Array(RoleRelToMenu.Columns().MenuId) */
+				// 方式3：缓存读取（推荐）
+				menuIdArr, _ := Role.CacheGetMenuIdArr(m.GetCtx(), gconv.Strings(roleIdArr)...)
 				if len(menuIdArr) == 0 {
 					m = m.Where(`1 = 0`)
 					continue

@@ -1075,7 +1075,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			record[v] = gvar.New(gjson.MustEncodeString(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)) //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					insertList := []map[string]any{}
-					for _, item := range gconv.SliceMap(v) {
+					for _, item := range gconv.Maps(v) {
 						insertItem := gjson.New(gjson.MustEncodeString(item)).Map()
 						insertItem[`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`] = id
 						insertList = append(insertList, insertItem)
@@ -1084,12 +1084,12 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 		switch tplEM.TableType {
 		case internal.TableTypeExtendMany:
 			dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+tplEM.FieldVar+"`"+`:
-					valList := gconv.SliceMap(v)
+					valList := gconv.Maps(v)
 					daoIndex.SaveListRelManyWithSort(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, gconv.SliceAny(daoModel.IdArr), valList)`)
 		case internal.TableTypeMiddleMany:
 			dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+tplEM.FieldVar+"`"+`:
-					// daoIndex.SaveListRelManyWithSort(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, gconv.SliceAny(daoModel.IdArr), gconv.SliceMap(v)) // 有顺序要求时使用，同时注释下面代码
-					valList := gconv.SliceMap(v)
+					// daoIndex.SaveListRelManyWithSort(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, gconv.SliceAny(daoModel.IdArr), gconv.Maps(v)) // 有顺序要求时使用，同时注释下面代码
+					valList := gconv.Maps(v)
 					for _, id := range daoModel.IdArr {
 						daoIndex.SaveListRelMany(ctx, &`+tplEM.daoPath+`, `+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, []string{`+gstr.Join(tplEM.FieldColumnArrOfIdSuffix, `, `)+`}, id, valList )
 					}`)

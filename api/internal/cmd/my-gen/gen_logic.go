@@ -85,7 +85,7 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 		}`
 		}
 		logic.update = append(logic.update, `if _, ok := data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; ok && gconv.Uint(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]) > 0 {
-		if garray.NewArrayFrom(gconv.SliceAny(gconv.SliceUint(daoModelThis.IdArr))).Contains(gconv.Uint(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`])) {
+		if garray.NewArrayFrom(gconv.SliceAny(gconv.Uints(daoModelThis.IdArr))).Contains(gconv.Uint(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`])) {
 			err = utils.NewErrorCode(ctx, 29999996, `+"``"+`)
 			return
 		}
@@ -328,9 +328,9 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 		}
 
 		if len(verifyDataArr.part1) > 0 {
-			logic.verifyData = append(logic.verifyData, `if _, ok := data[`+"`"+tplEM.FieldVar+"`"+`]; ok && len(gconv.SliceMap(data[`+"`"+tplEM.FieldVar+"`"+`])) > 0 {`+gstr.Join(append([]string{``}, verifyDataArr.part1...), `
+			logic.verifyData = append(logic.verifyData, `if _, ok := data[`+"`"+tplEM.FieldVar+"`"+`]; ok && len(gconv.Maps(data[`+"`"+tplEM.FieldVar+"`"+`])) > 0 {`+gstr.Join(append([]string{``}, verifyDataArr.part1...), `
 		`)+`
-		for _, item := range gconv.SliceMap(data[`+"`"+tplEM.FieldVar+"`"+`]) {`+gstr.Join(append([]string{``}, verifyDataArr.part2...), `
+		for _, item := range gconv.Maps(data[`+"`"+tplEM.FieldVar+"`"+`]) {`+gstr.Join(append([]string{``}, verifyDataArr.part2...), `
 			`)+`
 		}`+gstr.Join(append([]string{``}, verifyDataArr.part3...), `
 		`)+`

@@ -232,7 +232,7 @@ func (daoThis *orderDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				switch k {
 				case `order_rel_list`:
 					insertList := []map[string]any{}
-					for _, item := range gconv.SliceMap(v) {
+					for _, item := range gconv.Maps(v) {
 						insertItem := gjson.New(gjson.MustEncodeString(item)).Map()
 						insertItem[OrderRel.Columns().OrderId] = id
 						insertList = append(insertList, insertItem)
@@ -287,7 +287,7 @@ func (daoThis *orderDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			for k, v := range daoModel.AfterUpdate {
 				switch k {
 				case `order_rel_list`:
-					valList := gconv.SliceMap(v)
+					valList := gconv.Maps(v)
 					daoIndex.SaveListRelManyWithSort(ctx, &OrderRel, OrderRel.Columns().OrderId, gconv.SliceAny(daoModel.IdArr), valList)
 				}
 			}

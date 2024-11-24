@@ -395,7 +395,7 @@ func (daoThis *sceneDao) CacheSet(ctx context.Context) {
 func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id string) (info gdb.Record, err error) {
 	/* // 数据库中作为配置表的数据，可根据自身需要使用以下方式读取数据
 	info, err = daoThis.CtxDaoModel(ctx).Fields(daoThis.Columns().SceneId, daoThis.Columns().SceneName, daoThis.Columns().SceneConfig, daoThis.Columns().IsStop).FilterPri(id).One() //不推荐：数据库实时读取
-	//推荐-数据修改需要立即同步缓存的表：缓存在redis，数据修改可做到立即同步缓存，只需数据修改时删除缓存即可。如在dao层的HookUpdate和HookDelete方法中补充缓存删除代码：cache.DbData.Del(ctx, &daoThis, gconv.Strings(daoModel.IdArr)...)
+	//推荐-数据修改需要立即同步缓存的表：缓存在redis，数据修改可做到立即同步缓存，只需数据修改时删除缓存即可。如在dao层的HookUpdate和HookDelete方法中补充缓存删除代码：cache.DbData.Del(ctx, daoThis, gconv.Strings(daoModel.IdArr)...)
 	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, 6*30*24*60*60, daoThis.Columns().SceneId, daoThis.Columns().SceneName, daoThis.Columns().SceneConfig, daoThis.Columns().IsStop)
 	if err != nil {
 		return

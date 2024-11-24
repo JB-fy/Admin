@@ -30,8 +30,8 @@ func (logicThis *sOrgAdmin) verifyData(ctx context.Context, data map[string]any)
 		}
 	}
 
-	if _, ok := data[`role_id_arr`]; ok && len(gconv.SliceUint(data[`role_id_arr`])) > 0 {
-		roleIdArr := gconv.SliceUint(data[`role_id_arr`])
+	if _, ok := data[`role_id_arr`]; ok && len(gconv.Uints(data[`role_id_arr`])) > 0 {
+		roleIdArr := gconv.Uints(data[`role_id_arr`])
 		if count, _ := daoAuth.Role.CtxDaoModel(ctx).FilterPri(roleIdArr).Filter(daoAuth.Role.Columns().SceneId, `org`).Count(); count != len(roleIdArr) {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.role`)}})
 			return

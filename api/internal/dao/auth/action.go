@@ -12,6 +12,7 @@ import (
 	"database/sql/driver"
 	"sync"
 
+	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -96,7 +97,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]any{`scene_id`: `场景ID`, `login_id`: 登录身份id, `is_super`: 是否超管（平台超级管理员用）}
+			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]any{`scene_id`: `场景ID`, `login_id`: 登录身份id, `is_super`: 是否超管（平台超级管理员用）, `check_action_id_arr`: []string{判断操作权限时传入}}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
 				if gconv.String(val[`scene_id`]) == `platform` && gconv.Uint(val[`is_super`]) == 1 { //平台超级管理员
@@ -110,18 +111,29 @@ func (daoThis *actionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 					m = m.Where(`1 = 0`)
 					continue
 				}
-				// 方式1：非联表查询
-				actionIdArr, _ := RoleRelToAction.CtxDaoModel(m.GetCtx()).Filter(RoleRelToAction.Columns().RoleId, roleIdArr).Distinct().Array(RoleRelToAction.Columns().ActionId)
+				/* // 方式1：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
+				tableRoleRelToAction := RoleRelToAction.ParseDbTable(m.GetCtx())
+				m = m.Where(tableRoleRelToAction+`.`+RoleRelToAction.Columns().RoleId, roleIdArr)
+				m = m.Handler(daoThis.ParseJoin(tableRoleRelToAction, daoModel))
+				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ActionId)
+				// 方式2：非联表查询
+				actionIdArr, _ := RoleRelToAction.CtxDaoModel(m.GetCtx()).Filter(RoleRelToAction.Columns().RoleId, roleIdArr).Distinct().Array(RoleRelToAction.Columns().ActionId) */
+				// 方式3：缓存读取（推荐）
+				actionIdArr, _ := Role.CacheGetActionIdArr(m.GetCtx(), gconv.Strings(roleIdArr)...)
 				if len(actionIdArr) == 0 {
 					m = m.Where(`1 = 0`)
 					continue
 				}
+				if _, ok := val[`check_action_id_arr`]; ok {
+					checkActionIdArr := gconv.Strings(val[`check_action_id_arr`])
+					actionIdArr = gset.NewStrSetFrom(actionIdArr).Intersect(gset.NewStrSetFrom(checkActionIdArr)).Slice() //交集
+					// 因为是判断操作权限，所以actionIdArr和checkActionIdArr一致
+					if actionIdArrLen := len(actionIdArr); actionIdArrLen == 0 || actionIdArrLen != len(checkActionIdArr) {
+						m = m.Where(`1 = 0`)
+						continue
+					}
+				}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().ActionId, actionIdArr)
-				/* // 方式2：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
-				tableRoleRelToAction := RoleRelToAction.ParseDbTable(m.GetCtx())
-				m = m.Where(tableRoleRelToAction+`.`+RoleRelToAction.Columns().RoleId, roleIdArr)
-				m = m.Handler(daoThis.ParseJoin(tableRoleRelToAction, daoModel))
-				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ActionId) */
 			default:
 				if daoThis.ColumnArr().Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)

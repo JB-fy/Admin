@@ -5,6 +5,7 @@
 package auth
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/auth/internal"
 	daoOrg "api/internal/dao/org/allow"
@@ -13,6 +14,7 @@ import (
 	"database/sql/driver"
 	"sync"
 
+	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -366,6 +368,8 @@ func (daoThis *roleDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				}
 			}
 
+			daoThis.CacheDeleteInfo(ctx, gconv.Strings(daoModel.IdArr)...)
+
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
@@ -397,6 +401,8 @@ func (daoThis *roleDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 			if row == 0 {
 				return
 			}
+
+			daoThis.CacheDeleteInfo(ctx, gconv.Strings(daoModel.IdArr)...)
 
 			RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, daoModel.IdArr).Delete()
 			RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, daoModel.IdArr).Delete()
@@ -478,3 +484,48 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 }
 
 // Fill with you ideas below.
+
+func (daoThis *roleDao) CacheGetInfo(ctx context.Context, id string) (info gdb.Record, err error) {
+	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, gconv.String(id), 6*30*24*60*60, daoThis.Columns().RoleId, daoThis.Columns().RoleName, daoThis.Columns().SceneId, daoThis.Columns().RelId, daoThis.Columns().IsStop, `action_id_arr`, `menu_id_arr`)
+	if err != nil {
+		return
+	}
+	value.Scan(&info)
+	return
+}
+
+func (daoThis *roleDao) CacheDeleteInfo(ctx context.Context, idArr ...string) (row int64, err error) {
+	row, err = cache.DbData.Del(ctx, daoThis, idArr...)
+	return
+}
+
+func (daoThis *roleDao) CacheGetActionIdArr(ctx context.Context, idArr ...string) (actionIdArr []string, err error) {
+	for _, id := range idArr {
+		var info gdb.Record
+		info, err = daoThis.CacheGetInfo(ctx, id)
+		if err != nil {
+			return
+		}
+		if !info.IsEmpty() {
+			actionIdArr = append(actionIdArr, info[`action_id_arr`].Strings()...)
+		}
+	}
+	actionIdArr = garray.NewStrArrayFrom(actionIdArr).Unique().Slice()
+	return
+}
+
+func (daoThis *roleDao) CacheGetMenuIdArr(ctx context.Context, idArr ...string) (menuIdArr []uint, err error) {
+	menuIdArrG := garray.New()
+	for _, id := range idArr {
+		var info gdb.Record
+		info, err = daoThis.CacheGetInfo(ctx, id)
+		if err != nil {
+			return
+		}
+		if !info.IsEmpty() {
+			menuIdArrG.Append(info[`menu_id_arr`].Interfaces()...)
+		}
+	}
+	menuIdArr = gconv.Uints(menuIdArrG.Unique())
+	return
+}

@@ -657,7 +657,7 @@ func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...any) ([]uint, error) {
 	if err != nil {
 		return nil, err
 	}
-	return gconv.SliceUint(result), nil
+	return gconv.Uints(result), nil
 }
 
 // 封装常用方法
@@ -666,7 +666,7 @@ func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...any) ([]int, error) {
 	if err != nil {
 		return nil, err
 	}
-	return gconv.SliceInt(result), nil
+	return gconv.Ints(result), nil
 }
 
 // 封装常用方法
