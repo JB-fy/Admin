@@ -126,9 +126,8 @@ func (daoThis *actionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				}
 				if _, ok := val[`check_action_id_arr`]; ok {
 					checkActionIdArr := gconv.Strings(val[`check_action_id_arr`])
-					actionIdArr = gset.NewStrSetFrom(actionIdArr).Intersect(gset.NewStrSetFrom(checkActionIdArr)).Slice() //交集
-					// 因为是判断操作权限，所以actionIdArr和checkActionIdArr一致
-					if actionIdArrLen := len(actionIdArr); actionIdArrLen == 0 || actionIdArrLen != len(checkActionIdArr) {
+					actionIdArr = gset.NewStrSetFrom(actionIdArr).Intersect(gset.NewStrSetFrom(checkActionIdArr)).Slice()   //交集
+					if actionIdArrLen := len(actionIdArr); actionIdArrLen == 0 || actionIdArrLen != len(checkActionIdArr) { // 因为是判断操作权限，所以actionIdArr和checkActionIdArr必须一样，否则必定缺少权限
 						m = m.Where(`1 = 0`)
 						continue
 					}
