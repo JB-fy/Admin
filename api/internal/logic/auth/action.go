@@ -94,6 +94,16 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionIdArr ...stri
 		return
 	}
 
+	/* // 表数据很小，无需这样做，且会导致数据修改无法立即生效。确实需要减轻数据库压力时可以使用
+	actionIdArrOfSelf, err := daoAuth.Action.CacheGetActionIdArrOfSelf(ctx, sceneInfo[daoAuth.Scene.Columns().SceneId].String(), loginInfo[`login_id`])
+	if err != nil {
+		return
+	}
+	actionIdArrOfSelf = gset.NewStrSetFrom(actionIdArrOfSelf).Intersect(gset.NewStrSetFrom(actionIdArr)).Slice() //交集
+	if actionIdArrLen := len(actionIdArr); actionIdArrLen == 0 || actionIdArrLen != len(actionIdArrOfSelf) {     // 因为是判断操作权限，所以actionIdArr和actionIdArrOfSelf必须一样，否则必定缺少权限
+		err = utils.NewErrorCode(ctx, 39999996, ``)
+		return
+	} */
 	filter := map[string]any{
 		`self_action`: map[string]any{
 			`scene_id`:            sceneInfo[daoAuth.Scene.Columns().SceneId],

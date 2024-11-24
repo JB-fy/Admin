@@ -496,3 +496,27 @@ func (daoThis *actionDao) CacheGetListOfSelf(ctx context.Context, sceneId string
 	}
 	return
 }
+
+func (daoThis *actionDao) CacheGetActionIdArrOfSelf(ctx context.Context, sceneId string, loginId *gvar.Var) (actionIdArrOfSelf []string, err error) {
+	listTmp, err := daoThis.CacheGetListOfNoStop(ctx, sceneId)
+	if err != nil {
+		return
+	}
+	roleIdArr, err := Role.GetRoleIdArrOfSelf(ctx, sceneId, loginId)
+	if err != nil || len(roleIdArr) == 0 {
+		return
+	}
+	actionIdArr, err := Role.CacheGetActionIdArr(ctx, gconv.Strings(roleIdArr)...)
+	if err != nil || len(actionIdArr) == 0 {
+		return
+	}
+	for _, actionId := range actionIdArr {
+		for _, info := range listTmp {
+			if actionId == info[daoThis.Columns().ActionId].String() {
+				actionIdArrOfSelf = append(actionIdArrOfSelf, actionId)
+				break
+			}
+		}
+	}
+	return
+}
