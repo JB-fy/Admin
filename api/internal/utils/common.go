@@ -140,7 +140,6 @@ func GetFileBytesByRemote(ctx context.Context, fileUrl string) (fileBytes []byte
 
 // 列表转树状
 func Tree(list g.List, id uint, priKey string, pidKey string) (tree g.List) {
-	tree = g.List{}
 	for k, v := range list {
 		if gconv.Uint(v[pidKey]) == id {
 			v[`children`] = Tree(list[(k+1):], gconv.Uint(v[priKey]), priKey, pidKey)

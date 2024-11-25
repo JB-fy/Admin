@@ -11,15 +11,14 @@ require (
 	github.com/alibabacloud-go/tea v1.1.19
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.4
 	github.com/fatih/color v1.17.0
-	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.7.4
-	github.com/gogf/gf/contrib/drivers/pgsql/v2 v2.7.4
-	github.com/gogf/gf/contrib/nosql/redis/v2 v2.7.4
-	github.com/gogf/gf/v2 v2.7.4
+	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.8.1
+	github.com/gogf/gf/contrib/drivers/pgsql/v2 v2.8.1
+	github.com/gogf/gf/contrib/nosql/redis/v2 v2.8.1
+	github.com/gogf/gf/v2 v2.8.1
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/smartwalle/alipay/v3 v3.2.20
 	github.com/wechatpay-apiv3/wechatpay-go v0.2.18
 	github.com/yidun/yidun-golang-sdk v1.0.6
-	golang.org/x/net v0.29.0
 	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d
 )
 
@@ -65,6 +64,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.30.0 // indirect
 	go.opentelemetry.io/otel/trace v1.30.0 // indirect
 	golang.org/x/mod v0.17.0 // indirect
+	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
 	gopkg.in/ini.v1 v1.56.0 // indirect
