@@ -61,5 +61,5 @@ database:
 redis:
   default:
     address: "0.0.0.0:6379"
-    # db:      0
     # pass:    ""
+    # db:      0
