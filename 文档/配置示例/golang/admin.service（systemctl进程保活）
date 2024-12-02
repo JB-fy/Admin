@@ -1,0 +1,12 @@
+[Unit]
+Description=Admin
+After=network.target
+
+[Service]
+# 工作目录，默认为根目录/。注意：必须设置，否则上传文件目录将是/public，而不是/server/web/admin/public
+WorkingDirectory=/server/web/admin/api
+ExecStart=/server/web/admin/api/main --gf.gcfg.file=config.prod.yaml
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

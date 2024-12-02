@@ -80,6 +80,7 @@ After=network.target
 # User=nginx
 # Group=nginx
 # Type=forking
+# 工作目录，默认为根目录/
 # WorkingDirectory=/server/tool/xxxx
 # PIDFile=/server/tool/xxxx/run/nginx.pid
 ExecStart=/server/tool/xxxx/sbin/nginx
@@ -100,7 +101,7 @@ vi /usr/share/applications/xxxx.desktop
 [Desktop Entry]
 Name=xxxx
 Comment=xxxx
-Exec=/server/tool/xxxx/code  --no-sandbox
+Exec=/server/tool/xxxx/code --no-sandbox
 Icon=/server/tool/xxxx/resources/app/resources/linux/code.png
 Type=Application
 StartupNotify=true
