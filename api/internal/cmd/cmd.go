@@ -63,13 +63,9 @@ var (
 					}
 				})
 				// 无法做到nginx一样的效果：location ~ ^/admin/([^/]*) { try_files $uri /admin/$1/index.html @backend; }
-				// 	如访问/admin/platform/auth/scene时：
-				//		无后台登录Token时：
-				//			当前代码只能跳转前端入口文件，最后调用js跳转：/admin/platform/login?redirect=/
-				//			nginx能正常跳转（能调用前端入口文件）：/admin/platform/login?redirect=/auth/scene
-				//		有后台登录Token时：
-				//			当前代码只能跳转前端入口文件，访问：/admin/platform/
-				//			nginx能正常访问（能调用前端入口文件）：/admin/platform/auth/scene
+				//	需要前后端一起配合才能实现：
+				//		1、后端路由处理时，将/admin/:vueDir/之后的数据都放在redirectOfApi字段返回给前端
+				//		2、前端路由处理时，根据redirectOfApi字段跳转指定页面
 				s.BindHookHandler(`/admin/:vueDir/*vueRouterPath`, ghttp.HookBeforeServe, func(r *ghttp.Request) {
 					if vueRouterPath := r.Get(`vueRouterPath`).String(); vueRouterPath != `` {
 						if r.URL.RawQuery != `` {
