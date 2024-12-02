@@ -80,7 +80,6 @@ After=network.target
 # User=nginx
 # Group=nginx
 # Type=forking
-# 工作目录，默认为根目录/
 # WorkingDirectory=/server/tool/xxxx
 # PIDFile=/server/tool/xxxx/run/nginx.pid
 ExecStart=/server/tool/xxxx/sbin/nginx
