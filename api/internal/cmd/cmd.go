@@ -71,8 +71,11 @@ var (
 				//			当前代码只能跳转前端入口文件，访问：/admin/platform/
 				//			nginx能正常访问（能调用前端入口文件）：/admin/platform/auth/scene
 				s.BindHookHandler(`/admin/:vueDir/*vueRouterPath`, ghttp.HookBeforeServe, func(r *ghttp.Request) {
-					if r.Get(`vueRouterPath`).String() != `` {
-						r.Response.RedirectTo(`/admin/` + r.Get(`vueDir`).String())
+					if vueRouterPath := r.Get(`vueRouterPath`).String(); vueRouterPath != `` {
+						if r.URL.RawQuery != `` {
+							vueRouterPath += `?` + r.URL.RawQuery
+						}
+						r.Response.RedirectTo(`/admin/` + r.Get(`vueDir`).String() + `?redirectOfApi=/` + vueRouterPath)
 					}
 				})
 			}

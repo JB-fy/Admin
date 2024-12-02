@@ -114,6 +114,12 @@ const router = createRouter({
 
 router.beforeEach(async (to: any) => {
     const adminStore = useAdminStore()
+    // 服务器部署直接使用后端Golang处理路由时（不使用nginx代理），会有一个跳转地址字段：redirectOfApi，用于提示前端打开指定页面
+    let redirectOfApi = to.query.redirectOfApi as string
+    if (redirectOfApi) {
+        return redirectOfApi
+    }
+
     /**--------判断登录状态 开始--------**/
     const accessToken = getAccessToken()
     if (!accessToken) {
