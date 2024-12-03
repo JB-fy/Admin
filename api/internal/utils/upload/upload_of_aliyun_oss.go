@@ -12,7 +12,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"hash"
 	"io"
 	"net/http"
 	"net/url"
@@ -215,10 +214,9 @@ func (uploadThis *UploadOfAliyunOss) Notify(ctx context.Context, r *ghttp.Reques
 
 // 生成签名（web前端直传用）
 func (uploadThis *UploadOfAliyunOss) sign(policyBase64 string) (sign string) {
-	h := hmac.New(func() hash.Hash { return sha1.New() }, []byte(uploadThis.AccessKeySecret))
-	io.WriteString(h, policyBase64)
-	signBase64 := base64.StdEncoding.EncodeToString(h.Sum(nil))
-	sign = string(signBase64)
+	h := hmac.New(sha1.New, []byte(uploadThis.AccessKeySecret))
+	h.Write([]byte(policyBase64))
+	sign = base64.StdEncoding.EncodeToString(h.Sum(nil))
 	return
 }
 
