@@ -1,13 +1,11 @@
 package cache
 
 import (
+	"api/internal/cache/internal"
 	"api/internal/consts"
 	"api/internal/dao"
 	"context"
-	"errors"
 	"fmt"
-	"sync"
-	"time"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -27,89 +25,27 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, id string) string {
 	return fmt.Sprintf(consts.CacheDbDataFormat, daoModel.DbGroup, daoModel.DbTable, id)
 }
 
-var (
-	dbDataMuMap sync.Map //存放所有缓存KEY的锁（当前服务器用）
-	// （不同服务器竞争redis锁用）依据以下两个时间设置：运行速度 + 缓存写入到能读取之间的时间
-	dbDataIsSetKeySuffix       = `_isSet`               //redis锁缓存Key后缀。与原来的缓存KEY拼接
-	dbDataIsSetKeyTTL    int64 = 3                      //redis锁缓存Key时间
-	dbDataNumLock              = 3                      //获取锁的重试次数。作用：当获取锁的服务器因报错，无法做缓存写入时，允许其它服务器重新获取锁，以保证缓存写入成功
-	dbDataNumRead              = 5                      //读取缓存的重试次数。作用：当未获取锁的服务器获取缓存时数据为空时，可以重试多次
-	dbDataOneTime              = 200 * time.Millisecond //读取缓存重试间隔时间
-)
-
 func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id string, ttl int64, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
 	daoModel := dao.CtxDaoModel(ctx)
 	redis := cacheThis.cache()
 	key := cacheThis.key(daoModel, id)
-
-	value, noExistOfCache, err := cacheThis.get(ctx, key)
-	if err != nil {
-		return
-	}
-	if !noExistOfCache {
-		return
-	}
-
-	// 防止当前服务器并发
-	dbDataMuTmp, _ := dbDataMuMap.LoadOrStore(key, &sync.Mutex{})
-	dbDataMu := dbDataMuTmp.(*sync.Mutex)
-	dbDataMu.Lock()
-	defer dbDataMu.Unlock()
-
-	// 防止不同服务器并发
-	isSetKey := key + dbDataIsSetKeySuffix
-	var isSet int64 = 0
-	for i := 0; i < dbDataNumLock; i++ {
-		isSet, err = redis.Incr(ctx, isSetKey)
+	valueFunc := func() (value *gvar.Var, noSetCache bool, err error) {
+		info, err := daoModel.FilterPri(id).Fields(field...).One()
 		if err != nil {
 			return
 		}
-		if isSet == 1 {
-			var info gdb.Record
-			info, err = daoModel.FilterPri(id).Fields(field...).One()
-			if err != nil {
-				redis.Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
-				return
-			}
-			if info.IsEmpty() {
-				noExistOfDb = true
-				redis.Del(ctx, isSetKey) //数据库不存在时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
-				return
-			}
-			if len(field) == 1 {
-				value = info[field[0]]
-			} else {
-				value = gvar.New(info.Json())
-			}
-
-			err = cacheThis.set(ctx, key, value, ttl)
-			if err != nil {
-				redis.Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
-				return
-			}
-			redis.Expire(ctx, isSetKey, dbDataIsSetKeyTTL)
+		if info.IsEmpty() {
+			noSetCache = true
 			return
 		}
-
-		// 等待读取数据
-		for i := 0; i < dbDataNumRead; i++ {
-			value, noExistOfCache, err = cacheThis.get(ctx, key)
-			if err != nil {
-				return
-			}
-			if !noExistOfCache {
-				return
-			}
-			time.Sleep(dbDataOneTime)
+		if len(field) == 1 {
+			value = info[field[0]]
+		} else {
+			value = gvar.New(info.Json())
 		}
+		return
 	}
-	/*
-		出现该错误的情况：
-			1：所有服务器执行方法时都报错了。一般不大可能出现这种情况，概率极低
-			2：redis服务负载过高，需要及时做优化了。解决方案：扩容或分库
-	*/
-	err = errors.New(`尝试多次查询缓存失败：` + key)
-	return
+	return internal.GetOrSet.GetOrSet(ctx, redis, key, valueFunc, ttl, 0, 0, 0)
 }
 
 func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface, idArr []string, ttl int64, field ...string) (list gdb.Result, err error) {
@@ -119,7 +55,7 @@ func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface,
 			err = errTmp
 			return
 		}
-		if noExistOfDb { //既然缓存的是数据库数据，就要和数据库一样，无数据时，不返回
+		if noExistOfDb { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
 		var info gdb.Record
@@ -137,7 +73,7 @@ func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, dao dao.DaoInterface
 			err = errTmp
 			return
 		}
-		if noExistOfDb { //既然缓存的是数据库数据，就要和数据库一样，无数据时，不返回
+		if noExistOfDb { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
 		record[id] = value
@@ -152,35 +88,5 @@ func (cacheThis *dbData) Del(ctx context.Context, dao dao.DaoInterface, idArr ..
 		keyArr = append(keyArr, cacheThis.key(daoModel, id))
 	}
 	row, err = cacheThis.cache().Del(ctx, keyArr...)
-	return
-}
-
-func (cacheThis *dbData) set(ctx context.Context, key string, value *gvar.Var, ttl int64) (err error) {
-	if ttl > 0 {
-		err = cacheThis.cache().SetEX(ctx, key, value.String(), ttl)
-	} else {
-		_, err = cacheThis.cache().Set(ctx, key, value.String())
-	}
-	return
-}
-
-func (cacheThis *dbData) get(ctx context.Context, key string) (value *gvar.Var, noExistOfCache bool, err error) {
-	redis := cacheThis.cache()
-	value, err = redis.Get(ctx, key)
-	if err != nil {
-		return
-	}
-	if value.String() != `` {
-		return
-	}
-	//为空时增加判断，数据库数据本身就是空字符串，但已缓存在数据库
-	exists, err := redis.Exists(ctx, key)
-	if err != nil {
-		return
-	}
-	if exists > 0 {
-		return
-	}
-	noExistOfCache = true
 	return
 }
