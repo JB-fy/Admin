@@ -12,12 +12,15 @@ import (
 )
 
 var (
-	GetOrSet               = getOrSet{}
-	getOrSetMuMap          sync.Map   //存放所有缓存KEY的锁（当前服务器用）
-	getOrSetIsSetKeySuffix = `_isSet` //redis锁缓存Key后缀。与原来的缓存KEY拼接
+	GetOrSet      = getOrSet{}
+	getOrSetMuMap sync.Map //存放所有缓存KEY的锁（当前服务器用）
 )
 
 type getOrSet struct{}
+
+func (cacheThis *getOrSet) isSetKey(key string) string {
+	return key + `_isSet`
+}
 
 // 依据以下两个时间设置以下3个参数：valFunc运行速度 + 缓存写入到能读取之间的时间
 // numLock	获取锁的重试次数。作用：当获取锁的服务器因报错，无法做缓存写入时，允许其它服务器重新获取锁，以保证缓存写入成功
@@ -49,7 +52,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, redis *gredis.Redis, ke
 		oneTime = 200 * time.Millisecond
 	}
 	isSetKeyTTL := gconv.Int64(time.Duration(numLock*numRead) * oneTime / time.Second) //redis锁缓存Key时间
-	isSetKey := key + getOrSetIsSetKeySuffix
+	isSetKey := cacheThis.isSetKey(key)
 	var isSet int64 = 0
 	for i := 0; i < numLock; i++ {
 		isSet, err = redis.Incr(ctx, isSetKey)
@@ -89,6 +92,20 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, redis *gredis.Redis, ke
 			2：redis服务负载过高，需要及时做优化了。解决方案：扩容或分库
 	*/
 	err = errors.New(`尝试多次查询缓存失败：` + key)
+	return
+}
+
+// 删除时需同时删除redis竞争锁。建议：调用GetOrSet方法的缓存删除时也使用该方法。在缓存-删除-重设缓存三个步骤连续执行时，在第三步重设缓存会因redis竞争锁未删除报错：尝试多次查询缓存失败
+func (cacheThis *getOrSet) Del(ctx context.Context, redis *gredis.Redis, keyArr ...string) (row int64, err error) {
+	row, err = redis.Del(ctx, keyArr...)
+	if err != nil {
+		return
+	}
+	isSetKeyArr := make([]string, len(keyArr))
+	for index, key := range keyArr {
+		isSetKeyArr[index] = cacheThis.isSetKey(key)
+	}
+	redis.Del(ctx, isSetKeyArr...)
 	return
 }
 

@@ -87,6 +87,6 @@ func (cacheThis *dbData) Del(ctx context.Context, dao dao.DaoInterface, idArr ..
 	for _, id := range idArr {
 		keyArr = append(keyArr, cacheThis.key(daoModel, id))
 	}
-	row, err = cacheThis.cache().Del(ctx, keyArr...)
+	row, err = internal.GetOrSet.Del(ctx, cacheThis.cache(), keyArr...)
 	return
 }
