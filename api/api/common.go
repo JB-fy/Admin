@@ -4,7 +4,7 @@ type CommonNoDataRes struct {
 }
 
 type CommonCreateRes struct {
-	Id int64 `json:"id" dc:"ID"`
+	Id any `json:"id" dc:"ID"`
 }
 
 type CommonSaltRes struct {

@@ -215,7 +215,11 @@ func genDao(tpl myGenTpl) {
 					daoModel.CloneNew().FilterPri(id).HookUpdate(g.Map{k: v}).Update()
 				}
 			} */`
-		tplDao = gstr.Replace(tplDao, insertHookPoint, `id, _ := result.LastInsertId()
+		insertHookReplaceOfId := `id, _ := result.LastInsertId()`
+		if tpl.Handle.Id.IsPrimary && len(tpl.Handle.Id.List) == 1 && !tpl.Handle.Id.List[0].IsAutoInc {
+			insertHookReplaceOfId = `id := daoModel.IdArr[0]`
+		}
+		tplDao = gstr.Replace(tplDao, insertHookPoint, insertHookReplaceOfId+`
 
 			for k, v := range daoModel.AfterInsert {
 				switch k {`+gstr.Join(append([]string{``}, dao.insertHook...), `

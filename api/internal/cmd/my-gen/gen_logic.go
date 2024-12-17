@@ -134,6 +134,11 @@ func (logicThis *s` + tpl.LogicStructName + `) verifyData(ctx context.Context, d
 	}
 	logic.Unique()
 
+	insertOfId := `id, err = daoModelThis.HookInsert(data).InsertAndGetId()`
+	if tpl.Handle.Id.IsPrimary && len(tpl.Handle.Id.List) == 1 && !tpl.Handle.Id.List[0].IsAutoInc {
+		insertOfId = `id = data[` + daoPath + `.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `]
+	_, err = daoModelThis.SetIdArr(id).HookInsert(data).Insert()`
+	}
 	tplLogic := `package ` + tpl.GetModuleName(`logic`) + `
 
 import (
@@ -161,12 +166,12 @@ func init() {
 }` + logic.verifyDataFunc + `
 
 // 新增
-func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data map[string]any) (id int64, err error) {` + logic.verifyDataFuncRun + `
+func (logicThis *s` + tpl.LogicStructName + `) Create(ctx context.Context, data map[string]any) (id any, err error) {` + logic.verifyDataFuncRun + `
 	daoModelThis := ` + daoPath + `.CtxDaoModel(ctx)` + gstr.Join(append([]string{``}, logic.create...), `
 
 	`) + `
 
-	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
+	` + insertOfId + `
 	return
 }
 
