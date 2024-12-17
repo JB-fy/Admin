@@ -20,7 +20,7 @@ func init() {
 }
 
 // 新增
-func (logicThis *sPayScene) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+func (logicThis *sPayScene) Create(ctx context.Context, data map[string]any) (id any, err error) {
 	daoModelThis := daoPay.Scene.CtxDaoModel(ctx)
 
 	id, err = daoModelThis.HookInsert(data).InsertAndGetId()

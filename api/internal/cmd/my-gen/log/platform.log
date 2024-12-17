@@ -1,4 +1,3 @@
-
 ./main myGen -dbGroup=default -dbTable=auth_scene -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/场景 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     关联表:auth_action_rel_to_scene:scene_id:true
     关联表:auth_menu:scene_id:true

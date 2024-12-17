@@ -34,13 +34,14 @@ func (logicThis *sAuthAction) verifyData(ctx context.Context, data map[string]an
 }
 
 // 新增
-func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]any) (id any, err error) {
 	if err = logicThis.verifyData(ctx, data); err != nil {
 		return
 	}
 	daoModelThis := daoAuth.Action.CtxDaoModel(ctx)
 
-	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
+	id = data[daoAuth.Action.Columns().ActionId]
+	_, err = daoModelThis.SetIdArr(id).HookInsert(data).Insert()
 	return
 }
 

@@ -20,10 +20,11 @@ func init() {
 }
 
 // 新增
-func (logicThis *sAuthScene) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+func (logicThis *sAuthScene) Create(ctx context.Context, data map[string]any) (id any, err error) {
 	daoModelThis := daoAuth.Scene.CtxDaoModel(ctx)
 
-	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
+	id = data[daoAuth.Scene.Columns().SceneId]
+	_, err = daoModelThis.SetIdArr(id).HookInsert(data).Insert()
 	return
 }
 

@@ -259,7 +259,7 @@ func (daoThis *actionDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			if err != nil {
 				return
 			}
-			id, _ := result.LastInsertId()
+			id := daoModel.IdArr[0]
 
 			for k, v := range daoModel.AfterInsert {
 				switch k {

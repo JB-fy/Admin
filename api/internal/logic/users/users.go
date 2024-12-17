@@ -18,7 +18,7 @@ func init() {
 }
 
 // 新增
-func (logicThis *sUsers) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+func (logicThis *sUsers) Create(ctx context.Context, data map[string]any) (id any, err error) {
 	daoModelThis := daoUsers.Users.CtxDaoModel(ctx)
 
 	id, err = daoModelThis.HookInsert(data).InsertAndGetId()

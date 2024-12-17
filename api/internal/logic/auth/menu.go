@@ -34,7 +34,7 @@ func (logicThis *sAuthMenu) verifyData(ctx context.Context, data map[string]any)
 }
 
 // 新增
-func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]any) (id any, err error) {
 	if err = logicThis.verifyData(ctx, data); err != nil {
 		return
 	}

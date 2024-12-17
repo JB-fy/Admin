@@ -39,7 +39,7 @@ func (logicThis *sPayChannel) verifyData(ctx context.Context, data map[string]an
 }
 
 // 新增
-func (logicThis *sPayChannel) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+func (logicThis *sPayChannel) Create(ctx context.Context, data map[string]any) (id any, err error) {
 	if err = logicThis.verifyData(ctx, data); err != nil {
 		return
 	}

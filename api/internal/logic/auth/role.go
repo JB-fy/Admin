@@ -49,7 +49,7 @@ func (logicThis *sAuthRole) verifyData(ctx context.Context, data map[string]any)
 }
 
 // 新增
-func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+func (logicThis *sAuthRole) Create(ctx context.Context, data map[string]any) (id any, err error) {
 	if err = logicThis.verifyData(ctx, data); err != nil {
 		return
 	}

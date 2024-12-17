@@ -34,7 +34,7 @@ func (logicThis *sPlatformAdmin) verifyData(ctx context.Context, data map[string
 }
 
 // 新增
-func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]any) (id int64, err error) {
+func (logicThis *sPlatformAdmin) Create(ctx context.Context, data map[string]any) (id any, err error) {
 	if err = logicThis.verifyData(ctx, data); err != nil {
 		return
 	}

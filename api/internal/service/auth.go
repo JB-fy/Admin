@@ -12,7 +12,7 @@ import (
 type (
 	IAuthAction interface {
 		// 新增
-		Create(ctx context.Context, data map[string]any) (id int64, err error)
+		Create(ctx context.Context, data map[string]any) (id any, err error)
 		// 修改
 		Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error)
 		// 删除
@@ -22,7 +22,7 @@ type (
 	}
 	IAuthMenu interface {
 		// 新增
-		Create(ctx context.Context, data map[string]any) (id int64, err error)
+		Create(ctx context.Context, data map[string]any) (id any, err error)
 		// 修改
 		Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error)
 		// 删除
@@ -30,7 +30,7 @@ type (
 	}
 	IAuthRole interface {
 		// 新增
-		Create(ctx context.Context, data map[string]any) (id int64, err error)
+		Create(ctx context.Context, data map[string]any) (id any, err error)
 		// 修改
 		Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error)
 		// 删除
@@ -38,7 +38,7 @@ type (
 	}
 	IAuthScene interface {
 		// 新增
-		Create(ctx context.Context, data map[string]any) (id int64, err error)
+		Create(ctx context.Context, data map[string]any) (id any, err error)
 		// 修改
 		Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error)
 		// 删除

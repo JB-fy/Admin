@@ -186,6 +186,8 @@ func (daoThis *sceneDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
+			case `id`:
+				insertData[daoThis.Columns().SceneId] = v
 			case daoThis.Columns().SceneConfig:
 				if gconv.String(v) == `` {
 					v = nil
@@ -232,6 +234,8 @@ func (daoThis *sceneDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
+			case `id`:
+				updateData[daoThis.Columns().SceneId] = v
 			case daoThis.Columns().SceneConfig:
 				if gconv.String(v) == `` {
 					updateData[k] = nil
@@ -245,9 +249,9 @@ func (daoThis *sceneDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 			}
 		}
 		m = m.Data(updateData)
-		/* if len(daoModel.AfterUpdate) == 0 {	//强制后置处理，清理缓存
+		if len(daoModel.AfterUpdate) == 0 {
 			return m
-		} */
+		}
 		m = m.Hook(daoThis.HookUpdate(daoModel))
 		if len(updateData) == 0 {
 			daoModel.IsOnlyAfterUpdate = true
