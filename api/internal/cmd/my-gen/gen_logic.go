@@ -137,7 +137,7 @@ func (logicThis *s` + tpl.LogicStructName + `) verifyData(ctx context.Context, d
 	insertOfId := `id, err = daoModelThis.HookInsert(data).InsertAndGetId()`
 	if tpl.Handle.Id.IsPrimary && len(tpl.Handle.Id.List) == 1 && !tpl.Handle.Id.List[0].IsAutoInc {
 		insertOfId = `id = data[` + daoPath + `.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `]
-	_, err = daoModelThis.SetIdArr(id).HookInsert(data).Insert()`
+	_, err = daoModelThis.HookInsert(data).Insert()`
 	}
 	tplLogic := `package ` + tpl.GetModuleName(`logic`) + `
 

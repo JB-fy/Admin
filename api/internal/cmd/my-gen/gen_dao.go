@@ -354,8 +354,14 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 					m = m.WhereNot(daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, v)
 				}`)
 		if !tpl.Handle.Id.List[0].IsAutoInc {
-			dao.insertParse = append(dao.insertParse, `case `+"`id`"+`:
+			if tpl.Handle.Id.IsPrimary {
+				dao.insertParse = append(dao.insertParse, `case `+"`id`, daoThis.Columns()."+tpl.Handle.Id.List[0].FieldCaseCamel+`:
+					insertData[daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`] = v
+					daoModel.IdArr = []*gvar.Var{gvar.New(v)}`)
+			} else {
+				dao.insertParse = append(dao.insertParse, `case `+"`id`"+`:
 					insertData[daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`] = v`)
+			}
 			dao.updateParse = append(dao.updateParse, `case `+"`id`"+`:
 					updateData[daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`] = v`)
 		}

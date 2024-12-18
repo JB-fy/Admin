@@ -186,8 +186,9 @@ func (daoThis *sceneDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
-			case `id`:
+			case `id`, daoThis.Columns().SceneId:
 				insertData[daoThis.Columns().SceneId] = v
+				daoModel.IdArr = []*gvar.Var{gvar.New(v)}
 			case daoThis.Columns().SceneConfig:
 				if gconv.String(v) == `` {
 					v = nil

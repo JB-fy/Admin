@@ -172,43 +172,49 @@ func (daoModelThis *DaoModel) GetModel() *gdb.Model {
 }
 
 // 新增需要后置处理且主键非自增时 或 更新|删除需要后置处理时 使用。注意：一般在新增|更新|删除方法执行前调用（即在各种sql条件设置完后）
-// 新增需要后置处理且主键非自增时，传id
-// 更新|删除需要后置处理时，传filter
+// 新增需要后置处理且主键非自增时，不使用此方法，直接在dao做了处理
+// 该方法只在 更新|删除需要后置处理 时，才使用
 func (daoModelThis *DaoModel) SetIdArr(idOrFilterOpt ...any) *DaoModel {
 	if len(idOrFilterOpt) == 0 {
 		daoModelThis.IdArr, _ = daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
 		return daoModelThis
 	}
-	filter, ok := idOrFilterOpt[0].(map[string]any)
-	if !ok {
-		daoModelThis.IdArr = []*gvar.Var{gvar.New(idOrFilterOpt[0])}
-		return daoModelThis
-	}
-	daoModelThis.Filters(filter)
-	if len(filter) != 1 {
-		daoModelThis.IdArr, _ = daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
-		return daoModelThis
-	}
 	daoModelThis.IdArr = nil
-	if id, ok := filter[`id`]; ok {
-		daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
-	} else if idArr, ok := filter[`id_arr`]; ok {
-		for _, id := range gconv.SliceAny(idArr) {
-			daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+	if filter, ok := idOrFilterOpt[0].(g.Map); ok {
+		daoModelThis.Filters(filter)
+		if len(filter) != 1 {
+			daoModelThis.IdArr, _ = daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
+			return daoModelThis
 		}
-	} else if idArr, ok := filter[`idArr`]; ok {
-		for _, id := range gconv.SliceAny(idArr) {
+		if id, ok := filter[`id`]; ok {
 			daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
-		}
-	} else {
-		idField := daoModelThis.dao.ParseId(daoModelThis)
-		if id, ok := filter[idField]; ok {
-			daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
-		} else if gstr.Pos(idField, daoModelThis.DbTable+`.`) == 0 {
-			idField = gstr.Replace(idField, daoModelThis.DbTable+`.`, ``, 1)
-			if id, ok := filter[idField]; ok {
+		} else if idArr, ok := filter[`id_arr`]; ok {
+			for _, id := range gconv.SliceAny(idArr) {
 				daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
 			}
+		} else if idArr, ok := filter[`idArr`]; ok {
+			for _, id := range gconv.SliceAny(idArr) {
+				daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+			}
+		} else {
+			idField := daoModelThis.dao.ParseId(daoModelThis)
+			if id, ok := filter[idField]; ok {
+				daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+			} else if gstr.Pos(idField, daoModelThis.DbTable+`.`) == 0 {
+				idField = gstr.Replace(idField, daoModelThis.DbTable+`.`, ``, 1)
+				if id, ok := filter[idField]; ok {
+					daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+				}
+			}
+		}
+	} else {
+		daoModelThis.FilterPri(idOrFilterOpt[0])
+		if idVar := gvar.New(idOrFilterOpt[0]); idVar.IsSlice() {
+			for _, id := range idVar.Slice() {
+				daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+			}
+		} else {
+			daoModelThis.IdArr = append(daoModelThis.IdArr, idVar)
 		}
 	}
 	return daoModelThis

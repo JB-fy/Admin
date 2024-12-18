@@ -24,7 +24,7 @@ func (logicThis *sAuthScene) Create(ctx context.Context, data map[string]any) (i
 	daoModelThis := daoAuth.Scene.CtxDaoModel(ctx)
 
 	id = data[daoAuth.Scene.Columns().SceneId]
-	_, err = daoModelThis.SetIdArr(id).HookInsert(data).Insert()
+	_, err = daoModelThis.HookInsert(data).Insert()
 	return
 }
 

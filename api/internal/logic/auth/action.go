@@ -41,7 +41,7 @@ func (logicThis *sAuthAction) Create(ctx context.Context, data map[string]any) (
 	daoModelThis := daoAuth.Action.CtxDaoModel(ctx)
 
 	id = data[daoAuth.Action.Columns().ActionId]
-	_, err = daoModelThis.SetIdArr(id).HookInsert(data).Insert()
+	_, err = daoModelThis.HookInsert(data).Insert()
 	return
 }
 
