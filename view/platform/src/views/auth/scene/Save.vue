@@ -152,11 +152,11 @@ const saveDrawer = reactive({
                     <el-form-item :label="t('auth.scene.name.token_config.is_ip')" prop="token_config.is_ip">
                         <el-switch
                             v-model="saveForm.data.token_config.is_ip"
-                            :active-value="1"
-                            :inactive-value="0"
+                            :active-value="(tm('common.status.whether') as any[])[1].value"
+                            :inactive-value="(tm('common.status.whether') as any[])[0].value"
+                            :active-text="(tm('common.status.whether') as any[])[1].label"
+                            :inactive-text="(tm('common.status.whether') as any[])[0].label"
                             :inline-prompt="true"
-                            :active-text="t('common.yes')"
-                            :inactive-text="t('common.no')"
                             style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success); margin-right: 10px"
                         />
                         <el-alert :title="t('auth.scene.tip.token_config.is_ip')" type="info" :show-icon="true" :closable="false" />
@@ -164,11 +164,11 @@ const saveDrawer = reactive({
                     <el-form-item :label="t('auth.scene.name.token_config.is_unique')" prop="token_config.is_unique">
                         <el-switch
                             v-model="saveForm.data.token_config.is_unique"
-                            :active-value="1"
-                            :inactive-value="0"
+                            :active-value="(tm('common.status.whether') as any[])[1].value"
+                            :inactive-value="(tm('common.status.whether') as any[])[0].value"
+                            :active-text="(tm('common.status.whether') as any[])[1].label"
+                            :inactive-text="(tm('common.status.whether') as any[])[0].label"
                             :inline-prompt="true"
-                            :active-text="t('common.yes')"
-                            :inactive-text="t('common.no')"
                             style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success); margin-right: 10px"
                         />
                         <el-alert :title="t('auth.scene.tip.token_config.is_unique')" type="info" :show-icon="true" :closable="false" />

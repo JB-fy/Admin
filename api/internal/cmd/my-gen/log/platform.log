@@ -10,7 +10,7 @@
     关联表:auth_role_rel_of_org_admin:role_id:true
     关联表:auth_role_rel_of_platform_admin:role_id:true
 ./main myGen -dbGroup=default -dbTable=platform_admin -removePrefixCommon= -removePrefixAlone=platform_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/平台管理员 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-    关联表:auth_role_rel_of_org_admin:admin_id:true
+    关联表:auth_role_rel_of_org_admin:admin_id:false
 ./main myGen -dbGroup=default -dbTable=upload -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/上传配置 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
 ./main myGen -dbGroup=default -dbTable=pay -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/支付管理/支付配置 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     关联表:pay_channel:pay_id:true

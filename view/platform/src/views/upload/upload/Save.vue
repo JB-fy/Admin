@@ -169,11 +169,11 @@ const saveDrawer = reactive({
                     <el-form-item :label="t('upload.upload.name.upload_config_1.isNotify')" prop="upload_config_1.isNotify">
                         <el-switch
                             v-model="saveForm.data.upload_config_1.isNotify"
-                            :active-value="1"
-                            :inactive-value="0"
+                            :active-value="(tm('common.status.whether') as any[])[1].value"
+                            :inactive-value="(tm('common.status.whether') as any[])[0].value"
+                            :active-text="(tm('common.status.whether') as any[])[1].label"
+                            :inactive-text="(tm('common.status.whether') as any[])[0].label"
                             :inline-prompt="true"
-                            :active-text="t('common.yes')"
-                            :inactive-text="t('common.no')"
                             style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                         />
                     </el-form-item>
