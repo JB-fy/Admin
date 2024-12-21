@@ -16,7 +16,7 @@ const saveForm = reactive({
     rules: {
         upload_type: [
             { required: true, message: t('validation.required') },
-            { type: 'enum', trigger: 'change', enum: (tm('upload.upload.status.upload_type') as any).map((item: any) => item.value), message: t('validation.select') },
+            { type: 'enum', trigger: 'change', enum: (tm('upload.upload.status.upload_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
         ],
         /* upload_config: [
             { required: true, message: t('validation.required') },
@@ -62,7 +62,7 @@ const saveForm = reactive({
         ],
         'upload_config_1.endpoint': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         'upload_config_1.roleArn': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
-        'upload_config_1.isNotify': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        'upload_config_1.isNotify': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         remark: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
         is_default: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },

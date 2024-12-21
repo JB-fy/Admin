@@ -20,7 +20,7 @@ const saveForm = reactive({
         ],
         pay_type: [
             { required: true, message: t('validation.required') },
-            { type: 'enum', trigger: 'change', enum: (tm('pay.pay.status.pay_type') as any).map((item: any) => item.value), message: t('validation.select') },
+            { type: 'enum', trigger: 'change', enum: (tm('pay.pay.status.pay_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
         ],
         /* pay_config: [
             { required: true, message: t('validation.required') },

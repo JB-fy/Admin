@@ -37,18 +37,18 @@ const saveForm = reactive({
         ],
         'token_config.token_type': [
             { required: true, message: t('validation.required') },
-            { type: 'enum', trigger: 'change', enum: (tm('auth.scene.status.token_config.token_type') as any).map((item: any) => item.value), message: t('validation.select') },
+            { type: 'enum', trigger: 'change', enum: (tm('auth.scene.status.token_config.token_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
         ],
         'token_config.expire_time': [
             { required: true, message: t('validation.required') },
             { type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) },
         ],
         'token_config.active_time': [{ type: 'integer', trigger: 'change', min: 0, message: t('validation.min.number', { min: 0 }) }],
-        'token_config.is_ip': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
-        'token_config.is_unique': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        'token_config.is_ip': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
+        'token_config.is_unique': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         'token_config_0.sign_type': [
             { required: computed((): boolean => (saveForm.data.token_config.token_type == 0 ? true : false)), message: t('validation.required') },
-            { type: 'enum', trigger: 'change', enum: (tm('auth.scene.status.token_config_0.sign_type') as any).map((item: any) => item.value), message: t('validation.select') },
+            { type: 'enum', trigger: 'change', enum: (tm('auth.scene.status.token_config_0.sign_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
         ],
         'token_config_0.private_key': [
             { required: computed((): boolean => (saveForm.data.token_config.token_type == 0 ? true : false)), message: t('validation.required') },

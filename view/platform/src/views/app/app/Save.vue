@@ -16,11 +16,11 @@ const saveForm = reactive({
     rules: {
         name_type: [
             { required: true, message: t('validation.required') },
-            { type: 'enum', trigger: 'change', enum: (tm('app.app.status.name_type') as any).map((item: any) => item.value), message: t('validation.select') },
+            { type: 'enum', trigger: 'change', enum: (tm('app.app.status.name_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
         ],
         app_type: [
             { required: true, message: t('validation.required') },
-            { type: 'enum', trigger: 'change', enum: (tm('app.app.status.app_type') as any).map((item: any) => item.value), message: t('validation.select') },
+            { type: 'enum', trigger: 'change', enum: (tm('app.app.status.app_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
         ],
         package_name: [
             { required: true, message: t('validation.required') },
