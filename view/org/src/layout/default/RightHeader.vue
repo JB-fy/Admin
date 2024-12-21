@@ -81,8 +81,8 @@ const menuTab = reactive({
                         <autoicon-ep-place />
                     </el-link>
                     <template #dropdown>
-                        <el-dropdown-menu v-for="(item, index) in settingStore.language" :key="index">
-                            <el-dropdown-item @click="languageStore.changeLanguage(index)">
+                        <el-dropdown-menu>
+                            <el-dropdown-item v-for="(item, index) in settingStore.language" :key="index" @click="languageStore.changeLanguage(index)">
                                 {{ item }}
                             </el-dropdown-item>
                         </el-dropdown-menu>
