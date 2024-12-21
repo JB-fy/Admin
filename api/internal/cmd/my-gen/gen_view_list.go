@@ -572,28 +572,34 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
-                let obj = tm('` + i18nPath + `.status.` + v.FieldRaw + `') as { value: any, label: string }[]
-                let index = obj.findIndex((item) => { return item.value == props.rowData.` + v.FieldRaw + ` })
-                return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
+                let statusList = tm('` + i18nPath + `.status.` + v.FieldRaw + `') as { value: any, label: string }[]
+                let statusIndex = statusList.findIndex((item) => item.value == props.rowData.` + v.FieldRaw + `)
+                return <el-tag type={tagType[statusIndex % tagType.length]}>{statusList[statusIndex]?.label}</el-tag>
             }`
-	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型；注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
+	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
+		viewListField.isI18nTm = true
 		viewListField.width.Method = internal.ReturnTypeName
 		viewListField.width.DataTypeName = `100`
 		cellRendererStr := `disabled={true}`
 		if option.IsUpdate {
 			cellRendererStr = `disabled={!authAction.isUpdate}
-                        onChange={(val: number) => handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
+                        onChange={(val: any) => handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
 		}
 		viewListField.cellRenderer.Method = internal.ReturnTypeName
+		tmKey := i18nPath + `.status.` + v.FieldRaw
+		if v.StatusIsWhether {
+			tmKey = `common.status.whether`
+		}
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
+                let statusList = tm('` + tmKey + `') as { value: any, label: string }[]
                 return [
                     <el-switch
                         model-value={props.rowData.` + v.FieldRaw + `}
-                        active-value={1}
-                        inactive-value={0}
+                        active-value={statusList[1].value}
+                        inactive-value={statusList[0].value}
+                        active-text={statusList[1].label}
+                        inactive-text={statusList[0].label}
                         inline-prompt={true}
-                        active-text={t('common.yes')}
-                        inactive-text={t('common.no')}
                         ` + cellRendererStr + `
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,

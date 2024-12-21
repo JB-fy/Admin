@@ -86,6 +86,7 @@ type myGenField struct {
 	FieldDesc            string                         // 字段说明。由注释解析出来，API文档用。符号[\n\r]换成` `，"增加转义换成\"
 	FieldTip             string                         // 字段提示。由注释解析出来，前端提示用。
 	StatusList           [][2]string                    // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
+	StatusIsWhether      bool                           // 状态列表只有以下两个状态：0否 1是
 	FieldLimitStr        string                         // 字符串字段限制。varchar表示最大长度；char表示长度；
 	FieldLimitInt        internal.MyGenFieldLimitInt    // 整数字段限制
 	FieldLimitFloat      internal.MyGenFieldLimitFloat  // 浮点数字段限制
@@ -282,8 +283,11 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 					fieldTmp.FieldLimitInt.Min = `1`
 				}
 			}
-		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`status`, `type`, `scene`, `method`, `pos`, `position`, `gender`, `currency`}).Contains(fieldSuffix) { //status,type,scene,method,pos,position,gender,currency等后缀
+		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`status`, `type`, `scene`, `method`, `pos`, `position`, `gender`, `currency`}).Contains(fieldSuffix) || garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix)) { //status,type,scene,method,pos,position,gender,currency等后缀	//is_前缀
 			fieldTmp.FieldTypeName = internal.TypeNameStatusSuffix
+			if garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) {
+				fieldTmp.FieldTypeName = internal.TypeNameIsPrefix
+			}
 
 			isStr := false
 			if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) {
@@ -291,15 +295,17 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			}
 			fieldTmp.StatusList = internal.GetStatusList(fieldTmp.FieldTip, isStr)
 
+			statusStr := ``
 			for _, status := range fieldTmp.StatusList {
+				statusStr += status[0] + status[1]
 				showLen := internal.GetShowLen(status[1])
 				if showLen > fieldTmp.FieldShowLenMax {
 					fieldTmp.FieldShowLenMax = showLen
 				}
 			}
-		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU /* , internal.TypeVarchar, internal.TypeChar */}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`is`}).Contains(fieldPrefix) { //is_前缀
-			fieldTmp.FieldTypeName = internal.TypeNameIsPrefix
-			// TODO 可改成状态一样处理，同时需要修改前端开关组件属性设置（暂时不改）
+			if (statusStr == `0否1是` || statusStr == `1是0否`) && !isStr {
+				fieldTmp.StatusIsWhether = true
+			}
 		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText, internal.TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			fieldTmp.FieldTypeName = internal.TypeNameImageSuffix
 		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText, internal.TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`video`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `VideoList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `VideoArr`) { //video,video_list,videoList,video_arr,videoArr等后缀

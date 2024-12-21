@@ -98,7 +98,7 @@ const (
 	TypeNameColorSuffix    MyGenFieldTypeName = `命名：color后缀；	类型：varchar；`
 	TypeNameIdSuffix       MyGenFieldTypeName = `命名：id后缀；	类型：int等类型或varchar或char；`
 	TypeNameStatusSuffix   MyGenFieldTypeName = `命名：status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）`
-	TypeNameIsPrefix       MyGenFieldTypeName = `命名：is_前缀；	类型：int等类型；注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）`
+	TypeNameIsPrefix       MyGenFieldTypeName = `命名：is_前缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）`
 	TypeNameSortSuffix     MyGenFieldTypeName = `命名：sort,num,number,weight等后缀；	类型：int等类型；`
 	TypeNameNoSuffix       MyGenFieldTypeName = `命名：level,rank,no等后缀；	类型：int等类型；`
 	TypeNameStartPrefix    MyGenFieldTypeName = `命名：start_前缀；	类型：datetime或date或timestamp或time；`
