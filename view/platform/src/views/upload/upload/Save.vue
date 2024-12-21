@@ -64,7 +64,7 @@ const saveForm = reactive({
         'upload_config_1.roleArn': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         'upload_config_1.isNotify': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
         remark: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
-        is_default: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        is_default: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -184,11 +184,11 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('upload.upload.name.is_default')" prop="is_default">
                     <el-switch
                         v-model="saveForm.data.is_default"
-                        :active-value="1"
-                        :inactive-value="0"
+                        :active-value="(tm('common.status.whether') as any[])[1].value"
+                        :inactive-value="(tm('common.status.whether') as any[])[0].value"
+                        :active-text="(tm('common.status.whether') as any[])[1].label"
+                        :inactive-text="(tm('common.status.whether') as any[])[0].label"
                         :inline-prompt="true"
-                        :active-text="t('common.yes')"
-                        :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
                 </el-form-item>

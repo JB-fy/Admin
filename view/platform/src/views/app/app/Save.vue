@@ -54,9 +54,9 @@ const saveForm = reactive({
             // { required: computed((): boolean => (saveForm.data.app_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
-        remark: [{ type: 'string', trigger: 'blur', max: 255, message: t('validation.max.string', { max: 255 }) }],
-        is_force_prev: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
-        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        remark: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
+        is_force_prev: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
+        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -149,16 +149,16 @@ const saveDrawer = reactive({
                     </el-form-item>
                 </template>
                 <el-form-item :label="t('app.app.name.remark')" prop="remark">
-                    <el-input v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="255" :show-word-limit="true" />
+                    <el-input v-model="saveForm.data.remark" type="textarea" :autosize="{ minRows: 3 }" maxlength="120" :show-word-limit="true" />
                 </el-form-item>
                 <el-form-item :label="t('app.app.name.is_force_prev')" prop="is_force_prev">
                     <el-switch
                         v-model="saveForm.data.is_force_prev"
-                        :active-value="1"
-                        :inactive-value="0"
+                        :active-value="(tm('common.status.whether') as any[])[1].value"
+                        :inactive-value="(tm('common.status.whether') as any[])[0].value"
+                        :active-text="(tm('common.status.whether') as any[])[1].label"
+                        :inactive-text="(tm('common.status.whether') as any[])[0].label"
                         :inline-prompt="true"
-                        :active-text="t('common.yes')"
-                        :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
                     <el-alert :title="t('app.app.tip.is_force_prev')" type="info" :show-icon="true" :closable="false" style="margin-left: 10px" />
@@ -166,11 +166,11 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('app.app.name.is_stop')" prop="is_stop">
                     <el-switch
                         v-model="saveForm.data.is_stop"
-                        :active-value="1"
-                        :inactive-value="0"
+                        :active-value="(tm('common.status.whether') as any[])[1].value"
+                        :inactive-value="(tm('common.status.whether') as any[])[0].value"
+                        :active-text="(tm('common.status.whether') as any[])[1].label"
+                        :inactive-text="(tm('common.status.whether') as any[])[0].label"
                         :inline-prompt="true"
-                        :active-text="t('common.yes')"
-                        :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
                 </el-form-item>

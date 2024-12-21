@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import type { Action, MessageBoxState } from 'element-plus'
-const { t } = useI18n()
+const { t, tm } = useI18n()
 
 const authAction = inject('authAction') as { [propName: string]: boolean }
 
@@ -110,16 +110,17 @@ const table = reactive({
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
+                let statusList = tm('common.status.whether') as { value: any; label: string }[]
                 return [
                     <el-switch
                         model-value={props.rowData.is_stop}
-                        active-value={1}
-                        inactive-value={0}
+                        active-value={statusList[1].value}
+                        inactive-value={statusList[0].value}
+                        active-text={statusList[1].label}
+                        inactive-text={statusList[0].label}
                         inline-prompt={true}
-                        active-text={t('common.yes')}
-                        inactive-text={t('common.no')}
                         disabled={!authAction.isUpdate}
-                        onChange={(val: number) => handleUpdate(props.rowData.id, { is_stop: val }).then(() => (props.rowData.is_stop = val))}
+                        onChange={(val: any) => handleUpdate(props.rowData.id, { is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
                 ]

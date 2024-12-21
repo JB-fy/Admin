@@ -19,7 +19,7 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
             { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
-        gender: [{ type: 'enum', trigger: 'change', enum: (tm('users.users.status.gender') as any).map((item: any) => item.value), message: t('validation.select') }],
+        gender: [{ type: 'enum', trigger: 'change', enum: (tm('users.users.status.gender') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         birthday: [{ type: 'string', trigger: 'change', message: t('validation.select') }],
         address: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
         phone: [
@@ -42,10 +42,10 @@ const saveForm = reactive({
         ],
         id_card_no: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
         id_card_name: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
-        id_card_gender: [{ type: 'enum', trigger: 'change', enum: (tm('users.users.status.id_card_gender') as any).map((item: any) => item.value), message: t('validation.select') }],
+        id_card_gender: [{ type: 'enum', trigger: 'change', enum: (tm('users.users.status.id_card_gender') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         id_card_birthday: [{ type: 'string', trigger: 'change', message: t('validation.select') }],
         id_card_address: [{ type: 'string', trigger: 'blur', max: 120, message: t('validation.max.string', { max: 120 }) }],
-        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -158,11 +158,11 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('users.users.name.is_stop')" prop="is_stop">
                     <el-switch
                         v-model="saveForm.data.is_stop"
-                        :active-value="1"
-                        :inactive-value="0"
+                        :active-value="(tm('common.status.whether') as any[])[1].value"
+                        :inactive-value="(tm('common.status.whether') as any[])[0].value"
+                        :active-text="(tm('common.status.whether') as any[])[1].label"
+                        :inactive-text="(tm('common.status.whether') as any[])[0].label"
                         :inline-prompt="true"
-                        :active-text="t('common.yes')"
-                        :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
                 </el-form-item>

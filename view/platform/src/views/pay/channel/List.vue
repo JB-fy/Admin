@@ -131,11 +131,9 @@ const table = reactive({
             width: 100,
             cellRenderer: (props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
-                let obj = tm('pay.channel.status.pay_method') as { value: any; label: string }[]
-                let index = obj.findIndex((item) => {
-                    return item.value == props.rowData.pay_method
-                })
-                return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
+                let statusList = tm('pay.channel.status.pay_method') as { value: any; label: string }[]
+                let statusIndex = statusList.findIndex((item) => item.value == props.rowData.pay_method)
+                return <el-tag type={tagType[statusIndex % tagType.length]}>{statusList[statusIndex]?.label}</el-tag>
             },
         },
         {
@@ -205,16 +203,17 @@ const table = reactive({
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
+                let statusList = tm('common.status.whether') as { value: any; label: string }[]
                 return [
                     <el-switch
                         model-value={props.rowData.is_stop}
-                        active-value={1}
-                        inactive-value={0}
+                        active-value={statusList[1].value}
+                        inactive-value={statusList[0].value}
+                        active-text={statusList[1].label}
+                        inactive-text={statusList[0].label}
                         inline-prompt={true}
-                        active-text={t('common.yes')}
-                        inactive-text={t('common.no')}
                         disabled={!authAction.isUpdate}
-                        onChange={(val: number) => handleUpdate(props.rowData.id, { is_stop: val }).then(() => (props.rowData.is_stop = val))}
+                        onChange={(val: any) => handleUpdate(props.rowData.id, { is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
                 ]

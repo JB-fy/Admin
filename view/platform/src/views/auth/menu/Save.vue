@@ -41,7 +41,7 @@ const saveForm = reactive({
             },
         ],
         sort: [{ type: 'integer', trigger: 'change', min: 0, max: 255, message: t('validation.between.number', { min: 0, max: 255 }) }],
-        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as any).map((item: any) => item.value), message: t('validation.select') }],
+        is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
         saveForm.ref.validate(async (valid: boolean) => {
@@ -121,11 +121,11 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('auth.menu.name.is_stop')" prop="is_stop">
                     <el-switch
                         v-model="saveForm.data.is_stop"
-                        :active-value="1"
-                        :inactive-value="0"
+                        :active-value="(tm('common.status.whether') as any[])[1].value"
+                        :inactive-value="(tm('common.status.whether') as any[])[0].value"
+                        :active-text="(tm('common.status.whether') as any[])[1].label"
+                        :inactive-text="(tm('common.status.whether') as any[])[0].label"
                         :inline-prompt="true"
-                        :active-text="t('common.yes')"
-                        :inactive-text="t('common.no')"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
                 </el-form-item>

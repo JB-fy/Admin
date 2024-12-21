@@ -187,8 +187,9 @@ func (daoThis *privacyDao) ParseInsert(insert map[string]any, daoModel *daoIndex
 		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
-			case `id`:
+			case `id`, daoThis.Columns().UserId:
 				insertData[daoThis.Columns().UserId] = v
+				daoModel.IdArr = []*gvar.Var{gvar.New(v)}
 			case daoThis.Columns().Password:
 				password := gconv.String(v)
 				if len(password) != 32 {

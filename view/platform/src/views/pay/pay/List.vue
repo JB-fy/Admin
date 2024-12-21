@@ -95,11 +95,9 @@ const table = reactive({
             width: 100,
             cellRenderer: (props: any): any => {
                 let tagType = tm('config.const.tagType') as string[]
-                let obj = tm('pay.pay.status.pay_type') as { value: any; label: string }[]
-                let index = obj.findIndex((item) => {
-                    return item.value == props.rowData.pay_type
-                })
-                return <el-tag type={tagType[index % tagType.length]}>{obj[index]?.label}</el-tag>
+                let statusList = tm('pay.pay.status.pay_type') as { value: any; label: string }[]
+                let statusIndex = statusList.findIndex((item) => item.value == props.rowData.pay_type)
+                return <el-tag type={tagType[statusIndex % tagType.length]}>{statusList[statusIndex]?.label}</el-tag>
             },
         },
         {

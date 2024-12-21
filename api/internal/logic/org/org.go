@@ -56,6 +56,11 @@ func (logicThis *sOrg) Delete(ctx context.Context, filter map[string]any) (row i
 		return
 	}
 
+	/* if count, _ := daoOrg.Config.CtxDaoModel(ctx).Filter(daoOrg.Config.Columns().OrgId, daoModelThis.IdArr).Count(); count > 0 {
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.org.org`), count, g.I18n().T(ctx, `name.org.config`)}})
+		return
+	} */
+
 	row, err = daoModelThis.HookDelete().DeleteAndGetAffected()
 	return
 }
