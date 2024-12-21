@@ -8,6 +8,7 @@ import (
 	"api/internal/consts"
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/gogf/gf/v2/database/gdb"
@@ -94,6 +95,12 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 		url = gstr.Replace(r.GetUrl(), r.URL.String(), ``) + r.URL.Path
 	case 2: //http(s)://www.xxxx.com/test?a=1&b=2
 		url = r.GetUrl()
+	case 3: //http(s)://本地IP或网络IP:端口
+		if IsDev(ctx) {
+			url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
+		} else {
+			url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
+		}
 	}
 	return
 }

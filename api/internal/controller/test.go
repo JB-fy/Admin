@@ -19,13 +19,15 @@ func NewTest() *Test {
 func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, err error) {
 	// time.Sleep(10 * time.Second) // 睡眠几秒
 	// ghttp.RestartAllServer(ctx)  // 重启服务
+	// httpServer := ctx.Value(http.ServerContextKey).(*http.Server) // 获取当前http服务配置信息
+	// tcpAddr := ctx.Value(http.LocalAddrContextKey).(*net.TCPAddr) // 获取当前tcp信息
 
 	/* //生成登录token（测试用）
 	token, err := token.NewHandler(ctx, `platform`).Create(`1`)
 	fmt.Println(token) */
 
 	/*--------数据库使用示例 开始--------*/
-	// gregex.IsMatchString(`1062.*Duplicate.*`, err.Error()) //判断错误是不是唯一索引已存在
+	// gregex.IsMatchString(`1062.*Duplicate.*`, err.Error()) // 判断错误是不是唯一索引已存在
 	// m = m.Where(m.Builder().Where(`xxxx`).WhereOr(`xxxx`)) // 复杂条件
 	/* // 数据库事务
 	xxxxTxxxDaoModel := daoXxxx.Txxx.CtxDaoModel(ctx)

@@ -1,12 +1,10 @@
 package upload
 
 import (
-	"api/internal/consts"
 	daoUpload "api/internal/dao/upload"
 	"api/internal/utils"
 	"context"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -38,34 +36,26 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) *Handler {
 	case 1: //阿里云OSS
 	// case 0: //本地
 	default:
-		handleUrl := func(strRaw string) (str string) {
-			str = strRaw
-			if gstr.Pos(str, `http`) != 0 {
-				currentUrl := utils.GetRequestUrl(ctx, 0)
-				for _, v := range []string{`0.0.0.0`, `127.0.0.1`} {
-					if gstr.Pos(currentUrl, v) != -1 {
-						if utils.IsDev(ctx) {
-							currentUrl = gstr.Replace(currentUrl, v, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String(), 1)
-						} else {
-							currentUrl = gstr.Replace(currentUrl, v, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String(), 1)
-						}
-						break
-					}
-				}
-				if str != `` && gstr.Pos(str, `/`) != 0 {
-					str = `/` + str
-				}
-				str = currentUrl + str
-			}
-			return
-		}
-		config[`url`] = handleUrl(gconv.String(config[`url`]))
-		config[`fileUrlPrefix`] = handleUrl(gconv.String(config[`fileUrlPrefix`]))
+		config[`url`] = handlerObj.handleLocalUrl(gconv.String(config[`url`]))
+		config[`fileUrlPrefix`] = handlerObj.handleLocalUrl(gconv.String(config[`fileUrlPrefix`]))
 	}
 
 	config[`uploadType`] = uploadInfo[daoUpload.Upload.Columns().UploadType]
 	handlerObj.upload = NewUpload(config)
 	return handlerObj
+}
+
+func (handlerThis *Handler) handleLocalUrl(urlRaw string) (url string) {
+	url = urlRaw
+	if gstr.Pos(url, `http`) == 0 {
+		return
+	}
+	currentUrl := utils.GetRequestUrl(handlerThis.Ctx, 3)
+	if url != `` && gstr.Pos(url, `/`) != 0 {
+		url = `/` + url
+	}
+	url = currentUrl + url
+	return
 }
 
 func (handlerThis *Handler) Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
