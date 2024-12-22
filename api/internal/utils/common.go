@@ -114,12 +114,10 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 
 // 获取文件内容（通用）
 func GetFileBytes(ctx context.Context, fileUrl string, serverOpt ...string) (fileBytes []byte, err error) {
-	hostIp := g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String()
-	if IsDev(ctx) {
-		hostIp = g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String()
-	}
-	if hostIp != `` && gstr.Pos(fileUrl, hostIp) != -1 {
-		return GetFileBytesByLocal(ctx, fileUrl, serverOpt...)
+	for _, ip := range []string{g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String(), g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String()} {
+		if ip != `` && gstr.Pos(fileUrl, ip) != -1 {
+			return GetFileBytesByLocal(ctx, fileUrl, serverOpt...)
+		}
 	}
 	return GetFileBytesByRemote(ctx, fileUrl)
 }
