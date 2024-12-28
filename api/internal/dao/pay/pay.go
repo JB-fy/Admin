@@ -360,13 +360,16 @@ func (daoThis *payDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) 
 
 func (daoThis *payDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.Fields(daoThis.Columns().PayId, daoThis.Columns().PayName, daoThis.Columns().PayType, daoThis.Columns().PayConfig, daoThis.Columns().PayRate).All()
+	list, _ := daoModel.All()
 	for _, info := range list {
 		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().PayId].String(), info.Json())
 	}
 }
 
 func (daoThis *payDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	info, err = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+	info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+	if info.IsEmpty() {
+		info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
+	}
 	return
 }

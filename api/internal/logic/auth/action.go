@@ -101,7 +101,7 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionIdArr ...stri
 		return
 	}
 	actionIdArrOfSelf = gset.NewStrSetFrom(actionIdArrOfSelf).Intersect(gset.NewStrSetFrom(actionIdArr)).Slice() //交集
-	if actionIdArrLen := len(actionIdArr); actionIdArrLen == 0 || actionIdArrLen != len(actionIdArrOfSelf) {     // 因为是判断操作权限，所以actionIdArr和actionIdArrOfSelf必须一样，否则必定缺少权限
+	if actionIdArrLen := len(actionIdArr); actionIdArrLen == 0 || actionIdArrLen != len(actionIdArrOfSelf) {     //因为是判断操作权限，所以actionIdArr和actionIdArrOfSelf必须一样，否则必定缺少权限
 		err = utils.NewErrorCode(ctx, 39999996, ``)
 		return
 	} */

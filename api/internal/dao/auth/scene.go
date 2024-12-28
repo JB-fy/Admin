@@ -391,22 +391,23 @@ func (daoThis *sceneDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 
 func (daoThis *sceneDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.Fields(daoThis.Columns().SceneId, daoThis.Columns().SceneName, daoThis.Columns().SceneConfig, daoThis.Columns().IsStop).All()
+	list, _ := daoModel.All()
 	for _, info := range list {
 		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().SceneId].String(), info.Json())
 	}
 }
 
 func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id string) (info gdb.Record, err error) {
-	/* // 数据库中作为配置表的数据，可根据自身需要使用以下方式读取数据
-	info, err = daoThis.CtxDaoModel(ctx).Fields(daoThis.Columns().SceneId, daoThis.Columns().SceneName, daoThis.Columns().SceneConfig, daoThis.Columns().IsStop).FilterPri(id).One() //不推荐：数据库实时读取
-	//推荐-数据修改需要立即同步缓存的表：缓存在redis，数据修改可做到立即同步缓存，只需数据修改时删除缓存即可。如在dao层的HookUpdate和HookDelete方法中补充缓存删除代码：cache.DbData.Del(ctx, daoThis, gconv.Strings(daoModel.IdArr)...)
-	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, 6*30*24*60*60, daoThis.Columns().SceneId, daoThis.Columns().SceneName, daoThis.Columns().SceneConfig, daoThis.Columns().IsStop)
+	/* // 数据修改需要立即同步缓存的表：缓存在redis，数据修改可做到立即同步缓存，只需数据修改时删除缓存即可。如在dao层的HookUpdate和HookDelete方法中补充缓存删除代码：cache.DbData.Del(ctx, daoThis, gconv.Strings(daoModel.IdArr)...)
+	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, 6*30*24*60*60)
 	if err != nil {
 		return
 	}
 	value.Scan(&info) */
-	//推荐-数据修改无需立即同步缓存的表：服务启动时，缓存在本机内存中，数据库修改，只能重启服务 或 等待定时器执行 才能同步缓存
-	info, err = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
+	// 数据修改无需立即同步缓存的表：服务启动时，缓存在本机内存中，数据库修改，只能重启服务 或 等待定时器执行 才能同步缓存
+	info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
+	if info.IsEmpty() {
+		info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
+	}
 	return
 }

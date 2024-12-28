@@ -371,23 +371,26 @@ func (daoThis *uploadDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 
 func (daoThis *uploadDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.Fields(daoThis.Columns().UploadId, daoThis.Columns().UploadType, daoThis.Columns().UploadConfig).All()
-	for _, info := range list {
+	list, _ := daoModel.OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).All()
+	for index, info := range list {
 		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().UploadId].String(), info.Json())
+		if index == 0 {
+			cache.DbDataLocal.Set(ctx, daoModel, `default`, info.Json())
+		}
 	}
-
-	daoModel = daoThis.CtxDaoModel(ctx)
-	info, _ := daoModel.Fields(daoThis.Columns().UploadId, daoThis.Columns().UploadType, daoThis.Columns().UploadConfig).OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
-	cache.DbDataLocal.Set(ctx, daoModel, `default`, info.Json())
 }
 
 func (daoThis *uploadDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	var key string
 	if id > 0 {
-		key = gconv.String(id)
+		info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+		if info.IsEmpty() {
+			info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
+		}
 	} else {
-		key = `default`
+		info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), `default`)
+		if info.IsEmpty() {
+			info, err = daoThis.CtxDaoModel(ctx).OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
+		}
 	}
-	info, err = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), key)
 	return
 }

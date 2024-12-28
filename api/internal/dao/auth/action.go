@@ -439,7 +439,7 @@ func (daoThis *actionDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 
 func (daoThis *actionDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.Fields(daoThis.Columns().ActionId, daoThis.Columns().ActionName, daoThis.Columns().IsStop, `id`, `label`, `scene_id_arr`).All()
+	list, _ := daoModel.Fields(append(daoThis.ColumnArr().Slice(), `id`, `label`, `scene_id_arr`)...).All()
 	listMap := map[string]gdb.Result{}
 	for _, info := range list {
 		sceneIdArr := info[`scene_id_arr`].Strings()
@@ -457,7 +457,10 @@ func (daoThis *actionDao) CacheSet(ctx context.Context) {
 }
 
 func (daoThis *actionDao) CacheGetList(ctx context.Context, sceneId string) (list gdb.Result, err error) {
-	list, err = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId)
+	list, _ = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId)
+	if len(list) == 0 {
+		list, err = daoThis.CtxDaoModel(ctx).Fields(append(daoThis.ColumnArr().Slice(), `id`, `label`)...).Filter(ActionRelToScene.Columns().SceneId, sceneId).All()
+	}
 	return
 }
 
@@ -498,26 +501,14 @@ func (daoThis *actionDao) CacheGetListOfSelf(ctx context.Context, sceneId string
 	return
 }
 
-func (daoThis *actionDao) CacheGetActionIdArrOfSelf(ctx context.Context, sceneId string, loginId *gvar.Var) (actionIdArrOfSelf []string, err error) {
-	listTmp, err := daoThis.CacheGetListOfNoStop(ctx, sceneId)
+func (daoThis *actionDao) CacheGetActionIdArrOfSelf(ctx context.Context, sceneId string, loginId *gvar.Var) (actionIdArr []string, err error) {
+	list, err := daoThis.CacheGetListOfSelf(ctx, sceneId, loginId)
 	if err != nil {
 		return
 	}
-	roleIdArr, err := Role.GetRoleIdArrOfSelf(ctx, sceneId, loginId)
-	if err != nil || len(roleIdArr) == 0 {
-		return
-	}
-	actionIdArr, err := Role.CacheGetActionIdArr(ctx, gconv.Strings(roleIdArr)...)
-	if err != nil || len(actionIdArr) == 0 {
-		return
-	}
-	for _, actionId := range actionIdArr {
-		for _, info := range listTmp {
-			if actionId == info[daoThis.Columns().ActionId].String() {
-				actionIdArrOfSelf = append(actionIdArrOfSelf, actionId)
-				break
-			}
-		}
+	actionIdArr = make([]string, len(list))
+	for index, info := range list {
+		actionIdArr[index] = info[daoThis.Columns().ActionId].String()
 	}
 	return
 }

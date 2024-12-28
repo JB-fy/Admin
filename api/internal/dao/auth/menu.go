@@ -525,7 +525,7 @@ func (daoThis *menuDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 
 func (daoThis *menuDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.Fields(daoThis.Columns().MenuId, daoThis.Columns().MenuName, daoThis.Columns().SceneId, daoThis.Columns().IsStop, `id`, `label`, `tree`, `show_menu`).All()
+	list, _ := daoModel.Fields(append(daoThis.ColumnArr().Slice(), `id`, `label`, `tree`, `show_menu`)...).All()
 	listMap := map[string]gdb.Result{}
 	for _, info := range list {
 		sceneId := info[daoThis.Columns().SceneId].String()
@@ -541,7 +541,10 @@ func (daoThis *menuDao) CacheSet(ctx context.Context) {
 }
 
 func (daoThis *menuDao) CacheGetList(ctx context.Context, sceneId string) (list gdb.Result, err error) {
-	list, err = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId)
+	list, _ = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId)
+	if len(list) == 0 {
+		list, err = daoThis.CtxDaoModel(ctx).Fields(append(daoThis.ColumnArr().Slice(), `id`, `label`, `tree`, `show_menu`)...).Filter(daoThis.Columns().SceneId, sceneId).All()
+	}
 	return
 }
 

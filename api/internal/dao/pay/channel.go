@@ -373,7 +373,7 @@ func (daoThis *channelDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMod
 
 func (daoThis *channelDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.Fields(daoThis.Columns().ChannelId, daoThis.Columns().ChannelName, daoThis.Columns().ChannelIcon, daoThis.Columns().SceneId, daoThis.Columns().PayId, daoThis.Columns().PayMethod, daoThis.Columns().IsStop).OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
+	list, _ := daoModel.OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
 	listMap := map[string]gdb.Result{}
 	for _, info := range list {
 		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().ChannelId].String(), info.Json())
@@ -389,11 +389,17 @@ func (daoThis *channelDao) CacheSet(ctx context.Context) {
 }
 
 func (daoThis *channelDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	info, err = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+	info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+	if info.IsEmpty() {
+		info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
+	}
 	return
 }
 
 func (daoThis *channelDao) CacheGetList(ctx context.Context, sceneId uint) (list gdb.Result, err error) {
-	list, err = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+gconv.String(sceneId))
+	list, _ = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+gconv.String(sceneId))
+	if len(list) == 0 {
+		list, err = daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().SceneId, sceneId).OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
+	}
 	return
 }
