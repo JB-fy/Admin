@@ -374,7 +374,7 @@ func (daoThis *configDao) Get(ctx context.Context, configKeyArr ...string) (conf
 
 // 保存配置
 func (daoThis *configDao) Save(ctx context.Context, config map[string]any) (err error) {
-	configKeyArr := []string{}
+	idArr := make([]string, 0, len(config))
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 	err = daoModelThis.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {
@@ -385,13 +385,13 @@ func (daoThis *configDao) Save(ctx context.Context, config map[string]any) (err 
 			if err != nil {
 				return
 			}
-			configKeyArr = append(configKeyArr, k)
+			idArr = append(idArr, k)
 		}
 		return
 	})
 	if err != nil {
 		return
 	}
-	cache.DbData.Del(ctx, daoThis, configKeyArr...)
+	cache.DbData.Del(ctx, daoThis, idArr...)
 	return
 }

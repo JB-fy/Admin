@@ -168,21 +168,24 @@ func (uploadThis *UploadOfLocal) Notify(ctx context.Context, r *ghttp.Request) (
 
 // 生成签名
 func (uploadThis *UploadOfLocal) sign(data map[string]any) (sign string) {
-	keyArr := []string{}
-	for k := range data {
-		keyArr = append(keyArr, k)
+	keyArr := make([]string, 0, len(data))
+	for key := range data {
+		keyArr = append(keyArr, key)
 	}
 	sort.Strings(keyArr)
-	strArr := []string{}
-	for _, k := range keyArr {
-		tmp := gvar.New(data[k])
+
+	keyLen := len(keyArr)
+	strArr := make([]string, keyLen+1)
+	for index, key := range keyArr {
+		tmp := gvar.New(data[key])
 		if tmp.IsMap() || tmp.IsSlice() {
-			strArr = append(strArr, k+`=`+gjson.MustEncodeString(data[k]))
+			strArr[index] = key + `=` + gjson.MustEncodeString(data[key])
 		} else {
-			strArr = append(strArr, k+`=`+gconv.String(data[k]))
+			strArr[index] = key + `=` + gconv.String(data[key])
 		}
 	}
-	strArr = append(strArr, `key=`+uploadThis.SignKey)
+	strArr[keyLen] = `key=` + uploadThis.SignKey
+
 	sign = gmd5.MustEncryptString(gstr.Join(strArr, `&`))
 	return
 }

@@ -387,9 +387,9 @@ func (daoThis *configDao) GetOne(ctx context.Context, orgId string, configKey st
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, orgId string, configKeyArr ...string) (config gdb.Record, err error) {
-	idArr := []string{}
-	for _, configKey := range configKeyArr {
-		idArr = append(idArr, orgId+`|`+configKey)
+	idArr := make([]string, len(configKeyArr))
+	for index, configKey := range configKeyArr {
+		idArr[index] = orgId + `|` + configKey
 	}
 	// configTmp, err := daoThis.CtxDaoModel(ctx).FilterPri(idArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
 	configTmp, err := cache.DbData.GetOrSetPluck(ctx, daoThis, idArr, 6*30*24*60*60, daoThis.Columns().ConfigValue)
@@ -405,7 +405,7 @@ func (daoThis *configDao) Get(ctx context.Context, orgId string, configKeyArr ..
 
 // 保存配置
 func (daoThis *configDao) Save(ctx context.Context, orgId string, config map[string]any) (err error) {
-	idArr := []string{}
+	idArr := make([]string, 0, len(config))
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 	err = daoModelThis.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {

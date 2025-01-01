@@ -83,9 +83,9 @@ func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, dao dao.DaoInterface
 
 func (cacheThis *dbData) Del(ctx context.Context, dao dao.DaoInterface, idArr ...string) (row int64, err error) {
 	daoModel := dao.CtxDaoModel(ctx)
-	var keyArr []string
-	for _, id := range idArr {
-		keyArr = append(keyArr, cacheThis.key(daoModel, id))
+	keyArr := make([]string, len(idArr))
+	for index, id := range idArr {
+		keyArr[index] = cacheThis.key(daoModel, id)
 	}
 	row, err = internal.GetOrSet.Del(ctx, cacheThis.cache(), keyArr...)
 	return
