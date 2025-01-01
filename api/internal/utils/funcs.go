@@ -13,6 +13,7 @@ import (
 
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 	"golang.org/x/tools/imports"
 )
 
@@ -121,16 +122,15 @@ func AesEncrypt(rawStr string, key string) (cipherByte []byte, err error) {
 	}
 
 	rawStrByte := []byte(rawStr)
-
 	blockSize := block.BlockSize()
-	fillLen := blockSize - (len(rawStrByte) % blockSize)
+	rawStrByteLen := len(rawStrByte)
+	fillLen := blockSize - (rawStrByteLen % blockSize)
 	fillByte := bytes.Repeat([]byte{byte(fillLen)}, fillLen)
 	rawStrByte = append(rawStrByte, fillByte...)
 
-	cipherByteTmp := make([]byte, blockSize)
-	for i := 0; i < len(rawStrByte); i += blockSize {
-		block.Encrypt(cipherByteTmp, rawStrByte[i:i+blockSize])
-		cipherByte = append(cipherByte, cipherByteTmp...)
+	cipherByte = make([]byte, rawStrByteLen)
+	for i := 0; i < rawStrByteLen; i += blockSize {
+		block.Encrypt(cipherByte[i:i+blockSize], rawStrByte[i:i+blockSize])
 	}
 	return
 }
@@ -144,19 +144,30 @@ func AesDecrypt(cipherByte []byte, key string) (rawStr string, err error) {
 	}
 
 	blockSize := block.BlockSize()
-	if len(cipherByte)%blockSize != 0 {
+	cipherByteLen := len(cipherByte)
+	if cipherByteLen%blockSize != 0 {
 		err = errors.New(`加密串必须是块大小的整数倍`)
 		return
 	}
-
-	rawStrByte := []byte{}
-	rawStrByteTmp := make([]byte, blockSize)
-	for i := 0; i < len(cipherByte); i += blockSize {
-		block.Decrypt(rawStrByteTmp, cipherByte[i:i+blockSize])
-		rawStrByte = append(rawStrByte, rawStrByteTmp...)
+	rawStrByte := make([]byte, cipherByteLen)
+	for i := 0; i < cipherByteLen; i += blockSize {
+		block.Decrypt(rawStrByte[i:i+blockSize], cipherByte[i:i+blockSize])
 	}
 
-	fillLen := int(rawStrByte[len(rawStrByte)-1])
-	rawStr = string(rawStrByte[:(len(rawStrByte) - fillLen)])
+	rawStrByteLen := len(rawStrByte)
+	fillByte := rawStrByte[rawStrByteLen-1]
+	fillLen := int(fillByte)
+	if fillLen > blockSize || fillLen == 0 {
+		err = errors.New(`无效的填充长度：` + gconv.String(fillLen))
+		return
+	}
+	fillPosition := rawStrByteLen - fillLen
+	for _, v := range rawStrByte[fillPosition:] {
+		if v != fillByte {
+			err = errors.New(`无效的填充位：预期` + gconv.String(fillLen) + `实际` + gconv.String(v))
+			return
+		}
+	}
+	rawStr = string(rawStrByte[:fillPosition])
 	return
 }
