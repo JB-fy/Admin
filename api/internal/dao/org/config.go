@@ -83,9 +83,9 @@ func (daoThis *configDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				if gvar.New(v).IsSlice() {
 					idArr = gconv.Strings(v)
 				}
-				inStrArr := []string{}
-				for _, id := range idArr {
-					inStrArr = append(inStrArr, `('`+gstr.Replace(id, `|`, `', '`)+`')`)
+				inStrArr := make([]string, len(idArr))
+				for index, id := range idArr {
+					inStrArr[index] = `('` + gstr.Replace(id, `|`, `', '`) + `')`
 				}
 				m = m.Where(`(` + daoModel.DbTable + `.` + daoThis.Columns().OrgId + `, ` + daoModel.DbTable + `.` + daoThis.Columns().ConfigKey + `) IN (` + gstr.Join(inStrArr, `, `) + `)`)
 			case `exc_id`, `exc_id_arr`:
@@ -93,9 +93,9 @@ func (daoThis *configDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				if gvar.New(v).IsSlice() {
 					idArr = gconv.Strings(v)
 				}
-				inStrArr := []string{}
-				for _, id := range idArr {
-					inStrArr = append(inStrArr, `('`+gstr.Replace(id, `|`, `', '`)+`')`)
+				inStrArr := make([]string, len(idArr))
+				for index, id := range idArr {
+					inStrArr[index] = `('` + gstr.Replace(id, `|`, `', '`) + `')`
 				}
 				m = m.Where(`(` + daoModel.DbTable + `.` + daoThis.Columns().OrgId + `, ` + daoModel.DbTable + `.` + daoThis.Columns().ConfigKey + `) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)
 			case `label`:

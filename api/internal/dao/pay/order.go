@@ -231,11 +231,12 @@ func (daoThis *orderDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `order_rel_list`:
-					insertList := []map[string]any{}
-					for _, item := range gconv.Maps(v) {
+					vList := gconv.Maps(v)
+					insertList := make([]map[string]any, len(vList))
+					for index, item := range vList {
 						insertItem := gjson.New(gjson.MustEncodeString(item)).Map()
 						insertItem[OrderRel.Columns().OrderId] = id
-						insertList = append(insertList, insertItem)
+						insertList[index] = insertItem
 					}
 					OrderRel.CtxDaoModel(ctx).Data(insertList).Insert()
 				}

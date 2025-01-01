@@ -265,12 +265,10 @@ func (daoThis *actionDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `scene_id_arr`:
-					insertList := []map[string]any{}
-					for _, item := range gconv.SliceAny(v) {
-						insertList = append(insertList, map[string]any{
-							ActionRelToScene.Columns().ActionId: id,
-							ActionRelToScene.Columns().SceneId:  item,
-						})
+					vArr := gconv.SliceAny(v)
+					insertList := make([]map[string]any, len(vArr))
+					for index, item := range vArr {
+						insertList[index] = map[string]any{ActionRelToScene.Columns().ActionId: id, ActionRelToScene.Columns().SceneId: item}
 					}
 					ActionRelToScene.CtxDaoModel(ctx).Data(insertList).Insert()
 				}

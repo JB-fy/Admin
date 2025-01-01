@@ -287,21 +287,17 @@ func (daoThis *roleDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 			for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `action_id_arr`:
-					insertList := []map[string]any{}
-					for _, item := range gconv.SliceAny(v) {
-						insertList = append(insertList, map[string]any{
-							RoleRelToAction.Columns().RoleId:   id,
-							RoleRelToAction.Columns().ActionId: item,
-						})
+					vArr := gconv.SliceAny(v)
+					insertList := make([]map[string]any, len(vArr))
+					for index, item := range vArr {
+						insertList[index] = map[string]any{RoleRelToAction.Columns().RoleId: id, RoleRelToAction.Columns().ActionId: item}
 					}
 					RoleRelToAction.CtxDaoModel(ctx).Data(insertList).Insert()
 				case `menu_id_arr`:
-					insertList := []map[string]any{}
-					for _, item := range gconv.SliceAny(v) {
-						insertList = append(insertList, map[string]any{
-							RoleRelToMenu.Columns().RoleId: id,
-							RoleRelToMenu.Columns().MenuId: item,
-						})
+					vArr := gconv.SliceAny(v)
+					insertList := make([]map[string]any, len(vArr))
+					for index, item := range vArr {
+						insertList[index] = map[string]any{RoleRelToMenu.Columns().RoleId: id, RoleRelToMenu.Columns().MenuId: item}
 					}
 					RoleRelToMenu.CtxDaoModel(ctx).Data(insertList).Insert()
 				}

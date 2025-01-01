@@ -249,12 +249,10 @@ func (daoThis *adminDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `role_id_arr`:
-					insertList := []map[string]any{}
-					for _, item := range gconv.SliceAny(v) {
-						insertList = append(insertList, map[string]any{
-							daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId: id,
-							daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId:  item,
-						})
+					vArr := gconv.SliceAny(v)
+					insertList := make([]map[string]any, len(vArr))
+					for index, item := range vArr {
+						insertList[index] = map[string]any{daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId: id, daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId: item}
 					}
 					daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Data(insertList).Insert()
 				}
