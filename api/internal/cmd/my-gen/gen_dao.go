@@ -387,9 +387,9 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				if gvar.New(v).IsSlice() {
 					idArr = gconv.Strings(v)
 				}
-				inStrArr := []string{}
-				for _, id := range idArr {
-					inStrArr = append(inStrArr, `+"`('`+gstr.Replace(id, `"+concatStr+"`, `', '`)+`')`)"+`
+				inStrArr := make([]string, len(idArr))
+				for index, id := range idArr {
+					inStrArr[index] = `+"`('`+gstr.Replace(id, `"+concatStr+"`, `', '`)+`')`)"+`
 				}
 				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) IN (` + gstr.Join(inStrArr, `, `) + `)`)")
 		dao.filterParse = append(dao.filterParse, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+"`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+"`"+`:
@@ -397,9 +397,9 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				if gvar.New(v).IsSlice() {
 					idArr = gconv.Strings(v)
 				}
-				inStrArr := []string{}
-				for _, id := range idArr {
-					inStrArr = append(inStrArr, `+"`('`+gstr.Replace(id, `"+concatStr+"`, `', '`)+`')`)"+`
+				inStrArr := make([]string, len(idArr))
+				for index, id := range idArr {
+					inStrArr[index] = `+"`('`+gstr.Replace(id, `"+concatStr+"`, `', '`)+`')`)"+`
 				}
 				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)")
 		dao.groupParse = append(dao.groupParse, `case `+"`id`"+`:`+gstr.Join(append([]string{``}, groupParseStrArr...), `
@@ -1061,12 +1061,10 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
 			record[v] = gvar.New(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-					insertList := []map[string]any{}
-					for _, item := range gconv.SliceAny(v) {
-						insertList = append(insertList, map[string]any{
-							`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`: id,
-							`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`: item,
-						})
+					vArr := gconv.SliceAny(v)
+					insertList := make([]map[string]any, len(vArr))
+					for index, item := range vArr {
+						insertList[index] = map[string]any{`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`: id, `+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`: item}
 					}
 					`+tplEM.daoPath+`.CtxDaoModel(ctx).Data(insertList).Insert()`)
 		dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+tplEM.FieldVar+"`"+`:
@@ -1080,11 +1078,12 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]). /* OrderAsc(`+tplEM.daoPath+`.Columns().CreatedAt). */ All()	// 有顺序要求时使用，自定义OrderAsc
 			record[v] = gvar.New(gjson.MustEncodeString(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)) //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
-					insertList := []map[string]any{}
-					for _, item := range gconv.Maps(v) {
+					vList := gconv.Maps(v)
+					insertList := make([]map[string]any, len(vList))
+					for index, item := range vList {
 						insertItem := gjson.New(gjson.MustEncodeString(item)).Map()
 						insertItem[`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`] = id
-						insertList = append(insertList, insertItem)
+						insertList[index] = insertItem
 					}
 					`+tplEM.daoPath+`.CtxDaoModel(ctx).Data(insertList).Insert()`)
 		switch tplEM.TableType {
