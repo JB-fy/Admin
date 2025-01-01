@@ -5,6 +5,9 @@ funcs.go：基于golang封装的常用函数（不与框架耦合） */
 package utils
 
 import (
+	"bytes"
+	"crypto/aes"
+	"errors"
 	"os/exec"
 	"reflect"
 
@@ -106,5 +109,54 @@ func GetValueFromStruct(Obj any, name string) (val any) {
 	}
 
 	val = field.Interface()
+	return
+}
+
+// aes加密（ECB模式，PKCS5补码）
+func AesEncrypt(rawStr string, key string) (cipherByte []byte, err error) {
+	keyByte := []byte(key)
+	block, err := aes.NewCipher(keyByte)
+	if err != nil {
+		return
+	}
+
+	rawStrByte := []byte(rawStr)
+
+	blockSize := block.BlockSize()
+	fillLen := blockSize - (len(rawStrByte) % blockSize)
+	fillByte := bytes.Repeat([]byte{byte(fillLen)}, fillLen)
+	rawStrByte = append(rawStrByte, fillByte...)
+
+	cipherByteTmp := make([]byte, blockSize)
+	for i := 0; i < len(rawStrByte); i += blockSize {
+		block.Encrypt(cipherByteTmp, rawStrByte[i:i+blockSize])
+		cipherByte = append(cipherByte, cipherByteTmp...)
+	}
+	return
+}
+
+// aes解密（ECB模式，PKCS5补码）
+func AesDecrypt(cipherByte []byte, key string) (rawStr string, err error) {
+	keyByte := []byte(key)
+	block, err := aes.NewCipher(keyByte)
+	if err != nil {
+		return
+	}
+
+	blockSize := block.BlockSize()
+	if len(cipherByte)%blockSize != 0 {
+		err = errors.New(`加密串必须是块大小的整数倍`)
+		return
+	}
+
+	rawStrByte := []byte{}
+	rawStrByteTmp := make([]byte, blockSize)
+	for i := 0; i < len(cipherByte); i += blockSize {
+		block.Decrypt(rawStrByteTmp, cipherByte[i:i+blockSize])
+		rawStrByte = append(rawStrByte, rawStrByteTmp...)
+	}
+
+	fillLen := int(rawStrByte[len(rawStrByte)-1])
+	rawStr = string(rawStrByte[:(len(rawStrByte) - fillLen)])
 	return
 }
