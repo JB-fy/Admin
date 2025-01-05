@@ -5,7 +5,7 @@ gfcli:
     # arch: all # 编译架构，多个以,号分隔，all编译全部。386,amd64,arm
     # system: all # 编译平台，多个以,号分隔，all编译全部。linux,darwin,windows
     output: "./main_new" # 默认文件名main，也可写成../xxxx指定文件名
-    packSrc: "manifest" # 需要打包资源目录。前端代码一起打包示例："manifest,../public/admin"
+    packSrc: "manifest,../public/admin" # 需要打包资源目录。前端代码一起打包示例："manifest,../public/admin"
   gen:
     # pbentity:
     #   - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"

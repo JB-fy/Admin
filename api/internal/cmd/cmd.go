@@ -53,8 +53,7 @@ var (
 			// d2 := s.Domain(`api.xx.com`)
 
 			// 开启静态文件服务时设置
-			serverRoot := g.Cfg().MustGet(ctx, `server.serverRoot`).String()
-			if serverRoot != `` {
+			if g.Cfg().MustGet(ctx, `server.serverRoot`).String() != `` {
 				// 上传文件目录设置
 				s.BindHookHandler(`/upload/*`, ghttp.HookBeforeServe, func(r *ghttp.Request) {
 					if r.IsFileRequest() {
