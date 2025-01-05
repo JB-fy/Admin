@@ -9,6 +9,7 @@
 bin/
 **/.DS_Store
 main
+main_new
 output/
 manifest/output/
 temp/
