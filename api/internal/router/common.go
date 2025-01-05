@@ -63,14 +63,8 @@ func InitRouterCommon(ctx context.Context, s *ghttp.Server) {
 	<title>API Reference</title>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<style>
-		body {
-			margin:  0;
-			padding: 0;
-		}
-	</style>
 	</head>
-	<body>
+	<body style="margin:  0; padding: 0;">
 		<redoc spec-url="/api.json" show-object-schema-examples="true"></redoc>
 		<script>` + string(gres.GetContent(`/goframe/swaggerui/redoc.standalone.js`)) + `</script>
 	</body>
