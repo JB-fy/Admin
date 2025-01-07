@@ -15,9 +15,7 @@ var (
 
 func NewOneClickOfWxHandler(ctx context.Context) (oneClickOfWx *OneClickOfWx) {
 	config := daoPlatform.Config.GetOne(ctx, `oneClickOfWx`).Map()
-
 	oneClickOfWxKey := gmd5.MustEncrypt(config)
-
 	ok := false
 	if oneClickOfWx, ok = oneClickOfWxMap[oneClickOfWxKey]; ok { //先读一次（不加锁）
 		return
@@ -27,8 +25,7 @@ func NewOneClickOfWxHandler(ctx context.Context) (oneClickOfWx *OneClickOfWx) {
 	if oneClickOfWx, ok = oneClickOfWxMap[oneClickOfWxKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-
-	oneClickOfWx = NewOneClickOfWx(config)
+	oneClickOfWx = NewOneClickOfWx(ctx, config)
 	oneClickOfWxMap[oneClickOfWxKey] = oneClickOfWx
 	return
 }
@@ -38,11 +35,9 @@ var (
 	oneClickOfYidunMu  sync.Mutex
 )
 
-func NewOneClickOfYidunHandler(ctx context.Context, configOpt ...map[string]any) (oneClickOfYidun *OneClickOfYidun) {
+func NewOneClickOfYidunHandler(ctx context.Context) (oneClickOfYidun *OneClickOfYidun) {
 	config := daoPlatform.Config.GetOne(ctx, `oneClickOfYidun`).Map()
-
 	oneClickOfYidunKey := gmd5.MustEncrypt(config)
-
 	ok := false
 	if oneClickOfYidun, ok = oneClickOfYidunMap[oneClickOfYidunKey]; ok { //先读一次（不加锁）
 		return
@@ -52,8 +47,7 @@ func NewOneClickOfYidunHandler(ctx context.Context, configOpt ...map[string]any)
 	if oneClickOfYidun, ok = oneClickOfYidunMap[oneClickOfYidunKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-
-	oneClickOfYidun = NewOneClickOfYidun(config)
+	oneClickOfYidun = NewOneClickOfYidun(ctx, config)
 	oneClickOfYidunMap[oneClickOfYidunKey] = oneClickOfYidun
 	return
 }

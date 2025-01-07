@@ -36,7 +36,7 @@ type UploadOfAliyunOss struct {
 	CallbackUrl     string `json:"callbackUrl"`
 }
 
-func NewUploadOfAliyunOss(config map[string]any) *UploadOfAliyunOss {
+func NewUploadOfAliyunOss(ctx context.Context, config map[string]any) *UploadOfAliyunOss {
 	uploadObj := &UploadOfAliyunOss{}
 	gconv.Struct(config, uploadObj)
 	if uploadObj.Host == `` || uploadObj.Bucket == `` || uploadObj.AccessKeyId == `` || uploadObj.AccessKeySecret == `` || uploadObj.CallbackUrl == `` || uploadObj.Endpoint == `` || uploadObj.RoleArn == `` {

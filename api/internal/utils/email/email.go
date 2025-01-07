@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type Email interface {
@@ -14,13 +13,16 @@ type Email interface {
 }
 
 var (
+	emailTypeDef = `emailOfCommon`
+	emailFuncMap = map[string]func(ctx context.Context, config map[string]any) Email{
+		`emailOfCommon`: func(ctx context.Context, config map[string]any) Email { return NewEmailOfCommon(ctx, config) },
+	}
 	emailMap = map[string]Email{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	emailMu  sync.Mutex
 )
 
-func NewEmail(config map[string]any) (email Email) {
-	emailKey := gmd5.MustEncrypt(config)
-
+func NewEmail(ctx context.Context, emailType string, config map[string]any) (email Email) {
+	emailKey := emailType + gmd5.MustEncrypt(config)
 	ok := false
 	if email, ok = emailMap[emailKey]; ok { //先读一次（不加锁）
 		return
@@ -30,12 +32,10 @@ func NewEmail(config map[string]any) (email Email) {
 	if email, ok = emailMap[emailKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-
-	switch gconv.String(config[`emailType`]) {
-	// case `emailOfCommon`:
-	default:
-		email = NewEmailOfCommon(config)
+	if _, ok = emailFuncMap[emailType]; !ok {
+		emailType = emailTypeDef
 	}
+	email = emailFuncMap[emailType](ctx, config)
 	emailMap[emailKey] = email
 	return
 }

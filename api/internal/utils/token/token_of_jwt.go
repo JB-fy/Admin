@@ -31,13 +31,12 @@ type TokenOfJwt struct {
 	SignMethod jwt.SigningMethod
 }
 
-func NewTokenOfJwt(config map[string]any) *TokenOfJwt {
+func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
 	tokenObj := &TokenOfJwt{}
 	gconv.Struct(config, tokenObj)
 	if tokenObj.ExpireTime == 0 || tokenObj.SignType == `` || tokenObj.PrivateKey == `` || (tokenObj.PublicKey == `` && !garray.NewStrArrayFrom([]string{`HS256`, `HS384`, `HS512`}).Contains(tokenObj.SignType)) {
 		panic(`缺少配置：token-Jwt`)
 	}
-
 	signMethodMap := map[string]jwt.SigningMethod{
 		`HS256`: jwt.SigningMethodHS256,
 		`HS384`: jwt.SigningMethodHS384,
@@ -49,9 +48,9 @@ func NewTokenOfJwt(config map[string]any) *TokenOfJwt {
 		`ES384`: jwt.SigningMethodES384,
 		`ES512`: jwt.SigningMethodES512,
 	}
-	if signMethod, ok := signMethodMap[tokenObj.SignType]; ok {
-		tokenObj.SignMethod = signMethod
-	} else {
+	ok := false
+	tokenObj.SignMethod, ok = signMethodMap[tokenObj.SignType]
+	if !ok {
 		tokenObj.SignMethod = jwt.SigningMethodHS256
 	}
 	return tokenObj

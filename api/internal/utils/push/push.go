@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 /* //tx_tpns(腾讯移动推送）标签推送规则格式
@@ -56,13 +55,16 @@ type Push interface {
 }
 
 var (
+	pushTypeDef = `pushOfTx`
+	pushFuncMap = map[string]func(ctx context.Context, config map[string]any) Push{
+		`pushOfTx`: func(ctx context.Context, config map[string]any) Push { return NewPushOfTx(ctx, config) },
+	}
 	pushMap = map[string]Push{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	pushMu  sync.Mutex
 )
 
-func NewPush(config map[string]any) (push Push) {
-	pushKey := gmd5.MustEncrypt(config)
-
+func NewPush(ctx context.Context, pushType string, config map[string]any) (push Push) {
+	pushKey := pushType + gmd5.MustEncrypt(config)
 	ok := false
 	if push, ok = pushMap[pushKey]; ok { //先读一次（不加锁）
 		return
@@ -72,12 +74,10 @@ func NewPush(config map[string]any) (push Push) {
 	if push, ok = pushMap[pushKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-
-	switch gconv.String(config[`pushType`]) {
-	// case `pushOfTx`:	//腾讯移动推送
-	default:
-		push = NewPushOfTx(config)
+	if _, ok = pushFuncMap[pushType]; !ok {
+		pushType = pushTypeDef
 	}
+	push = pushFuncMap[pushType](ctx, config)
 	pushMap[pushKey] = push
 	return
 }

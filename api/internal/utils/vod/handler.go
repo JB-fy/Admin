@@ -3,8 +3,6 @@ package vod
 import (
 	daoPlatform "api/internal/dao/platform"
 	"context"
-
-	"github.com/gogf/gf/v2/frame/g"
 )
 
 type Handler struct {
@@ -18,23 +16,17 @@ func NewHandler(ctx context.Context, scene string, vodTypeOpt ...string) *Handle
 		Ctx:   ctx,
 		Scene: scene,
 	}
-
 	vodType := ``
 	if len(vodTypeOpt) > 0 {
 		vodType = vodTypeOpt[0]
 	} else {
 		vodType = daoPlatform.Config.GetOne(ctx, `vodType`).String()
 	}
-
-	var config g.Map
-	switch vodType {
-	// case `vodOfAliyun`:
-	default:
-		config = daoPlatform.Config.GetOne(ctx, `vodOfAliyun`).Map()
+	if _, ok := vodFuncMap[vodType]; !ok {
+		vodType = vodTypeDef
 	}
-
-	config[`vodType`] = vodType
-	handlerObj.Vod = NewVod(config)
+	config := daoPlatform.Config.GetOne(ctx, vodType).Map()
+	handlerObj.Vod = NewVod(ctx, vodType, config)
 	return handlerObj
 }
 

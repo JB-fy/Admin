@@ -31,7 +31,7 @@ type PayOfWx struct {
 	NotifyUrl  string `json:"notifyUrl"`
 }
 
-func NewPayOfWx(config map[string]any) *PayOfWx {
+func NewPayOfWx(ctx context.Context, config map[string]any) *PayOfWx {
 	payObj := &PayOfWx{}
 	gconv.Struct(config, payObj)
 	if payObj.AppId == `` || payObj.Mchid == `` || payObj.SerialNo == `` || payObj.APIv3Key == `` || payObj.PrivateKey == `` || payObj.NotifyUrl == `` {

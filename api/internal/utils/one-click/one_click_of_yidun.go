@@ -1,6 +1,7 @@
 package one_click
 
 import (
+	"context"
 	"errors"
 
 	"github.com/gogf/gf/v2/util/gconv"
@@ -13,7 +14,7 @@ type OneClickOfYidun struct {
 	BusinessId string `json:"businessId"`
 }
 
-func NewOneClickOfYidun(config map[string]any) *OneClickOfYidun {
+func NewOneClickOfYidun(ctx context.Context, config map[string]any) *OneClickOfYidun {
 	oneClickObj := &OneClickOfYidun{}
 	gconv.Struct(config, oneClickObj)
 	if oneClickObj.SecretId == `` || oneClickObj.SecretKey == `` || oneClickObj.BusinessId == `` {
@@ -22,7 +23,7 @@ func NewOneClickOfYidun(config map[string]any) *OneClickOfYidun {
 	return oneClickObj
 }
 
-func (oneClickThis *OneClickOfYidun) Check(token string, accessToken string) (phone string, err error) {
+func (oneClickThis *OneClickOfYidun) Check(ctx context.Context, token string, accessToken string) (phone string, err error) {
 	client := mobileverify.NewMobileNumberClientWithAccessKey(oneClickThis.SecretId, oneClickThis.SecretKey)
 
 	req := mobileverify.NewMobileNumberGetRequest(oneClickThis.BusinessId)

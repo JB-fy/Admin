@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -17,23 +16,17 @@ type Handler struct {
 
 func NewHandler(ctx context.Context, emailTypeOpt ...string) *Handler {
 	handlerObj := &Handler{Ctx: ctx}
-
 	emailType := ``
 	if len(emailTypeOpt) > 0 {
 		emailType = emailTypeOpt[0]
 	} else {
 		emailType = daoPlatform.Config.GetOne(ctx, `emailType`).String()
 	}
-
-	var config g.Map
-	switch emailType {
-	// case `emailOfCommon`:
-	default:
-		config = daoPlatform.Config.GetOne(ctx, `emailOfCommon`).Map()
+	if _, ok := emailFuncMap[emailType]; !ok {
+		emailType = emailTypeDef
 	}
-
-	config[`emailType`] = emailType
-	handlerObj.Email = NewEmail(config)
+	config := daoPlatform.Config.GetOne(ctx, emailType).Map()
+	handlerObj.Email = NewEmail(ctx, emailType, config)
 	return handlerObj
 }
 

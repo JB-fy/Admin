@@ -21,16 +21,14 @@ type Handler struct {
 
 func NewHandler(ctx context.Context /* , sceneIdOpt ...string */) *Handler {
 	handlerObj := &Handler{Ctx: ctx}
-
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	/* if len(sceneIdOpt) > 0 {
 		sceneInfo, _ = daoAuth.Scene.GetInfoFromCache(ctx, sceneIdOpt[0])
 	} */
-
 	config, _ := sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map)
 	gconv.Struct(config, handlerObj)
 	handlerObj.SceneId = sceneInfo[daoAuth.Scene.Columns().SceneId].String()
-	handlerObj.Token = NewToken(config)
+	handlerObj.Token = NewToken(ctx, gconv.Uint(config[`token_type`]), config)
 	return handlerObj
 }
 

@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type VodParam struct {
@@ -17,13 +16,16 @@ type Vod interface {
 }
 
 var (
+	vodTypeDef = `vodOfAliyun`
+	vodFuncMap = map[string]func(ctx context.Context, config map[string]any) Vod{
+		`vodOfAliyun`: func(ctx context.Context, config map[string]any) Vod { return NewVodOfAliyun(ctx, config) },
+	}
 	vodMap = map[string]Vod{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	vodMu  sync.Mutex
 )
 
-func NewVod(config map[string]any) (vod Vod) {
-	vodKey := gmd5.MustEncrypt(config)
-
+func NewVod(ctx context.Context, vodType string, config map[string]any) (vod Vod) {
+	vodKey := vodType + gmd5.MustEncrypt(config)
 	ok := false
 	if vod, ok = vodMap[vodKey]; ok { //先读一次（不加锁）
 		return
@@ -33,12 +35,10 @@ func NewVod(config map[string]any) (vod Vod) {
 	if vod, ok = vodMap[vodKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-
-	switch gconv.String(config[`vodType`]) {
-	// case `vodOfAliyun`:
-	default:
-		vod = NewVodOfAliyun(config)
+	if _, ok = vodFuncMap[vodType]; !ok {
+		vodType = vodTypeDef
 	}
+	vod = vodFuncMap[vodType](ctx, config)
 	vodMap[vodKey] = vod
 	return
 }

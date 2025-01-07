@@ -24,24 +24,22 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) *Handler {
 		Scene:    scene,
 		UploadId: uploadId,
 	}
-
 	uploadInfo, _ := daoUpload.Upload.CacheGetInfo(handlerObj.Ctx, handlerObj.UploadId)
-
 	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
 	config[`uploadId`] = uploadInfo[daoUpload.Upload.Columns().UploadId]
 	if gconv.Bool(config[`isNotify`]) {
 		config[`callbackUrl`] = utils.GetRequestUrl(handlerObj.Ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
 	}
-	switch uploadInfo[daoUpload.Upload.Columns().UploadType].Uint() {
-	case 1: //阿里云OSS
-	// case 0: //本地
-	default:
+	uploadType := uploadInfo[daoUpload.Upload.Columns().UploadType].Uint()
+	if _, ok := uploadFuncMap[uploadType]; !ok {
+		uploadType = uploadTypeDef
+	}
+	switch uploadType {
+	case 0:
 		config[`url`] = handlerObj.handleLocalUrl(gconv.String(config[`url`]))
 		config[`fileUrlPrefix`] = handlerObj.handleLocalUrl(gconv.String(config[`fileUrlPrefix`]))
 	}
-
-	config[`uploadType`] = uploadInfo[daoUpload.Upload.Columns().UploadType]
-	handlerObj.upload = NewUpload(config)
+	handlerObj.upload = NewUpload(ctx, uploadType, config)
 	return handlerObj
 }
 

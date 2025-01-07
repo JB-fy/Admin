@@ -269,7 +269,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 			saveData[daoUsers.Users.Columns().Avatar] = userInfo.Avatar
 		}
 	case `oneClickOfYidun`: //易盾
-		phone, errTmp := one_click.NewOneClickOfYidunHandler(ctx).Check(req.TokenOfYidun, req.AccessTokenOfYidun)
+		phone, errTmp := one_click.NewOneClickOfYidunHandler(ctx).Check(ctx, req.TokenOfYidun, req.AccessTokenOfYidun)
 		if errTmp != nil {
 			err = errTmp
 			return

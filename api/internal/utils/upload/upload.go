@@ -43,13 +43,17 @@ type Upload interface {
 }
 
 var (
+	uploadTypeDef uint = 0
+	uploadFuncMap      = map[uint]func(ctx context.Context, config map[string]any) Upload{
+		0: func(ctx context.Context, config map[string]any) Upload { return NewUploadOfLocal(ctx, config) },
+		1: func(ctx context.Context, config map[string]any) Upload { return NewUploadOfAliyunOss(ctx, config) },
+	}
 	uploadMap = map[string]Upload{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	uploadMu  sync.Mutex
 )
 
-func NewUpload(config map[string]any) (upload Upload) {
-	uploadKey := gmd5.MustEncrypt(config)
-
+func NewUpload(ctx context.Context, uploadType uint, config map[string]any) (upload Upload) {
+	uploadKey := gconv.String(uploadType) + gmd5.MustEncrypt(config)
 	ok := false
 	if upload, ok = uploadMap[uploadKey]; ok { //先读一次（不加锁）
 		return
@@ -59,14 +63,10 @@ func NewUpload(config map[string]any) (upload Upload) {
 	if upload, ok = uploadMap[uploadKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-
-	switch gconv.Uint(config[`uploadType`]) {
-	case 1: //阿里云OSS
-		upload = NewUploadOfAliyunOss(config)
-	// case 0: //本地
-	default:
-		upload = NewUploadOfLocal(config)
+	if _, ok = uploadFuncMap[uploadType]; !ok {
+		uploadType = uploadTypeDef
 	}
+	upload = uploadFuncMap[uploadType](ctx, config)
 	uploadMap[uploadKey] = upload
 	return
 }

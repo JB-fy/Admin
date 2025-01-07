@@ -17,7 +17,7 @@ type IdCardOfAliyun struct {
 	client  *gclient.Client
 }
 
-func NewIdCardOfAliyun(config map[string]any) *IdCardOfAliyun {
+func NewIdCardOfAliyun(ctx context.Context, config map[string]any) *IdCardOfAliyun {
 	idCardObj := &IdCardOfAliyun{}
 	gconv.Struct(config, idCardObj)
 	if idCardObj.Url == `` || idCardObj.Appcode == `` {

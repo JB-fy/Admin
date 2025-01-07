@@ -17,7 +17,7 @@ type PayOfAli struct {
 	NotifyUrl  string `json:"notifyUrl"`
 }
 
-func NewPayOfAli(config map[string]any) *PayOfAli {
+func NewPayOfAli(ctx context.Context, config map[string]any) *PayOfAli {
 	payObj := &PayOfAli{}
 	gconv.Struct(config, payObj)
 	if payObj.AppId == `` || payObj.PrivateKey == `` || payObj.PublicKey == `` || payObj.NotifyUrl == `` {

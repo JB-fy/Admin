@@ -25,7 +25,7 @@ type PushOfTx struct {
 	client    *gclient.Client
 }
 
-func NewPushOfTx(config map[string]any) *PushOfTx {
+func NewPushOfTx(ctx context.Context, config map[string]any) *PushOfTx {
 	pushObj := &PushOfTx{}
 	gconv.Struct(config, pushObj)
 	if pushObj.Host == `` || pushObj.AccessID == 0 || pushObj.SecretKey == `` {

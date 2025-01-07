@@ -3,8 +3,6 @@ package id_card
 import (
 	daoPlatform "api/internal/dao/platform"
 	"context"
-
-	"github.com/gogf/gf/v2/frame/g"
 )
 
 type Handler struct {
@@ -14,23 +12,17 @@ type Handler struct {
 
 func NewHandler(ctx context.Context, idCardTypeOpt ...string) *Handler {
 	handlerObj := &Handler{Ctx: ctx}
-
 	idCardType := ``
 	if len(idCardTypeOpt) > 0 {
 		idCardType = idCardTypeOpt[0]
 	} else {
 		idCardType = daoPlatform.Config.GetOne(ctx, `idCardType`).String()
 	}
-
-	var config g.Map
-	switch idCardType {
-	// case `idCardOfAliyun`:
-	default:
-		config = daoPlatform.Config.GetOne(ctx, `idCardOfAliyun`).Map()
+	if _, ok := idCardFuncMap[idCardType]; !ok {
+		idCardType = idCardTypeDef
 	}
-
-	config[`idCardType`] = idCardType
-	handlerObj.IdCard = NewIdCard(config)
+	config := daoPlatform.Config.GetOne(ctx, idCardType).Map()
+	handlerObj.IdCard = NewIdCard(ctx, idCardType, config)
 	return handlerObj
 }
 

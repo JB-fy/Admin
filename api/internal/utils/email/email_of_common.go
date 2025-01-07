@@ -17,7 +17,7 @@ type EmailOfCommon struct {
 	// clientMu  sync.Mutex   //互斥锁。确实需要复用客户端时，必须在发送时上锁
 }
 
-func NewEmailOfCommon(config map[string]any) *EmailOfCommon {
+func NewEmailOfCommon(ctx context.Context, config map[string]any) *EmailOfCommon {
 	emailObj := &EmailOfCommon{}
 	gconv.Struct(config, emailObj)
 	if emailObj.SmtpHost == `` || emailObj.SmtpPort == `` || emailObj.FromEmail == `` || emailObj.Password == `` {

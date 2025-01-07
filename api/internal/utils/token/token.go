@@ -20,24 +20,23 @@ type Token interface {
 }
 
 var (
+	tokenTypeDef uint = 0
+	tokenFuncMap      = map[uint]func(ctx context.Context, config map[string]any) Token{
+		0: func(ctx context.Context, config map[string]any) Token { return NewTokenOfJwt(ctx, config) },
+	}
 	// tokenMap sync.Map
 	tokenMap = map[string]Token{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	tokenMu  sync.Mutex
 )
 
-func NewToken(config map[string]any) (token Token) {
-	tokenKey := gmd5.MustEncrypt(config)
-
-	/* tokenTmp, _ := tokenMap.LoadOrStore(tokenKey, func() (token Token) {
-		switch gconv.Uint(config[`token_type`]) {
-		// case 0:	//JWT
-		default:
-			token = NewTokenOfJwt(config)
+func NewToken(ctx context.Context, tokenType uint, config map[string]any) (token Token) {
+	tokenKey := gconv.String(tokenType) + gmd5.MustEncrypt(config)
+	/* token, _ = tokenMap.LoadOrStore(tokenKey, func() Token {
+		if _, ok := tokenFuncMap[tokenType]; !ok {
+			tokenType = tokenTypeDef
 		}
-		return
-	})
-	token = tokenTmp.(Token) */
-
+		return tokenFuncMap[tokenType](ctx, config)
+	}) */
 	ok := false
 	if token, ok = tokenMap[tokenKey]; ok { //先读一次（不加锁）
 		return
@@ -47,12 +46,10 @@ func NewToken(config map[string]any) (token Token) {
 	if token, ok = tokenMap[tokenKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-
-	switch gconv.Uint(config[`token_type`]) {
-	// case 0:	//JWT
-	default:
-		token = NewTokenOfJwt(config)
+	if _, ok = tokenFuncMap[tokenType]; !ok {
+		tokenType = tokenTypeDef
 	}
+	token = tokenFuncMap[tokenType](ctx, config)
 	tokenMap[tokenKey] = token
 	return
 

@@ -18,7 +18,7 @@ type OneClickOfWx struct {
 	client *gclient.Client
 }
 
-func NewOneClickOfWx(config map[string]any) *OneClickOfWx {
+func NewOneClickOfWx(ctx context.Context, config map[string]any) *OneClickOfWx {
 	oneClickObj := &OneClickOfWx{}
 	gconv.Struct(config, oneClickObj)
 	if oneClickObj.Host == `` || oneClickObj.AppId == `` || oneClickObj.Secret == `` {

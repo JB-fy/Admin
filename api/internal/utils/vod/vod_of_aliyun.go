@@ -17,7 +17,7 @@ type VodOfAliyun struct {
 	RoleArn         string `json:"roleArn"`
 }
 
-func NewVodOfAliyun(config map[string]any) *VodOfAliyun {
+func NewVodOfAliyun(ctx context.Context, config map[string]any) *VodOfAliyun {
 	vodObj := &VodOfAliyun{}
 	gconv.Struct(config, vodObj)
 	if vodObj.AccessKeyId == `` || vodObj.AccessKeySecret == `` || vodObj.Endpoint == `` || vodObj.RoleArn == `` {

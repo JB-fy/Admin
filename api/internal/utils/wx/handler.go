@@ -15,9 +15,7 @@ var (
 
 func NewWxGzhHandler(ctx context.Context) (wxGzh *WxGzh) {
 	config := daoPlatform.Config.GetOne(ctx, `wxGzh`).Map()
-
 	wxGzhKey := gmd5.MustEncrypt(config)
-
 	ok := false
 	if wxGzh, ok = wxGzhMap[wxGzhKey]; ok { //先读一次（不加锁）
 		return
@@ -27,8 +25,7 @@ func NewWxGzhHandler(ctx context.Context) (wxGzh *WxGzh) {
 	if wxGzh, ok = wxGzhMap[wxGzhKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-
-	wxGzh = NewWxGzh(config)
+	wxGzh = NewWxGzh(ctx, config)
 	wxGzhMap[wxGzhKey] = wxGzh
 	return
 }

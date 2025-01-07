@@ -47,13 +47,17 @@ type Pay interface {
 }
 
 var (
+	payTypeDef uint = 0
+	payFuncMap      = map[uint]func(ctx context.Context, config map[string]any) Pay{
+		0: func(ctx context.Context, config map[string]any) Pay { return NewPayOfAli(ctx, config) },
+		1: func(ctx context.Context, config map[string]any) Pay { return NewPayOfWx(ctx, config) },
+	}
 	payMap = map[string]Pay{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	payMu  sync.Mutex
 )
 
-func NewPay(config map[string]any) (pay Pay) {
-	payKey := gmd5.MustEncrypt(config)
-
+func NewPay(ctx context.Context, payType uint, config map[string]any) (pay Pay) {
+	payKey := gconv.String(payType) + gmd5.MustEncrypt(config)
 	ok := false
 	if pay, ok = payMap[payKey]; ok { //先读一次（不加锁）
 		return
@@ -63,14 +67,10 @@ func NewPay(config map[string]any) (pay Pay) {
 	if pay, ok = payMap[payKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-
-	switch gconv.Uint(config[`payType`]) {
-	case 1: //微信
-		pay = NewPayOfWx(config)
-	// case 0: //支付宝
-	default:
-		pay = NewPayOfAli(config)
+	if _, ok = payFuncMap[payType]; !ok {
+		payType = payTypeDef
 	}
+	pay = payFuncMap[payType](ctx, config)
 	payMap[payKey] = pay
 	return
 }

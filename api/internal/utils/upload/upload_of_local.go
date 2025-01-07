@@ -30,7 +30,7 @@ type UploadOfLocal struct {
 	FileUrlPrefix string `json:"fileUrlPrefix"`
 }
 
-func NewUploadOfLocal(config map[string]any) *UploadOfLocal {
+func NewUploadOfLocal(ctx context.Context, config map[string]any) *UploadOfLocal {
 	uploadObj := &UploadOfLocal{}
 	gconv.Struct(config, uploadObj)
 	if uploadObj.UploadId == 0 || uploadObj.Url == `` || uploadObj.SignKey == `` || uploadObj.FileSaveDir == `` || uploadObj.FileUrlPrefix == `` {

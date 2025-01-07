@@ -34,7 +34,7 @@ type WxGzh struct {
 	client         *gclient.Client
 }
 
-func NewWxGzh(config map[string]any) *WxGzh {
+func NewWxGzh(ctx context.Context, config map[string]any) *WxGzh {
 	wxGzhObj := &WxGzh{}
 	gconv.Struct(config, wxGzhObj)
 	if wxGzhObj.AppId == `` || wxGzhObj.Secret == `` || wxGzhObj.Token == `` || wxGzhObj.EncodingAESKey == `` {

@@ -20,7 +20,7 @@ type SmsOfAliyun struct {
 	TemplateCode    string `json:"templateCode"`
 }
 
-func NewSmsOfAliyun(config map[string]any) *SmsOfAliyun {
+func NewSmsOfAliyun(ctx context.Context, config map[string]any) *SmsOfAliyun {
 	smsObj := &SmsOfAliyun{}
 	gconv.Struct(config, smsObj)
 	if smsObj.AccessKeyId == `` || smsObj.AccessKeySecret == `` || smsObj.Endpoint == `` {
