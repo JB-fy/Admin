@@ -56,7 +56,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, redis *gredis.Redis, ke
 	isSetTTL := gconv.Int64(time.Duration(numLock*numRead) * oneTime / time.Second) //redis锁缓存Key时间
 	isSetOption := gredis.SetOption{TTLOption: gredis.TTLOption{EX: &isSetTTL}, NX: true}
 	for i := 0; i < numLock; i++ {
-		isSetVal, err = redis.Set(ctx, isSetKey, key, isSetOption)
+		isSetVal, err = redis.Set(ctx, isSetKey, ``, isSetOption)
 		if err != nil {
 			return
 		}
