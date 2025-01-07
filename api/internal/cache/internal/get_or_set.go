@@ -51,15 +51,16 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, redis *gredis.Redis, ke
 	if oneTime <= 0 {
 		oneTime = 200 * time.Millisecond
 	}
-	isSetKeyTTL := gconv.Int64(time.Duration(numLock*numRead) * oneTime / time.Second) //redis锁缓存Key时间
+	var isSetVal *gvar.Var
 	isSetKey := cacheThis.isSetKey(key)
-	var isSet int64 = 0
+	isSetTTL := gconv.Int64(time.Duration(numLock*numRead) * oneTime / time.Second) //redis锁缓存Key时间
+	isSetOption := gredis.SetOption{TTLOption: gredis.TTLOption{EX: &isSetTTL}, NX: true}
 	for i := 0; i < numLock; i++ {
-		isSet, err = redis.Incr(ctx, isSetKey)
+		isSetVal, err = redis.Set(ctx, isSetKey, key, isSetOption)
 		if err != nil {
 			return
 		}
-		if isSet == 1 {
+		if isSetVal.Bool() {
 			value, noSetCache, err = valueFunc()
 			if err != nil || noSetCache {
 				redis.Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
@@ -70,10 +71,9 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, redis *gredis.Redis, ke
 				redis.Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 				return
 			}
-			redis.Expire(ctx, isSetKey, isSetKeyTTL)
+			redis.Expire(ctx, isSetKey, isSetTTL)
 			return
 		}
-
 		// 等待读取数据
 		for i := 0; i < numRead; i++ {
 			value, noExistOfCache, err = cacheThis.get(ctx, redis, key)
