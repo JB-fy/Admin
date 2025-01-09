@@ -1,18 +1,15 @@
 package wx
 
 import (
+	"api/internal/utils"
 	"bytes"
 	"context"
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/xml"
 	"errors"
-	"io"
 	"sort"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
@@ -127,30 +124,30 @@ func (wxGzhThis *WxGzh) GetEncryptReqBody(r *ghttp.Request) (encryptReqBody *Enc
 	return
 }
 
+// aes加密
+func (wxGzhThis *WxGzh) AesEncrypt(msgByte []byte) (encrypt string, err error) {
+	cipherByte, err := utils.AesEncrypt(utils.PKCS5Pad(msgByte, len(wxGzhThis.AESKey)), wxGzhThis.AESKey, `CBC`)
+	if err != nil {
+		return
+	}
+	encrypt = base64.StdEncoding.EncodeToString(cipherByte)
+	return
+}
+
 // aes解密
 func (wxGzhThis *WxGzh) AesDecrypt(encrypt string) (msgByte []byte, err error) {
 	cipherData, err := base64.StdEncoding.DecodeString(encrypt)
 	if err != nil {
 		return
 	}
-	if len(cipherData)%len(wxGzhThis.AESKey) != 0 {
-		err = errors.New(`crypto/cipher: ciphertext size is not multiple of aes key length`)
-		return
-	}
-
-	block, err := aes.NewCipher(wxGzhThis.AESKey)
+	rawByte, err := utils.AesDecrypt(cipherData, wxGzhThis.AESKey, `CBC`)
 	if err != nil {
 		return
 	}
-
-	iv := make([]byte, aes.BlockSize)
-	_, err = io.ReadFull(rand.Reader, iv)
+	msgByte, err = utils.PKCS5UnPad(rawByte, len(wxGzhThis.AESKey))
 	if err != nil {
 		return
 	}
-	blockMode := cipher.NewCBCDecrypter(block, iv)
-	msgByte = make([]byte, len(cipherData))
-	blockMode.CryptBlocks(msgByte, cipherData)
 	return
 }
 
@@ -193,7 +190,7 @@ func (wxGzhThis *WxGzh) EncryptMsg(fromUserName, toUserName, timestamp, msgType 
 	}
 
 	plainData := bytes.Join([][]byte{[]byte(grand.S(16)), buf.Bytes(), msgBody, []byte(wxGzhThis.AppId)}, nil)
-	encrypt, err = wxGzhThis.aesEncrypt(plainData)
+	encrypt, err = wxGzhThis.AesEncrypt(plainData)
 	return
 }
 
@@ -332,56 +329,4 @@ func (wxGzhThis *WxGzh) UserGet(ctx context.Context, accessToken, nextOpenid str
 
 func (wxGzhThis *WxGzh) value2CDATA(v string) CDATAText {
 	return CDATAText{`<![CDATA[` + v + `]]>`}
-}
-
-func (wxGzhThis *WxGzh) pKCS7Pad(message []byte, blocksize int) (padded []byte, err error) {
-	if blocksize < 2 {
-		err = errors.New(`block size is too small(minimum is 2 bytes)`)
-		return
-	}
-	if blocksize > 255 {
-		err = errors.New(`block size is too long(maxmum is 255 bytes)`)
-		return
-	}
-
-	// calculate padding length
-	padlen := blocksize - len(message)%blocksize
-	if padlen == 0 {
-		padlen = blocksize
-	}
-
-	// define PKCS7 padding blockbody
-	padding := bytes.Repeat([]byte{byte(padlen)}, padlen)
-
-	// apply padding
-	padded = append(message, padding...)
-	return
-}
-
-// aes加密
-func (wxGzhThis *WxGzh) aesEncrypt(msgByte []byte) (encrypt string, err error) {
-	k := len(wxGzhThis.AESKey)
-	if len(msgByte)%k != 0 {
-		msgByte, err = wxGzhThis.pKCS7Pad(msgByte, k)
-		if err != nil {
-			return
-		}
-	}
-
-	block, err := aes.NewCipher(wxGzhThis.AESKey)
-	if err != nil {
-		return
-	}
-
-	iv := make([]byte, aes.BlockSize)
-	_, err = io.ReadFull(rand.Reader, iv)
-	if err != nil {
-		return
-	}
-
-	cipherData := make([]byte, len(msgByte))
-	blockMode := cipher.NewCBCEncrypter(block, iv)
-	blockMode.CryptBlocks(cipherData, msgByte)
-	encrypt = base64.StdEncoding.EncodeToString(cipherData)
-	return
 }

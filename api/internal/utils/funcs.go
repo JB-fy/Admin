@@ -7,6 +7,7 @@ package utils
 import (
 	"bytes"
 	"crypto/aes"
+	"crypto/cipher"
 	"errors"
 	"os/exec"
 	"reflect"
@@ -14,6 +15,7 @@ import (
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/grand"
 	"golang.org/x/tools/imports"
 )
 
@@ -113,61 +115,79 @@ func GetValueFromStruct(Obj any, name string) (val any) {
 	return
 }
 
-// aes加密（ECB模式，PKCS5补码）
-func AesEncrypt(rawStr string, key string) (cipherByte []byte, err error) {
-	keyByte := []byte(key)
+// PKCS补码（PKCS5，PKCS7通用）
+func PKCS5Pad(rawByte []byte, padLen int) []byte {
+	rawByteLen := len(rawByte)
+	fillLen := padLen - (rawByteLen % padLen)
+	fillByte := bytes.Repeat([]byte{byte(fillLen)}, fillLen)
+	return append(rawByte, fillByte...)
+}
+
+// PKCS补码移除（PKCS5，PKCS7通用）
+func PKCS5UnPad(rawByte []byte, padLen int) ([]byte, error) {
+	rawByteLen := len(rawByte)
+	fillByte := rawByte[rawByteLen-1]
+	fillLen := int(fillByte)
+	if fillLen > padLen || fillLen == 0 {
+		return nil, errors.New(`无效的填充长度：` + gconv.String(fillLen))
+	}
+	fillPosition := rawByteLen - fillLen
+	for _, v := range rawByte[fillPosition:] {
+		if v != fillByte {
+			return nil, errors.New(`无效的填充位：预期` + gconv.String(fillLen) + `实际` + gconv.String(v))
+		}
+	}
+	return rawByte[:fillPosition], nil
+}
+
+// AES加密
+func AesEncrypt(rawByte []byte, keyByte []byte, cipherType string) (cipherByte []byte, err error) {
 	block, err := aes.NewCipher(keyByte)
 	if err != nil {
 		return
 	}
-
-	rawStrByte := []byte(rawStr)
 	blockSize := block.BlockSize()
-	rawStrByteLen := len(rawStrByte)
-	fillLen := blockSize - (rawStrByteLen % blockSize)
-	fillByte := bytes.Repeat([]byte{byte(fillLen)}, fillLen)
-	rawStrByte = append(rawStrByte, fillByte...)
-
-	cipherByte = make([]byte, rawStrByteLen)
-	for i := 0; i < rawStrByteLen; i += blockSize {
-		block.Encrypt(cipherByte[i:i+blockSize], rawStrByte[i:i+blockSize])
+	rawByteLen := len(rawByte)
+	if rawByteLen%blockSize != 0 {
+		err = errors.New(`加密串必须是块大小的整数倍`)
+		return
+	}
+	cipherByte = make([]byte, rawByteLen)
+	switch cipherType {
+	case `ECB`:
+		for i := 0; i < rawByteLen; i += blockSize {
+			block.Encrypt(cipherByte[i:i+blockSize], rawByte[i:i+blockSize])
+		}
+	// case `CBC`:
+	default:
+		blockMode := cipher.NewCBCEncrypter(block, grand.B(blockSize))
+		blockMode.CryptBlocks(cipherByte, rawByte)
 	}
 	return
 }
 
-// aes解密（ECB模式，PKCS5补码）
-func AesDecrypt(cipherByte []byte, key string) (rawStr string, err error) {
-	keyByte := []byte(key)
+// AES解密
+func AesDecrypt(cipherByte []byte, keyByte []byte, cipherType string) (rawByte []byte, err error) {
 	block, err := aes.NewCipher(keyByte)
 	if err != nil {
 		return
 	}
-
 	blockSize := block.BlockSize()
 	cipherByteLen := len(cipherByte)
 	if cipherByteLen%blockSize != 0 {
-		err = errors.New(`加密串必须是块大小的整数倍`)
+		err = errors.New(`解密串必须是块大小的整数倍`)
 		return
 	}
-	rawStrByte := make([]byte, cipherByteLen)
-	for i := 0; i < cipherByteLen; i += blockSize {
-		block.Decrypt(rawStrByte[i:i+blockSize], cipherByte[i:i+blockSize])
-	}
-
-	rawStrByteLen := len(rawStrByte)
-	fillByte := rawStrByte[rawStrByteLen-1]
-	fillLen := int(fillByte)
-	if fillLen > blockSize || fillLen == 0 {
-		err = errors.New(`无效的填充长度：` + gconv.String(fillLen))
-		return
-	}
-	fillPosition := rawStrByteLen - fillLen
-	for _, v := range rawStrByte[fillPosition:] {
-		if v != fillByte {
-			err = errors.New(`无效的填充位：预期` + gconv.String(fillLen) + `实际` + gconv.String(v))
-			return
+	rawByte = make([]byte, cipherByteLen)
+	switch cipherType {
+	case `ECB`:
+		for i := 0; i < cipherByteLen; i += blockSize {
+			block.Decrypt(rawByte[i:i+blockSize], cipherByte[i:i+blockSize])
 		}
+	// case `CBC`:
+	default:
+		blockMode := cipher.NewCBCDecrypter(block, grand.B(blockSize))
+		blockMode.CryptBlocks(rawByte, cipherByte)
 	}
-	rawStr = string(rawStrByte[:fillPosition])
 	return
 }
