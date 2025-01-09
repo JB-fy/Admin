@@ -15,7 +15,6 @@ import (
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
-	"github.com/gogf/gf/v2/util/grand"
 	"golang.org/x/tools/imports"
 )
 
@@ -141,7 +140,7 @@ func PKCS5UnPad(rawByte []byte, padLen int) ([]byte, error) {
 }
 
 // AES加密
-func AesEncrypt(rawByte []byte, keyByte []byte, cipherType string) (cipherByte []byte, err error) {
+func AesEncrypt(rawByte []byte, keyByte []byte, cipherType string, iv ...byte) (cipherByte []byte, err error) {
 	block, err := aes.NewCipher(keyByte)
 	if err != nil {
 		return
@@ -160,14 +159,14 @@ func AesEncrypt(rawByte []byte, keyByte []byte, cipherType string) (cipherByte [
 		}
 	// case `CBC`:
 	default:
-		blockMode := cipher.NewCBCEncrypter(block, grand.B(blockSize))
+		blockMode := cipher.NewCBCEncrypter(block, iv)
 		blockMode.CryptBlocks(cipherByte, rawByte)
 	}
 	return
 }
 
 // AES解密
-func AesDecrypt(cipherByte []byte, keyByte []byte, cipherType string) (rawByte []byte, err error) {
+func AesDecrypt(cipherByte []byte, keyByte []byte, cipherType string, iv ...byte) (rawByte []byte, err error) {
 	block, err := aes.NewCipher(keyByte)
 	if err != nil {
 		return
@@ -186,7 +185,7 @@ func AesDecrypt(cipherByte []byte, keyByte []byte, cipherType string) (rawByte [
 		}
 	// case `CBC`:
 	default:
-		blockMode := cipher.NewCBCDecrypter(block, grand.B(blockSize))
+		blockMode := cipher.NewCBCDecrypter(block, iv)
 		blockMode.CryptBlocks(rawByte, cipherByte)
 	}
 	return

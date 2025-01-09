@@ -4,6 +4,7 @@ import (
 	"api/internal/utils"
 	"bytes"
 	"context"
+	"crypto/aes"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/binary"
@@ -126,7 +127,7 @@ func (wxGzhThis *WxGzh) GetEncryptReqBody(r *ghttp.Request) (encryptReqBody *Enc
 
 // aes加密
 func (wxGzhThis *WxGzh) AesEncrypt(msgByte []byte) (encrypt string, err error) {
-	cipherByte, err := utils.AesEncrypt(utils.PKCS5Pad(msgByte, len(wxGzhThis.AESKey)), wxGzhThis.AESKey, `CBC`)
+	cipherByte, err := utils.AesEncrypt(utils.PKCS5Pad(msgByte, len(wxGzhThis.AESKey)), wxGzhThis.AESKey, `CBC`, wxGzhThis.AESKey[:aes.BlockSize]...)
 	if err != nil {
 		return
 	}
@@ -140,7 +141,7 @@ func (wxGzhThis *WxGzh) AesDecrypt(encrypt string) (msgByte []byte, err error) {
 	if err != nil {
 		return
 	}
-	rawByte, err := utils.AesDecrypt(cipherData, wxGzhThis.AESKey, `CBC`)
+	rawByte, err := utils.AesDecrypt(cipherData, wxGzhThis.AESKey, `CBC`, wxGzhThis.AESKey[:aes.BlockSize]...)
 	if err != nil {
 		return
 	}
