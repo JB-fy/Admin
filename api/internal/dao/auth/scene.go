@@ -398,7 +398,13 @@ func (daoThis *sceneDao) CacheSet(ctx context.Context) {
 }
 
 func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id string) (info gdb.Record, err error) {
-	/* // 数据修改需要立即同步缓存的表：缓存在redis，数据修改可做到立即同步缓存，只需数据修改时删除缓存即可。如在dao层的HookUpdate和HookDelete方法中补充缓存删除代码：cache.DbData.Del(ctx, daoThis, gconv.Strings(daoModel.IdArr)...)
+	/* // 数据修改需要立即同步缓存的表：缓存在redis，数据修改可做到立即同步缓存
+	// 只需数据修改 或 删除时，同时删除缓存即可。要求如下：
+	// 	1：数据修改删除都需触发后置操作。即调用以下方法
+	// 		修改用：daoThis.CtxDaoModel(ctx).SetIdArr(filter).HookUpdate(data).Update()
+	// 		删除用：daoThis.CtxDaoModel(ctx).SetIdArr(filter).HookDelete().Delete()
+	// 	2：后置操作 HookUpdate 和 HookDelete 方法的判断受影响行后面添加删除缓存代码：cache.DbData.Del(ctx, daoThis, gconv.SliceAny(daoModel.IdArr)...)
+	// 		注意：要触发 HookUpdate 方法，还需注释 ParseUpdate 方法中的 if len(daoModel.AfterUpdate) == 0 这段代码
 	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, 6*30*24*60*60)
 	if err != nil {
 		return
