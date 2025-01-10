@@ -119,7 +119,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				// 方式2：非联表查询
 				menuIdArr, _ := RoleRelToMenu.CtxDaoModel(m.GetCtx()).Filter(RoleRelToMenu.Columns().RoleId, roleIdArr).Distinct().Array(RoleRelToMenu.Columns().MenuId) */
 				// 方式3：缓存读取（推荐）
-				menuIdArr, _ := Role.CacheGetMenuIdArr(m.GetCtx(), gconv.Strings(roleIdArr)...)
+				menuIdArr, _ := Role.CacheGetMenuIdArr(m.GetCtx(), gconv.Uints(roleIdArr)...)
 				if len(menuIdArr) == 0 {
 					m = m.Where(`1 = 0`)
 					continue
@@ -570,7 +570,7 @@ func (daoThis *menuDao) CacheGetListOfSelf(ctx context.Context, sceneId string, 
 	if err != nil || len(roleIdArr) == 0 {
 		return
 	}
-	menuIdArr, err := Role.CacheGetMenuIdArr(ctx, gconv.Strings(roleIdArr)...)
+	menuIdArr, err := Role.CacheGetMenuIdArr(ctx, roleIdArr...)
 	if err != nil || len(menuIdArr) == 0 {
 		return
 	}

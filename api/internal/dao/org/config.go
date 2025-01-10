@@ -387,7 +387,7 @@ func (daoThis *configDao) GetOne(ctx context.Context, orgId string, configKey st
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, orgId string, configKeyArr ...string) (config gdb.Record, err error) {
-	idArr := make([]string, len(configKeyArr))
+	idArr := make([]any, len(configKeyArr))
 	for index, configKey := range configKeyArr {
 		idArr[index] = orgId + `|` + configKey
 	}
@@ -405,7 +405,7 @@ func (daoThis *configDao) Get(ctx context.Context, orgId string, configKeyArr ..
 
 // 保存配置
 func (daoThis *configDao) Save(ctx context.Context, orgId string, config map[string]any) (err error) {
-	idArr := make([]string, 0, len(config))
+	idArr := make([]any, 0, len(config))
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 	err = daoModelThis.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {

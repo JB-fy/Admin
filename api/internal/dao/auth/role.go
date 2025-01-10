@@ -365,7 +365,7 @@ func (daoThis *roleDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				}
 			}
 
-			daoThis.CacheDeleteInfo(ctx, gconv.Strings(daoModel.IdArr)...)
+			daoThis.CacheDeleteInfo(ctx, gconv.Uints(daoModel.IdArr)...)
 
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
@@ -399,7 +399,7 @@ func (daoThis *roleDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				return
 			}
 
-			daoThis.CacheDeleteInfo(ctx, gconv.Strings(daoModel.IdArr)...)
+			daoThis.CacheDeleteInfo(ctx, gconv.Uints(daoModel.IdArr)...)
 
 			RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, daoModel.IdArr).Delete()
 			RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, daoModel.IdArr).Delete()
@@ -482,8 +482,8 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 
 // Fill with you ideas below.
 
-func (daoThis *roleDao) CacheGetInfo(ctx context.Context, id string) (info gdb.Record, err error) {
-	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, gconv.String(id), 6*30*24*60*60, append(daoThis.ColumnArr().Slice(), `action_id_arr`, `menu_id_arr`)...)
+func (daoThis *roleDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
+	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, 6*30*24*60*60, append(daoThis.ColumnArr().Slice(), `action_id_arr`, `menu_id_arr`)...)
 	if err != nil {
 		return
 	}
@@ -491,12 +491,12 @@ func (daoThis *roleDao) CacheGetInfo(ctx context.Context, id string) (info gdb.R
 	return
 }
 
-func (daoThis *roleDao) CacheDeleteInfo(ctx context.Context, idArr ...string) (row int64, err error) {
-	row, err = cache.DbData.Del(ctx, daoThis, idArr...)
+func (daoThis *roleDao) CacheDeleteInfo(ctx context.Context, idArr ...uint) (row int64, err error) {
+	row, err = cache.DbData.Del(ctx, daoThis, gconv.SliceAny(idArr)...)
 	return
 }
 
-func (daoThis *roleDao) CacheGetActionIdArr(ctx context.Context, idArr ...string) (actionIdArr []string, err error) {
+func (daoThis *roleDao) CacheGetActionIdArr(ctx context.Context, idArr ...uint) (actionIdArr []string, err error) {
 	for _, id := range idArr {
 		var info gdb.Record
 		info, err = daoThis.CacheGetInfo(ctx, id)
@@ -511,7 +511,7 @@ func (daoThis *roleDao) CacheGetActionIdArr(ctx context.Context, idArr ...string
 	return
 }
 
-func (daoThis *roleDao) CacheGetMenuIdArr(ctx context.Context, idArr ...string) (menuIdArr []uint, err error) {
+func (daoThis *roleDao) CacheGetMenuIdArr(ctx context.Context, idArr ...uint) (menuIdArr []uint, err error) {
 	menuIdArrG := garray.New()
 	for _, id := range idArr {
 		var info gdb.Record

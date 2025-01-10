@@ -362,12 +362,12 @@ func (daoThis *payDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
 	list, _ := daoModel.All()
 	for _, info := range list {
-		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().PayId].String(), info.Json())
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().PayId], info.Json())
 	}
 }
 
 func (daoThis *payDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+	info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
 	if info.IsEmpty() {
 		info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
 	}

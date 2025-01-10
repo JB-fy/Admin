@@ -369,12 +369,12 @@ func (daoThis *configDao) GetOne(ctx context.Context, configKey string) (configV
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, configKeyArr ...string) (config gdb.Record, err error) {
 	// return daoThis.CtxDaoModel(ctx).FilterPri(configKeyArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
-	return cache.DbData.GetOrSetPluck(ctx, daoThis, configKeyArr, 6*30*24*60*60, daoThis.Columns().ConfigValue)
+	return cache.DbData.GetOrSetPluck(ctx, daoThis, gconv.SliceAny(configKeyArr), 6*30*24*60*60, daoThis.Columns().ConfigValue)
 }
 
 // 保存配置
 func (daoThis *configDao) Save(ctx context.Context, config map[string]any) (err error) {
-	idArr := make([]string, 0, len(config))
+	idArr := make([]any, 0, len(config))
 	daoModelThis := daoThis.CtxDaoModel(ctx)
 	err = daoModelThis.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {

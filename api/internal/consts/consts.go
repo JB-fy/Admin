@@ -4,7 +4,7 @@ var (
 	ConstCtxSceneInfoName = `sceneInfo`
 	ConstCtxLoginInfoName = `loginInfo`
 
-	CacheDbDataFormat = `dbData:%s:%s:%s` //数据库数据缓存key。参数：db分组，db表名，ID
+	CacheDbDataFormat = `dbData:%s:%s:%v` //数据库数据缓存key。参数：db分组，db表名，ID
 
 	CacheSaltFormat          = `salt:%s:%s`          //密码盐缓存key。参数：场景ID，手机/邮箱/账号/邮箱
 	CacheCodeFormat          = `code:%s:%s_%d`       //验证码缓存key。参数：场景ID，手机/邮箱，场景
@@ -18,5 +18,5 @@ var (
 	SERVER_NETWORK_IP = `SERVER_NETWORK_IP` //外网ip
 	SERVER_LOCAL_IP   = `SERVER_LOCAL_IP`   //内网ip
 
-	DB_DATA_FORMAT = `DB_DATA_%s_%s_%s` //数据库数据本机缓存key。参数：db分组，db表名，ID或其它唯一标识
+	DB_DATA_FORMAT = `DB_DATA_%s_%s_%v` //数据库数据本机缓存key。参数：db分组，db表名，ID或其它唯一标识
 )

@@ -372,17 +372,17 @@ func (daoThis *uploadDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 func (daoThis *uploadDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
 	list, _ := daoModel.OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).All()
-	for index, info := range list {
-		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().UploadId].String(), info.Json())
-		if index == 0 {
-			cache.DbDataLocal.Set(ctx, daoModel, `default`, info.Json())
-		}
+	for _, info := range list {
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().UploadId], info.Json())
+	}
+	if len(list) > 0 {
+		cache.DbDataLocal.Set(ctx, daoModel, `default`, list[0].Json())
 	}
 }
 
 func (daoThis *uploadDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
 	if id > 0 {
-		info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+		info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
 		if info.IsEmpty() {
 			info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
 		}

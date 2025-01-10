@@ -362,12 +362,12 @@ func (daoThis *sceneDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
 	list, _ := daoModel.All()
 	for _, info := range list {
-		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().SceneId].String(), info.Json())
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().SceneId], info.Json())
 	}
 }
 
 func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+	info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
 	if info.IsEmpty() {
 		info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
 	}

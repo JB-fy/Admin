@@ -376,7 +376,7 @@ func (daoThis *channelDao) CacheSet(ctx context.Context) {
 	list, _ := daoModel.OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
 	listMap := map[string]gdb.Result{}
 	for _, info := range list {
-		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().ChannelId].String(), info.Json())
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().ChannelId], info.Json())
 		sceneId := info[daoThis.Columns().SceneId].String()
 		if _, ok := listMap[sceneId]; !ok {
 			listMap[sceneId] = gdb.Result{}
@@ -389,7 +389,7 @@ func (daoThis *channelDao) CacheSet(ctx context.Context) {
 }
 
 func (daoThis *channelDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), gconv.String(id))
+	info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
 	if info.IsEmpty() {
 		info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
 	}

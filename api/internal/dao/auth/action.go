@@ -120,7 +120,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				// 方式2：非联表查询
 				actionIdArr, _ := RoleRelToAction.CtxDaoModel(m.GetCtx()).Filter(RoleRelToAction.Columns().RoleId, roleIdArr).Distinct().Array(RoleRelToAction.Columns().ActionId) */
 				// 方式3：缓存读取（推荐）
-				actionIdArr, _ := Role.CacheGetActionIdArr(m.GetCtx(), gconv.Strings(roleIdArr)...)
+				actionIdArr, _ := Role.CacheGetActionIdArr(m.GetCtx(), gconv.Uints(roleIdArr)...)
 				if len(actionIdArr) == 0 {
 					m = m.Where(`1 = 0`)
 					continue
@@ -484,7 +484,7 @@ func (daoThis *actionDao) CacheGetListOfSelf(ctx context.Context, sceneId string
 	if err != nil || len(roleIdArr) == 0 {
 		return
 	}
-	actionIdArr, err := Role.CacheGetActionIdArr(ctx, gconv.Strings(roleIdArr)...)
+	actionIdArr, err := Role.CacheGetActionIdArr(ctx, roleIdArr...)
 	if err != nil || len(actionIdArr) == 0 {
 		return
 	}
