@@ -39,12 +39,12 @@ var (
 )
 
 // 获取daoModel
-func (daoThis *roleDao) CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *daoIndex.DaoModel {
+func (daoThis *roleDao) CtxDaoModel(ctx context.Context, dbOpt ...any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *roleDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string {
+func (daoThis *roleDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -53,7 +53,7 @@ func (daoThis *roleDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...map[stri
 }
 
 // 解析分表
-func (daoThis *roleDao) ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string {
+func (daoThis *roleDao) ParseDbTable(ctx context.Context, dbTableOpt ...any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {

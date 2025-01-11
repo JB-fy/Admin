@@ -16,9 +16,9 @@ import (
 
 // 定义接口
 type DaoInterface interface {
-	CtxDaoModel(ctx context.Context, dbOpt ...map[string]any) *DaoModel
-	ParseDbGroup(ctx context.Context, dbGroupOpt ...map[string]any) string
-	ParseDbTable(ctx context.Context, dbTableOpt ...map[string]any) string
+	CtxDaoModel(ctx context.Context, dbOpt ...any) *DaoModel
+	ParseDbGroup(ctx context.Context, dbGroupOpt ...any) string
+	ParseDbTable(ctx context.Context, dbTableOpt ...any) string
 	ParseId(daoModel *DaoModel) string
 	ParseLabel(daoModel *DaoModel) string
 	ParseFilter(filter map[string]any, daoModel *DaoModel) gdb.ModelHandler
@@ -82,7 +82,7 @@ func (daoModelThis *DaoModel) PutPool() {
 }
 
 // 注意：dbOpt存在时，dbOpt[0]解析DbTable，dbOpt[1]索引参数解析DbGroup
-func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...map[string]any) *DaoModel {
+func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...any) *DaoModel {
 	daoModelObj := &DaoModel{} // poolDaoModel.Get().(*DaoModel)
 	daoModelObj.Ctx = ctx
 	daoModelObj.dao = dao
