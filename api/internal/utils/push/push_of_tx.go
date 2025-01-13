@@ -50,7 +50,7 @@ func NewPushOfTx(ctx context.Context, config map[string]any) *PushOfTx {
 		r.Header.Set(`Sign`, pushObj.sign(timeStamp, reqDataJson))
 
 		resp, err = c.Next(r)
-		return resp, err
+		return
 	})
 	return pushObj
 }
