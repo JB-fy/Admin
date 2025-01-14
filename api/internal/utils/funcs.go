@@ -190,3 +190,49 @@ func AesDecrypt(cipherByte []byte, keyByte []byte, cipherType string, iv ...byte
 	}
 	return
 }
+
+/* var imageMimeTypeExtMap = g.MapStrStr{
+	`image/x-icon`: `icon`,
+	`image/jpeg`:   `jpeg`,
+	`image/bmp`:    `bmp`,
+	`image/gif`:    `gif`,
+	`image/webp`:   `webp`,
+	`image/png`:    `png`,
+}
+
+// 获取图片后缀
+func GetImageExt(imageBytes []byte, defExt string) (imageExt string) {
+	imageExt = imageMimeTypeExtMap[http.DetectContentType(imageBytes[:512])]
+	if imageExt == `` {
+		imageExt = defExt
+	}
+	return
+} */
+
+/* // 转成jpeg图片。目前只支持webp转换
+func JpegEncode(imageBytes []byte, quality int, imageTypeArr ...string) ([]byte, error) {
+	var err error
+	imageType := http.DetectContentType(imageBytes[:512])
+	for _, v := range imageTypeArr {
+		if imageType != v {
+			continue
+		}
+
+		var img image.Image
+		switch v {
+		case `image/webp`:
+			img, err = webp.Decode(bytes.NewReader(imageBytes))
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		var jpegData bytes.Buffer
+		err = jpeg.Encode(&jpegData, img, &jpeg.Options{Quality: quality})
+		if err != nil {
+			return nil, err
+		}
+		imageBytes = jpegData.Bytes()
+	}
+	return imageBytes, err
+} */
