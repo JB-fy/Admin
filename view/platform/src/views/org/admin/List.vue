@@ -23,14 +23,7 @@ const table = reactive({
                         <el-checkbox
                             model-value={table.data.length ? allChecked : false}
                             indeterminate={someChecked && !allChecked}
-                            onChange={(val: boolean) => {
-                                table.data.forEach((item: any) => {
-                                    if (item.is_super == 0) {
-                                        return
-                                    }
-                                    item.checked = val
-                                })
-                            }}
+                            onChange={(val: boolean) => table.data.forEach((item: any) => (item.is_super == 0 ? undefined : (item.checked = val)))}
                         />
                     </div>,
                     <div>{t('common.name.id')}</div>,
