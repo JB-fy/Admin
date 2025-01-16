@@ -208,12 +208,11 @@ const handleDelete = (id: string | string[]) => {
                 case 'confirm':
                     instance.confirmButtonLoading = true
                     request(t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/del', { [Array.isArray(id) ? 'id_arr' : 'id']: id }, true)
-                        .then(() => getList(), done())
+                        .then(() => (table.data = table.data.filter((rowData: any) => (Array.isArray(id) ? !id.includes(rowData.id) : rowData.id != id))) /* getList() */, done())
                         .finally(() => (instance.confirmButtonLoading = false))
                     break
                 default:
                     done()
-                    break
             }
         },
     })
