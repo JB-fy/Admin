@@ -176,15 +176,13 @@ const handleDelete = (id: number | number[]) => {
         center: true,
         showClose: false,
         beforeClose: (action: Action, instance: MessageBoxState, done: Function) => {
-            switch (action) {
-                case 'confirm':
-                    instance.confirmButtonLoading = true
-                    request(t('config.VITE_HTTP_API_PREFIX') + '/upload/upload/del', { [Array.isArray(id) ? 'id_arr' : 'id']: id }, true)
-                        .then(() => (table.data = table.data.filter((rowData: any) => (Array.isArray(id) ? !id.includes(rowData.id) : rowData.id != id))) /* getList() */, done())
-                        .finally(() => (instance.confirmButtonLoading = false))
-                    break
-                default:
-                    done()
+            if (action == 'confirm') {
+                instance.confirmButtonLoading = true
+                request(t('config.VITE_HTTP_API_PREFIX') + '/upload/upload/del', { [Array.isArray(id) ? 'id_arr' : 'id']: id }, true)
+                    .then(() => (table.data = table.data.filter((rowData: any) => (Array.isArray(id) ? !id.includes(rowData.id) : rowData.id != id))) /* getList() */, done())
+                    .finally(() => (instance.confirmButtonLoading = false))
+            } else {
+                done()
             }
         },
     })
