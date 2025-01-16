@@ -161,14 +161,9 @@ const handleBatchDelete = () => {
 const handleEditCopy = (id: number, type: string = 'edit') => {
     request(t('config.VITE_HTTP_API_PREFIX') + '/upload/upload/info', { id: id }).then((res) => {
         saveCommon.data = { ...res.data.info }
-        switch (type) {
-            case 'edit':
-                saveCommon.title = t('common.edit')
-                break
-            case 'copy':
-                delete saveCommon.data.id
-                saveCommon.title = t('common.copy')
-                break
+        saveCommon.title = t('common.' + type)
+        if (type == 'copy') {
+            delete saveCommon.data.id
         }
         saveCommon.visible = true
     })
@@ -185,10 +180,7 @@ const handleDelete = (id: number | number[]) => {
                 case 'confirm':
                     instance.confirmButtonLoading = true
                     request(t('config.VITE_HTTP_API_PREFIX') + '/upload/upload/del', { [Array.isArray(id) ? 'id_arr' : 'id']: id }, true)
-                        .then(() => {
-                            getList()
-                            done()
-                        })
+                        .then(() => getList(), done())
                         .finally(() => (instance.confirmButtonLoading = false))
                     break
                 default:
