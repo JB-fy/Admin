@@ -65,7 +65,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { scene_name: props.rowData.scene_name }).catch(() => (props.rowData.scene_name = props.rowData.editSceneName.oldValue))
                         }}
-                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
+                        onKeydown={(event: any) => [13].includes(event.keyCode) && currentRef?.blur()} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             },

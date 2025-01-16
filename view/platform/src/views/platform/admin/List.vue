@@ -20,11 +20,7 @@ const table = reactive({
                 return [
                     //阻止冒泡
                     <div class="id-checkbox" onClick={(event: any) => event.stopPropagation()}>
-                        <el-checkbox
-                            model-value={table.data.length ? allChecked : false}
-                            indeterminate={someChecked && !allChecked}
-                            onChange={(val: boolean) => table.data.forEach((item: any) => (item.is_super == 1 ? undefined : (item.checked = val)))}
-                        />
+                        <el-checkbox model-value={table.data.length ? allChecked : false} indeterminate={someChecked && !allChecked} onChange={(val: boolean) => table.data.forEach((item: any) => item.is_super == 1 || (item.checked = val))} />
                     </div>,
                     <div>{t('common.name.id')}</div>,
                 ]

@@ -165,7 +165,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { id_card_name: props.rowData.id_card_name }).catch(() => (props.rowData.id_card_name = props.rowData.editIdCardName.oldValue))
                         }}
-                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
+                        onKeydown={(event: any) => [13].includes(event.keyCode) && currentRef?.blur()} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             }, */

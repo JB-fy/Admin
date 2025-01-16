@@ -511,7 +511,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                             }
                             handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: props.rowData.` + v.FieldRaw + ` }).catch(() => (props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue))
                         }}
-                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
+                        onKeydown={(event: any) => [13].includes(event.keyCode) && currentRef?.blur()} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             }`
@@ -629,7 +629,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                             }
                             handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: props.rowData.` + v.FieldRaw + ` }).catch(() => (props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue))
                         }}
-                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
+                        onKeydown={(event: any) => [13].includes(event.keyCode) && currentRef?.blur()} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             }`

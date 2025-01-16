@@ -65,7 +65,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { menu_name: props.rowData.menu_name }).catch(() => (props.rowData.menu_name = props.rowData.editMenuName.oldValue))
                         }}
-                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
+                        onKeydown={(event: any) => [13].includes(event.keyCode) && currentRef?.blur()} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             },
@@ -165,7 +165,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { sort: props.rowData.sort }).catch(() => (props.rowData.sort = props.rowData.editSort.oldValue))
                         }}
-                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
+                        onKeydown={(event: any) => [13].includes(event.keyCode) && currentRef?.blur()} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             },
