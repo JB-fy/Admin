@@ -219,7 +219,7 @@ const upload = reactive({
         ElMessage.error(t('common.tip.uploadFail') + '(' + err.message + ')')
     },
     beforeUpload: async (rawFile: any) => {
-        if (props.acceptType.length > 0 && props.acceptType.indexOf(rawFile.type) === -1) {
+        if (props.acceptType.length > 0 && !props.acceptType.includes(rawFile.type)) {
             ElMessage.error(t('common.tip.notAcceptFileType'))
             return false
         }

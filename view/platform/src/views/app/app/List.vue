@@ -75,10 +75,7 @@ const table = reactive({
                 let currentRef: any
                 return [
                     <el-input
-                        ref={(el: any) => {
-                            el?.focus()
-                            currentRef = el
-                        }}
+                        ref={(el: any) => (el?.focus(), (currentRef = el))}
                         v-model={props.rowData.package_name}
                         placeholder={t('app.app.name.package_name')}
                         maxlength={60}
@@ -94,13 +91,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { package_name: props.rowData.package_name }).catch(() => (props.rowData.package_name = props.rowData.editPackageName.oldValue))
                         }}
-                        onKeydown={(event: any) => {
-                            switch (event.keyCode) {
-                                case 13: //13：Enter键 27：Esc键 32：空格键
-                                    currentRef?.blur()
-                                    break
-                            }
-                        }}
+                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             },
@@ -148,10 +139,7 @@ const table = reactive({
                 let currentRef: any
                 return [
                     <el-input-number
-                        ref={(el: any) => {
-                            el?.focus()
-                            currentRef = el
-                        }}
+                        ref={(el: any) => (el?.focus(), (currentRef = el))}
                         v-model={props.rowData.ver_no}
                         placeholder={t('app.app.name.ver_no')}
                         min={0}
@@ -169,13 +157,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { ver_no: props.rowData.ver_no }).catch(() => (props.rowData.ver_no = props.rowData.editVerNo.oldValue))
                         }}
-                        onKeydown={(event: any) => {
-                            switch (event.keyCode) {
-                                case 13: //13：Enter键 27：Esc键 32：空格键
-                                    currentRef?.blur()
-                                    break
-                            }
-                        }}
+                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             },
@@ -200,10 +182,7 @@ const table = reactive({
                 let currentRef: any
                 return [
                     <el-input
-                        ref={(el: any) => {
-                            el?.focus()
-                            currentRef = el
-                        }}
+                        ref={(el: any) => (el?.focus(), (currentRef = el))}
                         v-model={props.rowData.ver_name}
                         placeholder={t('app.app.name.ver_name')}
                         maxlength={30}
@@ -219,13 +198,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { ver_name: props.rowData.ver_name }).catch(() => (props.rowData.ver_name = props.rowData.editVerName.oldValue))
                         }}
-                        onKeydown={(event: any) => {
-                            switch (event.keyCode) {
-                                case 13: //13：Enter键 27：Esc键 32：空格键
-                                    currentRef?.blur()
-                                    break
-                            }
-                        }}
+                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             },

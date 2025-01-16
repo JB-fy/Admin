@@ -76,7 +76,7 @@ const select = reactive({
         },
         set: (val) => {
             emits('update:modelValue', val)
-            emits('change', props.multiple ? select.options.filter((item) => (val as any).indexOf(item[select.props.value]) !== -1) : select.options.find((item) => item[select.props.value] == val))
+            emits('change', props.multiple ? select.options.filter((item) => (val as any).includes(item[select.props.value])) : select.options.find((item) => item[select.props.value] == val))
         },
     }),
     options: [...props.defaultOptions] as { value: any; label: any; [propName: string]: any }[],
@@ -200,8 +200,8 @@ if ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelV
 /* watch(() => props.modelValue, (newVal: any, oldVal: any) => {
     if (Array.isArray(props.modelValue)) {
         if (props.modelValue.length && select.options.filter((item) => {
-            //return (<string[] | number[]>props.modelValue).indexOf(item[select.props.value]) !== -1
-            return (<any>props.modelValue).indexOf(item[select.props.value]) !== -1
+            //return (<string[] | number[]>props.modelValue).includes(item[select.props.value])
+            return (<any>props.modelValue).includes(item[select.props.value])
         }).length !== props.modelValue.length) {
             select.resetOptions()
             select.initOptions()

@@ -149,10 +149,7 @@ const table = reactive({
                 let currentRef: any
                 return [
                     <el-input
-                        ref={(el: any) => {
-                            el?.focus()
-                            currentRef = el
-                        }}
+                        ref={(el: any) => (el?.focus(), (currentRef = el))}
                         v-model={props.rowData.id_card_name}
                         placeholder={t('users.users.name.id_card_name')}
                         maxlength={30}
@@ -168,13 +165,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { id_card_name: props.rowData.id_card_name }).catch(() => (props.rowData.id_card_name = props.rowData.editIdCardName.oldValue))
                         }}
-                        onKeydown={(event: any) => {
-                            switch (event.keyCode) {
-                                case 13: //13：Enter键 27：Esc键 32：空格键
-                                    currentRef?.blur()
-                                    break
-                            }
-                        }}
+                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             }, */

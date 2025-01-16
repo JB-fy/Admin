@@ -49,10 +49,7 @@ const table = reactive({
                 let currentRef: any
                 return [
                     <el-input
-                        ref={(el: any) => {
-                            el?.focus()
-                            currentRef = el
-                        }}
+                        ref={(el: any) => (el?.focus(), (currentRef = el))}
                         v-model={props.rowData.org_name}
                         placeholder={t('org.org.name.org_name')}
                         maxlength={60}
@@ -68,13 +65,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { org_name: props.rowData.org_name }).catch(() => (props.rowData.org_name = props.rowData.editOrgName.oldValue))
                         }}
-                        onKeydown={(event: any) => {
-                            switch (event.keyCode) {
-                                case 13: //13：Enter键 27：Esc键 32：空格键
-                                    currentRef?.blur()
-                                    break
-                            }
-                        }}
+                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             },

@@ -495,10 +495,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 let currentRef: any
                 return [
                     <el-input
-                        ref={(el: any) => {
-                            el?.focus()
-                            currentRef = el
-                        }}
+                        ref={(el: any) => (el?.focus(), (currentRef = el))}
                         v-model={props.rowData.` + v.FieldRaw + `}
                         placeholder={t('` + i18nPath + `.name.` + v.FieldRaw + `')}
                         maxlength={` + v.FieldLimitStr + `}
@@ -514,13 +511,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                             }
                             handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: props.rowData.` + v.FieldRaw + ` }).catch(() => (props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue))
                         }}
-                        onKeydown={(event: any) => {
-                            switch (event.keyCode) {
-                                case 13: //13：Enter键 27：Esc键 32：空格键
-                                    currentRef?.blur()
-                                    break
-                            }
-                        }}
+                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             }`
@@ -620,10 +611,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 let currentRef: any
                 return [
                     <el-input-number
-                        ref={(el: any) => {
-                            el?.focus()
-                            currentRef = el
-                        }}
+                        ref={(el: any) => (el?.focus(), (currentRef = el))}
                         v-model={props.rowData.` + v.FieldRaw + `}
                         ` + attrOfAdd + `
                         min={` + v.FieldLimitInt.Min + `}
@@ -641,13 +629,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                             }
                             handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: props.rowData.` + v.FieldRaw + ` }).catch(() => (props.rowData.` + v.FieldRaw + ` = props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + `.oldValue))
                         }}
-                        onKeydown={(event: any) => {
-                            switch (event.keyCode) {
-                                case 13: //13：Enter键 27：Esc键 32：空格键
-                                    currentRef?.blur()
-                                    break
-                            }
-                        }}
+                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             }`

@@ -7,7 +7,7 @@ const keepAliveStore = useKeepAliveStore()
     <router-view v-slot="{ Component, route }">
         <transition mode="out-in" name="el-zoom-in-center">
             <keep-alive :include="keepAliveStore.appContainerInclude" :exclude="keepAliveStore.appContainerExclude" :max="keepAliveStore.appContainerMax">
-                <component v-if="keepAliveStore.appContainerExclude.indexOf(route.meta.componentName as string) === -1" :is="Component" :key="route.fullPath" />
+                <component v-if="!keepAliveStore.appContainerExclude.includes(route.meta.componentName as string)" :is="Component" :key="route.fullPath" />
             </keep-alive>
         </transition>
     </router-view>
@@ -17,7 +17,7 @@ const keepAliveStore = useKeepAliveStore()
                 <transition mode="out-in" name="transform">
                     <keep-alive :include="keepAliveStore.appContainerInclude"
                         :exclude="keepAliveStore.appContainerExclude" :max="keepAliveStore.appContainerMax">
-                        <component v-if="keepAliveStore.appContainerExclude.indexOf(route.meta.componentName as string) === -1" :is="Component"
+                        <component v-if="!keepAliveStore.appContainerExclude.includes(route.meta.componentName as string)" :is="Component"
                             :key="route.fullPath" />
                     </keep-alive>
                 </transition>

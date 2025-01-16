@@ -348,7 +348,7 @@ export const useAdminStore = defineStore('admin', {
          * 判断是否有操作权限
          */
         IsAction(actionId: string): boolean {
-            return this.actionIdArr.indexOf(actionId) == -1 ? false : true
+            return this.actionIdArr.includes(actionId)
         },
         /**
          * 判断是否有操作权限（多个一起判断）

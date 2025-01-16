@@ -48,7 +48,7 @@ const transfer = reactive({
             emits('update:modelValue', val)
             emits(
                 'change',
-                transfer.options.filter((item: any) => val.indexOf(item[transfer.props.key]) !== -1)
+                transfer.options.filter((item: any) => val.includes(item[transfer.props.key]))
             )
         },
     }),

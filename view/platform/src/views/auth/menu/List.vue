@@ -49,10 +49,7 @@ const table = reactive({
                 let currentRef: any
                 return [
                     <el-input
-                        ref={(el: any) => {
-                            el?.focus()
-                            currentRef = el
-                        }}
+                        ref={(el: any) => (el?.focus(), (currentRef = el))}
                         v-model={props.rowData.menu_name}
                         placeholder={t('auth.menu.name.menu_name')}
                         maxlength={30}
@@ -68,13 +65,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { menu_name: props.rowData.menu_name }).catch(() => (props.rowData.menu_name = props.rowData.editMenuName.oldValue))
                         }}
-                        onKeydown={(event: any) => {
-                            switch (event.keyCode) {
-                                case 13: //13：Enter键 27：Esc键 32：空格键
-                                    currentRef?.blur()
-                                    break
-                            }
-                        }}
+                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             },
@@ -156,10 +147,7 @@ const table = reactive({
                 let currentRef: any
                 return [
                     <el-input-number
-                        ref={(el: any) => {
-                            el?.focus()
-                            currentRef = el
-                        }}
+                        ref={(el: any) => (el?.focus(), (currentRef = el))}
                         v-model={props.rowData.sort}
                         placeholder={t('auth.menu.tip.sort')}
                         min={0}
@@ -177,13 +165,7 @@ const table = reactive({
                             }
                             handleUpdate(props.rowData.id, { sort: props.rowData.sort }).catch(() => (props.rowData.sort = props.rowData.editSort.oldValue))
                         }}
-                        onKeydown={(event: any) => {
-                            switch (event.keyCode) {
-                                case 13: //13：Enter键 27：Esc键 32：空格键
-                                    currentRef?.blur()
-                                    break
-                            }
-                        }}
+                        onKeydown={(event: any) => ([13].includes(event.keyCode) ? currentRef?.blur() : undefined)} //13：Enter键 27：Esc键 32：空格键
                     />,
                 ]
             },
