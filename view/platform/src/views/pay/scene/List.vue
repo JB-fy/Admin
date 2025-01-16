@@ -248,9 +248,7 @@ const getList = async (resetPage: boolean = false) => {
 getList()
 
 //暴露组件接口给父组件
-defineExpose({
-    getList,
-})
+defineExpose({ getList })
 </script>
 
 <template>
