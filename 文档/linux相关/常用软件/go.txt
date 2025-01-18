@@ -19,22 +19,22 @@
     go env -w GOPROXY=https://goproxy.cn,direct
 #安装可执行文件
     go install
-#删除其它命令产生的文件和目录
+#删除其它命令产生的文件和目录（如go build、go test等命令产生的编译文件和其它临时文件）
     go clean
+#删除全局模块下载缓存
+    go clean -modcache
 #编译构建
     go build
 #运行文件
     go run xx.go
 #生成模块管理mod文件
     go mod init xx.go
-#格式化文件
-    go fmt xx.go
-#在当前目录的任意一个带有（//go:generate）开头注释的xx.go文件，自动化执行该注释后面的命令
-    go generate -x（显示并执行命令） -n（显示不执行命令） -v（显示被处理的包名和源文件名）
-
-
 #检查依赖模块，添加用到但未引入的模块，删除引入但未使用的模块
     go mod tidy
 #升级模块
     go get up [指定模块]
+#格式化文件
+    go fmt xx.go
+#在当前目录的任意一个带有（//go:generate）开头注释的xx.go文件，自动化执行该注释后面的命令
+    go generate -x（显示并执行命令） -n（显示不执行命令） -v（显示被处理的包名和源文件名）
 /**----------------常用命令 结束----------------**/
