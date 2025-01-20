@@ -11,12 +11,47 @@ import (
 	"errors"
 	"os/exec"
 	"reflect"
+	"strings"
+	"sync"
 
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"golang.org/x/tools/imports"
 )
+
+var bytesBufferPool = sync.Pool{
+	New: func() any {
+		return new(bytes.Buffer)
+	},
+}
+
+func BytesBufferPoolGet() *bytes.Buffer {
+	buf := bytesBufferPool.Get().(*bytes.Buffer)
+	buf.Reset()
+	return buf
+}
+
+func BytesBufferPoolPut(buf *bytes.Buffer) {
+	bytesBufferPool.Put(buf)
+}
+
+var stringsBuilderPool = sync.Pool{
+	New: func() any {
+		return new(strings.Builder)
+	},
+}
+
+func StringsBuilderPoolGet() *strings.Builder {
+	builder := stringsBuilderPool.Get().(*strings.Builder)
+	builder.Reset()
+	return builder
+}
+
+func StringsBuilderPoolPut(builder *strings.Builder) {
+	builder.Reset()
+	stringsBuilderPool.Put(builder)
+}
 
 // 获取服务器外网ip
 func GetServerNetworkIp() string {
