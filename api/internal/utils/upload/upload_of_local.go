@@ -1,6 +1,7 @@
 package upload
 
 import (
+	"api/internal/utils"
 	"context"
 	"errors"
 	"image"
@@ -168,24 +169,27 @@ func (uploadThis *UploadOfLocal) Notify(ctx context.Context, r *ghttp.Request) (
 
 // 生成签名
 func (uploadThis *UploadOfLocal) sign(data map[string]any) (sign string) {
-	length := len(data)
-	keyArr := make([]string, 0, length)
+	keyArr := make([]string, 0, len(data))
 	for key := range data {
 		keyArr = append(keyArr, key)
 	}
 	sort.Strings(keyArr)
 
-	strArr := make([]string, length+1)
-	for index, key := range keyArr {
-		tmp := gvar.New(data[key])
-		if tmp.IsMap() || tmp.IsSlice() {
-			strArr[index] = key + `=` + gjson.MustEncodeString(data[key])
+	buf := utils.BytesBufferPoolGet()
+	defer utils.BytesBufferPoolPut(buf)
+	for _, key := range keyArr {
+		buf.WriteString(key)
+		buf.WriteString(`=`)
+		if tmp := gvar.New(data[key]); tmp.IsMap() || tmp.IsSlice() {
+			buf.Write(gjson.MustEncode(data[key]))
 		} else {
-			strArr[index] = key + `=` + gconv.String(data[key])
+			buf.WriteString(gconv.String(data[key]))
 		}
+		buf.WriteString(`&`)
 	}
-	strArr[length] = `key=` + uploadThis.SignKey
+	buf.WriteString(`signSecret=`)
+	buf.WriteString(uploadThis.SignKey)
 
-	sign = gmd5.MustEncryptString(gstr.Join(strArr, `&`))
+	sign = gmd5.MustEncryptBytes(buf.Bytes())
 	return
 }
