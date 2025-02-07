@@ -18,7 +18,7 @@ var DbDataLocal = dbDataLocal{}
 type dbDataLocal struct{}
 
 func (cacheThis *dbDataLocal) key(daoModel *dao.DaoModel, key any) string {
-	return gstr.ToUpper(fmt.Sprintf(consts.DB_DATA_FORMAT, daoModel.DbGroup, daoModel.DbTable, key))
+	return gstr.ToUpper(fmt.Sprintf(consts.LOCAL_DB_DATA, daoModel.DbGroup, daoModel.DbTable, key))
 }
 
 func (cacheThis *dbDataLocal) Set(ctx context.Context, daoModel *dao.DaoModel, key any, value string) (err error) {

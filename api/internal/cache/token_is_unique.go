@@ -18,7 +18,7 @@ func (cacheThis *tokenIsUnique) cache() *gredis.Redis {
 }
 
 func (cacheThis *tokenIsUnique) key(sceneId string, loginId string) string {
-	return fmt.Sprintf(consts.CacheTokenIsUniqueFormat, sceneId, loginId)
+	return fmt.Sprintf(consts.CACHE_TOKEN_IS_UNIQUE, sceneId, loginId)
 }
 
 func (cacheThis *tokenIsUnique) Set(ctx context.Context, sceneId string, loginId string, value string, ttl int64) (err error) {

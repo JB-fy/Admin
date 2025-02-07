@@ -21,7 +21,7 @@ func (cacheThis *salt) cache() *gredis.Redis {
 }
 
 func (cacheThis *salt) key(sceneId string, loginName string) string {
-	return fmt.Sprintf(consts.CacheSaltFormat, sceneId, loginName)
+	return fmt.Sprintf(consts.CACHE_SALT, sceneId, loginName)
 }
 
 func (cacheThis *salt) Set(ctx context.Context, sceneId string, loginName string, value string, ttl int64) (err error) {

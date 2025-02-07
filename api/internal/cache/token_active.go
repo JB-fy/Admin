@@ -18,7 +18,7 @@ func (cacheThis *tokenActive) cache() *gredis.Redis {
 }
 
 func (cacheThis *tokenActive) key(sceneId string, loginId string) string {
-	return fmt.Sprintf(consts.CacheTokenActiveFormat, sceneId, loginId)
+	return fmt.Sprintf(consts.CACHE_TOKEN_ACTIVE, sceneId, loginId)
 }
 
 func (cacheThis *tokenActive) Set(ctx context.Context, sceneId string, loginId string, ttl int64) (err error) {

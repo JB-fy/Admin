@@ -19,7 +19,7 @@ func (cacheThis *wxGzhAccessToken) cache() *gredis.Redis {
 }
 
 func (cacheThis *wxGzhAccessToken) key(appId string) string {
-	return fmt.Sprintf(consts.CacheWxGzhAccessToken, appId)
+	return fmt.Sprintf(consts.CACHE_WX_GZH_ACCESS_TOKEN, appId)
 }
 
 func (cacheThis *wxGzhAccessToken) Set(ctx context.Context, appId string, value string, ttl int64) (err error) {

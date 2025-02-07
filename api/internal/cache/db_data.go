@@ -23,7 +23,7 @@ func (cacheThis *dbData) cache() *gredis.Redis {
 }
 
 func (cacheThis *dbData) key(daoModel *dao.DaoModel, id any) string {
-	return fmt.Sprintf(consts.CacheDbDataFormat, daoModel.DbGroup, daoModel.DbTable, id)
+	return fmt.Sprintf(consts.CACHE_DB_DATA, daoModel.DbGroup, daoModel.DbTable, id)
 }
 
 func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttl int64, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {

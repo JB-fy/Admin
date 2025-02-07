@@ -25,7 +25,7 @@ func (cacheThis *code) cache() *gredis.Redis {
 }
 
 func (cacheThis *code) key(sceneId string, to string, scene uint) string {
-	return fmt.Sprintf(consts.CacheCodeFormat, sceneId, to, scene)
+	return fmt.Sprintf(consts.CACHE_CODE, sceneId, to, scene)
 }
 
 func (cacheThis *code) Set(ctx context.Context, sceneId string, to string, scene uint, value string, ttl int64) (err error) {

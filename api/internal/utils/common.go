@@ -65,23 +65,23 @@ func HttpWriteJson(ctx context.Context, data map[string]any, code int, msg strin
 
 // 设置场景信息
 func SetCtxSceneInfo(r *ghttp.Request, info gdb.Record) {
-	r.SetCtxVar(consts.ConstCtxSceneInfoName, info)
+	r.SetCtxVar(consts.CTX_SCENE_INFO_NAME, info)
 }
 
 // 获取场景信息
 func GetCtxSceneInfo(ctx context.Context) (info gdb.Record) {
-	info, _ = ctx.Value(consts.ConstCtxSceneInfoName).(gdb.Record)
+	info, _ = ctx.Value(consts.CTX_SCENE_INFO_NAME).(gdb.Record)
 	return
 }
 
 // 设置登录身份信息
 func SetCtxLoginInfo(r *ghttp.Request, info gdb.Record) {
-	r.SetCtxVar(consts.ConstCtxLoginInfoName, info)
+	r.SetCtxVar(consts.CTX_LOGIN_INFO_NAME, info)
 }
 
 // 获取登录身份信息
 func GetCtxLoginInfo(ctx context.Context) (info gdb.Record) {
-	info, _ = ctx.Value(consts.ConstCtxLoginInfoName).(gdb.Record)
+	info, _ = ctx.Value(consts.CTX_LOGIN_INFO_NAME).(gdb.Record)
 	return
 }
 
@@ -97,16 +97,16 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 		url = r.GetUrl()
 	case 3: //http(s)://本地IP或网络IP:端口
 		if IsDev(ctx) {
-			// url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
+			// url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
 			url = gstr.Replace(r.GetUrl(), r.URL.String(), ``)
 			for _, v := range []string{`0.0.0.0`, `127.0.0.1`} {
 				if gstr.Pos(url, v) != -1 {
-					url = gstr.Replace(url, r.Host, g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
+					url = gstr.Replace(url, r.Host, g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
 					break
 				}
 			}
 		} else {
-			url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
+			url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
 		}
 	}
 	return
@@ -114,7 +114,7 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 
 // 获取文件内容（通用）
 func GetFileBytes(ctx context.Context, fileUrl string, serverOpt ...string) (fileBytes []byte, err error) {
-	for _, ip := range []string{g.Cfg().MustGetWithEnv(ctx, consts.SERVER_NETWORK_IP).String(), g.Cfg().MustGetWithEnv(ctx, consts.SERVER_LOCAL_IP).String()} {
+	for _, ip := range []string{g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String(), g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()} {
 		if ip != `` && gstr.Pos(fileUrl, ip) != -1 {
 			return GetFileBytesByLocal(ctx, fileUrl, serverOpt...)
 		}
