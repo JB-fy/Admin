@@ -470,13 +470,17 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 			viewListField.cellRenderer.Method = internal.ReturnTypeName
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!authAction.isUpdate) {
-                    return [<div class="el-table-v2__cell-text">{props.rowData.` + v.FieldRaw + `}</div>]
+                    return [
+                        <el-text line-clamp="2" title={props.rowData.` + v.FieldRaw + `}>
+                            {props.rowData.` + v.FieldRaw + `}
+                        </el-text>,
+                    ]
                 }
                 if (!props.rowData?.edit` + gstr.CaseCamel(v.FieldRaw) + `?.isEdit) {
                     return [
-                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
+                        <el-text class="inline-edit" type="primary" line-clamp="2" title={props.rowData.` + v.FieldRaw + `} onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
                             {props.rowData.` + v.FieldRaw + `}
-                        </div>,
+                        </el-text>,
                     ]
                 }
                 let currentRef: any
@@ -586,13 +590,17 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 			}
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!authAction.isUpdate) {
-                    return [<div class="el-table-v2__cell-text">{props.rowData.` + v.FieldRaw + `}</div>]
+                    return [
+                        <el-text line-clamp="2" title={props.rowData.` + v.FieldRaw + `}>
+                            {props.rowData.` + v.FieldRaw + `}
+                        </el-text>,
+                    ]
                 }
                 if (!props.rowData?.edit` + gstr.CaseCamel(v.FieldRaw) + `?.isEdit) {
                     return [
-                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
+                        <el-text class="inline-edit" type="primary" line-clamp="2" title={props.rowData.` + v.FieldRaw + `} onClick={() => (props.rowData.edit` + gstr.CaseCamel(v.FieldRaw) + ` = { isEdit: true, oldValue: props.rowData.` + v.FieldRaw + ` })}>
                             {props.rowData.` + v.FieldRaw + `}
-                        </div>,
+                        </el-text>,
                     ]
                 }
                 let currentRef: any

@@ -63,13 +63,17 @@ const table = reactive({
             width: 150,
             cellRenderer: (props: any): any => {
                 if (!authAction.isUpdate) {
-                    return [<div class="el-table-v2__cell-text">{props.rowData.package_name}</div>]
+                    return [
+                        <el-text line-clamp="2" title={props.rowData.package_name}>
+                            {props.rowData.package_name}
+                        </el-text>,
+                    ]
                 }
                 if (!props.rowData?.editPackageName?.isEdit) {
                     return [
-                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editPackageName = { isEdit: true, oldValue: props.rowData.package_name })}>
+                        <el-text class="inline-edit" type="primary" line-clamp="2" title={props.rowData.package_name} onClick={() => (props.rowData.editPackageName = { isEdit: true, oldValue: props.rowData.package_name })}>
                             {props.rowData.package_name}
-                        </div>,
+                        </el-text>,
                     ]
                 }
                 let currentRef: any
@@ -127,13 +131,17 @@ const table = reactive({
             sortable: true,
             cellRenderer: (props: any): any => {
                 if (!authAction.isUpdate) {
-                    return [<div class="el-table-v2__cell-text">{props.rowData.ver_no}</div>]
+                    return [
+                        <el-text line-clamp="2" title={props.rowData.ver_no}>
+                            {props.rowData.ver_no}
+                        </el-text>,
+                    ]
                 }
                 if (!props.rowData?.editVerNo?.isEdit) {
                     return [
-                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editVerNo = { isEdit: true, oldValue: props.rowData.ver_no })}>
+                        <el-text class="inline-edit" type="primary" line-clamp="2" title={props.rowData.ver_no} onClick={() => (props.rowData.editVerNo = { isEdit: true, oldValue: props.rowData.ver_no })}>
                             {props.rowData.ver_no}
-                        </div>,
+                        </el-text>,
                     ]
                 }
                 let currentRef: any
@@ -170,13 +178,17 @@ const table = reactive({
             width: 150,
             cellRenderer: (props: any): any => {
                 if (!authAction.isUpdate) {
-                    return [<div class="el-table-v2__cell-text">{props.rowData.ver_name}</div>]
+                    return [
+                        <el-text line-clamp="2" title={props.rowData.ver_name}>
+                            {props.rowData.ver_name}
+                        </el-text>,
+                    ]
                 }
                 if (!props.rowData?.editVerName?.isEdit) {
                     return [
-                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editVerName = { isEdit: true, oldValue: props.rowData.ver_name })}>
+                        <el-text class="inline-edit" type="primary" line-clamp="2" title={props.rowData.ver_name} onClick={() => (props.rowData.editVerName = { isEdit: true, oldValue: props.rowData.ver_name })}>
                             {props.rowData.ver_name}
-                        </div>,
+                        </el-text>,
                     ]
                 }
                 let currentRef: any

@@ -37,13 +37,17 @@ const table = reactive({
             width: 150,
             cellRenderer: (props: any): any => {
                 if (!authAction.isUpdate) {
-                    return [<div class="el-table-v2__cell-text">{props.rowData.menu_name}</div>]
+                    return [
+                        <el-text line-clamp="2" title={props.rowData.menu_name}>
+                            {props.rowData.menu_name}
+                        </el-text>,
+                    ]
                 }
                 if (!props.rowData?.editMenuName?.isEdit) {
                     return [
-                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editMenuName = { isEdit: true, oldValue: props.rowData.menu_name })}>
+                        <el-text class="inline-edit" type="primary" line-clamp="2" title={props.rowData.menu_name} onClick={() => (props.rowData.editMenuName = { isEdit: true, oldValue: props.rowData.menu_name })}>
                             {props.rowData.menu_name}
-                        </div>,
+                        </el-text>,
                     ]
                 }
                 let currentRef: any
@@ -135,13 +139,17 @@ const table = reactive({
             sortable: true,
             cellRenderer: (props: any): any => {
                 if (!authAction.isUpdate) {
-                    return [<div class="el-table-v2__cell-text">{props.rowData.sort}</div>]
+                    return [
+                        <el-text line-clamp="2" title={props.rowData.sort}>
+                            {props.rowData.sort}
+                        </el-text>,
+                    ]
                 }
                 if (!props.rowData?.editSort?.isEdit) {
                     return [
-                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editSort = { isEdit: true, oldValue: props.rowData.sort })}>
+                        <el-text class="inline-edit" type="primary" line-clamp="2" title={props.rowData.sort} onClick={() => (props.rowData.editSort = { isEdit: true, oldValue: props.rowData.sort })}>
                             {props.rowData.sort}
-                        </div>,
+                        </el-text>,
                     ]
                 }
                 let currentRef: any

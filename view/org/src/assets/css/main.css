@@ -107,14 +107,12 @@ body {
 }
 
 .main-table .inline-edit {
-    color: var(--el-color-primary);
     cursor: pointer;
-    border: 1px transparent dotted;
-    padding: 5px;
+    padding: 2px 5px;
 }
 
 .main-table .inline-edit:hover {
-    border-color: var(--el-color-primary);
+    border: 1px dotted;
 }
 
 .main-table-pagination {

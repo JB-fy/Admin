@@ -37,13 +37,17 @@ const table = reactive({
             width: 150,
             cellRenderer: (props: any): any => {
                 if (!authAction.isUpdate) {
-                    return [<div class="el-table-v2__cell-text">{props.rowData.pay_name}</div>]
+                    return [
+                        <el-text line-clamp="2" title={props.rowData.pay_name}>
+                            {props.rowData.pay_name}
+                        </el-text>,
+                    ]
                 }
                 if (!props.rowData?.editPayName?.isEdit) {
                     return [
-                        <div class="el-table-v2__cell-text inline-edit" onClick={() => (props.rowData.editPayName = { isEdit: true, oldValue: props.rowData.pay_name })}>
+                        <el-text class="inline-edit" type="primary" line-clamp="2" title={props.rowData.pay_name} onClick={() => (props.rowData.editPayName = { isEdit: true, oldValue: props.rowData.pay_name })}>
                             {props.rowData.pay_name}
-                        </div>,
+                        </el-text>,
                     ]
                 }
                 let currentRef: any
