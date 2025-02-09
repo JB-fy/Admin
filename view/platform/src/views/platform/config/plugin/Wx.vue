@@ -56,7 +56,7 @@ saveForm.initData()
                     <el-input v-model="saveForm.data.wxGzh.host" :placeholder="t('platform.config.plugin.name.wxGzh.host')" :clearable="true" style="max-width: 500px" />
                     <el-alert type="info" :show-icon="true" :closable="false">
                         <template #title>
-                            <span v-html="t('platform.config.plugin.tip.wxHost')"></span>
+                            <span v-html="t('platform.config.plugin.tip.wx.host')"></span>
                         </template>
                     </el-alert>
                 </el-form-item>
