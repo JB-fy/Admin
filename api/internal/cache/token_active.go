@@ -22,11 +22,15 @@ func (cacheThis *tokenActive) key(sceneId string, loginId string) string {
 }
 
 func (cacheThis *tokenActive) Set(ctx context.Context, sceneId string, loginId string, ttl int64) (err error) {
-	err = cacheThis.cache().SetEX(ctx, cacheThis.key(sceneId, loginId), ttl, ttl)
+	err = cacheThis.cache().SetEX(ctx, cacheThis.key(sceneId, loginId), ``, ttl)
 	return
 }
 
-func (cacheThis *tokenActive) Get(ctx context.Context, sceneId string, loginId string) (isExists int64, err error) {
-	isExists, err = cacheThis.cache().Exists(ctx, cacheThis.key(sceneId, loginId))
+func (cacheThis *tokenActive) Reset(ctx context.Context, sceneId string, loginId string, ttl int64) (isSet bool, err error) {
+	isSetVal, err := cacheThis.cache().Set(ctx, cacheThis.key(sceneId, loginId), ``, gredis.SetOption{TTLOption: gredis.TTLOption{EX: &ttl}, XX: true})
+	if err != nil {
+		return
+	}
+	isSet = isSetVal.Bool()
 	return
 }

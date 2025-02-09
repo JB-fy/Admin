@@ -65,11 +65,10 @@ func (handlerThis *Handler) Parse(token string) (tokenInfo TokenInfo, err error)
 	}
 
 	if handlerThis.ActiveTime > 0 {
-		if isExists, _ := cache.TokenActive.Get(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId); isExists == 0 {
+		if isSet, _ := cache.TokenActive.Reset(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, handlerThis.ActiveTime); !isSet {
 			err = utils.NewErrorCode(handlerThis.Ctx, 39994002, ``)
 			return
 		}
-		cache.TokenActive.Set(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, handlerThis.ActiveTime)
 	}
 
 	if handlerThis.IsUnique {
