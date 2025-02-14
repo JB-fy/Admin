@@ -2,6 +2,7 @@ package email
 
 import (
 	daoPlatform "api/internal/dao/platform"
+	"api/internal/utils/email/model"
 	"context"
 	"errors"
 
@@ -11,10 +12,10 @@ import (
 
 type Handler struct {
 	Ctx   context.Context
-	Email Email
+	Email model.Email
 }
 
-func NewHandler(ctx context.Context, emailTypeOpt ...string) *Handler {
+func NewHandler(ctx context.Context, emailTypeOpt ...string) model.Handler {
 	handlerObj := &Handler{Ctx: ctx}
 	emailType := ``
 	if len(emailTypeOpt) > 0 {
@@ -30,15 +31,15 @@ func NewHandler(ctx context.Context, emailTypeOpt ...string) *Handler {
 	return handlerObj
 }
 
-type CodeTemplate struct {
-	Subject  string `json:"subject"`
-	Template string `json:"template"`
+func (handlerThis *Handler) SendEmail(message string, toEmailArr ...string) (err error) {
+	return handlerThis.Email.SendEmail(handlerThis.Ctx, message, toEmailArr...)
 }
 
 func (handlerThis *Handler) SendCode(toEmail string, code string) (err error) {
-	codeTemplate := &CodeTemplate{}
-	gconv.Struct(daoPlatform.Config.GetOne(handlerThis.Ctx, `emailCode`).Map(), codeTemplate)
-	if codeTemplate.Subject == `` || codeTemplate.Template == `` {
+	codeData := daoPlatform.Config.GetOne(handlerThis.Ctx, `emailCode`).Map()
+	subject := gconv.String(codeData[`subject`])
+	template := gconv.String(codeData[`template`])
+	if subject == `` || template == `` {
 		err = errors.New(`缺少配置：邮箱-验证码模板`)
 		return
 	}
@@ -46,12 +47,8 @@ func (handlerThis *Handler) SendCode(toEmail string, code string) (err error) {
 	messageArr := []string{
 		`From: ` + handlerThis.Email.GetFromEmail(),
 		`To: ` + toEmail,
-		`Subject: ` + codeTemplate.Subject,
-		gstr.Replace(codeTemplate.Template, `{code}`, code),
+		`Subject: ` + subject,
+		gstr.Replace(template, `{code}`, code),
 	}
 	return handlerThis.SendEmail(gstr.Join(messageArr, "\r\n"), toEmail)
-}
-
-func (handlerThis *Handler) SendEmail(message string, toEmailArr ...string) (err error) {
-	return handlerThis.Email.SendEmail(handlerThis.Ctx, message, toEmailArr...)
 }

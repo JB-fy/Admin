@@ -1,7 +1,7 @@
 package token
 
 import (
-	"api/internal/utils/common"
+	"api/internal/utils"
 	"context"
 	"errors"
 	"time"
@@ -67,7 +67,7 @@ func (tokenThis *TokenOfJwt) Create(ctx context.Context, tokenInfo TokenInfo) (t
 		case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:
 			privateKey = []byte(tokenThis.PrivateKey)
 		default:
-			privateKey, _ = common.ParsePrivateKey(tokenThis.PrivateKey)
+			privateKey, _ = utils.ParsePrivateKey(tokenThis.PrivateKey)
 		}
 		return
 	}
@@ -88,7 +88,7 @@ func (tokenThis *TokenOfJwt) Parse(ctx context.Context, token string) (tokenInfo
 		case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:
 			return []byte(tokenThis.PrivateKey), nil
 		default:
-			return common.ParsePublicKey(tokenThis.PublicKey)
+			return utils.ParsePublicKey(tokenThis.PublicKey)
 		}
 	})
 	if err != nil {

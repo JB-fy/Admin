@@ -1,4 +1,4 @@
-package common
+package utils
 
 import (
 	"errors"
@@ -28,19 +28,19 @@ func CreateStsToken(config *openapi.Config, assumeRoleRequest *sts20150401.Assum
 		RoleArn:         tea.String(stsOption.RoleArn),
 		RoleSessionName: tea.String(stsOption.SessionName),
 	} */
-	tryErr := func() (_e error) {
+	tryErr := func() (err error) {
 		defer func() {
-			if r := tea.Recover(recover()); r != nil {
-				_e = r
+			if errTmp := tea.Recover(recover()); errTmp != nil {
+				err = errTmp
 			}
 		}()
-		result, errTmp := client.AssumeRoleWithOptions(assumeRoleRequest, &util.RuntimeOptions{})
-		if errTmp != nil {
-			return errTmp
+		result, err := client.AssumeRoleWithOptions(assumeRoleRequest, &util.RuntimeOptions{})
+		if err != nil {
+			return
 		}
 		if *result.StatusCode != 200 {
 			err = errors.New(`Sts Token响应错误`)
-			return err
+			return
 		}
 		stsInfo = map[string]any{
 			`StatusCode`:      *result.StatusCode,
@@ -50,19 +50,17 @@ func CreateStsToken(config *openapi.Config, assumeRoleRequest *sts20150401.Assum
 			`Expiration`:      *result.Body.Credentials.Expiration,
 			`SecurityToken`:   *result.Body.Credentials.SecurityToken,
 		}
-		return nil
+		return
 	}()
 
 	if tryErr != nil {
-		var errSDK = &tea.SDKError{}
-		if _t, ok := tryErr.(*tea.SDKError); ok {
-			errSDK = _t
-		} else {
-			errSDK.Message = tea.String(tryErr.Error())
+		var errSDK = &tea.SDKError{Message: tea.String(tryErr.Error())}
+		if errSDKTmp, ok := tryErr.(*tea.SDKError); ok {
+			errSDK = errSDKTmp
 		}
-		errMsg, errTmp := util.AssertAsString(errSDK.Message)
-		if errTmp != nil {
-			err = errTmp
+		var errMsg *string
+		errMsg, err = util.AssertAsString(errSDK.Message)
+		if err != nil {
 			return
 		}
 		err = errors.New(*errMsg)

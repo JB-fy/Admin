@@ -1,6 +1,7 @@
-package email
+package common
 
 import (
+	"api/internal/utils/email/model"
 	"context"
 	"crypto/tls"
 	"net/smtp"
@@ -8,7 +9,7 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type EmailOfCommon struct {
+type Email struct {
 	SmtpHost  string `json:"smtpHost"`
 	SmtpPort  string `json:"smtpPort"`
 	FromEmail string `json:"fromEmail"`
@@ -17,8 +18,8 @@ type EmailOfCommon struct {
 	// clientMu  sync.Mutex   //互斥锁。确实需要复用客户端时，必须在发送时上锁
 }
 
-func NewEmailOfCommon(ctx context.Context, config map[string]any) *EmailOfCommon {
-	emailObj := &EmailOfCommon{}
+func NewEmail(ctx context.Context, config map[string]any) model.Email {
+	emailObj := &Email{}
 	gconv.Struct(config, emailObj)
 	if emailObj.SmtpHost == `` || emailObj.SmtpPort == `` || emailObj.FromEmail == `` || emailObj.Password == `` {
 		panic(`缺少插件配置：邮箱-通用`)
@@ -57,7 +58,11 @@ func NewEmailOfCommon(ctx context.Context, config map[string]any) *EmailOfCommon
 	return emailObj
 }
 
-func (emailThis *EmailOfCommon) SendEmail(ctx context.Context, message string, toEmailArr ...string) (err error) { // 发送邮件
+func (emailThis *Email) GetFromEmail() string {
+	return emailThis.FromEmail
+}
+
+func (emailThis *Email) SendEmail(ctx context.Context, message string, toEmailArr ...string) (err error) { // 发送邮件
 	/* // 复用客户端时需上锁
 	emailThis.clientMu.Lock()
 	defer emailThis.clientMu.Unlock()
@@ -118,8 +123,4 @@ func (emailThis *EmailOfCommon) SendEmail(ctx context.Context, message string, t
 	}
 	err = w.Close()
 	return
-}
-
-func (emailThis *EmailOfCommon) GetFromEmail() string {
-	return emailThis.FromEmail
 }

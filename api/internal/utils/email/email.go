@@ -1,27 +1,24 @@
 package email
 
 import (
+	"api/internal/utils/email/common"
+	"api/internal/utils/email/model"
 	"context"
 	"sync"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 )
 
-type Email interface {
-	SendEmail(ctx context.Context, message string, toEmailArr ...string) (err error)
-	GetFromEmail() (fromEmail string)
-}
-
 var (
+	emailMap     = map[string]model.Email{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	emailMu      sync.Mutex
 	emailTypeDef = `emailOfCommon`
-	emailFuncMap = map[string]func(ctx context.Context, config map[string]any) Email{
-		`emailOfCommon`: func(ctx context.Context, config map[string]any) Email { return NewEmailOfCommon(ctx, config) },
+	emailFuncMap = map[string]model.EmailFunc{
+		`emailOfCommon`: common.NewEmail,
 	}
-	emailMap = map[string]Email{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	emailMu  sync.Mutex
 )
 
-func NewEmail(ctx context.Context, emailType string, config map[string]any) (email Email) {
+func NewEmail(ctx context.Context, emailType string, config map[string]any) (email model.Email) {
 	emailKey := emailType + gmd5.MustEncrypt(config)
 	ok := false
 	if email, ok = emailMap[emailKey]; ok { //先读一次（不加锁）

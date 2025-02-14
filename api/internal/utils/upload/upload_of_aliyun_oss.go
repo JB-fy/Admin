@@ -1,7 +1,7 @@
 package upload
 
 import (
-	"api/internal/utils/common"
+	"api/internal/utils"
 	"context"
 	"crypto"
 	"crypto/hmac"
@@ -119,7 +119,7 @@ func (uploadThis *UploadOfAliyunOss) Sts(ctx context.Context, param UploadParam)
 		RoleArn:         tea.String(uploadThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_oss`),
 	}
-	stsInfo, err = common.CreateStsToken(config, assumeRoleRequest)
+	stsInfo, err = utils.CreateStsToken(config, assumeRoleRequest)
 	return
 }
 
@@ -158,7 +158,7 @@ func (uploadThis *UploadOfAliyunOss) Notify(ctx context.Context, r *ghttp.Reques
 		return
 	}
 	defer responsePublicKeyURL.Body.Close()
-	publicKey, err := common.ParsePublicKey(string(publicKeyByte))
+	publicKey, err := utils.ParsePublicKey(string(publicKeyByte))
 	if err != nil {
 		return
 	}

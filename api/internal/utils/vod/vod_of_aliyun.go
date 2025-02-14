@@ -1,7 +1,7 @@
 package vod
 
 import (
-	"api/internal/utils/common"
+	"api/internal/utils"
 	"context"
 
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -41,6 +41,6 @@ func (vodThis *VodOfAliyun) Sts(ctx context.Context, param VodParam) (stsInfo ma
 		RoleArn:         tea.String(vodThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_vod`),
 	}
-	stsInfo, err = common.CreateStsToken(config, assumeRoleRequest)
+	stsInfo, err = utils.CreateStsToken(config, assumeRoleRequest)
 	return
 }
