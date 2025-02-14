@@ -24,7 +24,7 @@ func initTimer(ctx context.Context) {
 type myTimer struct{}
 
 func (myTimerThis *myTimer) CACHE_WX_GZH_ACCESS_TOKEN(ctx context.Context) {
-	wxGzhObj := wx.NewWxGzhHandler(ctx)
+	wxGzhObj := wx.NewWxGzh(ctx)
 	accessTokenInfo, err := wxGzhObj.AccessToken(ctx)
 	if err != nil {
 		g.Log().Error(ctx, `获取微信公众号AccessToken接口错误：`+err.Error(), err)

@@ -18,7 +18,7 @@ func NewWx() *Wx {
 // 公众号回调
 func (controllerThis *Wx) GzhNotify(ctx context.Context, req *api.WxGzhNotifyReq) (res *api.CommonNoDataRes, err error) {
 	r := g.RequestFromCtx(ctx)
-	wxGzhObj := wx.NewWxGzhHandler(ctx)
+	wxGzhObj := wx.NewWxGzh(ctx)
 	timestamp := r.Get(`timestamp`).String()
 	nonce := r.Get(`nonce`).String()
 	signature := r.Get(`signature`).String()

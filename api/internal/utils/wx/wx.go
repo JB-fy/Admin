@@ -2,6 +2,7 @@ package wx
 
 import (
 	daoPlatform "api/internal/dao/platform"
+	"api/internal/utils/wx/gzh"
 	"context"
 	"sync"
 
@@ -9,11 +10,11 @@ import (
 )
 
 var (
-	wxGzhMap = map[string]*WxGzh{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	wxGzhMap = map[string]*gzh.Wx{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	wxGzhMu  sync.Mutex
 )
 
-func NewWxGzhHandler(ctx context.Context) (wxGzh *WxGzh) {
+func NewWxGzh(ctx context.Context) (wxGzh *gzh.Wx) {
 	config := daoPlatform.Config.GetOne(ctx, `wxGzh`).Map()
 	wxGzhKey := gmd5.MustEncrypt(config)
 	ok := false
@@ -25,7 +26,7 @@ func NewWxGzhHandler(ctx context.Context) (wxGzh *WxGzh) {
 	if wxGzh, ok = wxGzhMap[wxGzhKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-	wxGzh = NewWxGzh(ctx, config)
+	wxGzh = gzh.NewWx(ctx, config)
 	wxGzhMap[wxGzhKey] = wxGzh
 	return
 }
