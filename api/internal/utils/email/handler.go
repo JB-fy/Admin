@@ -12,7 +12,7 @@ import (
 
 type Handler struct {
 	Ctx   context.Context
-	Email model.Email
+	email model.Email
 }
 
 func NewHandler(ctx context.Context, emailTypeOpt ...string) model.Handler {
@@ -27,12 +27,12 @@ func NewHandler(ctx context.Context, emailTypeOpt ...string) model.Handler {
 		emailType = emailTypeDef
 	}
 	config := daoPlatform.Config.GetOne(ctx, emailType).Map()
-	handlerObj.Email = NewEmail(ctx, emailType, config)
+	handlerObj.email = NewEmail(ctx, emailType, config)
 	return handlerObj
 }
 
 func (handlerThis *Handler) SendEmail(message string, toEmailArr ...string) (err error) {
-	return handlerThis.Email.SendEmail(handlerThis.Ctx, message, toEmailArr...)
+	return handlerThis.email.SendEmail(handlerThis.Ctx, message, toEmailArr...)
 }
 
 func (handlerThis *Handler) SendCode(toEmail string, code string) (err error) {
@@ -45,7 +45,7 @@ func (handlerThis *Handler) SendCode(toEmail string, code string) (err error) {
 	}
 
 	messageArr := []string{
-		`From: ` + handlerThis.Email.GetFromEmail(),
+		`From: ` + handlerThis.email.GetFromEmail(),
 		`To: ` + toEmail,
 		`Subject: ` + subject,
 		gstr.Replace(template, `{code}`, code),

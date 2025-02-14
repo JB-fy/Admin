@@ -1,6 +1,7 @@
-package push
+package tx
 
 import (
+	"api/internal/utils/push/model"
 	"context"
 	"crypto/hmac"
 	"crypto/sha256"
@@ -18,44 +19,44 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type PushOfTx struct {
+type Push struct {
 	Host      string `json:"host"`
 	AccessID  uint32 `json:"accessID"`
 	SecretKey string `json:"secretKey"`
 	client    *gclient.Client
 }
 
-func NewPushOfTx(ctx context.Context, config map[string]any) *PushOfTx {
-	pushObj := &PushOfTx{}
-	gconv.Struct(config, pushObj)
-	if pushObj.Host == `` || pushObj.AccessID == 0 || pushObj.SecretKey == `` {
+func NewPush(ctx context.Context, config map[string]any) model.Push {
+	obj := &Push{}
+	gconv.Struct(config, obj)
+	if obj.Host == `` || obj.AccessID == 0 || obj.SecretKey == `` {
 		panic(`缺少插件配置：推送-腾讯移动推送`)
 	}
 	/* // Basic Auth 认证
-	pushObj.client = g.Client().SetHeaderMap(g.MapStrStr{
+	obj.client = g.Client().SetHeaderMap(g.MapStrStr{
 		`Content-Type`:  `application/json`,
-		`Authorization`: `Basic ` + base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf(`%d:%s`, pushObj.AccessID, pushObj.SecretKey))),
+		`Authorization`: `Basic ` + base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf(`%d:%s`, obj.AccessID, obj.SecretKey))),
 	}) */
 
-	//签名认证（推荐）。注意：pushObj.client只初始化一次，请求前不能含有动态数据，否则会造成全局污染。所以动态请求头TimeStamp和Sign必须在中间件中处理，中间件内的r *http.Request参数是请求前临时生成的并且唯一，故不会污染全局
-	pushObj.client = g.Client().SetHeaderMap(g.MapStrStr{
+	//签名认证（推荐）。注意：obj.client只初始化一次，请求前不能含有动态数据，否则会造成全局污染。所以动态请求头TimeStamp和Sign必须在中间件中处理，中间件内的r *http.Request参数是请求前临时生成的并且唯一，故不会污染全局
+	obj.client = g.Client().SetHeaderMap(g.MapStrStr{
 		`Content-Type`: `application/json`,
-		`AccessId`:     gconv.String(pushObj.AccessID),
+		`AccessId`:     gconv.String(obj.AccessID),
 	})
-	pushObj.client.Use(func(c *gclient.Client, r *http.Request) (resp *gclient.Response, err error) {
+	obj.client.Use(func(c *gclient.Client, r *http.Request) (resp *gclient.Response, err error) {
 		timeStamp := gtime.Now().Unix()
 		bodyBytes, _ := io.ReadAll(r.Body)
 		reqDataJson := string(bodyBytes)
 		r.Header.Set(`TimeStamp`, gconv.String(timeStamp))
-		r.Header.Set(`Sign`, pushObj.sign(timeStamp, reqDataJson))
+		r.Header.Set(`Sign`, obj.sign(timeStamp, reqDataJson))
 
 		resp, err = c.Next(r)
 		return
 	})
-	return pushObj
+	return obj
 }
 
-func (pushThis *PushOfTx) PushMsg(ctx context.Context, param PushParam) (err error) {
+func (pushThis *Push) Push(ctx context.Context, param model.PushParam) (err error) {
 	reqData := g.Map{}
 	reqData[`environment`] = `product`
 	if param.IsDev {
@@ -108,8 +109,7 @@ func (pushThis *PushOfTx) PushMsg(ctx context.Context, param PushParam) (err err
 	}
 	reqData[`message`] = message
 
-	reqDataJson := gjson.MustEncodeString(reqData)
-	res, err := pushThis.client.Post(ctx, pushThis.Host+`/v3/push/app`, reqDataJson)
+	res, err := pushThis.client.Post(ctx, pushThis.Host+`/v3/push/app`, gjson.MustEncodeString(reqData))
 	if err != nil {
 		return
 	}
@@ -127,7 +127,7 @@ func (pushThis *PushOfTx) PushMsg(ctx context.Context, param PushParam) (err err
 	return
 }
 
-func (pushThis *PushOfTx) TagHandle(ctx context.Context, param TagParam) (err error) {
+func (pushThis *Push) Tag(ctx context.Context, param model.TagParam) (err error) {
 	lenOfTagList := len(param.TagList)
 	lenOfTokenList := len(param.TokenList)
 	if lenOfTagList > 1 && lenOfTokenList > 1 {
@@ -159,8 +159,7 @@ func (pushThis *PushOfTx) TagHandle(ctx context.Context, param TagParam) (err er
 		}
 	}
 
-	reqDataJson := gjson.MustEncodeString(reqData)
-	res, err := pushThis.client.Post(ctx, pushThis.Host+`/v3/device/tag`, reqDataJson)
+	res, err := pushThis.client.Post(ctx, pushThis.Host+`/v3/device/tag`, gjson.MustEncodeString(reqData))
 	if err != nil {
 		return
 	}
@@ -178,7 +177,7 @@ func (pushThis *PushOfTx) TagHandle(ctx context.Context, param TagParam) (err er
 	return
 }
 
-func (pushThis *PushOfTx) sign(timeStamp int64, reqDataJson string) (sign string) {
+func (pushThis *Push) sign(timeStamp int64, reqDataJson string) (sign string) {
 	h := hmac.New(sha256.New, []byte(pushThis.SecretKey))
 	h.Write([]byte(fmt.Sprintf(`%d%d%s`, timeStamp, pushThis.AccessID, reqDataJson)))
 	sha := hex.EncodeToString(h.Sum(nil))
