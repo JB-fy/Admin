@@ -1,7 +1,8 @@
-package token
+package jwt
 
 import (
 	"api/internal/utils"
+	"api/internal/utils/token/model"
 	"context"
 	"errors"
 	"time"
@@ -23,7 +24,7 @@ import (
 		私钥命令：openssl ecparam -genkey -name prime256r1|secp384r1|secp521r1 -noout -out ecc-private-key.pem
 		公钥命令：openssl ec -in ecc-private-key.pem -pubout -out ecc-public-key.pem
 */
-type TokenOfJwt struct {
+type Token struct {
 	ExpireTime uint   `json:"expire_time"`
 	SignType   string `json:"sign_type"`
 	PrivateKey string `json:"private_key"`
@@ -31,10 +32,10 @@ type TokenOfJwt struct {
 	SignMethod jwt.SigningMethod
 }
 
-func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
-	tokenObj := &TokenOfJwt{}
-	gconv.Struct(config, tokenObj)
-	if tokenObj.ExpireTime == 0 || tokenObj.SignType == `` || tokenObj.PrivateKey == `` || (tokenObj.PublicKey == `` && !garray.NewStrArrayFrom([]string{`HS256`, `HS384`, `HS512`}).Contains(tokenObj.SignType)) {
+func NewToken(ctx context.Context, config map[string]any) model.Token {
+	obj := &Token{}
+	gconv.Struct(config, obj)
+	if obj.ExpireTime == 0 || obj.SignType == `` || obj.PrivateKey == `` || (obj.PublicKey == `` && !garray.NewStrArrayFrom([]string{`HS256`, `HS384`, `HS512`}).Contains(obj.SignType)) {
 		panic(`缺少配置：token-Jwt`)
 	}
 	signMethodMap := map[string]jwt.SigningMethod{
@@ -49,19 +50,14 @@ func NewTokenOfJwt(ctx context.Context, config map[string]any) *TokenOfJwt {
 		`ES512`: jwt.SigningMethodES512,
 	}
 	ok := false
-	tokenObj.SignMethod, ok = signMethodMap[tokenObj.SignType]
+	obj.SignMethod, ok = signMethodMap[obj.SignType]
 	if !ok {
-		tokenObj.SignMethod = jwt.SigningMethodHS256
+		obj.SignMethod = jwt.SigningMethodHS256
 	}
-	return tokenObj
+	return obj
 }
 
-type tokenOfJwtClaims struct {
-	jwt.RegisteredClaims
-	IP string `json:"ip"`
-}
-
-func (tokenThis *TokenOfJwt) Create(ctx context.Context, tokenInfo TokenInfo) (token string, err error) {
+func (tokenThis *Token) Create(ctx context.Context, tokenInfo model.TokenInfo) (token string, err error) {
 	privateKeyFunc := func() (privateKey any) {
 		switch tokenThis.SignMethod {
 		case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:
@@ -72,7 +68,7 @@ func (tokenThis *TokenOfJwt) Create(ctx context.Context, tokenInfo TokenInfo) (t
 		return
 	}
 
-	claims := tokenOfJwtClaims{}
+	claims := tokenClaims{}
 	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Duration(tokenThis.ExpireTime) * time.Second)) // 过期时间
 	claims.IssuedAt = jwt.NewNumericDate(time.Now())                                                         // 签发时间
 	claims.NotBefore = jwt.NewNumericDate(time.Now())                                                        // 生效时间
@@ -82,8 +78,8 @@ func (tokenThis *TokenOfJwt) Create(ctx context.Context, tokenInfo TokenInfo) (t
 	return
 }
 
-func (tokenThis *TokenOfJwt) Parse(ctx context.Context, token string) (tokenInfo TokenInfo, err error) {
-	jwtToken, err := jwt.ParseWithClaims(token, &tokenOfJwtClaims{}, func(jwtToken *jwt.Token) (any, error) {
+func (tokenThis *Token) Parse(ctx context.Context, token string) (tokenInfo model.TokenInfo, err error) {
+	jwtToken, err := jwt.ParseWithClaims(token, &tokenClaims{}, func(jwtToken *jwt.Token) (any, error) {
 		switch jwtToken.Method {
 		case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:
 			return []byte(tokenThis.PrivateKey), nil
@@ -98,7 +94,7 @@ func (tokenThis *TokenOfJwt) Parse(ctx context.Context, token string) (tokenInfo
 		err = errors.New(`token无效`)
 		return
 	}
-	claims, ok := jwtToken.Claims.(*tokenOfJwtClaims)
+	claims, ok := jwtToken.Claims.(*tokenClaims)
 	if !ok {
 		err = errors.New(`token载体类型错误`)
 		return
@@ -109,6 +105,6 @@ func (tokenThis *TokenOfJwt) Parse(ctx context.Context, token string) (tokenInfo
 	return
 }
 
-func (tokenThis *TokenOfJwt) GetExpireTime() (expireTime int64) {
+func (tokenThis *Token) GetExpireTime() (expireTime int64) {
 	return int64(tokenThis.ExpireTime)
 }

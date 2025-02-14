@@ -4,6 +4,7 @@ import (
 	"api/internal/cache"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
+	"api/internal/utils/token/model"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -12,14 +13,14 @@ import (
 
 type Handler struct {
 	Ctx        context.Context
-	Token      Token
+	token      model.Token
 	SceneId    string //场景ID。缓存使用，注意：在同一权限场景下，存在互相覆盖BUG时，须自定义sceneId规避
 	ActiveTime int64  `json:"active_time"` //失活时间。大于0生效，防止长时间无操作（人离开）时，被他人趁机而入（一段秒数内Token未使用，判定失活）
 	IsIP       bool   `json:"is_ip"`       //验证IP。开启后，可防止Token被盗用（验证使用Token时的IP与生成Token时的IP是否一致）
 	IsUnique   bool   `json:"is_unique"`   //Token唯一。开启后，可限制用户多地、多设备登录（同时只会有一个Token有效，生成新Token时，旧Token失效）
 }
 
-func NewHandler(ctx context.Context /* , sceneIdOpt ...string */) *Handler {
+func NewHandler(ctx context.Context /* , sceneIdOpt ...string */) model.Handler {
 	handlerObj := &Handler{Ctx: ctx}
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	/* if len(sceneIdOpt) > 0 {
@@ -28,17 +29,17 @@ func NewHandler(ctx context.Context /* , sceneIdOpt ...string */) *Handler {
 	config, _ := sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map)
 	gconv.Struct(config, handlerObj)
 	handlerObj.SceneId = sceneInfo[daoAuth.Scene.Columns().SceneId].String()
-	handlerObj.Token = NewToken(ctx, gconv.Uint(config[`token_type`]), config)
+	handlerObj.token = NewToken(ctx, gconv.Uint(config[`token_type`]), config)
 	return handlerObj
 }
 
 func (handlerThis *Handler) Create(loginId string) (token string, err error) {
-	tokenInfo := TokenInfo{LoginId: loginId}
+	tokenInfo := model.TokenInfo{LoginId: loginId}
 	if handlerThis.IsIP {
 		tokenInfo.IP = g.RequestFromCtx(handlerThis.Ctx).GetClientIp()
 	}
 
-	token, err = handlerThis.Token.Create(handlerThis.Ctx, tokenInfo)
+	token, err = handlerThis.token.Create(handlerThis.Ctx, tokenInfo)
 	if err != nil {
 		return
 	}
@@ -48,13 +49,13 @@ func (handlerThis *Handler) Create(loginId string) (token string, err error) {
 	}
 
 	if handlerThis.IsUnique {
-		cache.TokenIsUnique.Set(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, token, handlerThis.Token.GetExpireTime())
+		cache.TokenIsUnique.Set(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, token, handlerThis.token.GetExpireTime())
 	}
 	return
 }
 
-func (handlerThis *Handler) Parse(token string) (tokenInfo TokenInfo, err error) {
-	tokenInfo, err = handlerThis.Token.Parse(handlerThis.Ctx, token)
+func (handlerThis *Handler) Parse(token string) (tokenInfo model.TokenInfo, err error) {
+	tokenInfo, err = handlerThis.token.Parse(handlerThis.Ctx, token)
 	if err != nil {
 		err = utils.NewErrorCode(handlerThis.Ctx, 39994001, err.Error())
 		return
