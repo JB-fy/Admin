@@ -1,33 +1,24 @@
 package id_card
 
 import (
+	"api/internal/utils/id-card/aliyun"
+	"api/internal/utils/id-card/model"
 	"context"
 	"sync"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 )
 
-type IdCardInfo struct {
-	Gender uint // 性别：0未设置 1男 2女
-	// Birthday *gtime.Time // 生日
-	Birthday string // 生日
-	Address  string // 详细地址
-}
-
-type IdCard interface {
-	Auth(ctx context.Context, idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error)
-}
-
 var (
+	idCardMap     = map[string]model.IdCard{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	idCardMu      sync.Mutex
 	idCardTypeDef = `idCardOfAliyun`
-	idCardFuncMap = map[string]func(ctx context.Context, config map[string]any) IdCard{
-		`idCardOfAliyun`: func(ctx context.Context, config map[string]any) IdCard { return NewIdCardOfAliyun(ctx, config) },
+	idCardFuncMap = map[string]model.IdCardFunc{
+		`idCardOfAliyun`: aliyun.NewIdCard,
 	}
-	idCardMap = map[string]IdCard{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	idCardMu  sync.Mutex
 )
 
-func NewIdCard(ctx context.Context, idCardType string, config map[string]any) (idCard IdCard) {
+func NewIdCard(ctx context.Context, idCardType string, config map[string]any) (idCard model.IdCard) {
 	idCardKey := idCardType + gmd5.MustEncrypt(config)
 	ok := false
 	if idCard, ok = idCardMap[idCardKey]; ok { //先读一次（不加锁）

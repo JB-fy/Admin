@@ -1,33 +1,35 @@
-package id_card
+package aliyun
 
 import (
+	"api/internal/utils/id-card/model"
 	"context"
 	"errors"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/gclient"
+	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type IdCardOfAliyun struct {
+type IdCard struct {
 	Ctx     context.Context
 	Url     string `json:"url"`
 	Appcode string `json:"appcode"`
 	client  *gclient.Client
 }
 
-func NewIdCardOfAliyun(ctx context.Context, config map[string]any) *IdCardOfAliyun {
-	idCardObj := &IdCardOfAliyun{}
-	gconv.Struct(config, idCardObj)
-	if idCardObj.Url == `` || idCardObj.Appcode == `` {
+func NewIdCard(ctx context.Context, config map[string]any) model.IdCard {
+	obj := &IdCard{}
+	gconv.Struct(config, obj)
+	if obj.Url == `` || obj.Appcode == `` {
 		panic(`缺少插件配置：实名认证-阿里云`)
 	}
-	idCardObj.client = g.Client().SetHeaderMap(g.MapStrStr{`Authorization`: `APPCODE ` + idCardObj.Appcode})
-	return idCardObj
+	obj.client = g.Client().SetHeaderMap(g.MapStrStr{`Authorization`: `APPCODE ` + obj.Appcode})
+	return obj
 }
 
-func (idCardThis *IdCardOfAliyun) Auth(ctx context.Context, idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error) {
+func (idCardThis *IdCard) Auth(ctx context.Context, idCardName string, idCardNo string) (idCardInfo model.IdCardInfo, err error) {
 	res, err := idCardThis.client.Get(idCardThis.Ctx, idCardThis.Url, g.Map{
 		`cardno`: idCardNo,
 		`name`:   idCardName,
@@ -57,7 +59,6 @@ func (idCardThis *IdCardOfAliyun) Auth(ctx context.Context, idCardName string, i
 		idCardInfo.Gender = gender
 	}
 	idCardInfo.Address = gconv.String(idCardInfoMap[`address`])
-	// idCardInfo.Birthday = gtime.NewFromStr(gconv.String(idCardInfoMap[`birthday`]))
-	idCardInfo.Birthday = gconv.String(idCardInfoMap[`birthday`])
+	idCardInfo.Birthday = gtime.New(idCardInfoMap[`birthday`])
 	return
 }

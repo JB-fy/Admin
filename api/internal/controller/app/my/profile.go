@@ -172,16 +172,16 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 					data[daoUsers.Users.Columns().Gender] = idCardInfo.Gender
 				}
 			}
+			if !idCardInfo.Birthday.IsZero() {
+				data[daoUsers.Privacy.Columns().IdCardBirthday] = idCardInfo.Birthday
+				if loginInfo[daoUsers.Users.Columns().Birthday].GTime().IsZero() {
+					data[daoUsers.Users.Columns().Birthday] = idCardInfo.Birthday
+				}
+			}
 			if idCardInfo.Address != `` {
 				data[daoUsers.Privacy.Columns().IdCardAddress] = idCardInfo.Address
 				if loginInfo[daoUsers.Users.Columns().Address].String() == `` {
 					data[daoUsers.Users.Columns().Address] = idCardInfo.Address
-				}
-			}
-			if idCardInfo.Birthday != `` {
-				data[daoUsers.Privacy.Columns().IdCardBirthday] = idCardInfo.Birthday
-				if loginInfo[daoUsers.Users.Columns().Birthday].String() == `` {
-					data[daoUsers.Users.Columns().Birthday] = idCardInfo.Birthday
 				}
 			}
 		}

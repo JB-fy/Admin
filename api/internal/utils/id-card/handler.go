@@ -2,15 +2,16 @@ package id_card
 
 import (
 	daoPlatform "api/internal/dao/platform"
+	"api/internal/utils/id-card/model"
 	"context"
 )
 
 type Handler struct {
 	Ctx    context.Context
-	IdCard IdCard
+	IdCard model.IdCard
 }
 
-func NewHandler(ctx context.Context, idCardTypeOpt ...string) *Handler {
+func NewHandler(ctx context.Context, idCardTypeOpt ...string) model.Handler {
 	handlerObj := &Handler{Ctx: ctx}
 	idCardType := ``
 	if len(idCardTypeOpt) > 0 {
@@ -26,6 +27,6 @@ func NewHandler(ctx context.Context, idCardTypeOpt ...string) *Handler {
 	return handlerObj
 }
 
-func (handlerThis *Handler) Auth(idCardName string, idCardNo string) (idCardInfo IdCardInfo, err error) {
+func (handlerThis *Handler) Auth(idCardName string, idCardNo string) (idCardInfo model.IdCardInfo, err error) {
 	return handlerThis.IdCard.Auth(handlerThis.Ctx, idCardName, idCardNo)
 }

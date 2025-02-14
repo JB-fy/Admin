@@ -19,43 +19,43 @@ type Email struct {
 }
 
 func NewEmail(ctx context.Context, config map[string]any) model.Email {
-	emailObj := &Email{}
-	gconv.Struct(config, emailObj)
-	if emailObj.SmtpHost == `` || emailObj.SmtpPort == `` || emailObj.FromEmail == `` || emailObj.Password == `` {
+	obj := &Email{}
+	gconv.Struct(config, obj)
+	if obj.SmtpHost == `` || obj.SmtpPort == `` || obj.FromEmail == `` || obj.Password == `` {
 		panic(`缺少插件配置：邮箱-通用`)
 	}
 	/* // 设置TLS配置
-	tlsConfig := &tls.Config{ServerName: emailObj.SmtpHost}
+	tlsConfig := &tls.Config{ServerName: obj.SmtpHost}
 	// tlsConfig.InsecureSkipVerify = true // 在开发环境中可以设置为true，但在生产环境中应该验证服务器证书
 
 	// 连接到SMTP服务器
-	conn, err := tls.Dial(`tcp`, emailObj.SmtpHost+`:`+emailObj.SmtpPort, tlsConfig)
+	conn, err := tls.Dial(`tcp`, obj.SmtpHost+`:`+obj.SmtpPort, tlsConfig)
 	if err != nil {
 		panic(`连接到SMTP服务器错误：` + err.Error())
 	}
 	// defer conn.Close()
 
 	// 创建SMTP客户端
-	client, err := smtp.NewClient(conn, emailObj.SmtpHost)
+	client, err := smtp.NewClient(conn, obj.SmtpHost)
 	if err != nil {
 		panic(`创建SMTP客户端错误：` + err.Error())
 	}
 	// defer client.Quit()
 
 	// 设置SMTP的认证信息
-	auth := smtp.PlainAuth(``, emailObj.FromEmail, emailObj.Password, emailObj.SmtpHost)
+	auth := smtp.PlainAuth(``, obj.FromEmail, obj.Password, obj.SmtpHost)
 	err = client.Auth(auth)
 	if err != nil {
 		panic(`SMTP的认证信息错误：` + err.Error())
 	}
 
 	// 发送邮件
-	err = client.Mail(emailObj.FromEmail)
+	err = client.Mail(obj.FromEmail)
 	if err != nil {
 		panic(`设置邮件发送人错误：` + err.Error())
 	}
-	emailObj.client = client */
-	return emailObj
+	obj.client = client */
+	return obj
 }
 
 func (emailThis *Email) GetFromEmail() string {
