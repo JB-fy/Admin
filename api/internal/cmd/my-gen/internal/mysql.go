@@ -15,7 +15,7 @@ type mysql struct {
 }
 
 func (dbHandler mysql) GetFieldList(ctx context.Context, group, table string) (fieldList []MyGenField) {
-	/* fieldListTmp, _ := g.DB(group).GetAll(ctx, `SHOW FULL COLUMNS FROM `+table)
+	/* fieldListTmp, _ := g.DB(group).GetAll(ctx, `SHOW FULL COLUMNS FROM `+"`"+table+"`")
 	fieldList = make([]MyGenField, len(fieldListTmp))
 	for k, v := range fieldListTmp {
 		field := MyGenField{
@@ -49,7 +49,7 @@ func (dbHandler mysql) GetFieldList(ctx context.Context, group, table string) (f
 }
 
 func (dbHandler mysql) GetKeyList(ctx context.Context, group, table string) (keyList []MyGenKey) {
-	keyListTmp, _ := g.DB(group).GetAll(ctx, `SHOW KEYS FROM `+table)
+	keyListTmp, _ := g.DB(group).GetAll(ctx, `SHOW KEYS FROM `+"`"+table+"`")
 	fieldList := dbHandler.GetFieldList(ctx, group, table)
 	keyNameList := []string{}
 	fieldArrMap := map[string][]string{}
