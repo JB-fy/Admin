@@ -1,4 +1,4 @@
-package one_click
+package yidun
 
 import (
 	"context"
@@ -8,22 +8,22 @@ import (
 	mobileverify "github.com/yidun/yidun-golang-sdk/yidun/service/mobileverify"
 )
 
-type OneClickOfYidun struct {
+type OneClick struct {
 	SecretId   string `json:"secretId"`
 	SecretKey  string `json:"secretKey"`
 	BusinessId string `json:"businessId"`
 }
 
-func NewOneClickOfYidun(ctx context.Context, config map[string]any) *OneClickOfYidun {
-	oneClickObj := &OneClickOfYidun{}
-	gconv.Struct(config, oneClickObj)
-	if oneClickObj.SecretId == `` || oneClickObj.SecretKey == `` || oneClickObj.BusinessId == `` {
+func NewOneClick(ctx context.Context, config map[string]any) *OneClick {
+	obj := &OneClick{}
+	gconv.Struct(config, obj)
+	if obj.SecretId == `` || obj.SecretKey == `` || obj.BusinessId == `` {
 		panic(`缺少插件配置：一键登录-易盾`)
 	}
-	return oneClickObj
+	return obj
 }
 
-func (oneClickThis *OneClickOfYidun) Check(ctx context.Context, token string, accessToken string) (phone string, err error) {
+func (oneClickThis *OneClick) Check(ctx context.Context, token string, accessToken string) (phone string, err error) {
 	client := mobileverify.NewMobileNumberClientWithAccessKey(oneClickThis.SecretId, oneClickThis.SecretKey)
 
 	req := mobileverify.NewMobileNumberGetRequest(oneClickThis.BusinessId)

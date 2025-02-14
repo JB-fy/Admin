@@ -2,6 +2,8 @@ package one_click
 
 import (
 	daoPlatform "api/internal/dao/platform"
+	"api/internal/utils/one-click/wx"
+	"api/internal/utils/one-click/yidun"
 	"context"
 	"sync"
 
@@ -9,11 +11,11 @@ import (
 )
 
 var (
-	oneClickOfWxMap = map[string]*OneClickOfWx{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	oneClickOfWxMap = map[string]*wx.OneClick{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	oneClickOfWxMu  sync.Mutex
 )
 
-func NewOneClickOfWxHandler(ctx context.Context) (oneClickOfWx *OneClickOfWx) {
+func NewOneClickOfWx(ctx context.Context) (oneClickOfWx *wx.OneClick) {
 	config := daoPlatform.Config.GetOne(ctx, `oneClickOfWx`).Map()
 	oneClickOfWxKey := gmd5.MustEncrypt(config)
 	ok := false
@@ -25,17 +27,17 @@ func NewOneClickOfWxHandler(ctx context.Context) (oneClickOfWx *OneClickOfWx) {
 	if oneClickOfWx, ok = oneClickOfWxMap[oneClickOfWxKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-	oneClickOfWx = NewOneClickOfWx(ctx, config)
+	oneClickOfWx = wx.NewOneClick(ctx, config)
 	oneClickOfWxMap[oneClickOfWxKey] = oneClickOfWx
 	return
 }
 
 var (
-	oneClickOfYidunMap = map[string]*OneClickOfYidun{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	oneClickOfYidunMap = map[string]*yidun.OneClick{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	oneClickOfYidunMu  sync.Mutex
 )
 
-func NewOneClickOfYidunHandler(ctx context.Context) (oneClickOfYidun *OneClickOfYidun) {
+func NewOneClickOfYidun(ctx context.Context) (oneClickOfYidun *yidun.OneClick) {
 	config := daoPlatform.Config.GetOne(ctx, `oneClickOfYidun`).Map()
 	oneClickOfYidunKey := gmd5.MustEncrypt(config)
 	ok := false
@@ -47,7 +49,7 @@ func NewOneClickOfYidunHandler(ctx context.Context) (oneClickOfYidun *OneClickOf
 	if oneClickOfYidun, ok = oneClickOfYidunMap[oneClickOfYidunKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
-	oneClickOfYidun = NewOneClickOfYidun(ctx, config)
+	oneClickOfYidun = yidun.NewOneClick(ctx, config)
 	oneClickOfYidunMap[oneClickOfYidunKey] = oneClickOfYidun
 	return
 }

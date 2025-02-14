@@ -235,7 +235,7 @@ func (controllerThis *Login) OneClickPreInfo(ctx context.Context, req *apiCurren
 	res = &apiCurrent.LoginOneClickPreInfoRes{}
 	switch req.OneClickType {
 	case `oneClickOfWx`: //微信
-		res.CodeUrlOfWx, err = one_click.NewOneClickOfWxHandler(ctx).CodeUrl(req.RedirectUriOfWx, req.ScopeOfWx, req.StateOfWx, req.ForcePopupOfWx)
+		res.CodeUrlOfWx, err = one_click.NewOneClickOfWx(ctx).CodeUrl(req.RedirectUriOfWx, req.ScopeOfWx, req.StateOfWx, req.ForcePopupOfWx)
 	case `oneClickOfYidun`: //易盾
 	}
 	return
@@ -247,7 +247,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 	saveData := g.Map{}
 	switch req.OneClickType {
 	case `oneClickOfWx`: //微信
-		accessToken, errTmp := one_click.NewOneClickOfWxHandler(ctx).AccessToken(ctx, req.CodeOfWx)
+		accessToken, errTmp := one_click.NewOneClickOfWx(ctx).AccessToken(ctx, req.CodeOfWx)
 		if errTmp != nil {
 			err = errTmp
 			return
@@ -258,7 +258,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 			saveData[daoUsers.Users.Columns().WxUnionid] = accessToken.Unionid
 		}
 		if garray.NewStrArrayFrom([]string{`snsapi_userinfo`, `snsapi_login`}).Contains(accessToken.Scope) {
-			userInfo, errTmp := one_click.NewOneClickOfWxHandler(ctx).UserInfo(ctx, accessToken.Openid, accessToken.AccessToken)
+			userInfo, errTmp := one_click.NewOneClickOfWx(ctx).UserInfo(ctx, accessToken.Openid, accessToken.AccessToken)
 			if errTmp != nil {
 				err = errTmp
 				return
@@ -269,7 +269,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 			saveData[daoUsers.Users.Columns().Avatar] = userInfo.Avatar
 		}
 	case `oneClickOfYidun`: //易盾
-		phone, errTmp := one_click.NewOneClickOfYidunHandler(ctx).Check(ctx, req.TokenOfYidun, req.AccessTokenOfYidun)
+		phone, errTmp := one_click.NewOneClickOfYidun(ctx).Check(ctx, req.TokenOfYidun, req.AccessTokenOfYidun)
 		if errTmp != nil {
 			err = errTmp
 			return
