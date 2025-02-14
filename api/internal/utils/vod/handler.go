@@ -2,16 +2,17 @@ package vod
 
 import (
 	daoPlatform "api/internal/dao/platform"
+	"api/internal/utils/vod/model"
 	"context"
 )
 
 type Handler struct {
 	Ctx   context.Context
 	Scene string //上传场景。default默认。根据自身需求扩展，用于确定上传通道和上传参数
-	Vod   Vod
+	vod   model.Vod
 }
 
-func NewHandler(ctx context.Context, scene string, vodTypeOpt ...string) *Handler {
+func NewHandler(ctx context.Context, scene string, vodTypeOpt ...string) model.Handler {
 	handlerObj := &Handler{
 		Ctx:   ctx,
 		Scene: scene,
@@ -26,18 +27,18 @@ func NewHandler(ctx context.Context, scene string, vodTypeOpt ...string) *Handle
 		vodType = vodTypeDef
 	}
 	config := daoPlatform.Config.GetOne(ctx, vodType).Map()
-	handlerObj.Vod = NewVod(ctx, vodType, config)
+	handlerObj.vod = NewVod(ctx, vodType, config)
 	return handlerObj
 }
 
 func (handlerThis *Handler) Sts() (stsInfo map[string]any, err error) {
-	return handlerThis.Vod.Sts(handlerThis.Ctx, handlerThis.createVodParam())
+	return handlerThis.vod.Sts(handlerThis.Ctx, handlerThis.createVodParam())
 }
 
-func (handlerThis *Handler) createVodParam() (param VodParam) {
+func (handlerThis *Handler) createVodParam() (param model.VodParam) {
 	switch handlerThis.Scene {
 	default:
-		param = VodParam{
+		param = model.VodParam{
 			ExpireTime: 50 * 60,
 		}
 	}

@@ -1,7 +1,8 @@
-package vod
+package aliyun
 
 import (
 	"api/internal/utils"
+	"api/internal/utils/vod/model"
 	"context"
 
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -10,7 +11,7 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type VodOfAliyun struct {
+type Vod struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`
 	Endpoint        string `json:"endpoint"`
@@ -18,8 +19,8 @@ type VodOfAliyun struct {
 	client          *sts20150401.Client
 }
 
-func NewVodOfAliyun(ctx context.Context, config map[string]any) *VodOfAliyun {
-	obj := &VodOfAliyun{}
+func NewVod(ctx context.Context, config map[string]any) model.Vod {
+	obj := &Vod{}
 	gconv.Struct(config, obj)
 	if obj.AccessKeyId == `` || obj.AccessKeySecret == `` || obj.Endpoint == `` || obj.RoleArn == `` {
 		panic(`缺少插件配置：视频点播-阿里云`)
@@ -37,7 +38,7 @@ func NewVodOfAliyun(ctx context.Context, config map[string]any) *VodOfAliyun {
 }
 
 // 获取Sts Token
-func (vodThis *VodOfAliyun) Sts(ctx context.Context, param VodParam) (stsInfo map[string]any, err error) {
+func (vodThis *Vod) Sts(ctx context.Context, param model.VodParam) (stsInfo map[string]any, err error) {
 	stsInfo, err = utils.CreateStsToken(vodThis.client, &sts20150401.AssumeRoleRequest{
 		DurationSeconds: tea.Int64(param.ExpireTime),
 		//写入权限：{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}

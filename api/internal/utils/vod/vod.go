@@ -1,30 +1,24 @@
 package vod
 
 import (
+	"api/internal/utils/vod/aliyun"
+	"api/internal/utils/vod/model"
 	"context"
 	"sync"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 )
 
-type VodParam struct {
-	ExpireTime int64 //签名有效时间。单位：秒
-}
-
-type Vod interface {
-	Sts(ctx context.Context, param VodParam) (stsInfo map[string]any, err error) // 获取Sts Token
-}
-
 var (
+	vodMap     = map[string]model.Vod{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	vodMu      sync.Mutex
 	vodTypeDef = `vodOfAliyun`
-	vodFuncMap = map[string]func(ctx context.Context, config map[string]any) Vod{
-		`vodOfAliyun`: func(ctx context.Context, config map[string]any) Vod { return NewVodOfAliyun(ctx, config) },
+	vodFuncMap = map[string]model.VodFunc{
+		`vodOfAliyun`: aliyun.NewVod,
 	}
-	vodMap = map[string]Vod{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	vodMu  sync.Mutex
 )
 
-func NewVod(ctx context.Context, vodType string, config map[string]any) (vod Vod) {
+func NewVod(ctx context.Context, vodType string, config map[string]any) (vod model.Vod) {
 	vodKey := vodType + gmd5.MustEncrypt(config)
 	ok := false
 	if vod, ok = vodMap[vodKey]; ok { //先读一次（不加锁）
