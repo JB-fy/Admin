@@ -1,7 +1,8 @@
-package upload
+package aliyun_oss
 
 import (
 	"api/internal/utils"
+	"api/internal/utils/upload/model"
 	"context"
 	"crypto"
 	"crypto/hmac"
@@ -26,7 +27,7 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type UploadOfAliyunOss struct {
+type Upload struct {
 	Host            string `json:"host"`
 	Bucket          string `json:"bucket"`
 	AccessKeyId     string `json:"accessKeyId"`
@@ -37,8 +38,8 @@ type UploadOfAliyunOss struct {
 	client          *sts20150401.Client
 }
 
-func NewUploadOfAliyunOss(ctx context.Context, config map[string]any) *UploadOfAliyunOss {
-	obj := &UploadOfAliyunOss{}
+func NewUpload(ctx context.Context, config map[string]any) model.Upload {
+	obj := &Upload{}
 	gconv.Struct(config, obj)
 	if obj.Host == `` || obj.Bucket == `` || obj.AccessKeyId == `` || obj.AccessKeySecret == `` || obj.CallbackUrl == `` || obj.Endpoint == `` || obj.RoleArn == `` {
 		panic(`缺少配置：上传-阿里云OSS`)
@@ -55,22 +56,16 @@ func NewUploadOfAliyunOss(ctx context.Context, config map[string]any) *UploadOfA
 	return obj
 }
 
-type UploadOfAliyunOssCallback struct {
-	Url      string `json:"url"`      //回调地址	utils.GetRequestUrl(ctx, 0) + `/upload/notify`
-	Body     string `json:"body"`     //回调参数	`filename=${object}&size=${size}&mime_type=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`
-	BodyType string `json:"bodyType"` //回调方式	`application/x-www-form-urlencoded`
-}
-
 // 本地上传
-func (uploadThis *UploadOfAliyunOss) Upload(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (uploadThis *Upload) Upload(ctx context.Context, r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
 	return
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *UploadOfAliyunOss) Sign(ctx context.Context, param UploadParam) (signInfo SignInfo, err error) {
+func (uploadThis *Upload) Sign(ctx context.Context, param model.UploadParam) (signInfo model.SignInfo, err error) {
 	bucketHost := uploadThis.getBucketHost()
 
-	signInfo = SignInfo{
+	signInfo = model.SignInfo{
 		UploadUrl: bucketHost,
 		Host:      bucketHost,
 		Dir:       param.Dir,
@@ -87,7 +82,7 @@ func (uploadThis *UploadOfAliyunOss) Sign(ctx context.Context, param UploadParam
 	}
 	//是否回调
 	if uploadThis.CallbackUrl != `` {
-		callback := UploadOfAliyunOssCallback{
+		callback := UploadCallback{
 			Url:      uploadThis.CallbackUrl,
 			Body:     `filename=${object}&size=${size}&mime_type=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
 			BodyType: `application/x-www-form-urlencoded`,
@@ -101,7 +96,7 @@ func (uploadThis *UploadOfAliyunOss) Sign(ctx context.Context, param UploadParam
 }
 
 // 获取配置信息（APP直传前调用）
-func (uploadThis *UploadOfAliyunOss) Config(ctx context.Context, param UploadParam) (config map[string]any, err error) {
+func (uploadThis *Upload) Config(ctx context.Context, param model.UploadParam) (config map[string]any, err error) {
 	config = map[string]any{
 		`endpoint`: uploadThis.Host,
 		`bucket`:   uploadThis.Bucket,
@@ -117,7 +112,7 @@ func (uploadThis *UploadOfAliyunOss) Config(ctx context.Context, param UploadPar
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *UploadOfAliyunOss) Sts(ctx context.Context, param UploadParam) (stsInfo map[string]any, err error) {
+func (uploadThis *Upload) Sts(ctx context.Context, param model.UploadParam) (stsInfo map[string]any, err error) {
 	stsInfo, err = utils.CreateStsToken(uploadThis.client, &sts20150401.AssumeRoleRequest{
 		DurationSeconds: tea.Int64(param.ExpireTime),
 		Policy:          tea.String(`{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + uploadThis.Bucket + `/` + param.Dir + `*"]}],"Version": "1"}`),
@@ -128,7 +123,7 @@ func (uploadThis *UploadOfAliyunOss) Sts(ctx context.Context, param UploadParam)
 }
 
 // 回调
-func (uploadThis *UploadOfAliyunOss) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (uploadThis *Upload) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
 	filename := r.Get(`filename`).String()
 	notifyInfo.Width = r.Get(`width`).Uint()
 	notifyInfo.Height = r.Get(`height`).Uint()
@@ -217,7 +212,7 @@ func (uploadThis *UploadOfAliyunOss) Notify(ctx context.Context, r *ghttp.Reques
 }
 
 // 生成签名（web前端直传用）
-func (uploadThis *UploadOfAliyunOss) sign(policyBase64 string) (sign string) {
+func (uploadThis *Upload) sign(policyBase64 string) (sign string) {
 	h := hmac.New(sha1.New, []byte(uploadThis.AccessKeySecret))
 	h.Write([]byte(policyBase64))
 	sign = base64.StdEncoding.EncodeToString(h.Sum(nil))
@@ -225,7 +220,7 @@ func (uploadThis *UploadOfAliyunOss) sign(policyBase64 string) (sign string) {
 }
 
 // 生成PolicyBase64（web前端直传用）
-func (uploadThis *UploadOfAliyunOss) createPolicyBase64(param UploadParam) (policyBase64 string) {
+func (uploadThis *Upload) createPolicyBase64(param model.UploadParam) (policyBase64 string) {
 	policyMap := map[string]any{
 		`expiration`: uploadThis.getGmtIso8601(param.Expire),
 		`conditions`: [][]any{
@@ -240,7 +235,7 @@ func (uploadThis *UploadOfAliyunOss) createPolicyBase64(param UploadParam) (poli
 }
 
 // 生成回调字符串（web前端直传用）
-func (uploadThis *UploadOfAliyunOss) createCallbackStr(callback UploadOfAliyunOssCallback) string {
+func (uploadThis *Upload) createCallbackStr(callback UploadCallback) string {
 	callbackParam := map[string]any{
 		`callbackUrl`:      callback.Url,
 		`callbackBody`:     callback.Body,
@@ -252,7 +247,7 @@ func (uploadThis *UploadOfAliyunOss) createCallbackStr(callback UploadOfAliyunOs
 }
 
 // 获取bucketHost
-func (uploadThis *UploadOfAliyunOss) getBucketHost() string {
+func (uploadThis *Upload) getBucketHost() string {
 	scheme := `https://`
 	if gstr.Pos(uploadThis.Host, `https://`) == -1 {
 		scheme = `http://`
@@ -260,7 +255,7 @@ func (uploadThis *UploadOfAliyunOss) getBucketHost() string {
 	return gstr.Replace(uploadThis.Host, scheme, scheme+uploadThis.Bucket+`.`, 1)
 }
 
-func (uploadThis *UploadOfAliyunOss) getGmtIso8601(expireEnd int64) string {
+func (uploadThis *Upload) getGmtIso8601(expireEnd int64) string {
 	var tokenExpire = time.Unix(expireEnd, 0).UTC().Format(`2006-01-02T15:04:05Z`)
 	return tokenExpire
 }
@@ -278,7 +273,7 @@ const (
 )
 
 // unescapePath : unescapes a string; the mode specifies, which section of the URL string is being unescaped.
-func (uploadThis *UploadOfAliyunOss) unescapePath(s string, mode encoding) (string, error) {
+func (uploadThis *Upload) unescapePath(s string, mode encoding) (string, error) {
 	// Count %, check that they're well-formed.
 	mode = encodePathSegment
 	n := 0
@@ -359,7 +354,7 @@ func (uploadThis *UploadOfAliyunOss) unescapePath(s string, mode encoding) (stri
 
 // Please be informed that for now shouldEscape does not check all
 // reserved characters correctly. See golang.org/issue/5684.
-func (uploadThis *UploadOfAliyunOss) shouldEscape(c byte, mode encoding) bool {
+func (uploadThis *Upload) shouldEscape(c byte, mode encoding) bool {
 	// §2.3 Unreserved characters (alphanum)
 	if 'A' <= c && c <= 'Z' || 'a' <= c && c <= 'z' || '0' <= c && c <= '9' {
 		return false
@@ -423,7 +418,7 @@ func (uploadThis *UploadOfAliyunOss) shouldEscape(c byte, mode encoding) bool {
 	return true
 }
 
-func (uploadThis *UploadOfAliyunOss) ishex(c byte) bool {
+func (uploadThis *Upload) ishex(c byte) bool {
 	switch {
 	case '0' <= c && c <= '9':
 		return true
@@ -435,7 +430,7 @@ func (uploadThis *UploadOfAliyunOss) ishex(c byte) bool {
 	return false
 }
 
-func (uploadThis *UploadOfAliyunOss) unhex(c byte) byte {
+func (uploadThis *Upload) unhex(c byte) byte {
 	switch {
 	case '0' <= c && c <= '9':
 		return c - '0'

@@ -1,7 +1,8 @@
-package upload
+package local
 
 import (
 	"api/internal/utils"
+	"api/internal/utils/upload/model"
 	"context"
 	"errors"
 	"image"
@@ -23,7 +24,7 @@ import (
 	"github.com/gogf/gf/v2/util/grand"
 )
 
-type UploadOfLocal struct {
+type Upload struct {
 	UploadId      uint   `json:"uploadId"`
 	Url           string `json:"url"`
 	SignKey       string `json:"signKey"`
@@ -31,17 +32,17 @@ type UploadOfLocal struct {
 	FileUrlPrefix string `json:"fileUrlPrefix"`
 }
 
-func NewUploadOfLocal(ctx context.Context, config map[string]any) *UploadOfLocal {
-	uploadObj := &UploadOfLocal{}
-	gconv.Struct(config, uploadObj)
-	if uploadObj.UploadId == 0 || uploadObj.Url == `` || uploadObj.SignKey == `` || uploadObj.FileSaveDir == `` || uploadObj.FileUrlPrefix == `` {
+func NewUpload(ctx context.Context, config map[string]any) model.Upload {
+	obj := &Upload{}
+	gconv.Struct(config, obj)
+	if obj.UploadId == 0 || obj.Url == `` || obj.SignKey == `` || obj.FileSaveDir == `` || obj.FileUrlPrefix == `` {
 		panic(`缺少配置：上传-本地`)
 	}
-	return uploadObj
+	return obj
 }
 
 // 本地上传
-func (uploadThis *UploadOfLocal) Upload(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (uploadThis *Upload) Upload(ctx context.Context, r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
 	dir := r.Get(`dir`).String()
 	expire := r.Get(`expire`).Int64()
 	minSize := r.Get(`min_size`).Int64()
@@ -129,8 +130,8 @@ func (uploadThis *UploadOfLocal) Upload(ctx context.Context, r *ghttp.Request) (
 }
 
 // 获取签名（H5直传用）
-func (uploadThis *UploadOfLocal) Sign(ctx context.Context, param UploadParam) (signInfo SignInfo, err error) {
-	signInfo = SignInfo{
+func (uploadThis *Upload) Sign(ctx context.Context, param model.UploadParam) (signInfo model.SignInfo, err error) {
+	signInfo = model.SignInfo{
 		UploadUrl: uploadThis.Url,
 		Host:      uploadThis.FileUrlPrefix,
 		Dir:       param.Dir,
@@ -153,22 +154,22 @@ func (uploadThis *UploadOfLocal) Sign(ctx context.Context, param UploadParam) (s
 }
 
 // 获取配置信息（APP直传前调用）
-func (uploadThis *UploadOfLocal) Config(ctx context.Context, param UploadParam) (config map[string]any, err error) {
+func (uploadThis *Upload) Config(ctx context.Context, param model.UploadParam) (config map[string]any, err error) {
 	return
 }
 
 // 获取Sts Token（APP直传用）
-func (uploadThis *UploadOfLocal) Sts(ctx context.Context, param UploadParam) (stsInfo map[string]any, err error) {
+func (uploadThis *Upload) Sts(ctx context.Context, param model.UploadParam) (stsInfo map[string]any, err error) {
 	return
 }
 
 // 回调
-func (uploadThis *UploadOfLocal) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (uploadThis *Upload) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
 	return
 }
 
 // 生成签名
-func (uploadThis *UploadOfLocal) sign(data map[string]any) (sign string) {
+func (uploadThis *Upload) sign(data map[string]any) (sign string) {
 	keyArr := make([]string, 0, len(data))
 	for key := range data {
 		keyArr = append(keyArr, key)

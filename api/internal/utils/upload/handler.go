@@ -3,6 +3,7 @@ package upload
 import (
 	daoUpload "api/internal/dao/upload"
 	"api/internal/utils"
+	"api/internal/utils/upload/model"
 	"context"
 
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -15,10 +16,10 @@ type Handler struct {
 	Ctx      context.Context
 	Scene    string //上传场景。default默认。根据自身需求扩展，用于确定上传通道和上传参数
 	UploadId uint   //上传ID
-	upload   Upload
+	upload   model.Upload
 }
 
-func NewHandler(ctx context.Context, scene string, uploadId uint) *Handler {
+func NewHandler(ctx context.Context, scene string, uploadId uint) model.Handler {
 	handlerObj := &Handler{
 		Ctx:      ctx,
 		Scene:    scene,
@@ -56,11 +57,11 @@ func (handlerThis *Handler) handleLocalUrl(urlRaw string) (url string) {
 	return
 }
 
-func (handlerThis *Handler) Upload(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (handlerThis *Handler) Upload(r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
 	return handlerThis.upload.Upload(handlerThis.Ctx, r)
 }
 
-func (handlerThis *Handler) Sign() (signInfo SignInfo, err error) {
+func (handlerThis *Handler) Sign() (signInfo model.SignInfo, err error) {
 	return handlerThis.upload.Sign(handlerThis.Ctx, handlerThis.createUploadParam())
 }
 
@@ -72,14 +73,14 @@ func (handlerThis *Handler) Sts() (stsInfo map[string]any, err error) {
 	return handlerThis.upload.Sts(handlerThis.Ctx, handlerThis.createUploadParam())
 }
 
-func (handlerThis *Handler) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (handlerThis *Handler) Notify(r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
 	return handlerThis.upload.Notify(handlerThis.Ctx, r)
 }
 
-func (handlerThis *Handler) createUploadParam() (param UploadParam) {
+func (handlerThis *Handler) createUploadParam() (param model.UploadParam) {
 	switch handlerThis.Scene {
 	default:
-		param = UploadParam{
+		param = model.UploadParam{
 			Dir:        `upload/` + gtime.Now().Format(`Ymd`) + `/`,
 			Expire:     gtime.Now().Unix() + 15*60,
 			ExpireTime: 15 * 60,
