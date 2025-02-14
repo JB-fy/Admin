@@ -7,6 +7,7 @@ import (
 	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
 	"api/internal/utils/pay"
+	payModel "api/internal/utils/pay/model"
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"
@@ -79,7 +80,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		orderFilter[daoPay.Order.Columns().OrderNo] = req.OrderNo
 	}
 
-	var payReqData pay.PayReqData
+	var payReq payModel.PayReq
 	switch utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String() {
 	case `app`:
 		loginInfo := utils.GetCtxLoginInfo(ctx)
@@ -90,9 +91,9 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		if channelInfo[daoPay.Channel.Columns().PayMethod].Uint() == 3 { //小程序支付
 			switch payInfo[daoPay.Pay.Columns().PayType].Uint() {
 			case 0: //支付宝
-				// payReqData.Openid = loginInfo[daoUsers.Users.Columns().AliOpenid].String()
+				// payReq.Openid = loginInfo[daoUsers.Users.Columns().AliOpenid].String()
 			case 1: //微信
-				payReqData.Openid = loginInfo[daoUsers.Users.Columns().WxOpenid].String()
+				payReq.Openid = loginInfo[daoUsers.Users.Columns().WxOpenid].String()
 			}
 		}
 		orderFilter[daoPay.Order.Columns().RelOrderType] = []uint{0}
@@ -108,26 +109,26 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		return
 	}
 
-	payReqData.OrderNo = orderInfo[daoPay.Order.Columns().OrderNo].String()
-	payReqData.Amount = orderInfo[daoPay.Order.Columns().Amount].Float64()
-	payReqData.Desc = `描述`
+	payReq.OrderNo = orderInfo[daoPay.Order.Columns().OrderNo].String()
+	payReq.Amount = orderInfo[daoPay.Order.Columns().Amount].Float64()
+	payReq.Desc = `描述`
 	/* switch orderInfo[daoPay.Order.Columns().RelOrderType].Uint() { // 根据订单类型确认是否设置不同描述
 	case 0:
-		payReqData.Desc = `默认订单`
+		payReq.Desc = `默认订单`
 	} */
 	/**--------订单验证和设置支付数据 结束--------**/
 
 	payObj := pay.NewHandler(ctx, payInfo)
-	var payResData pay.PayResData
+	var payRes payModel.PayRes
 	switch channelInfo[daoPay.Channel.Columns().PayMethod].Uint() {
 	case 0: //APP支付
-		payResData, err = payObj.App(payReqData)
+		payRes, err = payObj.App(payReq)
 	case 1: //H5支付
-		payResData, err = payObj.H5(payReqData)
+		payRes, err = payObj.H5(payReq)
 	case 2: //扫码支付
-		payResData, err = payObj.QRCode(payReqData)
+		payRes, err = payObj.QRCode(payReq)
 	case 3: //小程序支付
-		payResData, err = payObj.Jsapi(payReqData)
+		payRes, err = payObj.Jsapi(payReq)
 	}
 	if err != nil {
 		return
@@ -144,7 +145,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	}).Update()
 
 	res = &api.PayPayRes{
-		PayStr: payResData.PayStr,
+		PayStr: payRes.PayStr,
 	}
 	return
 }

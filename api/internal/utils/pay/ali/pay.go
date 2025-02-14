@@ -1,6 +1,7 @@
-package pay
+package ali
 
 import (
+	"api/internal/utils/pay/model"
 	"context"
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 	"github.com/smartwalle/alipay/v3"
 )
 
-type PayOfAli struct {
+type Pay struct {
 	AppId      string `json:"appId"`
 	PrivateKey string `json:"privateKey"`
 	PublicKey  string `json:"publicKey"`
@@ -17,16 +18,16 @@ type PayOfAli struct {
 	NotifyUrl  string `json:"notifyUrl"`
 }
 
-func NewPayOfAli(ctx context.Context, config map[string]any) *PayOfAli {
-	payObj := &PayOfAli{}
-	gconv.Struct(config, payObj)
-	if payObj.AppId == `` || payObj.PrivateKey == `` || payObj.PublicKey == `` || payObj.NotifyUrl == `` {
+func NewPay(ctx context.Context, config map[string]any) model.Pay {
+	obj := &Pay{}
+	gconv.Struct(config, obj)
+	if obj.AppId == `` || obj.PrivateKey == `` || obj.PublicKey == `` || obj.NotifyUrl == `` {
 		panic(`缺少配置：支付-支付宝`)
 	}
-	return payObj
+	return obj
 }
 
-func (payThis *PayOfAli) App(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *Pay) App(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -34,9 +35,9 @@ func (payThis *PayOfAli) App(ctx context.Context, payReqData PayReqData) (payRes
 
 	param := alipay.TradeAppPay{
 		Trade: alipay.Trade{
-			Subject:     payReqData.Desc,
-			OutTradeNo:  payReqData.OrderNo,
-			TotalAmount: gconv.String(payReqData.Amount),
+			Subject:     payReq.Desc,
+			OutTradeNo:  payReq.OrderNo,
+			TotalAmount: gconv.String(payReq.Amount),
 			ProductCode: `QUICK_MSECURITY_PAY`,
 			NotifyURL:   payThis.NotifyUrl,
 		},
@@ -46,11 +47,11 @@ func (payThis *PayOfAli) App(ctx context.Context, payReqData PayReqData) (payRes
 		return
 	}
 
-	payResData.PayStr = result
+	payRes.PayStr = result
 	return
 }
 
-func (payThis *PayOfAli) H5(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *Pay) H5(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -58,26 +59,26 @@ func (payThis *PayOfAli) H5(ctx context.Context, payReqData PayReqData) (payResD
 
 	param := alipay.TradeWapPay{
 		Trade: alipay.Trade{
-			Subject:     payReqData.Desc,
-			OutTradeNo:  payReqData.OrderNo,
-			TotalAmount: gconv.String(payReqData.Amount),
+			Subject:     payReq.Desc,
+			OutTradeNo:  payReq.OrderNo,
+			TotalAmount: gconv.String(payReq.Amount),
 			ProductCode: `QUICK_WAP_WAY`,
 			NotifyURL:   payThis.NotifyUrl,
 		},
 	}
-	if payReqData.ReturnUrl != `` {
-		param.ReturnURL = payReqData.ReturnUrl
+	if payReq.ReturnUrl != `` {
+		param.ReturnURL = payReq.ReturnUrl
 	}
 	result, err := client.TradeWapPay(param)
 	if err != nil {
 		return
 	}
 
-	payResData.PayStr = result.String()
+	payRes.PayStr = result.String()
 	return
 }
 
-func (payThis *PayOfAli) QRCode(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *Pay) QRCode(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -85,9 +86,9 @@ func (payThis *PayOfAli) QRCode(ctx context.Context, payReqData PayReqData) (pay
 
 	param := alipay.TradePreCreate{
 		Trade: alipay.Trade{
-			Subject:     payReqData.Desc,
-			OutTradeNo:  payReqData.OrderNo,
-			TotalAmount: gconv.String(payReqData.Amount),
+			Subject:     payReq.Desc,
+			OutTradeNo:  payReq.OrderNo,
+			TotalAmount: gconv.String(payReq.Amount),
 			ProductCode: `FACE_TO_FACE_PAYMENT`,
 			NotifyURL:   payThis.NotifyUrl,
 		},
@@ -101,11 +102,11 @@ func (payThis *PayOfAli) QRCode(ctx context.Context, payReqData PayReqData) (pay
 		return
 	}
 
-	payResData.PayStr = result.QRCode
+	payRes.PayStr = result.QRCode
 	return
 }
 
-func (payThis *PayOfAli) Jsapi(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *Pay) Jsapi(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -117,15 +118,15 @@ func (payThis *PayOfAli) Jsapi(ctx context.Context, payReqData PayReqData) (payR
 
 	param := alipay.TradeCreate{
 		Trade: alipay.Trade{
-			Subject:     payReqData.Desc,
-			OutTradeNo:  payReqData.OrderNo,
-			TotalAmount: gconv.String(payReqData.Amount),
+			Subject:     payReq.Desc,
+			OutTradeNo:  payReq.OrderNo,
+			TotalAmount: gconv.String(payReq.Amount),
 			ProductCode: `JSAPI_PAY`,
 			NotifyURL:   payThis.NotifyUrl,
 		},
 		// BuyerId:     ``, //买家支付宝用户ID（未来将被废弃）。BuyerId和BuyerOpenId二选一
-		BuyerOpenId: payReqData.Openid, //买家支付宝用户OpenId（推荐）。BuyerId和BuyerOpenId二选一
-		OpAppId:     payThis.OpAppId,   //小程序应用ID
+		BuyerOpenId: payReq.Openid,   //买家支付宝用户OpenId（推荐）。BuyerId和BuyerOpenId二选一
+		OpAppId:     payThis.OpAppId, //小程序应用ID
 	}
 
 	result, err := client.TradeCreate(param)
@@ -137,11 +138,11 @@ func (payThis *PayOfAli) Jsapi(ctx context.Context, payReqData PayReqData) (payR
 		return
 	}
 
-	payResData.PayStr = result.TradeNo
+	payRes.PayStr = result.TradeNo
 	return
 }
 
-func (payThis *PayOfAli) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (payThis *Pay) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
 	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
 	if err != nil {
 		return
@@ -162,7 +163,7 @@ func (payThis *PayOfAli) Notify(ctx context.Context, r *ghttp.Request) (notifyIn
 	return
 }
 
-func (payThis *PayOfAli) NotifyRes(ctx context.Context, r *ghttp.Request, failMsg string) {
+func (payThis *Pay) NotifyRes(ctx context.Context, r *ghttp.Request, failMsg string) {
 	resData := `success` //success:	成功；fail：失败
 	if failMsg != `` {
 		resData = `fail`

@@ -1,6 +1,7 @@
-package pay
+package wx
 
 import (
+	"api/internal/utils/pay/model"
 	"context"
 	"errors"
 	"net/url"
@@ -21,7 +22,7 @@ import (
 	"github.com/wechatpay-apiv3/wechatpay-go/utils"
 )
 
-type PayOfWx struct {
+type Pay struct {
 	Ctx        context.Context
 	AppId      string `json:"appId"`
 	Mchid      string `json:"mchid"`
@@ -31,16 +32,16 @@ type PayOfWx struct {
 	NotifyUrl  string `json:"notifyUrl"`
 }
 
-func NewPayOfWx(ctx context.Context, config map[string]any) *PayOfWx {
-	payObj := &PayOfWx{}
-	gconv.Struct(config, payObj)
-	if payObj.AppId == `` || payObj.Mchid == `` || payObj.SerialNo == `` || payObj.APIv3Key == `` || payObj.PrivateKey == `` || payObj.NotifyUrl == `` {
+func NewPay(ctx context.Context, config map[string]any) model.Pay {
+	obj := &Pay{}
+	gconv.Struct(config, obj)
+	if obj.AppId == `` || obj.Mchid == `` || obj.SerialNo == `` || obj.APIv3Key == `` || obj.PrivateKey == `` || obj.NotifyUrl == `` {
 		panic(`缺少配置：支付-微信`)
 	}
-	return payObj
+	return obj
 }
 
-func (payThis *PayOfWx) App(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *Pay) App(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
@@ -57,12 +58,12 @@ func (payThis *PayOfWx) App(ctx context.Context, payReqData PayReqData) (payResD
 		app.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
-			Description: core.String(payReqData.Desc),
-			OutTradeNo:  core.String(payReqData.OrderNo),
+			Description: core.String(payReq.Desc),
+			OutTradeNo:  core.String(payReq.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
 			Amount: &app.Amount{
-				// Total: core.Int64(gconv.Int64(math.Ceil(payReqData.Amount * 100))),
-				Total: core.Int64(gconv.Int64(payReqData.Amount * 100)),
+				// Total: core.Int64(gconv.Int64(math.Ceil(payReq.Amount * 100))),
+				Total: core.Int64(gconv.Int64(payReq.Amount * 100)),
 			},
 		},
 	)
@@ -73,11 +74,11 @@ func (payThis *PayOfWx) App(ctx context.Context, payReqData PayReqData) (payResD
 		err = errors.New(`响应错误`)
 		return
 	}
-	payResData.PayStr = *resp.PrepayId
+	payRes.PayStr = *resp.PrepayId
 	return
 }
 
-func (payThis *PayOfWx) H5(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *Pay) H5(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
@@ -88,11 +89,11 @@ func (payThis *PayOfWx) H5(ctx context.Context, payReqData PayReqData) (payResDa
 		return
 	}
 
-	if payReqData.ClientIp == `` {
-		payReqData.ClientIp = `127.0.0.1`
+	if payReq.ClientIp == `` {
+		payReq.ClientIp = `127.0.0.1`
 	}
-	/* if payReqData.Device == `` {
-		payReqData.Device = DeviceUnknown
+	/* if payReq.Device == `` {
+		payReq.Device = DeviceUnknown
 	} */
 	// 发送请求
 	svc := h5.H5ApiService{Client: client}
@@ -100,17 +101,17 @@ func (payThis *PayOfWx) H5(ctx context.Context, payReqData PayReqData) (payResDa
 		h5.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
-			Description: core.String(payReqData.Desc),
-			OutTradeNo:  core.String(payReqData.OrderNo),
+			Description: core.String(payReq.Desc),
+			OutTradeNo:  core.String(payReq.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
 			Amount: &h5.Amount{
-				// Total: core.Int64(gconv.Int64(math.Ceil(payReqData.Amount * 100))),
-				Total: core.Int64(gconv.Int64(payReqData.Amount * 100)),
+				// Total: core.Int64(gconv.Int64(math.Ceil(payReq.Amount * 100))),
+				Total: core.Int64(gconv.Int64(payReq.Amount * 100)),
 			},
 			SceneInfo: &h5.SceneInfo{
-				PayerClientIp: core.String(payReqData.ClientIp),
+				PayerClientIp: core.String(payReq.ClientIp),
 				H5Info: &h5.H5Info{
-					// Type: core.String(string(payReqData.Device)),
+					// Type: core.String(string(payReq.Device)),
 					Type: core.String(`H5`),
 				},
 			},
@@ -123,14 +124,14 @@ func (payThis *PayOfWx) H5(ctx context.Context, payReqData PayReqData) (payResDa
 		err = errors.New(`响应错误`)
 		return
 	}
-	payResData.PayStr = *resp.H5Url
-	if payReqData.ReturnUrl != `` {
-		payResData.PayStr = payResData.PayStr + `&redirect_url=` + url.QueryEscape(payReqData.ReturnUrl)
+	payRes.PayStr = *resp.H5Url
+	if payReq.ReturnUrl != `` {
+		payRes.PayStr = payRes.PayStr + `&redirect_url=` + url.QueryEscape(payReq.ReturnUrl)
 	}
 	return
 }
 
-func (payThis *PayOfWx) QRCode(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *Pay) QRCode(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
@@ -147,12 +148,12 @@ func (payThis *PayOfWx) QRCode(ctx context.Context, payReqData PayReqData) (payR
 		native.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
-			Description: core.String(payReqData.Desc),
-			OutTradeNo:  core.String(payReqData.OrderNo),
+			Description: core.String(payReq.Desc),
+			OutTradeNo:  core.String(payReq.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
 			Amount: &native.Amount{
-				// Total: core.Int64(gconv.Int64(math.Ceil(payReqData.Amount * 100))),
-				Total: core.Int64(gconv.Int64(payReqData.Amount * 100)),
+				// Total: core.Int64(gconv.Int64(math.Ceil(payReq.Amount * 100))),
+				Total: core.Int64(gconv.Int64(payReq.Amount * 100)),
 			},
 		},
 	)
@@ -163,11 +164,11 @@ func (payThis *PayOfWx) QRCode(ctx context.Context, payReqData PayReqData) (payR
 		err = errors.New(`响应错误`)
 		return
 	}
-	payResData.PayStr = *resp.CodeUrl
+	payRes.PayStr = *resp.CodeUrl
 	return
 }
 
-func (payThis *PayOfWx) Jsapi(ctx context.Context, payReqData PayReqData) (payResData PayResData, err error) {
+func (payThis *Pay) Jsapi(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
@@ -184,15 +185,15 @@ func (payThis *PayOfWx) Jsapi(ctx context.Context, payReqData PayReqData) (payRe
 		jsapi.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
 			Mchid:       core.String(payThis.Mchid),
-			Description: core.String(payReqData.Desc),
-			OutTradeNo:  core.String(payReqData.OrderNo),
+			Description: core.String(payReq.Desc),
+			OutTradeNo:  core.String(payReq.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
 			Amount: &jsapi.Amount{
-				// Total: core.Int64(gconv.Int64(math.Ceil(payReqData.Amount * 100))),
-				Total: core.Int64(gconv.Int64(payReqData.Amount * 100)),
+				// Total: core.Int64(gconv.Int64(math.Ceil(payReq.Amount * 100))),
+				Total: core.Int64(gconv.Int64(payReq.Amount * 100)),
 			},
 			Payer: &jsapi.Payer{
-				Openid: core.String(payReqData.Openid),
+				Openid: core.String(payReq.Openid),
 			},
 		},
 	)
@@ -203,11 +204,11 @@ func (payThis *PayOfWx) Jsapi(ctx context.Context, payReqData PayReqData) (payRe
 		err = errors.New(`响应错误`)
 		return
 	}
-	payResData.PayStr = *resp.PrepayId
+	payRes.PayStr = *resp.PrepayId
 	return
 }
 
-func (payThis *PayOfWx) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (payThis *Pay) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
 	privateKey, err := utils.LoadPrivateKey(payThis.PrivateKey)
 	if err != nil {
 		return
@@ -238,7 +239,7 @@ func (payThis *PayOfWx) Notify(ctx context.Context, r *ghttp.Request) (notifyInf
 	return
 }
 
-func (payThis *PayOfWx) NotifyRes(ctx context.Context, r *ghttp.Request, failMsg string) {
+func (payThis *Pay) NotifyRes(ctx context.Context, r *ghttp.Request, failMsg string) {
 	resData := map[string]string{
 		`code`:    `SUCCESS`, //错误码，SUCCESS为清算机构接收成功，其他错误码为失败。
 		`message`: ``,        //返回信息，如非空，为错误原因。

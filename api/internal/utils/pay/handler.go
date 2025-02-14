@@ -3,6 +3,7 @@ package pay
 import (
 	daoPay "api/internal/dao/pay"
 	"api/internal/utils"
+	"api/internal/utils/pay/model"
 	"context"
 
 	"github.com/gogf/gf/v2/database/gdb"
@@ -11,10 +12,10 @@ import (
 
 type Handler struct {
 	Ctx context.Context
-	Pay Pay
+	Pay model.Pay
 }
 
-func NewHandler(ctx context.Context, payInfo gdb.Record) *Handler {
+func NewHandler(ctx context.Context, payInfo gdb.Record) model.Handler {
 	handlerObj := &Handler{Ctx: ctx}
 	config := payInfo[daoPay.Pay.Columns().PayConfig].Map()
 	config[`notifyUrl`] = utils.GetRequestUrl(ctx, 0) + `/pay/notify/` + payInfo[daoPay.Pay.Columns().PayId].String()
@@ -22,23 +23,23 @@ func NewHandler(ctx context.Context, payInfo gdb.Record) *Handler {
 	return handlerObj
 }
 
-func (handlerThis *Handler) App(payReqData PayReqData) (payResData PayResData, err error) {
-	return handlerThis.Pay.App(handlerThis.Ctx, payReqData)
+func (handlerThis *Handler) App(payReq model.PayReq) (payRes model.PayRes, err error) {
+	return handlerThis.Pay.App(handlerThis.Ctx, payReq)
 }
 
-func (handlerThis *Handler) H5(payReqData PayReqData) (payResData PayResData, err error) {
-	return handlerThis.Pay.H5(handlerThis.Ctx, payReqData)
+func (handlerThis *Handler) H5(payReq model.PayReq) (payRes model.PayRes, err error) {
+	return handlerThis.Pay.H5(handlerThis.Ctx, payReq)
 }
 
-func (handlerThis *Handler) QRCode(payReqData PayReqData) (payResData PayResData, err error) {
-	return handlerThis.Pay.QRCode(handlerThis.Ctx, payReqData)
+func (handlerThis *Handler) QRCode(payReq model.PayReq) (payRes model.PayRes, err error) {
+	return handlerThis.Pay.QRCode(handlerThis.Ctx, payReq)
 }
 
-func (handlerThis *Handler) Jsapi(payReqData PayReqData) (payResData PayResData, err error) {
-	return handlerThis.Pay.Jsapi(handlerThis.Ctx, payReqData)
+func (handlerThis *Handler) Jsapi(payReq model.PayReq) (payRes model.PayRes, err error) {
+	return handlerThis.Pay.Jsapi(handlerThis.Ctx, payReq)
 }
 
-func (handlerThis *Handler) Notify(r *ghttp.Request) (notifyInfo NotifyInfo, err error) {
+func (handlerThis *Handler) Notify(r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
 	return handlerThis.Pay.Notify(handlerThis.Ctx, r)
 }
 
