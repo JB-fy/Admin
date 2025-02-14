@@ -1,27 +1,24 @@
 package sms
 
 import (
+	"api/internal/utils/sms/aliyun"
+	"api/internal/utils/sms/model"
 	"context"
 	"sync"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 )
 
-type Sms interface {
-	SendCode(ctx context.Context, phone string, code string) (err error)
-	SendSms(ctx context.Context, phoneArr []string, message string, paramOpt ...any) (err error)
-}
-
 var (
+	smsMap     = map[string]model.Sms{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
+	smsMu      sync.Mutex
 	smsTypeDef = `smsOfAliyun`
-	smsFuncMap = map[string]func(ctx context.Context, config map[string]any) Sms{
-		`smsOfAliyun`: func(ctx context.Context, config map[string]any) Sms { return NewSmsOfAliyun(ctx, config) },
+	smsFuncMap = map[string]model.SmsFunc{
+		`smsOfAliyun`: aliyun.NewSms,
 	}
-	smsMap = map[string]Sms{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	smsMu  sync.Mutex
 )
 
-func NewSms(ctx context.Context, smsType string, config map[string]any) (sms Sms) {
+func NewSms(ctx context.Context, smsType string, config map[string]any) (sms model.Sms) {
 	smsKey := smsType + gmd5.MustEncrypt(config)
 	ok := false
 	if sms, ok = smsMap[smsKey]; ok { //先读一次（不加锁）

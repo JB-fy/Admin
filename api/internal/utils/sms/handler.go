@@ -2,15 +2,16 @@ package sms
 
 import (
 	daoPlatform "api/internal/dao/platform"
+	"api/internal/utils/sms/model"
 	"context"
 )
 
 type Handler struct {
 	Ctx context.Context
-	Sms Sms
+	sms model.Sms
 }
 
-func NewHandler(ctx context.Context, smsTypeOpt ...string) *Handler {
+func NewHandler(ctx context.Context, smsTypeOpt ...string) model.Handler {
 	handlerObj := &Handler{Ctx: ctx}
 	smsType := ``
 	if len(smsTypeOpt) > 0 {
@@ -22,14 +23,14 @@ func NewHandler(ctx context.Context, smsTypeOpt ...string) *Handler {
 		smsType = smsTypeDef
 	}
 	config := daoPlatform.Config.GetOne(ctx, smsType).Map()
-	handlerObj.Sms = NewSms(ctx, smsType, config)
+	handlerObj.sms = NewSms(ctx, smsType, config)
 	return handlerObj
 }
 
 func (handlerThis *Handler) SendCode(phone string, code string) (err error) {
-	return handlerThis.Sms.SendCode(handlerThis.Ctx, phone, code)
+	return handlerThis.sms.SendCode(handlerThis.Ctx, phone, code)
 }
 
 func (handlerThis *Handler) SendSms(phoneArr []string, message string, paramOpt ...any) (err error) {
-	return handlerThis.Sms.SendSms(handlerThis.Ctx, phoneArr, message, paramOpt...)
+	return handlerThis.sms.SendSms(handlerThis.Ctx, phoneArr, message, paramOpt...)
 }

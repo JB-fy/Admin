@@ -3,31 +3,13 @@ package utils
 import (
 	"errors"
 
-	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	sts20150401 "github.com/alibabacloud-go/sts-20150401/v2/client"
 	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
 )
 
 // 生成Sts Token
-func CreateStsToken(config *openapi.Config, assumeRoleRequest *sts20150401.AssumeRoleRequest) (stsInfo map[string]any, err error) {
-	/* config := &openapi.Config{
-		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
-		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),
-		Endpoint:        tea.String(uploadThis.Endpoint),
-	} */
-	client, err := sts20150401.NewClient(config)
-	if err != nil {
-		return
-	}
-
-	/* assumeRoleRequest := &sts20150401.AssumeRoleRequest{
-		DurationSeconds: tea.Int64(stsOption.ExpireTime),
-		// ExternalId : tea.String(stsOption.ExternalId),
-		Policy:          tea.String(stsOption.Policy),
-		RoleArn:         tea.String(stsOption.RoleArn),
-		RoleSessionName: tea.String(stsOption.SessionName),
-	} */
+func CreateStsToken(client *sts20150401.Client, assumeRoleRequest *sts20150401.AssumeRoleRequest) (stsInfo map[string]any, err error) {
 	tryErr := func() (err error) {
 		defer func() {
 			if errTmp := tea.Recover(recover()); errTmp != nil {

@@ -15,32 +15,36 @@ type VodOfAliyun struct {
 	AccessKeySecret string `json:"accessKeySecret"`
 	Endpoint        string `json:"endpoint"`
 	RoleArn         string `json:"roleArn"`
+	client          *sts20150401.Client
 }
 
 func NewVodOfAliyun(ctx context.Context, config map[string]any) *VodOfAliyun {
-	vodObj := &VodOfAliyun{}
-	gconv.Struct(config, vodObj)
-	if vodObj.AccessKeyId == `` || vodObj.AccessKeySecret == `` || vodObj.Endpoint == `` || vodObj.RoleArn == `` {
+	obj := &VodOfAliyun{}
+	gconv.Struct(config, obj)
+	if obj.AccessKeyId == `` || obj.AccessKeySecret == `` || obj.Endpoint == `` || obj.RoleArn == `` {
 		panic(`缺少插件配置：视频点播-阿里云`)
 	}
-	return vodObj
+	var err error
+	obj.client, err = sts20150401.NewClient(&openapi.Config{
+		AccessKeyId:     tea.String(obj.AccessKeyId),
+		AccessKeySecret: tea.String(obj.AccessKeySecret),
+		Endpoint:        tea.String(obj.Endpoint),
+	})
+	if err != nil {
+		panic(err.Error())
+	}
+	return obj
 }
 
 // 获取Sts Token
 func (vodThis *VodOfAliyun) Sts(ctx context.Context, param VodParam) (stsInfo map[string]any, err error) {
-	config := &openapi.Config{
-		AccessKeyId:     tea.String(vodThis.AccessKeyId),
-		AccessKeySecret: tea.String(vodThis.AccessKeySecret),
-		Endpoint:        tea.String(vodThis.Endpoint),
-	}
-	assumeRoleRequest := &sts20150401.AssumeRoleRequest{
+	stsInfo, err = utils.CreateStsToken(vodThis.client, &sts20150401.AssumeRoleRequest{
 		DurationSeconds: tea.Int64(param.ExpireTime),
 		//写入权限：{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
 		//读取权限：{"Statement": [{"Action": ["oss:GetObject"],"Effect": "Allow","Resource": ["acs:oss:*:*:$BUCKET_NAME/$OBJECT_PREFIX*"]}],"Version": "1"}
 		Policy:          tea.String(`{"Statement": [{"Action": ["vod:*"],"Effect": "Allow","Resource": "*"}],"Version": "1"}`),
 		RoleArn:         tea.String(vodThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_vod`),
-	}
-	stsInfo, err = utils.CreateStsToken(config, assumeRoleRequest)
+	})
 	return
 }

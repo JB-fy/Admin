@@ -34,15 +34,25 @@ type UploadOfAliyunOss struct {
 	Endpoint        string `json:"endpoint"`
 	RoleArn         string `json:"roleArn"`
 	CallbackUrl     string `json:"callbackUrl"`
+	client          *sts20150401.Client
 }
 
 func NewUploadOfAliyunOss(ctx context.Context, config map[string]any) *UploadOfAliyunOss {
-	uploadObj := &UploadOfAliyunOss{}
-	gconv.Struct(config, uploadObj)
-	if uploadObj.Host == `` || uploadObj.Bucket == `` || uploadObj.AccessKeyId == `` || uploadObj.AccessKeySecret == `` || uploadObj.CallbackUrl == `` || uploadObj.Endpoint == `` || uploadObj.RoleArn == `` {
+	obj := &UploadOfAliyunOss{}
+	gconv.Struct(config, obj)
+	if obj.Host == `` || obj.Bucket == `` || obj.AccessKeyId == `` || obj.AccessKeySecret == `` || obj.CallbackUrl == `` || obj.Endpoint == `` || obj.RoleArn == `` {
 		panic(`缺少配置：上传-阿里云OSS`)
 	}
-	return uploadObj
+	var err error
+	obj.client, err = sts20150401.NewClient(&openapi.Config{
+		AccessKeyId:     tea.String(obj.AccessKeyId),
+		AccessKeySecret: tea.String(obj.AccessKeySecret),
+		Endpoint:        tea.String(obj.Endpoint),
+	})
+	if err != nil {
+		panic(err.Error())
+	}
+	return obj
 }
 
 type UploadOfAliyunOssCallback struct {
@@ -108,18 +118,12 @@ func (uploadThis *UploadOfAliyunOss) Config(ctx context.Context, param UploadPar
 
 // 获取Sts Token（APP直传用）
 func (uploadThis *UploadOfAliyunOss) Sts(ctx context.Context, param UploadParam) (stsInfo map[string]any, err error) {
-	config := &openapi.Config{
-		AccessKeyId:     tea.String(uploadThis.AccessKeyId),
-		AccessKeySecret: tea.String(uploadThis.AccessKeySecret),
-		Endpoint:        tea.String(uploadThis.Endpoint),
-	}
-	assumeRoleRequest := &sts20150401.AssumeRoleRequest{
+	stsInfo, err = utils.CreateStsToken(uploadThis.client, &sts20150401.AssumeRoleRequest{
 		DurationSeconds: tea.Int64(param.ExpireTime),
 		Policy:          tea.String(`{"Statement": [{"Action": ["oss:PutObject","oss:ListParts","oss:AbortMultipartUpload"],"Effect": "Allow","Resource": ["acs:oss:*:*:` + uploadThis.Bucket + `/` + param.Dir + `*"]}],"Version": "1"}`),
 		RoleArn:         tea.String(uploadThis.RoleArn),
 		RoleSessionName: tea.String(`sts_token_to_oss`),
-	}
-	stsInfo, err = utils.CreateStsToken(config, assumeRoleRequest)
+	})
 	return
 }
 
