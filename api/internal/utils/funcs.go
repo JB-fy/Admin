@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"os/exec"
 	"reflect"
+	"runtime"
 	"strings"
 	"sync"
 
@@ -61,6 +62,16 @@ func GetServerLocalIp() string {
 	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I`)
 	output, _ := cmd.CombinedOutput()
 	return gstr.Trim(string(output))
+}
+
+// 获取调用该函数的上层第几个函数的函数名
+func GetMethodName(skip int) (methodName string) {
+	if pc, _, _, ok := runtime.Caller(skip); ok {
+		fullName := runtime.FuncForPC(pc).Name()
+		parts := strings.Split(fullName, `.`)
+		methodName = parts[len(parts)-1]
+	}
+	return
 }
 
 // go文件代码格式化
