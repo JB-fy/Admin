@@ -109,21 +109,7 @@ func (pushThis *Push) Push(ctx context.Context, param model.PushParam) (err erro
 	}
 	reqData[`message`] = message
 
-	res, err := pushThis.client.Post(ctx, pushThis.Host+`/v3/push/app`, gjson.MustEncodeString(reqData))
-	if err != nil {
-		return
-	}
-	defer res.Close()
-	resStr := res.ReadAllString()
-	resData := gjson.New(resStr)
-	if !resData.Contains(`ret_code`) {
-		err = errors.New(resStr)
-		return
-	}
-	if resData.Get(`ret_code`).Int() != 0 {
-		err = errors.New(resData.Get(`err_msg`).String())
-		return
-	}
+	_, err = pushThis.post(ctx, `/v3/push/app`, reqData)
 	return
 }
 
@@ -134,7 +120,6 @@ func (pushThis *Push) Tag(ctx context.Context, param model.TagParam) (err error)
 		err = errors.New(`不支持多tag多token同时操作`)
 		return
 	}
-
 	reqData := g.Map{}
 	switch param.OperatorType {
 	case 0: //增加
@@ -158,14 +143,18 @@ func (pushThis *Push) Tag(ctx context.Context, param model.TagParam) (err error)
 			reqData[`operator_type`] = 4
 		}
 	}
+	_, err = pushThis.post(ctx, `/v3/device/tag`, reqData)
+	return
+}
 
-	res, err := pushThis.client.Post(ctx, pushThis.Host+`/v3/device/tag`, gjson.MustEncodeString(reqData))
+func (pushThis *Push) post(ctx context.Context, apiPath string, param g.Map) (resData *gjson.Json, err error) {
+	res, err := pushThis.client.Post(ctx, pushThis.Host+apiPath, gjson.MustEncodeString(param))
 	if err != nil {
 		return
 	}
 	defer res.Close()
 	resStr := res.ReadAllString()
-	resData := gjson.New(resStr)
+	resData = gjson.New(resStr)
 	if !resData.Contains(`ret_code`) {
 		err = errors.New(resStr)
 		return

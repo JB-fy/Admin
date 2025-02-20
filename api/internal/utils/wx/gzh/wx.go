@@ -175,7 +175,7 @@ func (wxGzhThis *Wx) NotifyRes(r *ghttp.Request, fromUserName, toUserName, nonce
 
 // 获取access_token（需要在公众号内设置IP白名单）
 func (wxGzhThis *Wx) AccessToken(ctx context.Context) (accessToken AccessToken, err error) {
-	res, err := wxGzhThis.client.Get(ctx, wxGzhThis.Host+`/cgi-bin/token`, g.Map{
+	resData, err := wxGzhThis.get(ctx, `/cgi-bin/token`, g.Map{
 		`grant_type`: `client_credential`,
 		`appid`:      wxGzhThis.AppId,
 		`secret`:     wxGzhThis.Secret,
@@ -183,21 +183,13 @@ func (wxGzhThis *Wx) AccessToken(ctx context.Context) (accessToken AccessToken, 
 	if err != nil {
 		return
 	}
-	defer res.Close()
-	resStr := res.ReadAllString()
-	resData := gjson.New(resStr)
-	if resData.Contains(`errcode`) && resData.Get(`errcode`).Int() != 0 {
-		err = errors.New(resData.Get(`errmsg`).String())
-		return
-	}
-
 	resData.Var().Struct(&accessToken)
 	return
 }
 
 // 获取用户基本信息
 func (wxGzhThis *Wx) UserInfo(ctx context.Context, accessToken, openid string) (userInfo UserInfo, err error) {
-	res, err := wxGzhThis.client.Get(ctx, wxGzhThis.Host+`/cgi-bin/user/info`, g.Map{
+	resData, err := wxGzhThis.get(ctx, `/cgi-bin/user/info`, g.Map{
 		`access_token`: accessToken,
 		`openid`:       openid,
 		`lang`:         `zh_CN`,
@@ -205,39 +197,38 @@ func (wxGzhThis *Wx) UserInfo(ctx context.Context, accessToken, openid string) (
 	if err != nil {
 		return
 	}
-	defer res.Close()
-	resStr := res.ReadAllString()
-	resData := gjson.New(resStr)
-	if resData.Contains(`errcode`) && resData.Get(`errcode`).Int() != 0 {
-		err = errors.New(resData.Get(`errmsg`).String())
-		return
-	}
-
 	resData.Var().Struct(&userInfo)
 	return
 }
 
 // 获取用户列表
 func (wxGzhThis *Wx) UserGet(ctx context.Context, accessToken, nextOpenid string) (userGet UserGet, err error) {
-	res, err := wxGzhThis.client.Get(ctx, wxGzhThis.Host+`/cgi-bin/user/get`, g.Map{
+	resData, err := wxGzhThis.get(ctx, `/cgi-bin/user/get`, g.Map{
 		`access_token`: accessToken,
 		`next_openid`:  nextOpenid,
 	})
 	if err != nil {
 		return
 	}
-	defer res.Close()
-	resStr := res.ReadAllString()
-	resData := gjson.New(resStr)
-	if resData.Contains(`errcode`) && resData.Get(`errcode`).Int() != 0 {
-		err = errors.New(resData.Get(`errmsg`).String())
-		return
-	}
-
 	resData.Var().Struct(&userGet)
 	return
 }
 
 func (wxGzhThis *Wx) value2CDATA(v string) CDATAText {
 	return CDATAText{`<![CDATA[` + v + `]]>`}
+}
+
+func (wxGzhThis *Wx) get(ctx context.Context, apiPath string, param g.Map) (resData *gjson.Json, err error) {
+	res, err := wxGzhThis.client.Get(ctx, wxGzhThis.Host+apiPath, param)
+	if err != nil {
+		return
+	}
+	defer res.Close()
+	resStr := res.ReadAllString()
+	resData = gjson.New(resStr)
+	if resData.Contains(`errcode`) && resData.Get(`errcode`).Int() != 0 {
+		err = errors.New(resData.Get(`errmsg`).String())
+		return
+	}
+	return
 }

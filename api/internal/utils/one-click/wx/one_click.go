@@ -46,7 +46,7 @@ func (oneClickThis *OneClick) CodeUrl(redirectUri string, scope string, state st
 
 // 通过code换取网页授权access_token（code由前端自己获取）
 func (oneClickThis *OneClick) AccessToken(ctx context.Context, code string) (accessToken AccessToken, err error) {
-	res, err := oneClickThis.client.Get(ctx, oneClickThis.Host+`/sns/oauth2/access_token`, g.Map{
+	resData, err := oneClickThis.get(ctx, `/sns/oauth2/access_token`, g.Map{
 		`appid`:      oneClickThis.AppId,
 		`secret`:     oneClickThis.Secret,
 		`code`:       code,
@@ -55,21 +55,13 @@ func (oneClickThis *OneClick) AccessToken(ctx context.Context, code string) (acc
 	if err != nil {
 		return
 	}
-	defer res.Close()
-	resStr := res.ReadAllString()
-	resData := gjson.New(resStr)
-	if resData.Contains(`errcode`) && resData.Get(`errcode`).Int() != 0 {
-		err = errors.New(resData.Get(`errmsg`).String())
-		return
-	}
-
 	resData.Var().Struct(&accessToken)
 	return
 }
 
 // 拉取用户信息(需scope为 snsapi_userinfo)
 func (oneClickThis *OneClick) UserInfo(ctx context.Context, openid, accessToken string) (userInfo UserInfo, err error) {
-	res, err := oneClickThis.client.Get(ctx, oneClickThis.Host+`/sns/userinfo`, g.Map{
+	resData, err := oneClickThis.get(ctx, `/sns/userinfo`, g.Map{
 		`access_token`: accessToken,
 		`openid`:       openid,
 		`lang`:         `zh_CN`,
@@ -77,21 +69,13 @@ func (oneClickThis *OneClick) UserInfo(ctx context.Context, openid, accessToken 
 	if err != nil {
 		return
 	}
-	defer res.Close()
-	resStr := res.ReadAllString()
-	resData := gjson.New(resStr)
-	if resData.Contains(`errcode`) && resData.Get(`errcode`).Int() != 0 {
-		err = errors.New(resData.Get(`errmsg`).String())
-		return
-	}
-
 	resData.Var().Struct(&userInfo)
 	return
 }
 
 // 刷新access_token（需要时用）
 func (oneClickThis *OneClick) RefreshToken(ctx context.Context, refreshTokenStr string) (refreshToken RefreshToken, err error) {
-	res, err := oneClickThis.client.Get(ctx, oneClickThis.Host+`/sns/oauth2/refresh_token`, g.Map{
+	resData, err := oneClickThis.get(ctx, `/sns/oauth2/refresh_token`, g.Map{
 		`appid`:         oneClickThis.AppId,
 		`grant_type`:    `refresh_token`,
 		`refresh_token`: refreshTokenStr,
@@ -99,31 +83,28 @@ func (oneClickThis *OneClick) RefreshToken(ctx context.Context, refreshTokenStr 
 	if err != nil {
 		return
 	}
-	defer res.Close()
-	resStr := res.ReadAllString()
-	resData := gjson.New(resStr)
-	if resData.Contains(`errcode`) && resData.Get(`errcode`).Int() != 0 {
-		err = errors.New(resData.Get(`errmsg`).String())
-		return
-	}
-
 	resData.Var().Struct(&refreshToken)
 	return
 }
 
 // 授权验证（需要时用）
 func (oneClickThis *OneClick) Auth(ctx context.Context, openid, accessToken string) (err error) {
-	res, err := oneClickThis.client.Get(ctx, oneClickThis.Host+`/sns/auth`, g.Map{
+	_, err = oneClickThis.get(ctx, `/sns/auth`, g.Map{
 		`access_token`: accessToken,
 		`openid`:       openid,
 		`lang`:         `zh_CN`,
 	})
+	return
+}
+
+func (oneClickThis *OneClick) get(ctx context.Context, apiPath string, param g.Map) (resData *gjson.Json, err error) {
+	res, err := oneClickThis.client.Get(ctx, oneClickThis.Host+apiPath, param)
 	if err != nil {
 		return
 	}
 	defer res.Close()
 	resStr := res.ReadAllString()
-	resData := gjson.New(resStr)
+	resData = gjson.New(resStr)
 	if resData.Contains(`errcode`) && resData.Get(`errcode`).Int() != 0 {
 		err = errors.New(resData.Get(`errmsg`).String())
 		return
