@@ -32,7 +32,7 @@ func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id 
 	daoModel := dao.CtxDaoModel(ctx)
 	redis := cacheThis.cache()
 	key := cacheThis.key(daoModel, id)
-	valueFunc := func() (value *gvar.Var, noSetCache bool, ttl int64, err error) {
+	valueFunc := func() (value *gvar.Var, ttl int64, noSetCache bool, err error) {
 		fieldArr := field
 		if len(fieldArr) > 0 {
 			if ttlField, ok := ttlOrField.(string); ok {

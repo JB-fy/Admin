@@ -26,7 +26,7 @@ func (cacheThis *getOrSet) isSetKey(key string) string {
 // numLock	获取锁的重试次数。作用：当获取锁的服务器因报错，无法做缓存写入时，允许其它服务器重新获取锁，以保证缓存写入成功
 // numRead	读取缓存的重试次数。作用：当未获取锁的服务器获取缓存时数据为空时，可以重试多次
 // oneTime	读取缓存重试间隔时间，单位：毫秒
-func (cacheThis *getOrSet) GetOrSet(ctx context.Context, redis *gredis.Redis, key string, valueFunc func() (value *gvar.Var, noSetCache bool, ttl int64, err error), numLock int, numRead int, oneTime time.Duration) (value *gvar.Var, noSetCache bool, err error) {
+func (cacheThis *getOrSet) GetOrSet(ctx context.Context, redis *gredis.Redis, key string, valueFunc func() (value *gvar.Var, ttl int64, noSetCache bool, err error), numLock int, numRead int, oneTime time.Duration) (value *gvar.Var, noSetCache bool, err error) {
 	value, noExistOfCache, err := cacheThis.get(ctx, redis, key)
 	if err != nil {
 		return
@@ -62,7 +62,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, redis *gredis.Redis, ke
 			return
 		}
 		if isSetVal.Bool() {
-			value, noSetCache, ttl, err = valueFunc()
+			value, ttl, noSetCache, err = valueFunc()
 			if err != nil || noSetCache {
 				redis.Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 				return
