@@ -11,6 +11,7 @@ import (
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -26,18 +27,35 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, id any) string {
 	return fmt.Sprintf(consts.CACHE_DB_DATA, daoModel.DbGroup, daoModel.DbTable, id)
 }
 
-func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttl int64, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
+// ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
+func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
 	daoModel := dao.CtxDaoModel(ctx)
 	redis := cacheThis.cache()
 	key := cacheThis.key(daoModel, id)
-	valueFunc := func() (value *gvar.Var, noSetCache bool, err error) {
-		info, err := daoModel.FilterPri(id).Fields(field...).One()
+	valueFunc := func() (value *gvar.Var, noSetCache bool, ttl int64, err error) {
+		fieldArr := field
+		if len(fieldArr) > 0 {
+			if ttlField, ok := ttlOrField.(string); ok {
+				fieldArr = append(fieldArr, ttlField)
+			}
+		}
+		info, err := daoModel.FilterPri(id).Fields(fieldArr...).One()
 		if err != nil {
 			return
 		}
 		if info.IsEmpty() {
 			noSetCache = true
 			return
+		}
+		if ttlField, ok := ttlOrField.(string); ok {
+			ttl = info[ttlField].GTime().Unix()
+			if nowTime := gtime.Now().Unix(); ttl > nowTime {
+				ttl = ttl - nowTime
+			} else if ttl <= 0 || ttl > consts.CACHE_TIME_DEFAULT { //比当前时间小时，缓存时间不能超过默认缓存时间
+				ttl = consts.CACHE_TIME_DEFAULT
+			}
+		} else {
+			ttl = gconv.Int64(ttlOrField)
 		}
 		if len(field) == 1 {
 			value = info[field[0]]
@@ -46,12 +64,12 @@ func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id 
 		}
 		return
 	}
-	return internal.GetOrSet.GetOrSet(ctx, redis, key, valueFunc, ttl, 0, 0, 0)
+	return internal.GetOrSet.GetOrSet(ctx, redis, key, valueFunc, 0, 0, 0)
 }
 
-func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface, idArr []any, ttl int64, field ...string) (list gdb.Result, err error) {
+func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
 	for _, id := range idArr {
-		value, noExistOfDb, errTmp := cacheThis.GetOrSet(ctx, dao, id, ttl, field...)
+		value, noExistOfDb, errTmp := cacheThis.GetOrSet(ctx, dao, id, ttlOrField, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
@@ -66,10 +84,10 @@ func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface,
 	return
 }
 
-func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, dao dao.DaoInterface, idArr []any, ttl int64, field ...string) (record gdb.Record, err error) {
+func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, dao dao.DaoInterface, idArr []any, ttlOrField any, field ...string) (record gdb.Record, err error) {
 	record = gdb.Record{}
 	for _, id := range idArr {
-		value, noExistOfDb, errTmp := cacheThis.GetOrSet(ctx, dao, id, ttl, field...)
+		value, noExistOfDb, errTmp := cacheThis.GetOrSet(ctx, dao, id, ttlOrField, field...)
 		if errTmp != nil {
 			err = errTmp
 			return

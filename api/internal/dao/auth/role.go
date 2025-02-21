@@ -6,6 +6,7 @@ package auth
 
 import (
 	"api/internal/cache"
+	"api/internal/consts"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/auth/internal"
 	daoOrg "api/internal/dao/org/allow"
@@ -483,7 +484,7 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 // Fill with you ideas below.
 
 func (daoThis *roleDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, 6*30*24*60*60, append(daoThis.ColumnArr().Slice(), `action_id_arr`, `menu_id_arr`)...)
+	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, consts.CACHE_TIME_DEFAULT, append(daoThis.ColumnArr().Slice(), `action_id_arr`, `menu_id_arr`)...)
 	if err != nil {
 		return
 	}

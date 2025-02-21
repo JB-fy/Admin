@@ -39,7 +39,7 @@ func (handlerThis *Handler) createVodParam() (param model.VodParam) {
 	switch handlerThis.Scene {
 	default:
 		param = model.VodParam{
-			ExpireTime: 50 * 60,
+			ExpireTime: 60 * 60,
 		}
 	}
 	return

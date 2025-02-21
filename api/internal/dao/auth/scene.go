@@ -405,7 +405,7 @@ func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id string) (info gdb.
 	// 		删除用：Scene.CtxDaoModel(ctx).SetIdArr(filter).HookDelete().Delete()
 	// 	2：后置操作 HookUpdate 和 HookDelete 方法的判断受影响行后面添加删除缓存代码：cache.DbData.Del(ctx, daoThis, gconv.SliceAny(daoModel.IdArr)...)
 	// 		注意：要触发 HookUpdate 方法，还需注释 ParseUpdate 方法中的 if len(daoModel.AfterUpdate) == 0 这段代码
-	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, 6*30*24*60*60)
+	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, consts.CACHE_TIME_DEFAULT)
 	if err != nil {
 		return
 	}

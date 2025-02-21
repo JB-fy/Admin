@@ -6,6 +6,7 @@ package org
 
 import (
 	"api/internal/cache"
+	"api/internal/consts"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/org/internal"
 	"context"
@@ -381,7 +382,7 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 // 获取单个配置
 func (daoThis *configDao) GetOne(ctx context.Context, orgId string, configKey string) (configValue *gvar.Var) {
 	// configValue, _ = daoThis.CtxDaoModel(ctx).FilterPri(orgId+`|`+configKey).Value(daoThis.Columns().ConfigValue)
-	configValue, _, _ = cache.DbData.GetOrSet(ctx, daoThis, orgId+`|`+configKey, 6*30*24*60*60, daoThis.Columns().ConfigValue)
+	configValue, _, _ = cache.DbData.GetOrSet(ctx, daoThis, orgId+`|`+configKey, consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
 	return
 }
 
@@ -392,7 +393,7 @@ func (daoThis *configDao) Get(ctx context.Context, orgId string, configKeyArr ..
 		idArr[index] = orgId + `|` + configKey
 	}
 	// configTmp, err := daoThis.CtxDaoModel(ctx).FilterPri(idArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
-	configTmp, err := cache.DbData.GetOrSetPluck(ctx, daoThis, idArr, 6*30*24*60*60, daoThis.Columns().ConfigValue)
+	configTmp, err := cache.DbData.GetOrSetPluck(ctx, daoThis, idArr, consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
 	if err != nil {
 		return
 	}

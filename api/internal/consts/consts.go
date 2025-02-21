@@ -4,6 +4,8 @@ const (
 	CTX_SCENE_INFO_NAME = `sceneInfo`
 	CTX_LOGIN_INFO_NAME = `loginInfo`
 
+	CACHE_TIME_DEFAULT int64 = 7 * 24 * 60 * 60 //默认缓存时间
+
 	CACHE_DB_DATA         = `dbData:%s:%s:%v`     //数据库数据缓存key。参数：db分组，db表名，ID
 	CACHE_SALT            = `salt:%s:%s`          //密码盐缓存key。参数：场景ID，手机/邮箱/账号/邮箱
 	CACHE_CODE            = `code:%s:%s_%d`       //验证码缓存key。参数：场景ID，手机/邮箱，场景

@@ -6,6 +6,7 @@ package platform
 
 import (
 	"api/internal/cache"
+	"api/internal/consts"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/platform/internal"
 	"context"
@@ -362,14 +363,14 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 // 获取单个配置
 func (daoThis *configDao) GetOne(ctx context.Context, configKey string) (configValue *gvar.Var) {
 	// configValue, _ = daoThis.CtxDaoModel(ctx).FilterPri(configKey).Value(daoThis.Columns().ConfigValue)
-	configValue, _, _ = cache.DbData.GetOrSet(ctx, daoThis, configKey, 6*30*24*60*60, daoThis.Columns().ConfigValue)
+	configValue, _, _ = cache.DbData.GetOrSet(ctx, daoThis, configKey, consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
 	return
 }
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, configKeyArr ...string) (config gdb.Record, err error) {
 	// return daoThis.CtxDaoModel(ctx).FilterPri(configKeyArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
-	return cache.DbData.GetOrSetPluck(ctx, daoThis, gconv.SliceAny(configKeyArr), 6*30*24*60*60, daoThis.Columns().ConfigValue)
+	return cache.DbData.GetOrSetPluck(ctx, daoThis, gconv.SliceAny(configKeyArr), consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
 }
 
 // 保存配置
