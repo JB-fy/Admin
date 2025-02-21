@@ -28,11 +28,6 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, id any) string {
 }
 
 // ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
-func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, err error) {
-	value, _, err = cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
-	return
-}
-
 func (cacheThis *dbData) getOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
 	daoModel := dao.CtxDaoModel(ctx)
 	redis := cacheThis.cache()
@@ -70,6 +65,11 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, dao dao.DaoInterface, id 
 		return
 	}
 	return internal.GetOrSet.GetOrSet(ctx, redis, key, valueFunc, 0, 0, 0)
+}
+
+func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, err error) {
+	value, _, err = cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
+	return
 }
 
 func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
