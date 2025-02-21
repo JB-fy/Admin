@@ -28,7 +28,12 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, id any) string {
 }
 
 // ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
-func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
+func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, err error) {
+	value, _, err = cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
+	return
+}
+
+func (cacheThis *dbData) getOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
 	daoModel := dao.CtxDaoModel(ctx)
 	redis := cacheThis.cache()
 	key := cacheThis.key(daoModel, id)
@@ -69,7 +74,7 @@ func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id 
 
 func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
 	for _, id := range idArr {
-		value, noExistOfDb, errTmp := cacheThis.GetOrSet(ctx, dao, id, ttlOrField, field...)
+		value, noExistOfDb, errTmp := cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
@@ -87,7 +92,7 @@ func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface,
 func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, dao dao.DaoInterface, idArr []any, ttlOrField any, field ...string) (record gdb.Record, err error) {
 	record = gdb.Record{}
 	for _, id := range idArr {
-		value, noExistOfDb, errTmp := cacheThis.GetOrSet(ctx, dao, id, ttlOrField, field...)
+		value, noExistOfDb, errTmp := cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
 		if errTmp != nil {
 			err = errTmp
 			return

@@ -382,7 +382,7 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 // 获取单个配置
 func (daoThis *configDao) GetOne(ctx context.Context, orgId string, configKey string) (configValue *gvar.Var) {
 	// configValue, _ = daoThis.CtxDaoModel(ctx).FilterPri(orgId+`|`+configKey).Value(daoThis.Columns().ConfigValue)
-	configValue, _, _ = cache.DbData.GetOrSet(ctx, daoThis, orgId+`|`+configKey, consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
+	configValue, _ = cache.DbData.GetOrSet(ctx, daoThis, orgId+`|`+configKey, consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
 	return
 }
 
