@@ -28,11 +28,11 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, id any) string {
 }
 
 // ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
-func (cacheThis *dbData) getOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, noExistOfDb bool, err error) {
+func (cacheThis *dbData) getOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, noSetCache bool, err error) {
 	daoModel := dao.CtxDaoModel(ctx)
 	redis := cacheThis.cache()
 	key := cacheThis.key(daoModel, id)
-	valueFunc := func() (value *gvar.Var, ttl int64, noSetCache bool, err error) {
+	valueFunc := func() (value any, ttl int64, noSetCache bool, err error) {
 		fieldArr := field
 		if len(fieldArr) > 0 {
 			if ttlField, ok := ttlOrField.(string); ok {
@@ -58,9 +58,9 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, dao dao.DaoInterface, id 
 			ttl = gconv.Int64(ttlOrField)
 		}
 		if len(field) == 1 {
-			value = info[field[0]]
+			value = info[field[0]].String()
 		} else {
-			value = gvar.New(info.Json())
+			value = info.Json()
 		}
 		return
 	}
@@ -74,12 +74,12 @@ func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id 
 
 func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
 	for _, id := range idArr {
-		value, noExistOfDb, errTmp := cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
+		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
 		}
-		if noExistOfDb { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
+		if noSetCache { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
 		var info gdb.Record
@@ -92,12 +92,12 @@ func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface,
 func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, dao dao.DaoInterface, idArr []any, ttlOrField any, field ...string) (record gdb.Record, err error) {
 	record = gdb.Record{}
 	for _, id := range idArr {
-		value, noExistOfDb, errTmp := cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
+		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
 		}
-		if noExistOfDb { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
+		if noSetCache { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
 		record[gconv.String(id)] = value
