@@ -211,7 +211,7 @@ const getList = async (resetPage: boolean = false) => {
     resetPage && (pagination.page = 1)
     const param = {
         field: [],
-        filter: removeEmptyOfObj(queryCommon.data, true, true),
+        filter: removeEmptyOfObj(queryCommon.data),
         sort: table.sort.key + ' ' + table.sort.order,
         page: pagination.page,
         limit: pagination.size,
