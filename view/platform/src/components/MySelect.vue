@@ -105,7 +105,6 @@ const select = reactive({
             return {
                 filter: {} as { [propName: string]: any },
                 field: ['id', 'label'],
-                sort: 'id desc',
                 page: 1,
                 limit: useSettingStore().scrollSize,
                 ...(props.api?.param ?? {}),

@@ -56,7 +56,6 @@ const exportButton = reactive({
             const param = {
                 filter: {} as { [propName: string]: any },
                 field: [],
-                sort: 'id desc',
                 page: 1,
                 limit: useSettingStore().exportButton.limit,
                 ...(props.api?.param ?? {}),

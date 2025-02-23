@@ -118,7 +118,6 @@ const cascader = reactive({
             const param = {
                 filter: {} as { [propName: string]: any },
                 field: ['id', 'label'],
-                sort: 'id desc',
                 page: 1,
                 limit: 0,
                 ...(props.api?.param ?? {}),
