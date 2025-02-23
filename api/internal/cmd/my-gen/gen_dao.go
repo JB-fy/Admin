@@ -491,7 +491,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.orderParse.Method = internal.ReturnType
 		daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				m = m.Order(`+daoTable+` + `+"`.`"+` + v)
-				`+getOrderOfIdList(tpl.Handle.Id.List)) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+				`+getAddOrder(tpl.Handle.Id.List, tpl.Handle.DefSort.Field, tpl.Handle.DefSort.Order))
 	case internal.TypeTime: // `time类型`
 	default:
 		daoField.filterParse.Method = internal.ReturnType
@@ -543,14 +543,20 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			}
 			record[v] = gvar.New(isHasChild)`)
 
-		orderParseStr := `case ` + "`tree`" + `:
+		orderParseStr := `case ` + "`tree`" + `:`
+		if tpl.Handle.Pid.Level != `` {
+			orderParseStr += `
+				m = m.OrderAsc(` + daoTable + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.Level) + `)`
+		} else {
+			orderParseStr += `
 				m = m.OrderAsc(` + daoTable + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + v.FieldCaseCamel + `)`
+		}
 		for _, sort := range tpl.Handle.Pid.Sort {
 			orderParseStr += `
 				m = m.OrderDesc(` + daoTable + ` + ` + "`.`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(sort) + `)`
 		}
 		orderParseStr += `
-				m = m.OrderAsc(daoModel.DbTable + ` + "`.`" + ` + ` + daoPath + `.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `)`
+				` + getAddOrder(tpl.Handle.Id.List, tpl.Handle.DefSort.Field, `ASC`)
 		daoField.orderParse.Method = internal.ReturnTypeName
 		daoField.orderParse.DataTypeName = append(daoField.orderParse.DataTypeName, orderParseStr)
 
@@ -666,7 +672,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.orderParse.Method = internal.ReturnTypeName
 		daoField.orderParse.DataTypeName = append(daoField.orderParse.DataTypeName, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				m = m.Order(`+daoTable+` + `+"`.`"+` + v)
-				m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + `+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+				`+getAddOrder(tpl.Handle.Id.List, tpl.Handle.DefSort.Field, tpl.Handle.DefSort.Order))
 	case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		return myGenDaoField{}
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
@@ -757,7 +763,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		daoField.orderParse.Method = internal.ReturnTypeName
 		daoField.orderParse.DataTypeName = append(daoField.orderParse.DataTypeName, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				m = m.Order(`+daoTable+` + `+"`.`"+` + v)
-				`+getOrderOfIdList(tpl.Handle.Id.List)) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+				`+getAddOrder(tpl.Handle.Id.List, tpl.Handle.DefSort.Field, tpl.Handle.DefSort.Order))
 	case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		filterParseStr := `m = m.WhereLTE(` + daoTable + `+` + "`.`" + `+k, v)`
 		if v.IsNull {
@@ -893,8 +899,8 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+tplEM.daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				m = m.Order(`+tplEM.daoTableVar+` + `+"`.`"+` + v)
-				`+getOrderOfIdList(tplEM.tplOfTop.Handle.Id.List)+`
-				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+				`+getAddOrder(tplEM.tplOfTop.Handle.Id.List, tplEM.tplOfTop.Handle.DefSort.Field, tplEM.tplOfTop.Handle.DefSort.Order)+`
+				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
 		case internal.TypeTime: // `time类型`
 		default:
 			daoField.filterParse.Method = internal.ReturnType
@@ -992,8 +998,8 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.orderParse.DataTypeName = append(daoField.orderParse.DataTypeName, `case `+tplEM.daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				m = m.Order(`+tplEM.daoTableVar+` + `+"`.`"+` + v)
-				`+getOrderOfIdList(tplEM.tplOfTop.Handle.Id.List)+`
-				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+				`+getAddOrder(tplEM.tplOfTop.Handle.Id.List, tplEM.tplOfTop.Handle.DefSort.Field, tplEM.tplOfTop.Handle.DefSort.Order)+`
+				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
 		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 			filterParseStr := `m = m.WhereLTE(` + tplEM.daoTable + `+` + "`.`" + `+k, v)`
 			if v.IsNull {
@@ -1127,8 +1133,8 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+tplEM.daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				m = m.Order(`+tplEM.daoTableVar+` + `+"`.`"+` + v)
-				`+getOrderOfIdList(tplEM.tplOfTop.Handle.Id.List)+`
-				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`) //追加主键倒序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+				`+getAddOrder(tplEM.tplOfTop.Handle.Id.List, tplEM.tplOfTop.Handle.DefSort.Field, tplEM.tplOfTop.Handle.DefSort.Order)+`
+				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
 		case internal.TypeTime: // `time类型`
 		default:
 			daoField.filterParse.Method = internal.ReturnType
@@ -1239,10 +1245,18 @@ func getDaoOtherRel(tplOR handleOtherRel) (dao myGenDao) {
 	return
 }
 
-func getOrderOfIdList(idList []myGenField) (order string) {
+// 追加排序。mysql排序字段有重复值时，分页会导致同一条数据可能在不同页都出现
+func getAddOrder(idList []myGenField, defSortField string, defSortOrder string) (order string) {
+	orderMethod := `OrderDesc`
+	if gstr.ToLower(defSortOrder) == `asc` {
+		orderMethod = `OrderAsc`
+	}
 	orderArr := []string{}
+	if defSortField != `id` {
+		orderArr = append(orderArr, `m = m.`+orderMethod+`(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+gstr.CaseCamel(defSortField)+`)`)
+	}
 	for _, v := range idList {
-		orderArr = append(orderArr, `m = m.OrderDesc(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+`)`)
+		orderArr = append(orderArr, `m = m.`+orderMethod+`(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+`)`)
 	}
 	order = gstr.Join(orderArr, `
 				`)

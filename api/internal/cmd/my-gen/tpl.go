@@ -467,12 +467,14 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 			if !tpl.Handle.Pid.IsCoexist {
 				fieldList[k].FieldTypeName = internal.TypeNameNoSuffix
+				tpl.Handle.Pid.Level = ``
 			} else {
 				fieldList[k].FieldLimitInt.Min = `1`
 			}
 		case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 			if !tpl.Handle.Pid.IsCoexist {
 				fieldList[k].FieldTypeName = ``
+				tpl.Handle.Pid.IdPath = ``
 			}
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			passwordMapKey := internal.GetHandlePasswordMapKey(v.FieldRaw)

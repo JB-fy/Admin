@@ -334,6 +334,7 @@ func (daoThis *channelDao) ParseOrder(order []string, daoModel *daoIndex.DaoMode
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().ChannelId, 1))
 			case daoThis.Columns().Sort:
 				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().ChannelId)
 			default:
 				if daoThis.ColumnArr().Contains(k) {

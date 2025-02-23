@@ -373,6 +373,7 @@ func (daoThis *appDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) g
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().AppId, 1))
 			case daoThis.Columns().VerNo:
 				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().AppId)
 			default:
 				if daoThis.ColumnArr().Contains(k) {

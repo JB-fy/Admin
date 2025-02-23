@@ -424,10 +424,12 @@ func (daoThis *usersDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel)
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().UserId, 1))
 			case daoThis.Columns().Birthday:
 				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 			case Privacy.Columns().IdCardBirthday:
 				tablePrivacy := Privacy.ParseDbTable(m.GetCtx())
 				m = m.Order(tablePrivacy + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 				m = m.Handler(daoThis.ParseJoin(tablePrivacy, daoModel))
 			default:

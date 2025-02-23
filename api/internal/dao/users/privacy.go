@@ -350,6 +350,7 @@ func (daoThis *privacyDao) ParseOrder(order []string, daoModel *daoIndex.DaoMode
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().UserId, 1))
 			case daoThis.Columns().IdCardBirthday:
 				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 			default:
 				if daoThis.ColumnArr().Contains(k) {
