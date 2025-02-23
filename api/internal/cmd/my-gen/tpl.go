@@ -37,6 +37,10 @@ type myGenTpl struct {
 	LogicStructName    string                   //logic层结构体名称，也是权限操作前缀（大驼峰，由ModuleDirCaseCamel+TableCaseCamel组成。命名原因：gf gen service只支持logic单层目录，可能导致service层重名）
 	I18nPath           string                   //前端多语言使用
 	Handle             struct {                 //需特殊处理的字段
+		DefSort struct { //默认排序
+			Field string //排序字段
+			Order string //排序方式：ASC正序 DESC倒序
+		}
 		Id struct { //主键列表（无主键时，默认为排除internal.ConfigIdAndLabelExcField过后的第一个字段）。联合主键有多字段，需按顺序存入
 			List      []myGenField
 			IsPrimary bool //是否主键
@@ -157,6 +161,8 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	tpl.TableCaseSnake = gstr.CaseSnake(gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))
 	tpl.TableCaseCamel = gstr.CaseCamel(tpl.TableCaseSnake)
 	tpl.TableCaseKebab = gstr.CaseKebab(tpl.TableCaseSnake)
+	tpl.Handle.DefSort.Field = `id`
+	tpl.Handle.DefSort.Order = `DESC`
 	tpl.Handle.PasswordMap = map[string]handlePassword{}
 	tpl.Handle.RelIdMap = map[string]handleRelId{}
 	logicStructName := gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1)
@@ -261,6 +267,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			fieldTmp.FieldTypeName = internal.TypeNameUpdated
 		} else if garray.NewStrArrayFrom(internal.ConfigFieldNameArrCreated).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = internal.TypeNameCreated
+			tpl.Handle.DefSort.Field = fieldTmp.FieldRaw
 		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) && fieldTmp.FieldRaw == `pid` { //pid，且与主键类型相同时（才）有效
 			fieldTmp.FieldTypeName = internal.TypeNamePid
 		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText}).Contains(fieldTmp.FieldType) && fieldTmp.FieldCaseCamel == `IdPath` { //id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效

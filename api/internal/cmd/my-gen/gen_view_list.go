@@ -204,7 +204,7 @@ const table = reactive({
     ] as any,
     data: [],
     loading: false,
-    sort: { key: 'id', order: 'desc' } as any,
+    sort: { key: '` + tpl.Handle.DefSort.Field + `', order: '` + gstr.ToLower(tpl.Handle.DefSort.Order) + `' } as any,
     handleSort: (sort: any) => {
         table.sort.key = sort.key
         table.sort.order = sort.order

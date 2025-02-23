@@ -137,7 +137,7 @@ type ` + tpl.TableCaseCamel + `ListReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/list" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"列表"` + "`" + `
 	Filter ` + tpl.TableCaseCamel + `Filter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"` + "`" + `
-	Sort   string          ` + "`" + `json:"sort" default:"id DESC" dc:"排序"` + "`" + `
+	Sort   string          ` + "`" + `json:"sort" default:"` + tpl.Handle.DefSort.Field + ` ` + gstr.ToUpper(tpl.Handle.DefSort.Order) + `" dc:"排序"` + "`" + `
 	Page   int             ` + "`" + `json:"page" v:"min:1" default:"1" dc:"页码"` + "`" + `
 	Limit  int             ` + "`" + `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"` + "`" + `
 }
