@@ -66,7 +66,7 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 			val: `父级`,
 		}
 		logic.i18n.Add(i18nField)
-		logic.create = append(logic.create, `if _, ok := data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; ok && gconv.Uint(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]) > 0 {
+		logic.create = append(logic.create, `if _, ok := data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; ok && gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]) `+tpl.Handle.Pid.Tpl.PidJudge+` {
 		pInfo, _ := daoModelThis.CloneNew().FilterPri(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]).One()
 		if pInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 29999997, `+"``"+`, g.Map{`+"`i18nValues`"+`: []any{g.I18n().T(ctx, `+"`"+i18nField.key+"`"+`)}})
@@ -84,8 +84,8 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 			}
 		}`
 		}
-		logic.update = append(logic.update, `if _, ok := data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; ok && gconv.Uint(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]) > 0 {
-		if garray.NewArrayFrom(gconv.SliceAny(gconv.Uints(daoModelThis.IdArr))).Contains(gconv.Uint(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`])) {
+		logic.update = append(logic.update, `if _, ok := data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; ok && gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]) `+tpl.Handle.Pid.Tpl.PidJudge+` {
+		if garray.NewArrayFrom(gconv.SliceAny(gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`s(daoModelThis.IdArr))).Contains(gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`])) {
 			err = utils.NewErrorCode(ctx, 29999996, `+"``"+`)
 			return
 		}

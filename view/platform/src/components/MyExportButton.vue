@@ -61,7 +61,7 @@ const exportButton = reactive({
                 limit: useSettingStore().exportButton.limit,
                 ...(props.api?.param ?? {}),
             }
-            param.filter = removeEmptyOfObj(param.filter, true, true)
+            param.filter = removeEmptyOfObj(param.filter)
             return param
         }),
         transform: computed(() => {

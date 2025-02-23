@@ -83,7 +83,7 @@ const (
 	TypeNameDeleted        MyGenFieldTypeName = `软删除字段`
 	TypeNameUpdated        MyGenFieldTypeName = `更新时间字段`
 	TypeNameCreated        MyGenFieldTypeName = `创建时间字段`
-	TypeNamePid            MyGenFieldTypeName = `命名：pid；	类型：int等类型；`
+	TypeNamePid            MyGenFieldTypeName = `命名：pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；`
 	TypeNameLevel          MyGenFieldTypeName = `命名：level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；`
 	TypeNameIdPath         MyGenFieldTypeName = `命名：id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；`
 	TypeNamePasswordSuffix MyGenFieldTypeName = `命名：password,passwd后缀；	类型：char(32)；`

@@ -40,7 +40,7 @@ func (logicThis *sAuthMenu) Create(ctx context.Context, data map[string]any) (id
 	}
 	daoModelThis := daoAuth.Menu.CtxDaoModel(ctx)
 
-	if _, ok := data[daoAuth.Menu.Columns().Pid]; ok && gconv.Uint(data[daoAuth.Menu.Columns().Pid]) > 0 {
+	if _, ok := data[daoAuth.Menu.Columns().Pid]; ok && gconv.Uint(data[daoAuth.Menu.Columns().Pid]) != 0 {
 		pInfo, _ := daoModelThis.CloneNew().FilterPri(data[daoAuth.Menu.Columns().Pid]).One()
 		if pInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.pid`)}})
@@ -65,7 +65,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]any, d
 		return
 	}
 
-	if _, ok := data[daoAuth.Menu.Columns().Pid]; ok && gconv.Uint(data[daoAuth.Menu.Columns().Pid]) > 0 {
+	if _, ok := data[daoAuth.Menu.Columns().Pid]; ok && gconv.Uint(data[daoAuth.Menu.Columns().Pid]) != 0 {
 		if garray.NewArrayFrom(gconv.SliceAny(gconv.Uints(daoModelThis.IdArr))).Contains(gconv.Uint(data[daoAuth.Menu.Columns().Pid])) {
 			err = utils.NewErrorCode(ctx, 29999996, ``)
 			return

@@ -128,7 +128,7 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 		return myGenViewI18nField{}
 	case internal.TypeNameCreated: // 创建时间字段
 		return myGenViewI18nField{}
-	case internal.TypeNamePid: // pid；	类型：int等类型；
+	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		viewI18nField.name.Method = internal.ReturnTypeName
 		viewI18nField.name.DataTypeName = `'父级'`
 	case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
@@ -227,7 +227,7 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case internal.TypeNameDeleted, internal.TypeNameUpdated, internal.TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
-		case internal.TypeNamePid: // pid；	类型：int等类型；
+		case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 		case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；

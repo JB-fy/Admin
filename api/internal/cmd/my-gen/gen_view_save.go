@@ -373,15 +373,25 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		return myGenViewSaveField{}
 	case internal.TypeNameCreated: // 创建时间字段
 		return myGenViewSaveField{}
-	case internal.TypeNamePid: // pid；	类型：int等类型；
+	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		viewSaveField.dataInitAfter.Method = internal.ReturnTypeName
 		viewSaveField.dataInitAfter.DataTypeName = `saveCommon.data.` + dataFieldPath + ` ? saveCommon.data.` + dataFieldPath + ` : undefined`
 		viewSaveField.rule.Method = internal.ReturnTypeName
-		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'integer', trigger: 'change', min: `+v.FieldLimitInt.Min+`, max: `+v.FieldLimitInt.Max+`, message: t('validation.select') },`)
+		rule := `{ type: 'integer', trigger: 'change', min: ` + v.FieldLimitInt.Min + `, max: ` + v.FieldLimitInt.Max + `, message: t('validation.select') },`
+		if v.FieldType == internal.TypeVarchar {
+			rule = `{ type: 'string', trigger: 'change', max: ` + v.FieldLimitStr + `, message: t('validation.select') },`
+		} else if v.FieldType == internal.TypeChar {
+			rule = `{ type: 'string', trigger: 'change', len: ` + v.FieldLimitStr + `, message: t('validation.select') },`
+		}
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, rule)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`) + `: saveForm.data.id } } }" :props="{ checkStrictly: true, emitPath: false }" />`
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
-		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = 0)`
+		defVal := `0`
+		if !garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(v.FieldType) {
+			defVal = `''`
+		}
+		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = ` + defVal + `)`
 	case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 		return myGenViewSaveField{}
 	case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
@@ -754,7 +764,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case internal.TypeNameDeleted, internal.TypeNameUpdated, internal.TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
-		case internal.TypeNamePid: // pid；	类型：int等类型；
+		case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 		case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；

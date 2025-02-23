@@ -519,7 +519,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				m = m.WhereGTE(`+daoTable+`+`+"`.`"+`+`+daoPath+`.Columns().`+v.FieldCaseCamel+`, v)
 			case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_end`)+"`"+`:
 				m = m.WhereLTE(`+daoTable+`+`+"`.`"+`+`+daoPath+`.Columns().`+v.FieldCaseCamel+`, v)`)
-	case internal.TypeNamePid: // pid；	类型：int等类型；
+	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		daoField.filterParse.Method = internal.ReturnTypeName
 
 		daoField.fieldParse.Method = internal.ReturnTypeName
@@ -561,7 +561,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 		if tpl.Handle.Pid.IsCoexist {
 			daoField.insertParseBefore.Method = internal.ReturnTypeName
 			daoField.insertParseBefore.DataTypeName = append(daoField.insertParseBefore.DataTypeName, `if _, ok := insert[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; !ok {
-			insert[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`] = 0
+			insert[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`] = `+tpl.Handle.Pid.Tpl.PidDefVal+`
 		}`)
 
 			daoField.insertParse.Method = internal.ReturnTypeName
@@ -570,7 +570,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			pLevelStr := internal.GetStrByFieldStyle(tpl.FieldStyle, `p_level`)
 			daoField.insertParse.DataTypeName = append(daoField.insertParse.DataTypeName, `case `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`:
 				insertData[k] = v
-				if gconv.Uint(v) > 0 {
+				if gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`(v) `+tpl.Handle.Pid.Tpl.PidJudge+` {
 					pInfo, _ := daoModel.CloneNew().FilterPri(v).One()
 					daoModel.AfterInsert[`+"`"+selfUpdateStr+"`"+`] = map[string]any{
 						`+"`"+pIdPathStr+"`"+`: pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`].String(),
@@ -578,7 +578,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 					}
 				} else {
 					daoModel.AfterInsert[`+"`"+selfUpdateStr+"`"+`] = map[string]any{
-						`+"`"+pIdPathStr+"`"+`: `+"`0`"+`,
+						`+"`"+pIdPathStr+"`"+`: `+tpl.Handle.Pid.Tpl.PIdPathDefVal+`,
 						`+"`"+pLevelStr+"`"+`:   0,
 					}
 				}`)
@@ -601,9 +601,9 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			childLevelStr := internal.GetStrByFieldStyle(tpl.FieldStyle, `child_level`)
 			daoField.updateParse.DataTypeName = append(daoField.updateParse.DataTypeName, `case `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`:
 				updateData[k] = v
-				pIdPath := `+"`0`"+`
+				pIdPath := `+tpl.Handle.Pid.Tpl.PIdPathDefVal+`
 				var pLevel uint = 0
-				if gconv.Uint(v) > 0 {
+				if gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`(v) `+tpl.Handle.Pid.Tpl.PidJudge+` {
 					pInfo, _ := daoModel.CloneNew().FilterPri(v).One()
 					pIdPath = pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`].String()
 					pLevel = pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`].Uint()
@@ -614,7 +614,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				`+gstr.CaseCamelLower(childUpdateStr)+` := []map[string]any{}
 				oldList, _ := daoModel.CloneNew().FilterPri(daoModel.IdArr).All()
 				for _, oldInfo := range oldList {
-					if gconv.Uint(v) != oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`].Uint() {
+					if gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`(v) != oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`].`+tpl.Handle.Pid.Tpl.PidGconvMethod+`() {
 						`+gstr.CaseCamelLower(childUpdateStr)+` = append(`+gstr.CaseCamelLower(childUpdateStr)+`, map[string]any{
 							`+"`"+pIdPathOfOldStr+"`"+`: oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IdPath)+`],
 							`+"`"+pIdPathOfNewStr+"`"+`: pIdPath + `+"`-`"+` + oldInfo[`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`].String(),
@@ -920,7 +920,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			continue
 		case internal.TypeNameCreated: // 创建时间字段
 			continue
-		case internal.TypeNamePid: // pid；	类型：int等类型；
+		case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 			continue
 		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 			continue
@@ -1154,7 +1154,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			continue
 		case internal.TypeNameCreated: // 创建时间字段
 			continue
-		case internal.TypeNamePid: // pid；	类型：int等类型；
+		case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 			continue
 		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 			continue

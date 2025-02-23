@@ -43,7 +43,7 @@
 			Label			命名：label；	全表禁用
 
 		固定命名：
-			父级			命名：pid；	类型：int等类型；
+			父级			命名：pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 			层级			命名：level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 			层级路径		命名：id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 				建议直接使用text，当level层级大时，不用考虑字符长度问题。

@@ -43,6 +43,7 @@ export default {
     },
     status: {
         pid: [{ value: 0, label: '全部顶级', leaf: true }],
+        pidStr: [{ value: ``, label: '全部顶级', leaf: true }],
         whether: [
             { value: 0, label: '否' },
             { value: 1, label: '是' },

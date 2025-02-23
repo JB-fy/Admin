@@ -484,8 +484,11 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 			`TimeRangeStart *gtime.Time `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_start`)+`,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`+"`",
 			`TimeRangeEnd   *gtime.Time `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_end`)+`,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`+"`",
 		)
-	case internal.TypeNamePid: // pid；	类型：int等类型；
+	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		apiField.filterType.Method = internal.ReturnType
+		if !garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(v.FieldType) {
+			apiField.filterType.DataType = `*string`
+		}
 
 		apiField.resOfAdd = append(apiField.resOfAdd,
 			internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, tpl.Handle.LabelList[0], `p`)+` *string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+`,omitempty" dc:"父级"`+"`",
@@ -747,7 +750,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 		/*--------根据字段命名类型处理 开始--------*/
 		switch v.FieldTypeName {
 		case internal.TypeNameDeleted, internal.TypeNameUpdated, internal.TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
-		case internal.TypeNamePid: // pid；	类型：int等类型；
+		case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 		case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；

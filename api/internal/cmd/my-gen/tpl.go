@@ -59,6 +59,12 @@ type myGenTpl struct {
 			Level     string   //层级字段
 			IdPath    string   //层级路径字段
 			Sort      []string //排序字段列表（当有排序字段时，树状列表对这些字段做正序排序）
+			Tpl       struct {
+				PidDefVal      string
+				PidGconvMethod string
+				PidJudge       string
+				PIdPathDefVal  string
+			}
 		}
 		RelIdMap            map[string]handleRelId //id后缀字段，需特殊处理
 		ExtendTableOneList  []handleExtendMiddle   //扩展表（一对一）：表命名：主表名_xxxx，并存在与主表（主键 或 表名去掉前缀 + ID）同名的id后缀字段，且字段设为：非递增主键 或 唯一索引
@@ -254,10 +260,10 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			fieldTmp.FieldTypeName = internal.TypeNameUpdated
 		} else if garray.NewStrArrayFrom(internal.ConfigFieldNameArrCreated).Contains(fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = internal.TypeNameCreated
+		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) && fieldTmp.FieldRaw == `pid` { //pid，且与主键类型相同时（才）有效
+			fieldTmp.FieldTypeName = internal.TypeNamePid
 		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText}).Contains(fieldTmp.FieldType) && fieldTmp.FieldCaseCamel == `IdPath` { //id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效
 			fieldTmp.FieldTypeName = internal.TypeNameIdPath
-
-			tpl.Handle.Pid.IdPath = fieldTmp.FieldRaw
 		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}).Contains(fieldTmp.FieldType) && garray.NewStrArrayFrom([]string{`id`}).Contains(fieldSuffix) { //id后缀
 			if !isFromOtherRel && !garray.NewStrArrayFrom([]string{internal.TypePrimary, internal.TypePrimaryAutoInc}).Contains(fieldTmp.FieldTypePrimary) { // 本表id字段不算
 				fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
@@ -369,11 +375,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				tpl.Handle.PasswordMap[passwordMapKey] = handlePasswordObj
 			}
 		} else if garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(fieldTmp.FieldType) { //int等类型
-			if fieldTmp.FieldRaw == `pid` { //pid
-				fieldTmp.FieldTypeName = internal.TypeNamePid
-
-				tpl.Handle.Pid.Pid = fieldTmp.FieldRaw
-			} else if garray.NewStrArrayFrom([]string{`sort`, `num`, `number`, `weight`}).Contains(fieldSuffix) { //sort,num,number,weight等后缀
+			if garray.NewStrArrayFrom([]string{`sort`, `num`, `number`, `weight`}).Contains(fieldSuffix) { //sort,num,number,weight等后缀
 				fieldTmp.FieldTypeName = internal.TypeNameSortSuffix
 				if fieldSuffix == `sort` {
 					tpl.Handle.Pid.Sort = append(tpl.Handle.Pid.Sort, fieldTmp.FieldRaw)
@@ -382,8 +384,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = internal.TypeNameNoSuffix
 				if fieldTmp.FieldRaw == `level` { //level，且pid,level,id_path|idPath同时存在时（才）有效。该命名类型需做二次确定
 					fieldTmp.FieldTypeName = internal.TypeNameLevel
-
-					tpl.Handle.Pid.Level = fieldTmp.FieldRaw
 				}
 			}
 		} else if garray.NewIntArrayFrom([]int{internal.TypeDatetime, internal.TypeTimestamp, internal.TypeDate, internal.TypeTime}).Contains(fieldTmp.FieldType) { //类型：datetime或date或timestamp或time
@@ -398,12 +398,42 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		fieldList[k] = fieldTmp
 	}
 
-	/*--------解析影响命名类型二次确认，且需特殊处理的字段 开始--------*/
-	//password|passwd,salt同时存在时，需特殊处理
-	for k, v := range tpl.Handle.PasswordMap {
-		if v.PasswordField != `` && v.SaltField != `` {
-			v.IsCoexist = true
-			tpl.Handle.PasswordMap[k] = v
+	/*--------命名类型二次确认的字段 开始--------*/
+	var fieldTypeOfId internal.MyGenFieldType
+	for _, v := range fieldList {
+		if garray.NewStrArrayFrom([]string{internal.TypePrimary, internal.TypePrimaryAutoInc}).Contains(v.FieldTypePrimary) {
+			fieldTypeOfId = v.FieldType
+			break
+		}
+	}
+
+	for k, v := range fieldList {
+		switch v.FieldTypeName {
+		case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效
+			if v.FieldType != fieldTypeOfId {
+				fieldList[k].FieldTypeName = ``
+				continue
+			}
+			tpl.Handle.Pid.Pid = v.FieldRaw
+			switch v.FieldType {
+			case internal.TypeInt, internal.TypeIntU:
+				tpl.Handle.Pid.Tpl.PidDefVal = `0`
+				tpl.Handle.Pid.Tpl.PidGconvMethod = `Int`
+				tpl.Handle.Pid.Tpl.PidJudge = `!= 0`
+				tpl.Handle.Pid.Tpl.PIdPathDefVal = "`0`"
+				if v.FieldType == internal.TypeIntU {
+					tpl.Handle.Pid.Tpl.PidGconvMethod = `Uint`
+				}
+			default:
+				tpl.Handle.Pid.Tpl.PidDefVal = "``"
+				tpl.Handle.Pid.Tpl.PidGconvMethod = `String`
+				tpl.Handle.Pid.Tpl.PidJudge = "!= ``"
+				tpl.Handle.Pid.Tpl.PIdPathDefVal = "``"
+			}
+		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
+			tpl.Handle.Pid.Level = v.FieldRaw
+		case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
+			tpl.Handle.Pid.IdPath = v.FieldRaw
 		}
 	}
 
@@ -413,9 +443,15 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			tpl.Handle.Pid.IsCoexist = true
 		}
 	}
-	/*--------解析影响命名类型二次确认，且需特殊处理的字段 结束--------*/
 
-	/*--------命名类型二次确认的字段 开始--------*/
+	//password|passwd,salt同时存在时，需特殊处理
+	for k, v := range tpl.Handle.PasswordMap {
+		if v.PasswordField != `` && v.SaltField != `` {
+			v.IsCoexist = true
+			tpl.Handle.PasswordMap[k] = v
+		}
+	}
+
 	for k, v := range fieldList {
 		switch v.FieldTypeName {
 		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；

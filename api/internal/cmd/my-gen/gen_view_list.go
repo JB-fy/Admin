@@ -298,7 +298,7 @@ const getList = async (resetPage: boolean = false) => {
     resetPage && (pagination.page = 1)
     const param = {
         field: [],
-        filter: removeEmptyOfObj(queryCommon.data, true, true),
+        filter: removeEmptyOfObj(queryCommon.data),
         sort: table.sort.key + ' ' + table.sort.order,
         page: pagination.page,
         limit: pagination.size,
@@ -452,7 +452,7 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	case internal.TypeNameCreated: // 创建时间字段
 		viewListField.title.Method = internal.ReturnTypeName
 		viewListField.title.DataTypeName = `t('common.name.createdAt')`
-	case internal.TypeNamePid: // pid；	类型：int等类型；
+	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		viewListField.dataKey.Method = internal.ReturnTypeName
 		viewListField.dataKey.DataTypeName = `'` + internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`) + `'`
 	case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；

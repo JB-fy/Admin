@@ -91,14 +91,14 @@ func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().MenuName, `%`+gconv.String(v)+`%`)
 			case daoThis.Columns().MenuName:
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
-			case daoThis.Columns().MenuName + `_eq`:
-				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().MenuName, v)
 			case `p_id_path_of_old`: //父级ID路径（旧）
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().IdPath, gconv.String(v)+`-%`)
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case daoThis.Columns().MenuName + `_eq`:
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().MenuName, v)
 			case `self_menu`: //获取当前登录身份可用的菜单。参数：map[string]any{`scene_id`: `场景ID`, `login_id`: 登录身份id, `is_super`: 是否超管（平台超级管理员用）}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
@@ -258,7 +258,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]any, daoModel *daoIndex.Da
 			switch k {
 			case daoThis.Columns().Pid:
 				insertData[k] = v
-				if gconv.Uint(v) > 0 {
+				if gconv.Uint(v) != 0 {
 					pInfo, _ := daoModel.CloneNew().FilterPri(v).One()
 					daoModel.AfterInsert[`self_update`] = map[string]any{
 						`p_id_path`: pInfo[daoThis.Columns().IdPath].String(),
@@ -324,7 +324,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 				updateData[k] = v
 				pIdPath := `0`
 				var pLevel uint = 0
-				if gconv.Uint(v) > 0 {
+				if gconv.Uint(v) != 0 {
 					pInfo, _ := daoModel.CloneNew().FilterPri(v).One()
 					pIdPath = pInfo[daoThis.Columns().IdPath].String()
 					pLevel = pInfo[daoThis.Columns().Level].Uint()
