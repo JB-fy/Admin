@@ -64,6 +64,7 @@ type myGenTpl struct {
 				PidGconvMethod string
 				PidJudge       string
 				PIdPathDefVal  string
+				PidIsStr       string
 			}
 		}
 		RelIdMap            map[string]handleRelId //id后缀字段，需特殊处理
@@ -421,6 +422,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				tpl.Handle.Pid.Tpl.PidGconvMethod = `Int`
 				tpl.Handle.Pid.Tpl.PidJudge = `!= 0`
 				tpl.Handle.Pid.Tpl.PIdPathDefVal = "`0`"
+				tpl.Handle.Pid.Tpl.PidIsStr = ``
 				if v.FieldType == internal.TypeIntU {
 					tpl.Handle.Pid.Tpl.PidGconvMethod = `Uint`
 				}
@@ -429,6 +431,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				tpl.Handle.Pid.Tpl.PidGconvMethod = `String`
 				tpl.Handle.Pid.Tpl.PidJudge = "!= ``"
 				tpl.Handle.Pid.Tpl.PIdPathDefVal = "``"
+				tpl.Handle.Pid.Tpl.PidIsStr = `, pidIsStr: true`
 			}
 		case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
 			tpl.Handle.Pid.Level = v.FieldRaw
