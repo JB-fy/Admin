@@ -561,8 +561,8 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 		}
 		viewListField.cellRenderer.Method = internal.ReturnTypeName
 		tmKey := i18nPath + `.status.` + v.FieldRaw
-		if v.StatusIsWhether {
-			tmKey = `common.status.whether`
+		if v.StatusWhetherI18n != `` {
+			tmKey = v.StatusWhetherI18n
 		}
 		viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 let statusList = tm('` + tmKey + `') as { value: any, label: string }[]

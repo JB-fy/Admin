@@ -97,7 +97,7 @@ type myGenField struct {
 	FieldDesc            string                         // 字段说明。由注释解析出来，API文档用。符号[\n\r]换成` `，"增加转义换成\"
 	FieldTip             string                         // 字段提示。由注释解析出来，前端提示用。
 	StatusList           [][2]string                    // 状态列表。由注释解析出来，前端显示用。多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
-	StatusIsWhether      bool                           // 状态列表只有以下两个状态：0否 1是
+	StatusWhetherI18n    string                         // 前端多语言状态标识。状态只有以下两个状态时才有值：0否 1是 或 0是 1否
 	FieldLimitStr        string                         // 字符串字段限制。varchar表示最大长度；char表示长度；
 	FieldLimitInt        internal.MyGenFieldLimitInt    // 整数字段限制
 	FieldLimitFloat      internal.MyGenFieldLimitFloat  // 浮点数字段限制
@@ -317,8 +317,12 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 					fieldTmp.FieldShowLenMax = showLen
 				}
 			}
-			if (statusStr == `0否1是` || statusStr == `1是0否`) && !isStr {
-				fieldTmp.StatusIsWhether = true
+			if !isStr {
+				if statusStr == `0否1是` || statusStr == `1是0否` {
+					fieldTmp.StatusWhetherI18n = `common.status.whether`
+				} else if statusStr == `1否0是` || statusStr == `0是1否` {
+					fieldTmp.StatusWhetherI18n = `common.status.whetherConv`
+				}
 			}
 		} else if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeText, internal.TypeJson}).Contains(fieldTmp.FieldType) && (garray.NewStrArrayFrom([]string{`icon`, `cover`, `avatar`, `img`, `image`}).Contains(fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -7) == `ImgList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -6) == `ImgArr` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `ImageList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `ImageArr`) { //icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀
 			fieldTmp.FieldTypeName = internal.TypeNameImageSuffix

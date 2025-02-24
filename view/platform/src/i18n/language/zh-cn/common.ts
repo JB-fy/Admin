@@ -48,6 +48,10 @@ export default {
             { value: 0, label: '否' },
             { value: 1, label: '是' },
         ],
+        whetherConv: [
+            { value: 0, label: '是' },
+            { value: 1, label: '否' },
+        ],
     },
     tip: {
         notAuthActionRead: '您暂无查看权限，请联系管理员授权！',

@@ -494,8 +494,8 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.isI18nTm = true
 		viewSaveField.rule.Method = internal.ReturnTypeName
 		tmKey := i18nPath + `.status.` + i18nFieldPath
-		if v.StatusIsWhether {
-			tmKey = `common.status.whether`
+		if v.StatusWhetherI18n != `` {
+			tmKey = v.StatusWhetherI18n
 		}
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'enum', trigger: 'change', enum: (tm('`+tmKey+`') as { value: any, label: string }[]).map((item) => item.value), message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnTypeName
@@ -796,8 +796,8 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.isI18nTm = true
 			viewSaveFieldTmp.rule.Method = internal.ReturnTypeName
 			tmKey := i18nPath + `.status.` + i18nFieldPath
-			if v.StatusIsWhether {
-				tmKey = `common.status.whether`
+			if v.StatusWhetherI18n != `` {
+				tmKey = v.StatusWhetherI18n
 			}
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'enum', enum: (tm('`+tmKey+`') as { value: any, label: string }[]).map((item) => item.value), message: t('validation.select') },`)
 		case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；

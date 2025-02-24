@@ -256,8 +256,8 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 		viewQueryField.isI18nTm = true
 		viewQueryField.form.Method = internal.ReturnTypeName
 		tmKey := i18nPath + `.status.` + i18nFieldPath
-		if v.StatusIsWhether {
-			tmKey = `common.status.whether`
+		if v.StatusWhetherI18n != `` {
+			tmKey = v.StatusWhetherI18n
 		}
 		viewQueryField.form.DataTypeName = `<el-select-v2 v-model="queryCommon.data.` + v.FieldRaw + `" :options="tm('` + tmKey + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :clearable="true" style="width: ` + gconv.String(100+(v.FieldShowLenMax-3)*14) + `px" />`
 	case internal.TypeNameSortSuffix: // sort,num,number,weight等后缀；	类型：int等类型；
