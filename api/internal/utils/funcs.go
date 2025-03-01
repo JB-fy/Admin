@@ -90,7 +90,7 @@ func FileFormat(filePath string) {
 }
 
 // 逐行读取文件内容。框架gfile.ReadLines()方法中scanner.Scan()在行数据超过默认的缓冲区大小（一般4KB），会返回false，会中断执行
-func FileReadLine(filePath string, callback func(text []byte) error) (err error) {
+func FileReadLine(filePath string, callback func(line []byte) error) (err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return
