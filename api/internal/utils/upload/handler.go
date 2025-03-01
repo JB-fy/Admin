@@ -37,19 +37,19 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) model.Handler 
 	}
 	switch uploadType {
 	case 0:
-		config[`url`] = handlerObj.handleLocalUrl(gconv.String(config[`url`]))
-		config[`fileUrlPrefix`] = handlerObj.handleLocalUrl(gconv.String(config[`fileUrlPrefix`]))
+		config[`url`] = handlerObj.handleLocalUrl(gconv.String(config[`url`]), 0)
+		config[`fileUrlPrefix`] = handlerObj.handleLocalUrl(gconv.String(config[`fileUrlPrefix`]), 3)
 	}
 	handlerObj.upload = NewUpload(ctx, uploadType, config)
 	return handlerObj
 }
 
-func (handlerThis *Handler) handleLocalUrl(urlRaw string) (url string) {
+func (handlerThis *Handler) handleLocalUrl(urlRaw string, flag int) (url string) {
 	url = urlRaw
 	if gstr.Pos(url, `http`) == 0 {
 		return
 	}
-	currentUrl := utils.GetRequestUrl(handlerThis.Ctx, 3)
+	currentUrl := utils.GetRequestUrl(handlerThis.Ctx, flag)
 	if url != `` && gstr.Pos(url, `/`) != 0 {
 		url = `/` + url
 	}
