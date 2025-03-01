@@ -37,7 +37,7 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) model.Handler 
 	}
 	switch uploadType {
 	case 0:
-		config[`url`] = handlerObj.handleLocalUrl(gconv.String(config[`url`]), 0)
+		config[`url`] = handlerObj.handleLocalUrl(gconv.String(config[`url`]), 0) //多服务器，且需要客户端多个文件都上传到一个服务器时，可改成3
 		config[`fileUrlPrefix`] = handlerObj.handleLocalUrl(gconv.String(config[`fileUrlPrefix`]), 3)
 	}
 	handlerObj.upload = NewUpload(ctx, uploadType, config)
