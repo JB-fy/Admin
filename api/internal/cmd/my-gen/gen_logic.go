@@ -208,8 +208,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 }
 `
 
-	gfile.PutContents(saveFile, tplLogic)
-	utils.FileFormat(saveFile)
+	utils.FilePutFormat(saveFile, []byte(tplLogic)...)
 	internal.Command(`service生成`, true, ``, `gf`, `gen`, `service`)
 	i18n = logic.i18n
 	return

@@ -77,16 +77,16 @@ func GetMethodName(skip int) (methodName string) {
 	return
 }
 
-// go文件代码格式化
-func FileFormat(filePath string) {
-	fmtFuc := func(path, content string) string {
-		res, err := imports.Process(path, []byte(content), nil)
-		if err != nil {
-			return content
+// 文件代码格式化
+func FilePutFormat(filePath string, src ...byte) (err error) {
+	contentFormat, err := imports.Process(filePath, src, nil)
+	if err != nil {
+		if src == nil {
+			return
 		}
-		return string(res)
+		contentFormat = src
 	}
-	gfile.ReplaceFileFunc(fmtFuc, filePath)
+	return gfile.PutBytes(filePath, contentFormat)
 }
 
 // 逐行读取文件内容。框架gfile.ReadLines()方法中scanner.Scan()在行数据超过默认的缓冲区大小（一般4KB），会返回false，会中断执行

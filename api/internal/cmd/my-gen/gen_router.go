@@ -23,15 +23,13 @@ func genRouter(option myGenOption, tpl myGenTpl) {
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, 1)
-		gfile.PutContents(saveFile, tplRouter)
+		utils.FilePutFormat(saveFile, []byte(tplRouter)...)
 	} else {
 		// 路由生成（controller已导入，但路由不存在）
 		if gstr.Pos(tplRouter, `group.Bind(`+moduleName+`.New`+tpl.TableCaseCamel+`())`) == -1 {
 			tplRouter = gstr.Replace(tplRouter, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseKebab+"`"+`, func(group *ghttp.RouterGroup) {`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseKebab+"`"+`, func(group *ghttp.RouterGroup) {
 				group.Bind(`+moduleName+`.New`+tpl.TableCaseCamel+`())`, 1)
-			gfile.PutContents(saveFile, tplRouter)
+			utils.FilePutFormat(saveFile, []byte(tplRouter)...)
 		}
 	}
-
-	utils.FileFormat(saveFile)
 }

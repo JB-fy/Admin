@@ -338,8 +338,7 @@ func genDao(tpl myGenTpl) {
 		`), 1)
 	}
 
-	gfile.PutContents(saveFile, tplDao)
-	utils.FileFormat(saveFile)
+	utils.FilePutFormat(saveFile, []byte(tplDao)...)
 }
 
 func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
