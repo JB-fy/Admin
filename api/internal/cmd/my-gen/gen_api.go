@@ -225,7 +225,7 @@ type ` + tpl.TableCaseCamel + `TreeRes struct {
 
 	saveFile := gfile.SelfDir() + `/api/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	gfile.PutContents(saveFile, tplApi)
-	utils.GoFileFmt(saveFile)
+	utils.FileFormat(saveFile)
 }
 
 func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {

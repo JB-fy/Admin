@@ -5,7 +5,10 @@ funcs.go：基于golang封装的常用函数（不与框架耦合） */
 package utils
 
 import (
+	"bufio"
 	"bytes"
+	"io"
+	"os"
 	"os/exec"
 	"reflect"
 	"runtime"
@@ -75,7 +78,7 @@ func GetMethodName(skip int) (methodName string) {
 }
 
 // go文件代码格式化
-func GoFileFmt(filePath string) {
+func FileFormat(filePath string) {
 	fmtFuc := func(path, content string) string {
 		res, err := imports.Process(path, []byte(content), nil)
 		if err != nil {
@@ -84,6 +87,36 @@ func GoFileFmt(filePath string) {
 		return string(res)
 	}
 	gfile.ReplaceFileFunc(fmtFuc, filePath)
+}
+
+// 逐行读取文件内容。框架gfile.ReadLines()方法中scanner.Scan()在行数据超过默认的缓冲区大小（一般4KB），会返回false，会中断执行
+func FileReadLine(filePath string, callback func(text []byte) error) (err error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	reader := bufio.NewReader(file)
+	var line []byte
+	var isPrefix bool
+	var fullLine []byte
+	for {
+		line, isPrefix, err = reader.ReadLine()
+		if err != nil && err != bufio.ErrBufferFull {
+			if err == io.EOF {
+				return nil
+			}
+			return
+		}
+		fullLine = append(fullLine, line...)
+		if isPrefix {
+			continue
+		}
+		if err = callback(fullLine); err != nil {
+			return
+		}
+		fullLine = fullLine[:0]
+	}
 }
 
 // 十进制转其它进制

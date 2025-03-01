@@ -33,5 +33,5 @@ func genRouter(option myGenOption, tpl myGenTpl) {
 		}
 	}
 
-	utils.GoFileFmt(saveFile)
+	utils.FileFormat(saveFile)
 }

@@ -373,7 +373,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 
 	saveFile := gfile.SelfDir() + `/internal/controller/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	gfile.PutContents(saveFile, tplController)
-	utils.GoFileFmt(saveFile)
+	utils.FileFormat(saveFile)
 }
 
 func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
