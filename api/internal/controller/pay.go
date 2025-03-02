@@ -179,9 +179,9 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 	}
 
 	// 订单回调处理
-	payOrderHandler := daoPay.Order.CtxDaoModel(ctx)
-	err = payOrderHandler.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
-		row, _ := payOrderHandler.CloneNew().TX(tx).Filters(g.Map{
+	payOrderDaoModel := daoPay.Order.CtxDaoModel(ctx)
+	err = payOrderDaoModel.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
+		row, _ := payOrderDaoModel.CloneNew().TX(tx).Filters(g.Map{
 			daoPay.Order.Columns().OrderId:   orderInfo[daoPay.Order.Columns().OrderId],
 			daoPay.Order.Columns().PayStatus: 0, //防并发
 		}).Data(g.Map{
