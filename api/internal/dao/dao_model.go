@@ -42,14 +42,14 @@ type DaoModel struct {
 	model               *gdb.Model
 	DbGroup             string // 分库情况下，解析后所确定的库
 	DbTable             string // 分表情况下，解析后所确定的表
+	JoinTableSet        *gset.StrSet
 	AfterField          *gset.StrSet
 	AfterFieldSlice     []string // 后置处理前，将AfterField转换成AfterFieldSlice，减少列表后置处理多次调用AfterField.Slice()转换
 	AfterFieldWithParam map[string]any
-	IdArr               []*gvar.Var // 新增需要后置处理且主键非自增时 或 更新|删除需要后置处理时 使用。注意：一般在新增|更新|删除方法执行前调用（即在各种sql条件设置完后）
 	AfterInsert         map[string]any
-	IsOnlyAfterUpdate   bool // 更新时，用于判断是否只做后置更新
 	AfterUpdate         map[string]any
-	JoinTableSet        *gset.StrSet
+	IdArr               []*gvar.Var // 新增需要后置处理且主键非自增时 或 更新|删除需要后置处理时 使用。注意：一般在新增|更新|删除方法执行前调用（即在各种sql条件设置完后）
+	IsOnlyAfterUpdate   bool        // 更新时，用于判断是否只做后置更新
 }
 
 // 对象池。性能提醒不明显，暂时不用。确实大幅减少了对象创建和销毁（内存压力减少），但却需要手动增加放入对象池的代码：defer daoModel.PutPool()
@@ -60,24 +60,20 @@ var poolDaoModel = sync.Pool{
 }
 
 func (daoModelThis *DaoModel) PutPool() {
-	//以下属性从池中取出对象时，会重新赋值
 	daoModelThis.Ctx = nil
 	daoModelThis.dao = nil
+	daoModelThis.db = nil
+	daoModelThis.model = nil
+	daoModelThis.DbGroup = ``
+	daoModelThis.DbTable = ``
 	daoModelThis.AfterField = nil
+	daoModelThis.AfterFieldSlice = nil
 	daoModelThis.AfterFieldWithParam = nil
 	daoModelThis.AfterInsert = nil
 	daoModelThis.AfterUpdate = nil
 	daoModelThis.JoinTableSet = nil
-	daoModelThis.DbTable = ``
-	daoModelThis.DbGroup = ``
-	daoModelThis.db = nil
-	daoModelThis.model = nil
-
-	daoModelThis.AfterFieldSlice = nil
 	daoModelThis.IdArr = nil
 	daoModelThis.IsOnlyAfterUpdate = false
-	daoModelThis.IsOnlyAfterUpdate = false
-
 	poolDaoModel.Put(daoModelThis)
 }
 
@@ -86,11 +82,11 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...any) *DaoModel 
 	daoModelObj := &DaoModel{} // poolDaoModel.Get().(*DaoModel)
 	daoModelObj.Ctx = ctx
 	daoModelObj.dao = dao
+	daoModelObj.JoinTableSet = gset.NewStrSet()
 	daoModelObj.AfterField = gset.NewStrSet()
 	daoModelObj.AfterFieldWithParam = map[string]any{}
 	daoModelObj.AfterInsert = map[string]any{}
 	daoModelObj.AfterUpdate = map[string]any{}
-	daoModelObj.JoinTableSet = gset.NewStrSet()
 	switch len(dbOpt) {
 	case 1:
 		daoModelObj.DbTable = daoModelObj.dao.ParseDbTable(ctx, dbOpt[0])
@@ -136,14 +132,28 @@ func (daoModelThis *DaoModel) CloneNew() *DaoModel {
 		db:                  daoModelThis.db,
 		DbGroup:             daoModelThis.DbGroup,
 		DbTable:             daoModelThis.DbTable,
+		JoinTableSet:        gset.NewStrSet(),
 		AfterField:          gset.NewStrSet(),
 		AfterFieldWithParam: map[string]any{},
 		AfterInsert:         map[string]any{},
 		AfterUpdate:         map[string]any{},
-		JoinTableSet:        gset.NewStrSet(),
 	}
 	daoModelObj.model = daoModelObj.NewModel()
 	return &daoModelObj
+}
+
+// 重置daoModel（所有属性重置）。作用：对同一个表做多次操作时，不用再解析分库分表。注意：要在原daoModel已经不用的情况下使用
+func (daoModelThis *DaoModel) ResetNew() *DaoModel {
+	daoModelThis.JoinTableSet = gset.NewStrSet()
+	daoModelThis.AfterField = gset.NewStrSet()
+	daoModelThis.AfterFieldSlice = nil
+	daoModelThis.AfterFieldWithParam = map[string]any{}
+	daoModelThis.AfterInsert = map[string]any{}
+	daoModelThis.AfterUpdate = map[string]any{}
+	daoModelThis.IdArr = nil
+	daoModelThis.IsOnlyAfterUpdate = false
+	daoModelThis.model = daoModelThis.NewModel()
+	return daoModelThis
 }
 
 // 生成数据库
