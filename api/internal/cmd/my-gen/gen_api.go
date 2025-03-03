@@ -811,7 +811,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 	} else {
 		api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` *[]struct {`+gstr.Join(append([]string{``}, apiTmp.create...), `
 		`)+`
-	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
+	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" data:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
 		api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` *[]struct {`+gstr.Join(append([]string{``}, apiTmp.update...), `
 		`)+`
 	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
