@@ -84,14 +84,14 @@ type RoleCreateReq struct {
 /*--------修改 开始--------*/
 type RoleUpdateReq struct {
 	g.Meta   `path:"/role/update" method:"post" tags:"机构后台/权限管理/角色" sm:"修改"`
-	Id       uint    `json:"-" filter:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr    []uint  `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	RoleName *string `json:"role_name,omitempty" filter:"-" v:"max-length:30" dc:"名称"`
-	// SceneId     *string   `json:"scene_id,omitempty" filter:"-" v:"max-length:15" dc:"场景ID"`
-	// RelId       *uint     `json:"rel_id,omitempty" filter:"-" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
-	ActionIdArr *[]string `json:"action_id_arr,omitempty" filter:"-" v:"distinct|foreach|max-length:30" dc:"操作ID"`
-	MenuIdArr   *[]uint   `json:"menu_id_arr,omitempty" filter:"-" v:"distinct|foreach|between:1,4294967295" dc:"菜单ID"`
-	IsStop      *uint     `json:"is_stop,omitempty" filter:"-" v:"in:0,1" dc:"停用：0否 1是"`
+	Id       uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr    []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	RoleName *string `json:"role_name,omitempty" filter:"-" data:"role_name,omitempty" v:"max-length:30" dc:"名称"`
+	// SceneId     *string   `json:"scene_id,omitempty" filter:"-" data:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
+	// RelId       *uint     `json:"rel_id,omitempty" filter:"-" data:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
+	ActionIdArr *[]string `json:"action_id_arr,omitempty" filter:"-" data:"action_id_arr,omitempty" v:"distinct|foreach|max-length:30" dc:"操作ID"`
+	MenuIdArr   *[]uint   `json:"menu_id_arr,omitempty" filter:"-" data:"menu_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"菜单ID"`
+	IsStop      *uint     `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

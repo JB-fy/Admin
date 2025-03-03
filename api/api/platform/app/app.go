@@ -92,19 +92,19 @@ type AppCreateReq struct {
 /*--------修改 开始--------*/
 type AppUpdateReq struct {
 	g.Meta      `path:"/app/update" method:"post" tags:"平台后台/系统管理/APP" sm:"修改"`
-	Id          uint    `json:"-" filter:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr       []uint  `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	NameType    *uint   `json:"name_type,omitempty" filter:"-" v:"in:0" dc:"名称：0APP。有两种以上APP时自行扩展"`
-	AppType     *uint   `json:"app_type,omitempty" filter:"-" v:"in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
-	PackageName *string `json:"package_name,omitempty" filter:"-" v:"max-length:60" dc:"包名"`
-	PackageFile *string `json:"package_file,omitempty" filter:"-" v:"max-length:200|url" dc:"安装包"`
-	VerNo       *uint   `json:"ver_no,omitempty" filter:"-" v:"between:0,4294967295" dc:"版本号"`
-	VerName     *string `json:"ver_name,omitempty" filter:"-" v:"max-length:30" dc:"版本名称"`
-	VerIntro    *string `json:"ver_intro,omitempty" filter:"-" v:"max-length:255" dc:"版本介绍"`
-	ExtraConfig *string `json:"extra_config,omitempty" filter:"-" v:"json" dc:"额外配置"`
-	Remark      *string `json:"remark,omitempty" filter:"-" v:"max-length:120" dc:"备注"`
-	IsForcePrev *uint   `json:"is_force_prev,omitempty" filter:"-" v:"in:0,1" dc:"强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关"`
-	IsStop      *uint   `json:"is_stop,omitempty" filter:"-" v:"in:0,1" dc:"停用：0否 1是"`
+	Id          uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr       []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	NameType    *uint   `json:"name_type,omitempty" filter:"-" data:"name_type,omitempty" v:"in:0" dc:"名称：0APP。有两种以上APP时自行扩展"`
+	AppType     *uint   `json:"app_type,omitempty" filter:"-" data:"app_type,omitempty" v:"in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
+	PackageName *string `json:"package_name,omitempty" filter:"-" data:"package_name,omitempty" v:"max-length:60" dc:"包名"`
+	PackageFile *string `json:"package_file,omitempty" filter:"-" data:"package_file,omitempty" v:"max-length:200|url" dc:"安装包"`
+	VerNo       *uint   `json:"ver_no,omitempty" filter:"-" data:"ver_no,omitempty" v:"between:0,4294967295" dc:"版本号"`
+	VerName     *string `json:"ver_name,omitempty" filter:"-" data:"ver_name,omitempty" v:"max-length:30" dc:"版本名称"`
+	VerIntro    *string `json:"ver_intro,omitempty" filter:"-" data:"ver_intro,omitempty" v:"max-length:255" dc:"版本介绍"`
+	ExtraConfig *string `json:"extra_config,omitempty" filter:"-" data:"extra_config,omitempty" v:"json" dc:"额外配置"`
+	Remark      *string `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`
+	IsForcePrev *uint   `json:"is_force_prev,omitempty" filter:"-" data:"is_force_prev,omitempty" v:"in:0,1" dc:"强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关"`
+	IsStop      *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

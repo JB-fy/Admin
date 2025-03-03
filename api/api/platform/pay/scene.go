@@ -73,11 +73,11 @@ type SceneCreateReq struct {
 /*--------修改 开始--------*/
 type SceneUpdateReq struct {
 	g.Meta    `path:"/scene/update" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付场景" sm:"修改"`
-	Id        uint    `json:"-" filter:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr     []uint  `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	SceneName *string `json:"scene_name,omitempty" filter:"-" v:"max-length:30" dc:"名称"`
-	Remark    *string `json:"remark,omitempty" filter:"-" v:"max-length:120" dc:"备注"`
-	IsStop    *uint   `json:"is_stop,omitempty" filter:"-" v:"in:0,1" dc:"停用：0否 1是"`
+	Id        uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr     []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	SceneName *string `json:"scene_name,omitempty" filter:"-" data:"scene_name,omitempty" v:"max-length:30" dc:"名称"`
+	Remark    *string `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`
+	IsStop    *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/
