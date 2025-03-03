@@ -38,7 +38,7 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 				fieldArr = append(fieldArr, ttlField)
 			}
 		}
-		info, err := daoModel.ResetNew().FilterPri(id).Fields(fieldArr...).One()
+		info, err := daoModel.FilterPri(id).Fields(fieldArr...).One()
 		if err != nil {
 			return
 		}
@@ -73,7 +73,7 @@ func (cacheThis *dbData) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 
 func (cacheThis *dbData) GetOrSetMany(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
 	for _, id := range idArr {
-		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, daoModel, id, ttlOrField, field...)
+		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
@@ -91,7 +91,7 @@ func (cacheThis *dbData) GetOrSetMany(ctx context.Context, daoModel *dao.DaoMode
 func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (record gdb.Record, err error) {
 	record = gdb.Record{}
 	for _, id := range idArr {
-		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, daoModel, id, ttlOrField, field...)
+		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
