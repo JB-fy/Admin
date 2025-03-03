@@ -363,14 +363,14 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 // 获取单个配置
 func (daoThis *configDao) GetOne(ctx context.Context, configKey string) (configValue *gvar.Var) {
 	// configValue, _ = daoThis.CtxDaoModel(ctx).FilterPri(configKey).Value(daoThis.Columns().ConfigValue)
-	configValue, _ = cache.DbData.GetOrSet(ctx, daoThis, configKey, consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
+	configValue, _ = cache.DbData.GetOrSet(ctx, daoThis.CtxDaoModel(ctx), configKey, consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
 	return
 }
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, configKeyArr ...string) (config gdb.Record, err error) {
 	// return daoThis.CtxDaoModel(ctx).FilterPri(configKeyArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
-	return cache.DbData.GetOrSetPluck(ctx, daoThis, gconv.SliceAny(configKeyArr), consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
+	return cache.DbData.GetOrSetPluck(ctx, daoThis.CtxDaoModel(ctx), gconv.SliceAny(configKeyArr), consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
 }
 
 // 保存配置
@@ -393,6 +393,6 @@ func (daoThis *configDao) Save(ctx context.Context, config map[string]any) (err 
 	if err != nil {
 		return
 	}
-	cache.DbData.Del(ctx, daoThis, idArr...)
+	cache.DbData.Del(ctx, daoModelThis, idArr...)
 	return
 }

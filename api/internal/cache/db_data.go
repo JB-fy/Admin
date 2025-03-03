@@ -28,8 +28,7 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, id any) string {
 }
 
 // ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
-func (cacheThis *dbData) getOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, noSetCache bool, err error) {
-	daoModel := dao.CtxDaoModel(ctx)
+func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, noSetCache bool, err error) {
 	redis := cacheThis.cache()
 	key := cacheThis.key(daoModel, id)
 	valueFunc := func() (value any, ttl int64, noSetCache bool, err error) {
@@ -39,7 +38,7 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, dao dao.DaoInterface, id 
 				fieldArr = append(fieldArr, ttlField)
 			}
 		}
-		info, err := daoModel.FilterPri(id).Fields(fieldArr...).One()
+		info, err := daoModel.ResetNew().FilterPri(id).Fields(fieldArr...).One()
 		if err != nil {
 			return
 		}
@@ -67,14 +66,14 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, dao dao.DaoInterface, id 
 	return internal.GetOrSet.GetOrSet(ctx, redis, key, valueFunc, 0, 0, 0)
 }
 
-func (cacheThis *dbData) GetOrSet(ctx context.Context, dao dao.DaoInterface, id any, ttlOrField any, field ...string) (value *gvar.Var, err error) {
-	value, _, err = cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
+func (cacheThis *dbData) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, err error) {
+	value, _, err = cacheThis.getOrSet(ctx, daoModel, id, ttlOrField, field...)
 	return
 }
 
-func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
+func (cacheThis *dbData) GetOrSetMany(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
 	for _, id := range idArr {
-		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
+		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, daoModel, id, ttlOrField, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
@@ -89,10 +88,10 @@ func (cacheThis *dbData) GetOrSetMany(ctx context.Context, dao dao.DaoInterface,
 	return
 }
 
-func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, dao dao.DaoInterface, idArr []any, ttlOrField any, field ...string) (record gdb.Record, err error) {
+func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (record gdb.Record, err error) {
 	record = gdb.Record{}
 	for _, id := range idArr {
-		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, dao, id, ttlOrField, field...)
+		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, daoModel, id, ttlOrField, field...)
 		if errTmp != nil {
 			err = errTmp
 			return
@@ -105,8 +104,7 @@ func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, dao dao.DaoInterface
 	return
 }
 
-func (cacheThis *dbData) Del(ctx context.Context, dao dao.DaoInterface, idArr ...any) (row int64, err error) {
-	daoModel := dao.CtxDaoModel(ctx)
+func (cacheThis *dbData) Del(ctx context.Context, daoModel *dao.DaoModel, idArr ...any) (row int64, err error) {
 	keyArr := make([]string, len(idArr))
 	for index, id := range idArr {
 		keyArr[index] = cacheThis.key(daoModel, id)

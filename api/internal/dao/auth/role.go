@@ -484,7 +484,7 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 // Fill with you ideas below.
 
 func (daoThis *roleDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	value, err := cache.DbData.GetOrSet(ctx, daoThis, id, consts.CACHE_TIME_DEFAULT, append(daoThis.ColumnArr().Slice(), `action_id_arr`, `menu_id_arr`)...)
+	value, err := cache.DbData.GetOrSet(ctx, daoThis.CtxDaoModel(ctx), id, consts.CACHE_TIME_DEFAULT, append(daoThis.ColumnArr().Slice(), `action_id_arr`, `menu_id_arr`)...)
 	if err != nil {
 		return
 	}
@@ -493,7 +493,7 @@ func (daoThis *roleDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Rec
 }
 
 func (daoThis *roleDao) CacheDeleteInfo(ctx context.Context, idArr ...uint) (row int64, err error) {
-	row, err = cache.DbData.Del(ctx, daoThis, gconv.SliceAny(idArr)...)
+	row, err = cache.DbData.Del(ctx, daoThis.CtxDaoModel(ctx), gconv.SliceAny(idArr)...)
 	return
 }
 
