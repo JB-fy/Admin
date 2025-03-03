@@ -6,11 +6,17 @@ import (
 )
 
 type UploadConfig struct {
-	Url             *string `json:"url,omitempty" v:"" dc:"本地-上传地址"`
-	SignKey         *string `json:"signKey,omitempty" v:"" dc:"本地-密钥"`
-	FileSaveDir     *string `json:"fileSaveDir,omitempty" v:"" dc:"本地-保存目录"`
-	FileUrlPrefix   *string `json:"fileUrlPrefix,omitempty" v:"" dc:"本地-文件地址前缀"`
-	Host            *string `json:"host,omitempty" v:"" dc:"阿里云OSS-域名"`
+	SignKey      *string `json:"signKey,omitempty" v:"" dc:"本地-密钥"`
+	Url          *string `json:"url,omitempty" v:"url" dc:"本地-上传地址"`
+	FileSaveDir  *string `json:"fileSaveDir,omitempty" v:"" dc:"本地-保存目录"`
+	IsCluster    *uint   `json:"isCluster,omitempty" v:"in:0,1" dc:"本地-集群服务：0否 1是"`
+	IsSameServer *uint   `json:"isSameServer,omitempty" v:"in:0,1" dc:"本地-单次多文件上传相同服务器：0否 1是"`
+	ServerList   []struct {
+		Ip   string `json:"ip,omitempty" v:"required|ip" dc:"外网IP"`
+		Host string `json:"host,omitempty" v:"required|url" dc:"域名"`
+	} `json:"serverList,omitempty" v:"" dc:"本地-服务器列表"`
+
+	Host            *string `json:"host,omitempty" v:"url" dc:"阿里云OSS-域名"`
 	Bucket          *string `json:"bucket,omitempty" v:"" dc:"阿里云OSS-Bucket"`
 	AccessKeyId     *string `json:"accessKeyId,omitempty" v:"" dc:"阿里云OSS-AccessKeyId"`
 	AccessKeySecret *string `json:"accessKeySecret,omitempty" v:"" dc:"阿里云OSS-AccessKeySecret"`

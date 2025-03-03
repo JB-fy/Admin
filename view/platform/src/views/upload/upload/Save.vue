@@ -10,7 +10,11 @@ const saveForm = reactive({
     data: {
         upload_type: 0,
         ...saveCommon.data,
-        upload_config_0: saveCommon.data.upload_type == 0 && saveCommon.data.upload_config ? JSON.parse(saveCommon.data.upload_config) : {},
+        upload_config_0: (() => {
+            const uploadConfig = saveCommon.data.upload_type == 0 && saveCommon.data.upload_config ? JSON.parse(saveCommon.data.upload_config) : {}
+            uploadConfig.serverList || (uploadConfig.serverList = [])
+            return uploadConfig
+        })(),
         upload_config_1: saveCommon.data.upload_type == 1 && saveCommon.data.upload_config ? JSON.parse(saveCommon.data.upload_config) : {},
     } as { [propName: string]: any },
     rules: {
@@ -28,22 +32,35 @@ const saveForm = reactive({
                 transform: (value: any) => (value ? jsonDecode(value) : undefined),
             },
         ], */
-        'upload_config_0.url': [
-            { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
-        ],
         'upload_config_0.signKey': [
             { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'upload_config_0.fileSaveDir': [
-            { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        'upload_config_0.url': [{ type: 'url', trigger: 'blur', message: t('validation.input') }],
+        'upload_config_0.fileSaveDir': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'upload_config_0.isCluster': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
+        'upload_config_0.serverList': [
+            {
+                type: 'array',
+                trigger: 'change',
+                defaultField: [
+                    {
+                        type: 'object',
+                        fields: {
+                            ip: [
+                                { required: true, message: t('upload.upload.name.upload_config_0.serverList.ip') + t('validation.required') },
+                                { type: 'string', trigger: 'blur', message: t('upload.upload.name.upload_config_0.serverList.ip') + t('validation.input') },
+                            ],
+                            host: [
+                                { required: true, message: t('upload.upload.name.upload_config_0.serverList.host') + t('validation.required') },
+                                { type: 'url', trigger: 'blur', message: t('upload.upload.name.upload_config_0.serverList.host') + t('validation.input') },
+                            ],
+                        },
+                    },
+                ],
+            },
         ],
-        'upload_config_0.fileUrlPrefix': [
-            // { required: computed((): boolean => (saveForm.data.upload_type == 0 ? true : false)), message: t('validation.required') },
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
-        ],
+        'upload_config_0.isSameServer': [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         'upload_config_1.host': [
             { required: computed((): boolean => (saveForm.data.upload_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'url', trigger: 'blur', message: t('validation.url') },
@@ -124,21 +141,62 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.upload_config" type="textarea" :autosize="{ minRows: 3 }" />
                 </el-form-item> -->
                 <template v-if="saveForm.data.upload_type == 0">
+                    <el-form-item :label="t('upload.upload.name.upload_config_0.signKey')" prop="upload_config_0.signKey">
+                        <el-input v-model="saveForm.data.upload_config_0.signKey" :placeholder="t('upload.upload.name.upload_config_0.signKey')" :clearable="true" />
+                    </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_0.url')" prop="upload_config_0.url">
                         <el-input v-model="saveForm.data.upload_config_0.url" :placeholder="t('upload.upload.name.upload_config_0.url')" :clearable="true" style="max-width: 300px" />
                         <el-alert :title="t('upload.upload.tip.upload_config_0.url')" type="info" :show-icon="true" :closable="false" />
-                    </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_0.signKey')" prop="upload_config_0.signKey">
-                        <el-input v-model="saveForm.data.upload_config_0.signKey" :placeholder="t('upload.upload.name.upload_config_0.signKey')" :clearable="true" />
                     </el-form-item>
                     <el-form-item :label="t('upload.upload.name.upload_config_0.fileSaveDir')" prop="upload_config_0.fileSaveDir">
                         <el-input v-model="saveForm.data.upload_config_0.fileSaveDir" :placeholder="t('upload.upload.name.upload_config_0.fileSaveDir')" :clearable="true" style="max-width: 300px" />
                         <el-alert :title="t('upload.upload.tip.upload_config_0.fileSaveDir')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
-                    <el-form-item :label="t('upload.upload.name.upload_config_0.fileUrlPrefix')" prop="upload_config_0.fileUrlPrefix">
-                        <el-input v-model="saveForm.data.upload_config_0.fileUrlPrefix" :placeholder="t('upload.upload.name.upload_config_0.fileUrlPrefix')" :clearable="true" style="max-width: 300px" />
-                        <el-alert :title="t('upload.upload.tip.upload_config_0.fileUrlPrefix')" type="info" :show-icon="true" :closable="false" />
+                    <el-form-item :label="t('upload.upload.name.upload_config_0.isCluster')" prop="upload_config_0.isCluster">
+                        <el-switch
+                            v-model="saveForm.data.upload_config_0.isCluster"
+                            :active-value="(tm('common.status.whether') as any[])[1].value"
+                            :inactive-value="(tm('common.status.whether') as any[])[0].value"
+                            :active-text="(tm('common.status.whether') as any[])[1].label"
+                            :inactive-text="(tm('common.status.whether') as any[])[0].label"
+                            :inline-prompt="true"
+                            style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
+                        />
                     </el-form-item>
+                    <template v-if="saveForm.data.upload_config_0.isCluster">
+                        <el-form-item :label="t('upload.upload.name.upload_config_0.serverList_label')" prop="upload_config_0.serverList" style="min-height: 60px">
+                            <template #label>
+                                <span style="text-align: right">
+                                    <div>{{ t('upload.upload.name.upload_config_0.serverList_label') }}</div>
+                                    <el-button type="primary" size="small" @click="() => saveForm.data.upload_config_0.serverList.push({})"><autoicon-ep-plus />{{ t('common.add') }}</el-button>
+                                </span>
+                            </template>
+                            <el-alert type="info" :show-icon="true" :closable="false" style="width: 100%">
+                                <template #title>
+                                    <span v-html="t('upload.upload.tip.upload_config_0.serverList')"></span>
+                                </template>
+                            </el-alert>
+                            <template v-for="(_, index) in saveForm.data.upload_config_0.serverList" :key="index">
+                                <div style="width: 100%; margin: 3px 0; display: flex; align-items: center; gap: 10px">
+                                    <el-button type="danger" size="small" @click="() => saveForm.data.upload_config_0.serverList.splice(index, 1)"><autoicon-ep-close />{{ t('common.delete') }}</el-button>
+                                    <el-input v-model="saveForm.data.upload_config_0.serverList[index].ip" :placeholder="t('upload.upload.name.upload_config_0.serverList.ip')" :clearable="true" style="max-width: 200px" />
+                                    <el-input v-model="saveForm.data.upload_config_0.serverList[index].host" :placeholder="t('upload.upload.name.upload_config_0.serverList.host')" :clearable="true" />
+                                </div>
+                            </template>
+                        </el-form-item>
+                        <el-form-item :label="t('upload.upload.name.upload_config_0.isSameServer')" prop="upload_config_0.isSameServer">
+                            <el-switch
+                                v-model="saveForm.data.upload_config_0.isSameServer"
+                                :active-value="(tm('common.status.whether') as any[])[1].value"
+                                :inactive-value="(tm('common.status.whether') as any[])[0].value"
+                                :active-text="(tm('common.status.whether') as any[])[1].label"
+                                :inactive-text="(tm('common.status.whether') as any[])[0].label"
+                                :inline-prompt="true"
+                                style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
+                            />
+                            <el-alert :title="t('upload.upload.tip.upload_config_0.isSameServer')" type="info" :show-icon="true" :closable="false" />
+                        </el-form-item>
+                    </template>
                 </template>
                 <template v-else-if="saveForm.data.upload_type == 1">
                     <el-form-item :label="t('upload.upload.name.upload_config_1.host')" prop="upload_config_1.host">

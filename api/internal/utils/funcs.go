@@ -55,16 +55,24 @@ func StringsBuilderPoolPut(builder *strings.Builder) {
 
 // 获取服务器外网ip
 func GetServerNetworkIp() string {
-	cmd := exec.Command(`/bin/bash`, `-c`, `curl -s ifconfig.me`)
-	output, _ := cmd.CombinedOutput()
-	return string(output)
+	for _, v := range []string{`ifconfig.me`, `https://ipinfo.io/ip`, `https://checkip.amazonaws.com`, `https://icanhazip.com`, `https://api.ipify.org`} {
+		cmd := exec.Command(`/bin/bash`, `-c`, `curl -s --max-time 3 `+v)
+		output, _ := cmd.CombinedOutput()
+		if ip := string(output); ip != `` {
+			return ip
+		}
+	}
+	panic(`获取外网IP失败`)
 }
 
 // 获取服务器内网ip
 func GetServerLocalIp() string {
 	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I`)
 	output, _ := cmd.CombinedOutput()
-	return gstr.Trim(string(output))
+	if ip := gstr.Trim(string(output)); ip != `` {
+		return ip
+	}
+	panic(`获取内网IP失败`)
 }
 
 // 获取调用该函数的上层第几个函数的函数名

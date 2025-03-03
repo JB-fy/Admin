@@ -95,19 +95,10 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 		url = gstr.Replace(r.GetUrl(), r.URL.String(), ``) + r.URL.Path
 	case 2: //http(s)://www.xxxx.com/test?a=1&b=2
 		url = r.GetUrl()
-	case 3: //http(s)://本地IP或网络IP:端口
-		if IsDev(ctx) {
-			// url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
-			url = gstr.Replace(r.GetUrl(), r.URL.String(), ``)
-			for _, v := range []string{`0.0.0.0`, `127.0.0.1`} {
-				if gstr.Pos(url, v) != -1 {
-					url = gstr.Replace(url, r.Host, g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
-					break
-				}
-			}
-		} else {
-			url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
-		}
+	case 3: //http(s)://网络IP:端口
+		url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
+	case 4: //http(s)://本地IP:端口
+		url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()+ctx.Value(http.ServerContextKey).(*http.Server).Addr)
 	}
 	return
 }

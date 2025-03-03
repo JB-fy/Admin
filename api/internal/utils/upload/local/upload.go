@@ -1,6 +1,7 @@
 package local
 
 import (
+	"api/internal/consts"
 	"api/internal/utils"
 	"api/internal/utils/upload/model"
 	"context"
@@ -10,6 +11,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"net/http"
+	"net/url"
 	"os"
 	"sort"
 	"time"
@@ -17,6 +19,7 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/encoding/gjson"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -26,17 +29,51 @@ import (
 
 type Upload struct {
 	UploadId      uint   `json:"uploadId"`
-	Url           string `json:"url"`
 	SignKey       string `json:"signKey"`
+	Url           string `json:"url"`
 	FileSaveDir   string `json:"fileSaveDir"`
 	FileUrlPrefix string `json:"fileUrlPrefix"`
+	IsCluster     uint   `json:"isCluster"`
+	IsSameServer  uint   `json:"isSameServer"`
+	ServerList    []struct {
+		Ip   string `json:"ip"`
+		Host string `json:"host"`
+	} `json:"serverList"`
 }
 
 func NewUpload(ctx context.Context, config map[string]any) model.Upload {
 	obj := &Upload{}
 	gconv.Struct(config, obj)
-	if obj.UploadId == 0 || obj.Url == `` || obj.SignKey == `` || obj.FileSaveDir == `` || obj.FileUrlPrefix == `` {
+	if obj.UploadId == 0 || obj.SignKey == `` {
 		panic(`缺少配置：上传-本地`)
+	}
+	if obj.FileSaveDir == `` {
+		obj.FileSaveDir = `../public/`
+	}
+	if obj.Url == `` {
+		obj.Url = utils.GetRequestUrl(ctx, 0) + `/upload/upload`
+		if utils.IsDev(ctx) {
+			obj.Url = utils.GetRequestUrl(ctx, 4) + `/upload/upload`
+		}
+	}
+	urlObj, _ := url.Parse(obj.Url)
+	obj.FileUrlPrefix = urlObj.Scheme + `://` + urlObj.Host
+	if !utils.IsDev(ctx) && obj.IsCluster == 1 {
+		obj.FileUrlPrefix = utils.GetRequestUrl(ctx, 3)
+		serverHostObj, _ := url.Parse(obj.FileUrlPrefix)
+		serverIp := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
+		for _, v := range obj.ServerList {
+			if v.Ip == serverIp {
+				serverHostObj, _ = url.Parse(v.Host)
+				obj.FileUrlPrefix = serverHostObj.Scheme + `://` + serverHostObj.Host
+				break
+			}
+		}
+		if obj.IsSameServer == 1 {
+			urlObj.Scheme = serverHostObj.Scheme
+			urlObj.Host = serverHostObj.Host
+			obj.Url = urlObj.String()
+		}
 	}
 	return obj
 }
