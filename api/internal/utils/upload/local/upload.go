@@ -53,13 +53,13 @@ func NewUpload(ctx context.Context, config map[string]any) model.Upload {
 	if obj.Url == `` {
 		obj.Url = utils.GetRequestUrl(ctx, 0) + `/upload/upload`
 		if utils.IsDev(ctx) {
-			obj.Url = utils.GetRequestUrl(ctx, 4) + `/upload/upload`
+			obj.Url = utils.GetRequestUrl(ctx, 20) + `/upload/upload`
 		}
 	}
 	urlObj, _ := url.Parse(obj.Url)
 	obj.FileUrlPrefix = urlObj.Scheme + `://` + urlObj.Host
 	if !utils.IsDev(ctx) && obj.IsCluster == 1 {
-		obj.FileUrlPrefix = utils.GetRequestUrl(ctx, 3)
+		obj.FileUrlPrefix = utils.GetRequestUrl(ctx, 10)
 		serverHostObj, _ := url.Parse(obj.FileUrlPrefix)
 		serverIp := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
 		for _, v := range obj.ServerList {

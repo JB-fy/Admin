@@ -95,32 +95,42 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 		url = gstr.Replace(r.GetUrl(), r.URL.String(), ``) + r.URL.Path
 	case 2: //http(s)://www.xxxx.com/test?a=1&b=2
 		url = r.GetUrl()
-	case 3: //http://网络IP:端口
-		url = `http://` + g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String() + ctx.Value(http.ServerContextKey).(*http.Server).Addr
-	case 4: //http://本地IP:端口
-		url = `http://` + g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String() + ctx.Value(http.ServerContextKey).(*http.Server).Addr
+	case 10, 20: //http(s)://外网IP:端口	//http(s)://内网IP:端口
+		addr := ctx.Value(http.ServerContextKey).(*http.Server).Addr
+		if gstr.Pos(url, `https`) == 0 {
+			serverHttpsAddr := `server.httpsAddr`
+			if serverName := r.Server.GetName(); serverName != ghttp.DefaultServerName {
+				serverHttpsAddr = `server.` + serverName + `.httpsAddr`
+			}
+			if addrOfHttps := g.Cfg().MustGet(ctx, serverHttpsAddr).String(); addrOfHttps != `` && addrOfHttps != addr {
+				addr = addrOfHttps
+			}
+		}
+		ip := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
+		if flag == 20 {
+			ip = g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()
+		}
+		url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), ip+addr)
 	}
 	return
 }
 
 // 获取文件内容（通用）
-func GetFileBytes(ctx context.Context, fileUrl string, serverOpt ...string) (fileBytes []byte, err error) {
+func GetFileBytes(ctx context.Context, fileUrl string) (fileBytes []byte, err error) {
 	for _, ip := range []string{g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String(), g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()} {
 		if ip != `` && gstr.Pos(fileUrl, ip) != -1 {
-			return GetFileBytesByLocal(ctx, fileUrl, serverOpt...)
+			return GetFileBytesByLocal(ctx, fileUrl)
 		}
 	}
 	return GetFileBytesByRemote(ctx, fileUrl)
 }
 
 // 获取文件内容（本地文件）
-func GetFileBytesByLocal(ctx context.Context, fileUrl string, serverOpt ...string) (fileBytes []byte, err error) {
-	serverRoot := `server`
-	if len(serverOpt) > 0 && serverOpt[0] != `` {
-		serverRoot = serverOpt[0]
+func GetFileBytesByLocal(ctx context.Context, fileUrl string) (fileBytes []byte, err error) {
+	serverRoot := `server.serverRoot`
+	if serverName := g.RequestFromCtx(ctx).Server.GetName(); serverName != ghttp.DefaultServerName {
+		serverRoot = `server.` + serverName + `.serverRoot`
 	}
-	serverRoot += `.serverRoot`
-
 	urlObj, err := url.Parse(fileUrl)
 	file := g.Cfg().MustGet(ctx, serverRoot).String() + urlObj.Path
 	fileBytes = gfile.GetBytes(file)
