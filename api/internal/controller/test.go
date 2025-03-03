@@ -63,6 +63,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	/*--------配置使用示例 结束--------*/
 
 	/*--------日志使用示例 开始--------*/
+	// trace.SpanContextFromContext(ctx).TraceID().String()    //链路跟踪TraceID
 	// g.Log().Info(ctx, `日志打印`, "\r\n", g.Map{`aaaa`: `asd`}) // 记录日志
 	// g.I18n().T(ctx, `code.99999999`)                        // 多语言
 	/*--------日志使用示例 结束--------*/
