@@ -77,12 +77,12 @@ type ActionCreateReq struct {
 /*--------修改 开始--------*/
 type ActionUpdateReq struct {
 	g.Meta     `path:"/action/update" method:"post" tags:"平台后台/权限管理/操作" sm:"修改"`
-	Id         string    `json:"-" filter:"id,omitempty" v:"required-without:IdArr|length:1,30" dc:"ID"`
-	IdArr      []string  `json:"-" filter:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,30" dc:"ID数组"`
-	ActionName *string   `json:"action_name,omitempty" filter:"-" v:"max-length:30" dc:"名称"`
-	Remark     *string   `json:"remark,omitempty" filter:"-" v:"max-length:120" dc:"备注"`
-	SceneIdArr *[]string `json:"scene_id_arr,omitempty" filter:"-" v:"distinct|foreach|max-length:15" dc:"场景ID"`
-	IsStop     *uint     `json:"is_stop,omitempty" filter:"-" v:"in:0,1" dc:"停用：0否 1是"`
+	Id         string    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|length:1,30" dc:"ID"`
+	IdArr      []string  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|length:1,30" dc:"ID数组"`
+	ActionName *string   `json:"action_name,omitempty" filter:"-" data:"action_name,omitempty" v:"max-length:30" dc:"名称"`
+	Remark     *string   `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`
+	SceneIdArr *[]string `json:"scene_id_arr,omitempty" filter:"-" data:"scene_id_arr,omitempty" v:"distinct|foreach|max-length:15" dc:"场景ID"`
+	IsStop     *uint     `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------修改 结束--------*/

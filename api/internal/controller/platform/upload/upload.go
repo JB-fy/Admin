@@ -129,7 +129,7 @@ func (controllerThis *Upload) Create(ctx context.Context, req *apiUpload.UploadC
 func (controllerThis *Upload) Update(ctx context.Context, req *apiUpload.UploadUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
