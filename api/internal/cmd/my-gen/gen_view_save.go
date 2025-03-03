@@ -633,7 +633,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 					`)+`] },	// 限制数组数量时用：max: 10, message: t('validation.max.array', { max: 10 })`)
 			viewSaveField.formContent.Method = internal.ReturnTypeName
 			viewSaveField.formContent.DataTypeName = `<el-space :size="10">
-                        <el-color-picker v-for="(item, index) in saveForm.data.` + tplEM.FieldVar + `" :key="index" v-model="saveForm.data.` + tplEM.FieldVar + `[index]" :show-alpha="true" @change="(val) => (val ? null : saveForm.data.` + tplEM.FieldVar + `.splice(index, 1))" />
+                        <el-color-picker v-for="(_, index) in saveForm.data.` + tplEM.FieldVar + `" :key="index" v-model="saveForm.data.` + tplEM.FieldVar + `[index]" :show-alpha="true" @change="(val) => (val ? null : saveForm.data.` + tplEM.FieldVar + `.splice(index, 1))" />
                         <el-button v-if="saveForm.data.` + tplEM.FieldVar + `.length == 0 || saveForm.data.` + tplEM.FieldVar + `[saveForm.data.` + tplEM.FieldVar + `.length - 1]" type="primary" size="small" @click="saveForm.data.` + tplEM.FieldVar + `.push('')">
                             <autoicon-ep-plus />{{ t('common.add') }}
                         </el-button>
@@ -917,7 +917,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
                         </span>
                     </template>
 
-                    <template v-for="(item, index) in saveForm.data.`+tplEM.FieldVar+`" :key="index">
+                    <template v-for="(_, index) in saveForm.data.`+tplEM.FieldVar+`" :key="index">
                         <div style="width: 100%; margin: 3px 0; display: flex; align-items: center; gap: 10px">
                             <el-button type="danger" size="small" @click="() => saveForm.data.`+tplEM.FieldVar+`.splice(index, 1)"><autoicon-ep-close />{{ t('common.delete') }}</el-button>
                             {{formContent}}
