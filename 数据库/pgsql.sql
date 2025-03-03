@@ -1,10 +1,10 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : Postgresql-1.6.2
+ Source Server         : 本地-PostgreSQL
  Source Server Type    : PostgreSQL
  Source Server Version : 160002 (160002)
- Source Host           : 192.168.0.200:5432
+ Source Host           : 192.168.1.200:5432
  Source Catalog        : admin
  Source Schema         : public
 
@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 23/11/2024 22:50:08
+ Date: 03/03/2025 16:45:45
 */
 
 
@@ -980,7 +980,7 @@ COMMENT ON TABLE "public"."upload" IS '上传表';
 -- ----------------------------
 -- Records of upload
 -- ----------------------------
-INSERT INTO "public"."upload" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, 0, '{"url": "/upload/upload", "signKey": "secretKey", "fileSaveDir": "../public/", "fileUrlPrefix": ""}', 1, '此项目自带简易文件上传接口，故可将此项目部署到服务器，对外提供文件上传下载服务');
+INSERT INTO "public"."upload" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, 0, '{"url": "", "signKey": "secretKey", "isCluster": 1, "fileSaveDir": "", "isSameServer": 0}', 1, '此项目自带文件上传下载功能，可直接部署成文件服务器使用');
 
 -- ----------------------------
 -- Table structure for users
