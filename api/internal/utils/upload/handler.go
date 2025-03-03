@@ -33,13 +33,6 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) model.Handler 
 	}
 	switch uploadType {
 	case 0:
-		/* if utils.IsDev(ctx) {
-			config[`url`] = handlerObj.handleLocalUrl(gconv.String(config[`url`]), 4)
-			config[`fileUrlPrefix`] = handlerObj.handleLocalUrl(gconv.String(config[`fileUrlPrefix`]), 4)
-		} else {
-			config[`url`] = handlerObj.handleLocalUrl(gconv.String(config[`url`]), 0) //多服务器，且需要客户端多个文件都上传到一个服务器时，可改成3
-			config[`fileUrlPrefix`] = handlerObj.handleLocalUrl(gconv.String(config[`fileUrlPrefix`]), 3)
-		} */
 	case 1:
 		if gconv.Bool(config[`isNotify`]) {
 			config[`callbackUrl`] = utils.GetRequestUrl(handlerObj.Ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
@@ -48,26 +41,6 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) model.Handler 
 	handlerObj.upload = NewUpload(ctx, uploadType, config)
 	return handlerObj
 }
-
-/* func (handlerThis *Handler) handleLocalUrl(urlRaw string, flag int) string {
-	if gstr.Pos(urlRaw, `http`) == 0 {
-		return urlRaw
-	}
-	if urlRaw != `` && gstr.Pos(urlRaw, `/`) != 0 {
-		urlRaw = `/` + urlRaw
-	}
-	urlRaw = utils.GetRequestUrl(handlerThis.Ctx, flag) + urlRaw
-	if flag == 0 && utils.IsDev(handlerThis.Ctx) {
-		for _, v := range []string{`0.0.0.0`, `127.0.0.1`} {
-			if gstr.Pos(urlRaw, v) != -1 {
-				urlObj, _ := url.Parse(urlRaw)
-				urlRaw = gstr.Replace(urlRaw, urlObj.Host, g.Cfg().MustGetWithEnv(handlerThis.Ctx, consts.LOCAL_SERVER_LOCAL_IP).String()+handlerThis.Ctx.Value(http.ServerContextKey).(*http.Server).Addr)
-				break
-			}
-		}
-	}
-	return urlRaw
-} */
 
 func (handlerThis *Handler) Upload(r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
 	return handlerThis.upload.Upload(handlerThis.Ctx, r)
