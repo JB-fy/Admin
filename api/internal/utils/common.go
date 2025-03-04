@@ -96,24 +96,18 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 	case 2: //http(s)://www.xxxx.com/test?a=1&b=2
 		url = r.GetUrl()
 	case 10, 20: //http(s)://外网IP:端口	//http(s)://内网IP:端口
-		addr := ctx.Value(http.ServerContextKey).(*http.Server).Addr
-		if gstr.Pos(url, `https`) == 0 {
-			serverHttpsAddr := `server.httpsAddr`
-			if serverName := r.Server.GetName(); serverName != ghttp.DefaultServerName {
-				serverHttpsAddr = `server.` + serverName + `.httpsAddr`
-			}
-			if addrOfHttps := g.Cfg().MustGet(ctx, serverHttpsAddr).String(); addrOfHttps != `` {
-				if gstr.Pos(addrOfHttps, `:`) != 0 {
-					addrOfHttps = `:` + addrOfHttps
-				}
-				addr = addrOfHttps
-			}
-		}
+		url = r.GetUrl()
 		ip := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
 		if flag == 20 {
 			ip = g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()
 		}
-		url = gstr.Replace(r.GetUrl(), r.Host+r.URL.String(), ip+addr)
+		addr := ctx.Value(http.ServerContextKey).(*http.Server).Addr
+		if gstr.Pos(url, `https`) == 0 {
+			if portOfHttps := r.Server.GetListenedHTTPSPort(); portOfHttps != -1 {
+				addr = `:` + gconv.String(portOfHttps)
+			}
+		}
+		url = gstr.Replace(url, r.Host+r.URL.String(), ip+addr)
 	}
 	return
 }
