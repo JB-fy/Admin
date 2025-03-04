@@ -37,6 +37,7 @@ export default {
     phone: '必须是有效的手机号码',
     email: '必须是有效的EMAIL格式',
     url: '必须是有效的URL格式',
+    ip: '必须是有效的IP格式',
     json: '必须是有效的JSON格式',
     regex: '格式是无效的',
     alpha: '只能包含字母',

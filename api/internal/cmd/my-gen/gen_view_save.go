@@ -430,6 +430,8 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.rule.Method = internal.ReturnUnion
 		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'url', trigger: 'blur', message: t('validation.url') },`)
 	case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+		viewSaveField.rule.Method = internal.ReturnUnion
+		viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'string', trigger: 'blur', pattern: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}$|^((?:[A-Fa-f0-9]{1,4}:){0,6}[A-Fa-f0-9]{1,4})?::((?:[A-Fa-f0-9]{1,4}:){0,6}[A-Fa-f0-9]{1,4})?$/, message: t('validation.ip') },`)
 	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<el-color-picker v-model="saveForm.data.` + dataFieldPath + `" :show-alpha="true" />`
@@ -786,6 +788,8 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 			viewSaveFieldTmp.rule.Method = internal.ReturnUnion
 			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'url', message: t('validation.url') },`)
 		case internal.TypeNameIpSuffix: // IP后缀；	类型：varchar；
+			viewSaveFieldTmp.rule.Method = internal.ReturnUnion
+			viewSaveFieldTmp.rule.DataTypeName = append(viewSaveFieldTmp.rule.DataTypeName, `{ type: 'string', pattern: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}$|^((?:[A-Fa-f0-9]{1,4}:){0,6}[A-Fa-f0-9]{1,4})?::((?:[A-Fa-f0-9]{1,4}:){0,6}[A-Fa-f0-9]{1,4})?$/, message: t('validation.ip') },`)
 		case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）

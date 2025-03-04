@@ -49,11 +49,17 @@ const saveForm = reactive({
                         fields: {
                             ip: [
                                 { required: true, message: t('upload.upload.name.upload_config_0.serverList.ip') + t('validation.required') },
-                                { type: 'string', trigger: 'blur', message: t('upload.upload.name.upload_config_0.serverList.ip') + t('validation.input') },
+                                {
+                                    type: 'string',
+                                    trigger: 'blur',
+                                    pattern:
+                                        /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}$|^((?:[A-Fa-f0-9]{1,4}:){0,6}[A-Fa-f0-9]{1,4})?::((?:[A-Fa-f0-9]{1,4}:){0,6}[A-Fa-f0-9]{1,4})?$/,
+                                    message: t('upload.upload.name.upload_config_0.serverList.ip') + t('validation.ip'),
+                                },
                             ],
                             host: [
                                 { required: true, message: t('upload.upload.name.upload_config_0.serverList.host') + t('validation.required') },
-                                { type: 'url', trigger: 'blur', message: t('upload.upload.name.upload_config_0.serverList.host') + t('validation.input') },
+                                { type: 'string', trigger: 'blur', pattern: /^([0-9a-zA-Z][0-9a-zA-Z\-]{0,62}\.)+([a-zA-Z]{0,62})$/, message: t('upload.upload.name.upload_config_0.serverList.host') + t('validation.url') },
                             ],
                         },
                     },

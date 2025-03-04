@@ -13,7 +13,7 @@ type UploadConfig struct {
 	IsSameServer *uint   `json:"isSameServer,omitempty" v:"in:0,1" dc:"本地-单次多文件上传相同服务器：0否 1是"`
 	ServerList   []struct {
 		Ip   string `json:"ip,omitempty" v:"required|ip" dc:"外网IP"`
-		Host string `json:"host,omitempty" v:"required|url" dc:"域名"`
+		Host string `json:"host,omitempty" v:"required|domain" dc:"域名"`
 	} `json:"serverList,omitempty" v:"" dc:"本地-服务器列表"`
 
 	Host            *string `json:"host,omitempty" v:"url" dc:"阿里云OSS-域名"`

@@ -11,7 +11,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"net/http"
-	"net/url"
 	"os"
 	"sort"
 	"time"
@@ -210,25 +209,20 @@ func (uploadThis *Upload) getUrl(ctx context.Context) string {
 	if uploadThis.Url != `` {
 		return uploadThis.Url
 	}
+	apiPath := `/upload/upload`
 	if utils.IsDev(ctx) {
-		return utils.GetRequestUrl(ctx, 20) + `/upload/upload`
+		return utils.GetRequestUrl(ctx, 20) + apiPath
 	}
-	uploadUrl := utils.GetRequestUrl(ctx, 0) + `/upload/upload`
 	if uploadThis.IsCluster == 0 || uploadThis.IsSameServer == 0 {
-		return uploadUrl
+		return utils.GetRequestUrl(ctx, 0) + apiPath
 	}
-	serverHostObj, _ := url.Parse(utils.GetRequestUrl(ctx, 10))
 	serverIp := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
 	for _, v := range uploadThis.ServerList {
 		if v.Ip == serverIp {
-			serverHostObj, _ = url.Parse(v.Host)
-			break
+			return g.RequestFromCtx(ctx).GetSchema() + `://` + v.Host + apiPath //scheme需与原请求一致
 		}
 	}
-	urlObj, _ := url.Parse(uploadUrl)
-	urlObj.Scheme = serverHostObj.Scheme
-	urlObj.Host = serverHostObj.Host
-	return urlObj.String()
+	return utils.GetRequestUrl(ctx, 10) + apiPath
 }
 
 // 获取文件地址前缀
@@ -242,8 +236,7 @@ func (uploadThis *Upload) getFileUrlPrefix(ctx context.Context) string {
 	serverIp := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
 	for _, v := range uploadThis.ServerList {
 		if v.Ip == serverIp {
-			serverHostObj, _ := url.Parse(v.Host)
-			return serverHostObj.Scheme + `://` + serverHostObj.Host
+			return g.RequestFromCtx(ctx).GetSchema() + `://` + v.Host //scheme需与原请求一致
 		}
 	}
 	return utils.GetRequestUrl(ctx, 10)
