@@ -28,14 +28,13 @@ import (
 )
 
 type Upload struct {
-	UploadId      uint   `json:"uploadId"`
-	SignKey       string `json:"signKey"`
-	Url           string `json:"url"`
-	FileSaveDir   string `json:"fileSaveDir"`
-	FileUrlPrefix string `json:"fileUrlPrefix"`
-	IsCluster     uint   `json:"isCluster"`
-	IsSameServer  uint   `json:"isSameServer"`
-	ServerList    []struct {
+	UploadId     uint   `json:"uploadId"`
+	SignKey      string `json:"signKey"`
+	Url          string `json:"url"`
+	FileSaveDir  string `json:"fileSaveDir"`
+	IsCluster    uint   `json:"isCluster"`
+	IsSameServer uint   `json:"isSameServer"`
+	ServerList   []struct {
 		Ip   string `json:"ip"`
 		Host string `json:"host"`
 	} `json:"serverList"`
@@ -49,31 +48,6 @@ func NewUpload(ctx context.Context, config map[string]any) model.Upload {
 	}
 	if obj.FileSaveDir == `` {
 		obj.FileSaveDir = `../public/`
-	}
-	if obj.Url == `` {
-		obj.Url = utils.GetRequestUrl(ctx, 0) + `/upload/upload`
-		if utils.IsDev(ctx) {
-			obj.Url = utils.GetRequestUrl(ctx, 20) + `/upload/upload`
-		}
-	}
-	urlObj, _ := url.Parse(obj.Url)
-	obj.FileUrlPrefix = urlObj.Scheme + `://` + urlObj.Host
-	if !utils.IsDev(ctx) && obj.IsCluster == 1 {
-		obj.FileUrlPrefix = utils.GetRequestUrl(ctx, 10)
-		serverHostObj, _ := url.Parse(obj.FileUrlPrefix)
-		serverIp := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
-		for _, v := range obj.ServerList {
-			if v.Ip == serverIp {
-				serverHostObj, _ = url.Parse(v.Host)
-				obj.FileUrlPrefix = serverHostObj.Scheme + `://` + serverHostObj.Host
-				break
-			}
-		}
-		if obj.IsSameServer == 1 {
-			urlObj.Scheme = serverHostObj.Scheme
-			urlObj.Host = serverHostObj.Host
-			obj.Url = urlObj.String()
-		}
 	}
 	return obj
 }
@@ -145,7 +119,7 @@ func (uploadThis *Upload) Upload(ctx context.Context, r *ghttp.Request) (notifyI
 	}
 	notifyInfo.Size = gconv.Uint(file.Size)
 
-	notifyInfo.Url = uploadThis.FileUrlPrefix + `/` + dir + filename
+	notifyInfo.Url = uploadThis.getFileUrlPrefix(ctx) + `/` + dir + filename
 	//有时文件信息放地址后面，一起保存在数据库中会更好。比如：苹果手机做瀑布流时需要知道图片宽高，这时就能直接从地址中解析获取
 	urlQueryArr := []string{}
 	if notifyInfo.Width > 0 {
@@ -169,8 +143,7 @@ func (uploadThis *Upload) Upload(ctx context.Context, r *ghttp.Request) (notifyI
 // 获取签名（H5直传用）
 func (uploadThis *Upload) Sign(ctx context.Context, param model.UploadParam) (signInfo model.SignInfo, err error) {
 	signInfo = model.SignInfo{
-		UploadUrl: uploadThis.Url,
-		Host:      uploadThis.FileUrlPrefix,
+		UploadUrl: uploadThis.getUrl(ctx),
 		Dir:       param.Dir,
 		Expire:    gconv.Uint(param.Expire),
 		IsRes:     1,
@@ -230,4 +203,46 @@ func (uploadThis *Upload) sign(data map[string]any) (sign string) {
 
 	sign = gmd5.MustEncryptBytes(buf.Bytes())
 	return
+}
+
+// 获取上传地址
+func (uploadThis *Upload) getUrl(ctx context.Context) string {
+	if uploadThis.Url != `` {
+		return uploadThis.Url
+	}
+	if utils.IsDev(ctx) {
+		return utils.GetRequestUrl(ctx, 20) + `/upload/upload`
+	}
+	uploadUrl := utils.GetRequestUrl(ctx, 0) + `/upload/upload`
+	if uploadThis.IsCluster == 0 || uploadThis.IsSameServer == 0 {
+		return uploadUrl
+	}
+	serverHostObj, _ := url.Parse(utils.GetRequestUrl(ctx, 10))
+	serverIp := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
+	for _, v := range uploadThis.ServerList {
+		if v.Ip == serverIp {
+			serverHostObj, _ = url.Parse(v.Host)
+			break
+		}
+	}
+	urlObj, _ := url.Parse(uploadUrl)
+	urlObj.Scheme = serverHostObj.Scheme
+	urlObj.Host = serverHostObj.Host
+	return urlObj.String()
+}
+
+// 获取文件地址前缀
+func (uploadThis *Upload) getFileUrlPrefix(ctx context.Context) string {
+	if uploadThis.IsCluster == 0 {
+		urlObj, _ := url.Parse(uploadThis.getUrl(ctx))
+		return urlObj.Scheme + `://` + urlObj.Host
+	}
+	serverIp := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
+	for _, v := range uploadThis.ServerList {
+		if v.Ip == serverIp {
+			serverHostObj, _ := url.Parse(v.Host)
+			return serverHostObj.Scheme + `://` + serverHostObj.Host
+		}
+	}
+	return utils.GetRequestUrl(ctx, 10)
 }
