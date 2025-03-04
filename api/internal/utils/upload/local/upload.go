@@ -233,6 +233,9 @@ func (uploadThis *Upload) getUrl(ctx context.Context) string {
 
 // 获取文件地址前缀
 func (uploadThis *Upload) getFileUrlPrefix(ctx context.Context) string {
+	if utils.IsDev(ctx) {
+		return utils.GetRequestUrl(ctx, 20)
+	}
 	if uploadThis.IsCluster == 0 {
 		urlObj, _ := url.Parse(uploadThis.getUrl(ctx))
 		return urlObj.Scheme + `://` + urlObj.Host
