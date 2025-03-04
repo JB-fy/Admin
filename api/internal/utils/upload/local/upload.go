@@ -237,8 +237,7 @@ func (uploadThis *Upload) getFileUrlPrefix(ctx context.Context) string {
 		return utils.GetRequestUrl(ctx, 20)
 	}
 	if uploadThis.IsCluster == 0 {
-		urlObj, _ := url.Parse(uploadThis.getUrl(ctx))
-		return urlObj.Scheme + `://` + urlObj.Host
+		return utils.GetRequestUrl(ctx, 0)
 	}
 	serverIp := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
 	for _, v := range uploadThis.ServerList {
