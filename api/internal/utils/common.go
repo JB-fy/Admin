@@ -105,6 +105,8 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 		if gstr.Pos(url, `https`) == 0 {
 			if portOfHttps := r.Server.GetListenedHTTPSPort(); portOfHttps != -1 {
 				addr = `:` + gconv.String(portOfHttps)
+			} else {
+				url = gstr.Replace(url, `https`, `http`, 1)
 			}
 		}
 		url = gstr.Replace(url, r.Host+r.URL.String(), ip+addr)
