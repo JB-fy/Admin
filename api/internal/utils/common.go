@@ -102,7 +102,10 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 			if serverName := r.Server.GetName(); serverName != ghttp.DefaultServerName {
 				serverHttpsAddr = `server.` + serverName + `.httpsAddr`
 			}
-			if addrOfHttps := g.Cfg().MustGet(ctx, serverHttpsAddr).String(); addrOfHttps != `` && addrOfHttps != addr {
+			if addrOfHttps := g.Cfg().MustGet(ctx, serverHttpsAddr).String(); addrOfHttps != `` {
+				if gstr.Pos(addrOfHttps, `:`) != 0 {
+					addrOfHttps = `:` + addrOfHttps
+				}
 				addr = addrOfHttps
 			}
 		}
