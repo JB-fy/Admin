@@ -153,7 +153,7 @@ const upload = reactive({
             }, timeout)
         }
     },
-    //生成保存在云服务器中的文件名及完成地址
+    //生成保存文件名和访问地址（访问地址只在上传无返回地址时有用。目前只在阿里云oss上传未设置回调时有用）
     createSaveInfo: (rawFile: any) => {
         let fileName = upload.signInfo.dir + rawFile.uid + '_' + randomInt(10000000, 99999999) + rawFile.name.slice(rawFile.name.lastIndexOf('.'))
         let url = upload.signInfo.host + '/' + fileName
