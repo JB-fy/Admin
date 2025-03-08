@@ -29,14 +29,14 @@ type SignInfo struct {
 	UploadData map[string]any //上传数据
 	Host       string         //站点域名（当上传无响应数据，前端组件用于与上传目录拼接形成文件访问地址。目前只在阿里云oss上传未设置回调时有用）
 	Dir        string         //上传目录
-	Expire     uint           //过期时间。单位：秒
-	IsRes      uint           //是否有响应信息。0否 1是
+	Expire     int64          //过期时间。单位：秒
+	IsRes      uint8          //是否有响应信息。0否 1是
 }
 
 type NotifyInfo struct {
 	Url      string //地址
+	MimeType string //类型
 	Width    uint   //宽度
 	Height   uint   //高度
 	Size     uint   //大小。单位：比特
-	MimeType string //文件类型
 }

@@ -55,7 +55,7 @@ func (idCardThis *IdCard) Auth(ctx context.Context, idCardName string, idCardNo 
 		"birthday": "1986-08-30",
 	} */
 	idCardInfoMap := resData.Get(`data`).Map()
-	if gender, ok := map[string]uint{`男`: 1, `女`: 2}[gconv.String(idCardInfoMap[`sex`])]; ok {
+	if gender, ok := map[string]uint8{`男`: 1, `女`: 2}[gconv.String(idCardInfoMap[`sex`])]; ok {
 		idCardInfo.Gender = gender
 	}
 	idCardInfo.Address = gconv.String(idCardInfoMap[`address`])

@@ -31,7 +31,7 @@ func (myTimerThis *myTimer) CACHE_WX_GZH_ACCESS_TOKEN(ctx context.Context) {
 		gtimer.SetTimeout(ctx, 5*time.Second, myTimerThis.CACHE_WX_GZH_ACCESS_TOKEN) //5秒后重试
 		return
 	}
-	err = cache.WxGzhAccessToken.Set(ctx, wxGzhObj.AppId, accessTokenInfo.AccessToken, int64(accessTokenInfo.ExpiresIn))
+	err = cache.WxGzhAccessToken.Set(ctx, wxGzhObj.AppId, accessTokenInfo.AccessToken, accessTokenInfo.ExpiresIn)
 	if err != nil {
 		g.Log().Error(ctx, `缓存微信公众号AccessToken错误：`+err.Error(), err)
 		gtimer.SetTimeout(ctx, 5*time.Second, myTimerThis.CACHE_WX_GZH_ACCESS_TOKEN) //5秒后重试

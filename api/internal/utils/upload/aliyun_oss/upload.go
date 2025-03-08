@@ -69,7 +69,7 @@ func (uploadThis *Upload) Sign(ctx context.Context, param model.UploadParam) (si
 		UploadUrl: bucketHost,
 		Host:      bucketHost,
 		Dir:       param.Dir,
-		Expire:    gconv.Uint(param.Expire),
+		Expire:    param.Expire,
 		IsRes:     0,
 	}
 

@@ -27,16 +27,16 @@ import (
 )
 
 type Upload struct {
-	UploadId     uint   `json:"uploadId"`
-	SignKey      string `json:"signKey"`
-	Url          string `json:"url"`
-	FileSaveDir  string `json:"fileSaveDir"`
-	IsCluster    uint   `json:"isCluster"`
-	IsSameServer uint   `json:"isSameServer"`
-	ServerList   []struct {
+	UploadId    uint   `json:"uploadId"`
+	SignKey     string `json:"signKey"`
+	Url         string `json:"url"`
+	FileSaveDir string `json:"fileSaveDir"`
+	ServerList  []struct {
 		Ip   string `json:"ip"`
 		Host string `json:"host"`
 	} `json:"serverList"`
+	IsCluster    uint8 `json:"isCluster"`
+	IsSameServer uint8 `json:"isSameServer"`
 }
 
 func NewUpload(ctx context.Context, config map[string]any) model.Upload {
@@ -144,7 +144,7 @@ func (uploadThis *Upload) Sign(ctx context.Context, param model.UploadParam) (si
 	signInfo = model.SignInfo{
 		UploadUrl: uploadThis.getUrl(ctx),
 		Dir:       param.Dir,
-		Expire:    gconv.Uint(param.Expire),
+		Expire:    param.Expire,
 		IsRes:     1,
 	}
 

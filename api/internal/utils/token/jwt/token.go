@@ -25,7 +25,7 @@ import (
 		公钥命令：openssl ec -in ecc-private-key.pem -pubout -out ecc-public-key.pem
 */
 type Token struct {
-	ExpireTime uint   `json:"expire_time"`
+	ExpireTime int64  `json:"expire_time"`
 	SignType   string `json:"sign_type"`
 	PrivateKey string `json:"private_key"`
 	PublicKey  string `json:"public_key"`
@@ -105,6 +105,6 @@ func (tokenThis *Token) Parse(ctx context.Context, token string) (tokenInfo mode
 	return
 }
 
-func (tokenThis *Token) GetExpireTime() (expireTime int64) {
-	return int64(tokenThis.ExpireTime)
+func (tokenThis *Token) GetExpireTime() int64 {
+	return tokenThis.ExpireTime
 }

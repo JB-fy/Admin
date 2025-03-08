@@ -13,7 +13,7 @@ type IdCard interface {
 }
 
 type IdCardInfo struct {
-	Gender   uint        // 性别：0未设置 1男 2女
 	Birthday *gtime.Time // 生日
 	Address  string      // 详细地址
+	Gender   uint8       // 性别：0未设置 1男 2女
 }

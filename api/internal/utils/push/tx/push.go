@@ -21,7 +21,7 @@ import (
 
 type Push struct {
 	Host      string `json:"host"`
-	AccessID  uint32 `json:"accessID"`
+	AccessID  string `json:"accessID"`
 	SecretKey string `json:"secretKey"`
 	client    *gclient.Client
 }
@@ -29,7 +29,7 @@ type Push struct {
 func NewPush(ctx context.Context, config map[string]any) model.Push {
 	obj := &Push{}
 	gconv.Struct(config, obj)
-	if obj.Host == `` || obj.AccessID == 0 || obj.SecretKey == `` {
+	if obj.Host == `` || obj.AccessID == `` || obj.SecretKey == `` {
 		panic(`缺少插件配置：推送-腾讯移动推送`)
 	}
 	/* // Basic Auth 认证
@@ -41,7 +41,7 @@ func NewPush(ctx context.Context, config map[string]any) model.Push {
 	//签名认证（推荐）。注意：obj.client只初始化一次，请求前不能含有动态数据，否则会造成全局污染。所以动态请求头TimeStamp和Sign必须在中间件中处理，中间件内的r *http.Request参数是请求前临时生成的并且唯一，故不会污染全局
 	obj.client = g.Client().SetHeaderMap(g.MapStrStr{
 		`Content-Type`: `application/json`,
-		`AccessId`:     gconv.String(obj.AccessID),
+		`AccessId`:     obj.AccessID,
 	})
 	obj.client.Use(func(c *gclient.Client, r *http.Request) (resp *gclient.Response, err error) {
 		timeStamp := gtime.Now().Unix()
@@ -168,7 +168,7 @@ func (pushThis *Push) post(ctx context.Context, apiPath string, param g.Map) (re
 
 func (pushThis *Push) sign(timeStamp int64, reqDataJson string) (sign string) {
 	h := hmac.New(sha256.New, []byte(pushThis.SecretKey))
-	h.Write([]byte(fmt.Sprintf(`%d%d%s`, timeStamp, pushThis.AccessID, reqDataJson)))
+	h.Write(fmt.Appendf(nil, `%d%s%s`, timeStamp, pushThis.AccessID, reqDataJson))
 	sha := hex.EncodeToString(h.Sum(nil))
 	sign = base64.StdEncoding.EncodeToString([]byte(sha))
 	return
