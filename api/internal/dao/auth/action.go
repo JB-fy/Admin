@@ -135,7 +135,7 @@ func (daoThis *actionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().ActionId, actionIdArr)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -164,7 +164,7 @@ func (daoThis *actionDao) ParseField(field []string, fieldWithParam map[string]a
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ActionId)
 				daoModel.AfterField.Add(v)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
@@ -239,7 +239,7 @@ func (daoThis *actionDao) ParseInsert(insert map[string]any, daoModel *daoIndex.
 			case `scene_id_arr`:
 				daoModel.AfterInsert[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					insertData[k] = v
 				}
 			}
@@ -289,7 +289,7 @@ func (daoThis *actionDao) ParseUpdate(update map[string]any, daoModel *daoIndex.
 			case `scene_id_arr`:
 				daoModel.AfterUpdate[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					updateData[k] = v
 				}
 			}
@@ -378,7 +378,7 @@ func (daoThis *actionDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel
 			case `id`:
 				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ActionId)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
@@ -400,7 +400,7 @@ func (daoThis *actionDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel
 			case `id`:
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().ActionId, 1))
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)
@@ -437,7 +437,7 @@ func (daoThis *actionDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 
 func (daoThis *actionDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.Fields(append(daoThis.ColumnArr().Slice(), `id`, `label`, `scene_id_arr`)...).All()
+	list, _ := daoModel.Fields(append(daoThis.ColumnArr(), `id`, `label`, `scene_id_arr`)...).All()
 	listMap := map[string]gdb.Result{}
 	for _, info := range list {
 		sceneIdArr := info[`scene_id_arr`].Strings()
@@ -457,7 +457,7 @@ func (daoThis *actionDao) CacheSet(ctx context.Context) {
 func (daoThis *actionDao) CacheGetList(ctx context.Context, sceneId string) (list gdb.Result, err error) {
 	list, _ = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId)
 	if len(list) == 0 {
-		list, err = daoThis.CtxDaoModel(ctx).Fields(append(daoThis.ColumnArr().Slice(), `id`, `label`)...).Filter(ActionRelToScene.Columns().SceneId, sceneId).All()
+		list, err = daoThis.CtxDaoModel(ctx).Fields(append(daoThis.ColumnArr(), `id`, `label`)...).Filter(ActionRelToScene.Columns().SceneId, sceneId).All()
 	}
 	return
 }

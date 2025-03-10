@@ -21,7 +21,7 @@ type Menu struct {
 }
 
 func NewMenu() *Menu {
-	field := daoAuth.Menu.ColumnArr().Slice()
+	field := daoAuth.Menu.ColumnArr()
 	defaultFieldOfList := []string{`id`, `label`, daoAuth.Scene.Columns().SceneName, `p_menu_name`, `is_has_child`}
 	defaultFieldOfInfo := []string{`id`, `label`}
 	defaultFieldOfTree := []string{`id`, `label`}

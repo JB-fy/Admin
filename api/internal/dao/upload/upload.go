@@ -93,7 +93,7 @@ func (daoThis *uploadDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -119,7 +119,7 @@ func (daoThis *uploadDao) ParseField(field []string, fieldWithParam map[string]a
 			case `label`:
 				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
@@ -191,7 +191,7 @@ func (daoThis *uploadDao) ParseInsert(insert map[string]any, daoModel *daoIndex.
 					daoModel.AfterInsert[k] = nil
 				}
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					insertData[k] = v
 				}
 			}
@@ -237,7 +237,7 @@ func (daoThis *uploadDao) ParseUpdate(update map[string]any, daoModel *daoIndex.
 					daoModel.AfterUpdate[k] = v
 				}
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					updateData[k] = v
 				}
 			}
@@ -316,7 +316,7 @@ func (daoThis *uploadDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel
 			case `id`:
 				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().UploadId)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
@@ -338,7 +338,7 @@ func (daoThis *uploadDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel
 			case `id`:
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().UploadId, 1))
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)

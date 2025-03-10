@@ -16,7 +16,7 @@ type App struct {
 }
 
 func NewApp() *App {
-	field := daoApp.App.ColumnArr().Slice()
+	field := daoApp.App.ColumnArr()
 	defaultFieldOfInfo := []string{`id`, `label`}
 	return &App{
 		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
@@ -30,7 +30,7 @@ func (controllerThis *App) Info(ctx context.Context, req *api.AppInfoReq) (res *
 	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 	filter[daoApp.App.Columns().IsStop] = 0
 
-	field := daoApp.App.ColumnArr().Slice()
+	field := daoApp.App.ColumnArr()
 	field = append(field, `download_url_to_app`, `download_url_to_h5`)
 
 	fieldWithParam := g.Map{}

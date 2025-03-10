@@ -126,7 +126,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().MenuId, menuIdArr)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -175,7 +175,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]any
 				// m = m.Fields(gdb.Raw(`JSON_UNQUOTE(JSON_EXTRACT(` + daoThis.Columns().ExtraData + `, '$.i18n')) AS i18n`))	//mysql不能直接转成对象返回
 				daoModel.AfterField.Add(v)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
@@ -276,7 +276,7 @@ func (daoThis *menuDao) ParseInsert(insert map[string]any, daoModel *daoIndex.Da
 				}
 				insertData[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					insertData[k] = v
 				}
 			}
@@ -367,7 +367,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 				}
 				updateData[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					updateData[k] = v
 				}
 			}
@@ -454,7 +454,7 @@ func (daoThis *menuDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) 
 			case `id`:
 				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
@@ -489,7 +489,7 @@ func (daoThis *menuDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) 
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)
@@ -528,7 +528,7 @@ func (daoThis *menuDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 
 func (daoThis *menuDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.Fields(append(daoThis.ColumnArr().Slice(), `id`, `label`, `tree`, `show_menu`)...).All()
+	list, _ := daoModel.Fields(append(daoThis.ColumnArr(), `id`, `label`, `tree`, `show_menu`)...).All()
 	listMap := map[string]gdb.Result{}
 	for _, info := range list {
 		sceneId := info[daoThis.Columns().SceneId].String()
@@ -546,7 +546,7 @@ func (daoThis *menuDao) CacheSet(ctx context.Context) {
 func (daoThis *menuDao) CacheGetList(ctx context.Context, sceneId string) (list gdb.Result, err error) {
 	list, _ = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId)
 	if len(list) == 0 {
-		list, err = daoThis.CtxDaoModel(ctx).Fields(append(daoThis.ColumnArr().Slice(), `id`, `label`, `tree`, `show_menu`)...).Filter(daoThis.Columns().SceneId, sceneId).All()
+		list, err = daoThis.CtxDaoModel(ctx).Fields(append(daoThis.ColumnArr(), `id`, `label`, `tree`, `show_menu`)...).Filter(daoThis.Columns().SceneId, sceneId).All()
 	}
 	return
 }

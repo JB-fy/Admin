@@ -20,7 +20,7 @@ type Channel struct {
 }
 
 func NewChannel() *Channel {
-	field := daoPay.Channel.ColumnArr().Slice()
+	field := daoPay.Channel.ColumnArr()
 	defaultFieldOfList := []string{`id`, `label`, daoPay.Scene.Columns().SceneName, daoPay.Pay.Columns().PayName}
 	defaultFieldOfInfo := []string{`id`, `label`}
 	return &Channel{

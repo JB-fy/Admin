@@ -133,7 +133,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().RoleId, roleIdArr)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -173,7 +173,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RelId)
 				daoModel.AfterField.Add(v)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
@@ -262,7 +262,7 @@ func (daoThis *roleDao) ParseInsert(insert map[string]any, daoModel *daoIndex.Da
 			case `menu_id_arr`:
 				daoModel.AfterInsert[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					insertData[k] = v
 				}
 			}
@@ -319,7 +319,7 @@ func (daoThis *roleDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 			case `menu_id_arr`:
 				daoModel.AfterUpdate[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					updateData[k] = v
 				}
 			}
@@ -420,7 +420,7 @@ func (daoThis *roleDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) 
 			case `id`:
 				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().RoleId)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
@@ -442,7 +442,7 @@ func (daoThis *roleDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) 
 			case `id`:
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().RoleId, 1))
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)
@@ -484,7 +484,7 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 // Fill with you ideas below.
 
 func (daoThis *roleDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	value, err := cache.DbData.GetOrSet(ctx, daoThis.CtxDaoModel(ctx), id, consts.CACHE_TIME_DEFAULT, append(daoThis.ColumnArr().Slice(), `action_id_arr`, `menu_id_arr`)...)
+	value, err := cache.DbData.GetOrSet(ctx, daoThis.CtxDaoModel(ctx), id, consts.CACHE_TIME_DEFAULT, append(daoThis.ColumnArr(), `action_id_arr`, `menu_id_arr`)...)
 	if err != nil {
 		return
 	}

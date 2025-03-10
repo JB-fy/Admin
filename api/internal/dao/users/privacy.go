@@ -95,7 +95,7 @@ func (daoThis *privacyDao) ParseFilter(filter map[string]any, daoModel *daoIndex
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -121,7 +121,7 @@ func (daoThis *privacyDao) ParseField(field []string, fieldWithParam map[string]
 			case `label`:
 				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
@@ -200,7 +200,7 @@ func (daoThis *privacyDao) ParseInsert(insert map[string]any, daoModel *daoIndex
 				password = gmd5.MustEncrypt(password + salt)
 				insertData[k] = password
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					insertData[k] = v
 				}
 			}
@@ -252,7 +252,7 @@ func (daoThis *privacyDao) ParseUpdate(update map[string]any, daoModel *daoIndex
 				password = gmd5.MustEncrypt(password + salt)
 				updateData[k] = password
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					updateData[k] = v
 				}
 			}
@@ -327,7 +327,7 @@ func (daoThis *privacyDao) ParseGroup(group []string, daoModel *daoIndex.DaoMode
 			case `id`:
 				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
@@ -353,7 +353,7 @@ func (daoThis *privacyDao) ParseOrder(order []string, daoModel *daoIndex.DaoMode
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)

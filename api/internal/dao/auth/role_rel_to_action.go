@@ -77,7 +77,7 @@ func (daoThis *roleRelToActionDao) ParseFilter(filter map[string]any, daoModel *
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -99,7 +99,7 @@ func (daoThis *roleRelToActionDao) ParseField(field []string, fieldWithParam map
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
 			daoModel.AfterField.Add(v) */
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
@@ -166,7 +166,7 @@ func (daoThis *roleRelToActionDao) ParseInsert(insert map[string]any, daoModel *
 		for k, v := range insert {
 			switch k {
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					insertData[k] = v
 				}
 			}
@@ -207,7 +207,7 @@ func (daoThis *roleRelToActionDao) ParseUpdate(update map[string]any, daoModel *
 		for k, v := range update {
 			switch k {
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					updateData[k] = v
 				}
 			}
@@ -280,7 +280,7 @@ func (daoThis *roleRelToActionDao) ParseGroup(group []string, daoModel *daoIndex
 		for _, v := range group {
 			switch v {
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
@@ -300,7 +300,7 @@ func (daoThis *roleRelToActionDao) ParseOrder(order []string, daoModel *daoIndex
 			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)

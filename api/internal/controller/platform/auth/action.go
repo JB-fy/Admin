@@ -20,7 +20,7 @@ type Action struct {
 }
 
 func NewAction() *Action {
-	field := daoAuth.Action.ColumnArr().Slice()
+	field := daoAuth.Action.ColumnArr()
 	defaultFieldOfList := []string{`id`, `label`}
 	defaultFieldOfInfo := []string{`id`, `label`, `scene_id_arr`}
 	return &Action{

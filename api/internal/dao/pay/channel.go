@@ -94,7 +94,7 @@ func (daoThis *channelDao) ParseFilter(filter map[string]any, daoModel *daoIndex
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -128,7 +128,7 @@ func (daoThis *channelDao) ParseField(field []string, fieldWithParam map[string]
 				m = m.Fields(tablePay + `.` + v)
 				m = m.Handler(daoThis.ParseJoin(tablePay, daoModel))
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
@@ -195,7 +195,7 @@ func (daoThis *channelDao) ParseInsert(insert map[string]any, daoModel *daoIndex
 		for k, v := range insert {
 			switch k {
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					insertData[k] = v
 				}
 			}
@@ -236,7 +236,7 @@ func (daoThis *channelDao) ParseUpdate(update map[string]any, daoModel *daoIndex
 		for k, v := range update {
 			switch k {
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					updateData[k] = v
 				}
 			}
@@ -311,7 +311,7 @@ func (daoThis *channelDao) ParseGroup(group []string, daoModel *daoIndex.DaoMode
 			case `id`:
 				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ChannelId)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
@@ -337,7 +337,7 @@ func (daoThis *channelDao) ParseOrder(order []string, daoModel *daoIndex.DaoMode
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().ChannelId)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)

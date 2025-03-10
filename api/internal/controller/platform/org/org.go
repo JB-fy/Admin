@@ -20,7 +20,7 @@ type Org struct {
 }
 
 func NewOrg() *Org {
-	field := daoOrg.Org.ColumnArr().Slice()
+	field := daoOrg.Org.ColumnArr()
 	defaultFieldOfList := []string{`id`, `label`}
 	defaultFieldOfInfo := []string{`id`, `label`}
 	return &Org{

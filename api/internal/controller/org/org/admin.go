@@ -20,7 +20,7 @@ type Admin struct {
 }
 
 func NewAdmin() *Admin {
-	field := daoOrg.Admin.ColumnArr().Slice()
+	field := daoOrg.Admin.ColumnArr()
 	field = gset.NewStrSetFrom(field).Diff(gset.NewStrSetFrom([]string{daoOrg.Admin.Columns().Password, daoOrg.Admin.Columns().Salt})).Slice() //移除敏感字段
 	defaultFieldOfList := []string{`id`, `label`, daoOrg.Org.Columns().OrgName}
 	defaultFieldOfInfo := []string{`id`, `label`, `role_id_arr`}

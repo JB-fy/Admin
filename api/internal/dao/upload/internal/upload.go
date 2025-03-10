@@ -8,17 +8,17 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
 // UploadDao is the data access object for table upload.
 type UploadDao struct {
-	table     string           // table is the underlying table name of the DAO.
-	group     string           // group is the database configuration group name of current DAO.
-	columns   UploadColumns    // columns contains all the column names of Table for convenient usage.
-	columnArr *garray.StrArray // 所有字段的数组
+	table     string              // table is the underlying table name of the DAO.
+	group     string              // group is the database configuration group name of current DAO.
+	columns   UploadColumns       // columns contains all the column names of Table for convenient usage.
+	columnArr []string            // 字段数组
+	columnMap map[string]struct{} // 字段map
 }
 
 // UploadColumns defines and stores column names for table upload.
@@ -45,20 +45,20 @@ var uploadColumns = UploadColumns{
 
 // NewUploadDao creates and returns a new DAO object for table data access.
 func NewUploadDao() *UploadDao {
-	return &UploadDao{
+	dao := &UploadDao{
 		group:   `default`,
 		table:   `upload`,
 		columns: uploadColumns,
-		columnArr: func() *garray.StrArray {
-			v := reflect.ValueOf(uploadColumns)
-			count := v.NumField()
-			column := make([]string, count)
-			for i := 0; i < count; i++ {
-				column[i] = v.Field(i).String()
-			}
-			return garray.NewStrArrayFrom(column)
-		}(),
 	}
+	v := reflect.ValueOf(dao.columns)
+	count := v.NumField()
+	dao.columnArr = make([]string, count)
+	dao.columnMap = make(map[string]struct{}, count)
+	for i := 0; i < count; i++ {
+		dao.columnArr[i] = v.Field(i).String()
+		dao.columnMap[v.Field(i).String()] = struct{}{}
+	}
+	return dao
 }
 
 // DB retrieves and returns the underlying raw database management object of current DAO.
@@ -97,7 +97,18 @@ func (dao *UploadDao) Transaction(ctx context.Context, f func(ctx context.Contex
 	return dao.Ctx(ctx).Transaction(ctx, f)
 }
 
-// 所有字段的数组
-func (dao *UploadDao) ColumnArr() *garray.StrArray {
+// 字段数组
+func (dao *UploadDao) ColumnArr() []string {
 	return dao.columnArr
+}
+
+// 字段map
+func (dao *UploadDao) ColumnMap() map[string]struct{} {
+	return dao.columnMap
+}
+
+// 判断字段是否存在
+func (dao *UploadDao) Contains(column string) (ok bool) {
+	_, ok = dao.columnMap[column]
+	return
 }

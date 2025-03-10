@@ -20,7 +20,7 @@ type Upload struct {
 }
 
 func NewUpload() *Upload {
-	field := daoUpload.Upload.ColumnArr().Slice()
+	field := daoUpload.Upload.ColumnArr()
 	defaultFieldOfList := []string{`id`, `label`}
 	defaultFieldOfInfo := []string{`id`, `label`}
 	return &Upload{

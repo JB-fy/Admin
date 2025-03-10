@@ -20,7 +20,7 @@ type App struct {
 }
 
 func NewApp() *App {
-	field := daoApp.App.ColumnArr().Slice()
+	field := daoApp.App.ColumnArr()
 	defaultFieldOfList := []string{`id`, `label`}
 	defaultFieldOfInfo := []string{`id`, `label`}
 	return &App{

@@ -98,7 +98,7 @@ func (daoThis *adminDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -131,7 +131,7 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]an
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().AdminId)
 				daoModel.AfterField.Add(v)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
@@ -212,7 +212,7 @@ func (daoThis *adminDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 			case `role_id_arr`:
 				daoModel.AfterInsert[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					insertData[k] = v
 				}
 			}
@@ -269,7 +269,7 @@ func (daoThis *adminDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 			case `role_id_arr`:
 				daoModel.AfterUpdate[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					updateData[k] = v
 				}
 			}
@@ -356,7 +356,7 @@ func (daoThis *adminDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel)
 			case `id`:
 				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().AdminId)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
@@ -378,7 +378,7 @@ func (daoThis *adminDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel)
 			case `id`:
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().AdminId, 1))
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)

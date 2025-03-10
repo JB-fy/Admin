@@ -20,7 +20,7 @@ type Pay struct {
 }
 
 func NewPay() *Pay {
-	field := daoPay.Pay.ColumnArr().Slice()
+	field := daoPay.Pay.ColumnArr()
 	defaultFieldOfList := []string{`id`, `label`}
 	defaultFieldOfInfo := []string{`id`, `label`}
 	return &Pay{

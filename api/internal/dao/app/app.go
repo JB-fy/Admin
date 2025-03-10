@@ -98,7 +98,7 @@ func (daoThis *appDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Dao
 			case `current_ver_no`:
 				m = m.WhereGT(daoModel.DbTable+`.`+daoThis.Columns().VerNo, v)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
 				} else {
 					m = m.Where(k, v)
@@ -129,7 +129,7 @@ func (daoThis *appDao) ParseField(field []string, fieldWithParam map[string]any,
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraConfig)
 				daoModel.AfterField.Add(v)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Fields(v)
@@ -228,7 +228,7 @@ func (daoThis *appDao) ParseInsert(insert map[string]any, daoModel *daoIndex.Dao
 				}
 				insertData[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					insertData[k] = v
 				}
 			}
@@ -275,7 +275,7 @@ func (daoThis *appDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Dao
 				}
 				updateData[k] = v
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					updateData[k] = v
 				}
 			}
@@ -350,7 +350,7 @@ func (daoThis *appDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) g
 			case `id`:
 				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().AppId)
 			default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Group(v)
@@ -376,7 +376,7 @@ func (daoThis *appDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) g
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().AppId)
 			default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
 				} else {
 					m = m.Order(v)

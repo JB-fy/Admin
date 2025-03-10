@@ -20,7 +20,7 @@ type Users struct {
 }
 
 func NewUsers() *Users {
-	field := daoUsers.Users.ColumnArr().Slice()
+	field := daoUsers.Users.ColumnArr()
 	defaultFieldOfList := []string{`id`, `label`, daoUsers.Privacy.Columns().IdCardNo, daoUsers.Privacy.Columns().IdCardName, daoUsers.Privacy.Columns().IdCardGender, daoUsers.Privacy.Columns().IdCardBirthday, daoUsers.Privacy.Columns().IdCardAddress}
 	defaultFieldOfInfo := []string{`id`, `label`, daoUsers.Privacy.Columns().IdCardNo, daoUsers.Privacy.Columns().IdCardName, daoUsers.Privacy.Columns().IdCardGender, daoUsers.Privacy.Columns().IdCardBirthday, daoUsers.Privacy.Columns().IdCardAddress}
 	return &Users{

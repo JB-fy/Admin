@@ -20,7 +20,7 @@ type Scene struct {
 }
 
 func NewScene() *Scene {
-	field := daoAuth.Scene.ColumnArr().Slice()
+	field := daoAuth.Scene.ColumnArr()
 	defaultFieldOfList := []string{`id`, `label`}
 	defaultFieldOfInfo := []string{`id`, `label`}
 	return &Scene{

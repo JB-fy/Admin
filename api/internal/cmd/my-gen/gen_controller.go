@@ -86,7 +86,7 @@ func genController(option myGenOption, tpl myGenTpl) {
 		if len(controller.diff) > 0 {
 			defaultFieldObj.part2 = append([]string{`field = gset.NewStrSetFrom(field).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`}, defaultFieldObj.part2...)
 		}
-		defaultFieldObj.part2 = append([]string{`field := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr().Slice()`}, defaultFieldObj.part2...)
+		defaultFieldObj.part2 = append([]string{`field := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr()`}, defaultFieldObj.part2...)
 		part3Str := `allowField:         append(field, `
 		if len(defaultFieldObj.part4) == 1 {
 			part3Str += defaultFieldObj.part4[0]

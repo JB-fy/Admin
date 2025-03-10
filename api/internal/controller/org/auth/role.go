@@ -21,7 +21,7 @@ type Role struct {
 }
 
 func NewRole() *Role {
-	field := daoAuth.Role.ColumnArr().Slice()
+	field := daoAuth.Role.ColumnArr()
 	defaultFieldOfList := []string{`id`, `label`}
 	defaultFieldOfInfo := []string{`id`, `label`, `action_id_arr`, `menu_id_arr`}
 	return &Role{
