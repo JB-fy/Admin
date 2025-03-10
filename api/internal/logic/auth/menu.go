@@ -5,8 +5,8 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
+	"slices"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -66,7 +66,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]any, d
 	}
 
 	if _, ok := data[daoAuth.Menu.Columns().Pid]; ok && gconv.Uint(data[daoAuth.Menu.Columns().Pid]) != 0 {
-		if garray.NewArrayFrom(gconv.SliceAny(gconv.Uints(daoModelThis.IdArr))).Contains(gconv.Uint(data[daoAuth.Menu.Columns().Pid])) {
+		if slices.Contains(gconv.Uints(daoModelThis.IdArr), gconv.Uint(data[daoAuth.Menu.Columns().Pid])) {
 			err = utils.NewErrorCode(ctx, 29999996, ``)
 			return
 		}
@@ -76,7 +76,7 @@ func (logicThis *sAuthMenu) Update(ctx context.Context, filter map[string]any, d
 			return
 		}
 		for _, id := range daoModelThis.IdArr {
-			if garray.NewStrArrayFrom(gstr.Split(pInfo[daoAuth.Menu.Columns().IdPath].String(), `-`)).Contains(gconv.String(id)) {
+			if slices.Contains(gstr.Split(pInfo[daoAuth.Menu.Columns().IdPath].String(), `-`), gconv.String(id)) {
 				err = utils.NewErrorCode(ctx, 29999995, ``)
 				return
 			}

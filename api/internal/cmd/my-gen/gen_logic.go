@@ -79,14 +79,14 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 		if tpl.Handle.Pid.IsCoexist {
 			updateAddStr = `
 		for _, id := range daoModelThis.IdArr {
-			if garray.NewStrArrayFrom(gstr.Split(pInfo[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `].String(), ` + "`-`" + `)).Contains(gconv.String(id)) {
+			if slices.Contains(gstr.Split(pInfo[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `].String(), ` + "`-`" + `), gconv.String(id)) {
 				err = utils.NewErrorCode(ctx, 29999995, ` + "``" + `)
 				return
 			}
 		}`
 		}
 		logic.update = append(logic.update, `if _, ok := data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; ok && gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]) `+tpl.Handle.Pid.Tpl.PidJudge+` {
-		if garray.NewArrayFrom(gconv.SliceAny(gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`s(daoModelThis.IdArr))).Contains(gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`])) {
+		if slices.Contains(gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`s(daoModelThis.IdArr), gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`(data[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`])) {
 			err = utils.NewErrorCode(ctx, 29999996, `+"``"+`)
 			return
 		}
