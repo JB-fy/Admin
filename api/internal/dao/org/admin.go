@@ -392,10 +392,10 @@ func (daoThis *adminDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel)
 // 解析join
 func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		if daoModel.JoinTableSet.Contains(joinTable) {
+		if _, ok := daoModel.JoinTableMap[joinTable]; ok {
 			return m
 		}
-		daoModel.JoinTableSet.Add(joinTable)
+		daoModel.JoinTableMap[joinTable] = struct{}{}
 		switch joinTable {
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)

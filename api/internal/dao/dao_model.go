@@ -42,7 +42,7 @@ type DaoModel struct {
 	model               *gdb.Model
 	DbGroup             string // 分库情况下，解析后所确定的库
 	DbTable             string // 分表情况下，解析后所确定的表
-	JoinTableSet        *gset.StrSet
+	JoinTableMap        map[string]struct{}
 	AfterField          *gset.StrSet
 	AfterFieldSlice     []string // 后置处理前，将AfterField转换成AfterFieldSlice，减少列表后置处理多次调用AfterField.Slice()转换
 	AfterFieldWithParam map[string]any
@@ -71,7 +71,7 @@ func (daoModelThis *DaoModel) PutPool() {
 	daoModelThis.AfterFieldWithParam = nil
 	daoModelThis.AfterInsert = nil
 	daoModelThis.AfterUpdate = nil
-	daoModelThis.JoinTableSet = nil
+	daoModelThis.JoinTableMap = nil
 	daoModelThis.IdArr = nil
 	daoModelThis.IsOnlyAfterUpdate = false
 	poolDaoModel.Put(daoModelThis)
@@ -82,7 +82,7 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...any) *DaoModel 
 	daoModelObj := &DaoModel{} // poolDaoModel.Get().(*DaoModel)
 	daoModelObj.Ctx = ctx
 	daoModelObj.dao = dao
-	daoModelObj.JoinTableSet = gset.NewStrSet()
+	daoModelObj.JoinTableMap = map[string]struct{}{}
 	daoModelObj.AfterField = gset.NewStrSet()
 	daoModelObj.AfterFieldWithParam = map[string]any{}
 	daoModelObj.AfterInsert = map[string]any{}
@@ -132,7 +132,7 @@ func (daoModelThis *DaoModel) CloneNew() *DaoModel {
 		db:                  daoModelThis.db,
 		DbGroup:             daoModelThis.DbGroup,
 		DbTable:             daoModelThis.DbTable,
-		JoinTableSet:        gset.NewStrSet(),
+		JoinTableMap:        map[string]struct{}{},
 		AfterField:          gset.NewStrSet(),
 		AfterFieldWithParam: map[string]any{},
 		AfterInsert:         map[string]any{},
@@ -144,7 +144,7 @@ func (daoModelThis *DaoModel) CloneNew() *DaoModel {
 
 // 重置daoModel（所有属性重置）。作用：对同一个表做多次操作时，不用再解析分库分表。注意：要在原daoModel已经不用的情况下使用
 func (daoModelThis *DaoModel) ResetNew() *DaoModel {
-	daoModelThis.JoinTableSet = gset.NewStrSet()
+	daoModelThis.JoinTableMap = map[string]struct{}{}
 	daoModelThis.AfterField = gset.NewStrSet()
 	daoModelThis.AfterFieldSlice = nil
 	daoModelThis.AfterFieldWithParam = map[string]any{}
@@ -232,7 +232,7 @@ func (daoModelThis *DaoModel) SetIdArr(idOrFilterOpt ...any) *DaoModel {
 
 // 判断是否联表
 func (daoModelThis *DaoModel) IsJoin() bool {
-	return daoModelThis.JoinTableSet.Size() > 0
+	return len(daoModelThis.JoinTableMap) > 0
 }
 
 // 联表时，GroupBy主键
