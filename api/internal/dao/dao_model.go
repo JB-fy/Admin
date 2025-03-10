@@ -271,7 +271,7 @@ func (daoModelThis *DaoModel) Filters(filter map[string]any) *DaoModel {
 }
 
 func (daoModelThis *DaoModel) Fields(field ...string) *DaoModel {
-	daoModelThis.Handler(daoModelThis.dao.ParseField(field, map[string]any{}, daoModelThis))
+	daoModelThis.Handler(daoModelThis.dao.ParseField(field, nil, daoModelThis))
 	return daoModelThis
 }
 
@@ -280,7 +280,7 @@ func (daoModelThis *DaoModel) FieldWithParam(key string, val any) *DaoModel {
 }
 
 func (daoModelThis *DaoModel) FieldsWithParam(fieldWithParam map[string]any) *DaoModel {
-	daoModelThis.Handler(daoModelThis.dao.ParseField([]string{}, fieldWithParam, daoModelThis))
+	daoModelThis.Handler(daoModelThis.dao.ParseField(nil, fieldWithParam, daoModelThis))
 	return daoModelThis
 }
 
@@ -438,37 +438,37 @@ func (daoModelThis *DaoModel) UnionAll(unions ...*gdb.Model) *DaoModel {
 }
 
 // 以下Where开头的方法通常情况下不建议使用，更建议使用filter方法代替。只在极个别情况下可临时使用
-func (daoModelThis *DaoModel) Where(where interface{}, args ...interface{}) *DaoModel {
+func (daoModelThis *DaoModel) Where(where any, args ...any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.Where(where, args...)
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) WhereGT(column string, value interface{}) *DaoModel {
+func (daoModelThis *DaoModel) WhereGT(column string, value any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereGT(column, value)
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) WhereGTE(column string, value interface{}) *DaoModel {
+func (daoModelThis *DaoModel) WhereGTE(column string, value any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereGTE(column, value)
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) WhereLT(column string, value interface{}) *DaoModel {
+func (daoModelThis *DaoModel) WhereLT(column string, value any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereLT(column, value)
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) WhereLTE(column string, value interface{}) *DaoModel {
+func (daoModelThis *DaoModel) WhereLTE(column string, value any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereLTE(column, value)
 	return daoModelThis
 }
 
-/* func (daoModelThis *DaoModel) WhereBetween(column string, min interface{}, max interface{}) *DaoModel {
+/* func (daoModelThis *DaoModel) WhereBetween(column string, min any, max any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereBetween(column, min, max)
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) WhereIn(column string, in interface{}) *DaoModel {
+func (daoModelThis *DaoModel) WhereIn(column string, in any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereIn(column, in)
 	return daoModelThis
 }
@@ -483,17 +483,17 @@ func (daoModelThis *DaoModel) WhereNull(columns ...string) *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) WhereNot(column string, value interface{}) *DaoModel {
+func (daoModelThis *DaoModel) WhereNot(column string, value any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereNot(column, value)
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) WhereNotBetween(column string, min interface{}, max interface{}) *DaoModel {
+func (daoModelThis *DaoModel) WhereNotBetween(column string, min any, max any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereNotBetween(column, min, max)
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) WhereNotIn(column string, in interface{}) *DaoModel {
+func (daoModelThis *DaoModel) WhereNotIn(column string, in any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereNotIn(column, in)
 	return daoModelThis
 }
@@ -508,7 +508,7 @@ func (daoModelThis *DaoModel) WhereNotNull(columns ...string) *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) WhereOr(where interface{}, args ...interface{}) *DaoModel {
+func (daoModelThis *DaoModel) WhereOr(where any, args ...any) *DaoModel {
 	daoModelThis.model = daoModelThis.model.WhereOr(where, args...)
 	return daoModelThis
 } */
