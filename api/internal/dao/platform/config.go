@@ -186,8 +186,9 @@ func (daoThis *configDao) ParseInsert(insert map[string]any, daoModel *daoIndex.
 		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
-			case `id`:
+			case `id`, daoThis.Columns().ConfigKey:
 				insertData[daoThis.Columns().ConfigKey] = v
+				daoModel.IdArr = []*gvar.Var{gvar.New(v)}
 			default:
 				if daoThis.Contains(k) {
 					insertData[k] = v
