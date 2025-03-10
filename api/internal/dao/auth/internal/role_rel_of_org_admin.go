@@ -93,7 +93,7 @@ func (dao *RoleRelOfOrgAdminDao) Transaction(ctx context.Context, f func(ctx con
 
 // 字段数组
 func (dao *RoleRelOfOrgAdminDao) ColumnArr() []string {
-	return append([]string{}, dao.columnArr...) 
+	return dao.columnArr
 }
 
 // 字段map

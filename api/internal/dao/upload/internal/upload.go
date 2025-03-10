@@ -99,7 +99,7 @@ func (dao *UploadDao) Transaction(ctx context.Context, f func(ctx context.Contex
 
 // 字段数组
 func (dao *UploadDao) ColumnArr() []string {
-	return append([]string{}, dao.columnArr...) 
+	return dao.columnArr
 }
 
 // 字段map

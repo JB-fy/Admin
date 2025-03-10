@@ -88,7 +88,7 @@ func (dao *{TplTableNameCamelCase}Dao) Transaction(ctx context.Context, f func(c
 
 // 字段数组
 func (dao *{TplTableNameCamelCase}Dao) ColumnArr() []string {
-	return append([]string{}, dao.columnArr...) 
+	return dao.columnArr
 }
 
 // 字段map

@@ -93,7 +93,7 @@ func (dao *RoleRelToMenuDao) Transaction(ctx context.Context, f func(ctx context
 
 // 字段数组
 func (dao *RoleRelToMenuDao) ColumnArr() []string {
-	return append([]string{}, dao.columnArr...) 
+	return dao.columnArr
 }
 
 // 字段map
