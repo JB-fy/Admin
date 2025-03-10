@@ -181,13 +181,17 @@ func genDao(tpl myGenTpl) {
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Fields(tableXxxx + ` + "`.`" + ` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
-			daoModel.AfterField.Add(v) */`
+			daoModel.AfterField[v] = struct{}{} */`
 		tplDao = gstr.Replace(tplDao, fieldParsePoint, fieldParsePoint+gstr.Join(append([]string{``}, dao.fieldParse...), `
 			`), 1)
 	}
 	if len(dao.fieldHook) > 0 {
 		fieldHookPoint := `default:
-			record[v] = gvar.New(nil)`
+			if v == struct{}{} {
+				record[k] = gvar.New(nil)
+			} else {
+				record[k] = gvar.New(v)
+			}`
 		tplDao = gstr.Replace(tplDao, fieldHookPoint, gstr.Join(append(dao.fieldHook, ``), `
 		`)+fieldHookPoint, 1)
 	}
@@ -528,7 +532,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				m = m.Handler(daoThis.ParseJoin(tableP, daoModel))`)
 		daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_has_child`)+"`"+`:
 				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)
-				daoModel.AfterField.Add(v)`)
+				daoModel.AfterField[v] = struct{}{}`)
 		daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`tree`"+`:
 				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)
 				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+v.FieldCaseCamel+`)
@@ -540,7 +544,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			if count, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+v.FieldCaseCamel+`, record[`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`]).Count(); count > 0 {
 				isHasChild = 1
 			}
-			record[v] = gvar.New(isHasChild)`)
+			record[k] = gvar.New(isHasChild)`)
 
 		orderParseStr := `case ` + "`tree`" + `:`
 		if tpl.Handle.Pid.Level != `` {
@@ -1056,7 +1060,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 
 	dao.fieldParse = append(dao.fieldParse, `case `+"`"+tplEM.FieldVar+"`"+`:
 				m = m.Fields(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`)
-				daoModel.AfterField.Add(v)`)
+				daoModel.AfterField[v] = struct{}{}`)
 	dao.insertParse = append(dao.insertParse, `case `+"`"+tplEM.FieldVar+"`"+`:
 				daoModel.AfterInsert[k] = v`)
 	dao.updateParse = append(dao.updateParse, `case `+"`"+tplEM.FieldVar+"`"+`:
@@ -1064,7 +1068,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 	if len(tplEM.FieldList) == 1 {
 		dao.fieldHook = append(dao.fieldHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 			`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
-			record[v] = gvar.New(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)`)
+			record[k] = gvar.New(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					vArr := gconv.SliceAny(v)
 					insertList := make([]map[string]any, len(vArr))
@@ -1081,7 +1085,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 	} else {
 		dao.fieldHook = append(dao.fieldHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 			`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]). /* OrderAsc(`+tplEM.daoPath+`.Columns().CreatedAt). */ All()	// 有顺序要求时使用，自定义OrderAsc
-			record[v] = gvar.New(gjson.MustEncodeString(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)) //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效`)
+			record[k] = gvar.New(gjson.MustEncodeString(`+gstr.CaseCamelLower(tplEM.FieldVar)+`)) //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					vList := gconv.Maps(v)
 					insertList := make([]map[string]any, len(vList))

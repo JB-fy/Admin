@@ -118,7 +118,7 @@ func (daoThis *appDao) ParseField(field []string, fieldWithParam map[string]any,
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
-			daoModel.AfterField.Add(v) */
+			daoModel.AfterField[v] = struct{}{} */
 			case `id`:
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
@@ -127,7 +127,7 @@ func (daoThis *appDao) ParseField(field []string, fieldWithParam map[string]any,
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().AppType)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().PackageFile)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraConfig)
-				daoModel.AfterField.Add(v)
+				daoModel.AfterField[v] = struct{}{}
 			default:
 				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -139,10 +139,10 @@ func (daoThis *appDao) ParseField(field []string, fieldWithParam map[string]any,
 		for k, v := range fieldWithParam {
 			switch k {
 			default:
-				daoModel.AfterFieldWithParam[k] = v
+				daoModel.AfterField[k] = v
 			}
 		}
-		if daoModel.AfterField.Size() > 0 || len(daoModel.AfterFieldWithParam) > 0 {
+		if len(daoModel.AfterField) > 0 {
 			m = m.Hook(daoThis.HookSelect(daoModel))
 		}
 		return m
@@ -151,10 +151,10 @@ func (daoThis *appDao) ParseField(field []string, fieldWithParam map[string]any,
 
 // 处理afterField
 func (daoThis *appDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterFieldSlice {
-		switch v {
+	for k, v := range daoModel.AfterField {
+		switch k {
 		case `download_url_to_app`, `download_url_to_h5`:
-			if _, ok := record[v]; ok {
+			if _, ok := record[k]; ok {
 				continue
 			}
 			// m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraConfig)
@@ -173,12 +173,6 @@ func (daoThis *appDao) HandleAfterField(ctx context.Context, record gdb.Record, 
 				record[`download_url_to_app`] = record[daoThis.Columns().PackageFile]
 				record[`download_url_to_h5`] = record[daoThis.Columns().PackageFile]
 			}
-		default:
-			record[v] = gvar.New(nil)
-		}
-	}
-	for k, v := range daoModel.AfterFieldWithParam {
-		switch k {
 		case `is_force`: //参数：当前版本号
 			isForce := 0
 			if sum, _ := daoModel.CloneNew().GetModel().Where(daoThis.Columns().AppType, record[daoThis.Columns().AppType]).
@@ -188,6 +182,12 @@ func (daoThis *appDao) HandleAfterField(ctx context.Context, record gdb.Record, 
 				isForce = 1
 			}
 			record[k] = gvar.New(isForce)
+		default:
+			if v == struct{}{} {
+				record[k] = gvar.New(nil)
+			} else {
+				record[k] = gvar.New(v)
+			}
 		}
 	}
 }
@@ -203,7 +203,6 @@ func (daoThis *appDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
-			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()

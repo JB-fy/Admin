@@ -153,7 +153,7 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
-			daoModel.AfterField.Add(v) */
+			daoModel.AfterField[v] = struct{}{} */
 			case `id`:
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
@@ -164,14 +164,14 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 				m = m.Handler(daoThis.ParseJoin(tableScene, daoModel))
 			case `action_id_arr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RoleId)
-				daoModel.AfterField.Add(v)
+				daoModel.AfterField[v] = struct{}{}
 			case `menu_id_arr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RoleId)
-				daoModel.AfterField.Add(v)
+				daoModel.AfterField[v] = struct{}{}
 			case `rel_name`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().SceneId)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RelId)
-				daoModel.AfterField.Add(v)
+				daoModel.AfterField[v] = struct{}{}
 			default:
 				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -183,10 +183,10 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 		for k, v := range fieldWithParam {
 			switch k {
 			default:
-				daoModel.AfterFieldWithParam[k] = v
+				daoModel.AfterField[k] = v
 			}
 		}
-		if daoModel.AfterField.Size() > 0 || len(daoModel.AfterFieldWithParam) > 0 {
+		if len(daoModel.AfterField) > 0 {
 			m = m.Hook(daoThis.HookSelect(daoModel))
 		}
 		return m
@@ -195,14 +195,14 @@ func (daoThis *roleDao) ParseField(field []string, fieldWithParam map[string]any
 
 // 处理afterField
 func (daoThis *roleDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterFieldSlice {
-		switch v {
+	for k, v := range daoModel.AfterField {
+		switch k {
 		case `action_id_arr`:
 			actionIdArr, _ := RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToAction.Columns().ActionId)
-			record[v] = gvar.New(actionIdArr)
+			record[k] = gvar.New(actionIdArr)
 		case `menu_id_arr`:
 			menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToMenu.Columns().MenuId)
-			record[v] = gvar.New(menuIdArr)
+			record[k] = gvar.New(menuIdArr)
 		case `rel_name`:
 			relName := ``
 			if record[daoThis.Columns().RelId].Uint() == 0 {
@@ -214,17 +214,15 @@ func (daoThis *roleDao) HandleAfterField(ctx context.Context, record gdb.Record,
 					relName, _ = daoOrg.Org.CtxDaoModel(ctx).FilterPri(record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)
 				}
 			}
-			record[v] = gvar.New(relName)
+			record[k] = gvar.New(relName)
 		default:
-			record[v] = gvar.New(nil)
+			if v == struct{}{} {
+				record[k] = gvar.New(nil)
+			} else {
+				record[k] = gvar.New(v)
+			}
 		}
 	}
-	/* for k, v := range daoModel.AfterFieldWithParam {
-		switch k {
-		case `xxxx`:
-			record[k] = gvar.New(v)
-		}
-	} */
 }
 
 // hook select
@@ -238,7 +236,6 @@ func (daoThis *roleDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
-			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()

@@ -113,7 +113,7 @@ func (daoThis *uploadDao) ParseField(field []string, fieldWithParam map[string]a
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
-			daoModel.AfterField.Add(v) */
+			daoModel.AfterField[v] = struct{}{} */
 			case `id`:
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
@@ -129,10 +129,10 @@ func (daoThis *uploadDao) ParseField(field []string, fieldWithParam map[string]a
 		for k, v := range fieldWithParam {
 			switch k {
 			default:
-				daoModel.AfterFieldWithParam[k] = v
+				daoModel.AfterField[k] = v
 			}
 		}
-		if daoModel.AfterField.Size() > 0 || len(daoModel.AfterFieldWithParam) > 0 {
+		if len(daoModel.AfterField) > 0 {
 			m = m.Hook(daoThis.HookSelect(daoModel))
 		}
 		return m
@@ -141,18 +141,16 @@ func (daoThis *uploadDao) ParseField(field []string, fieldWithParam map[string]a
 
 // 处理afterField
 func (daoThis *uploadDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterFieldSlice {
-		switch v {
+	for k, v := range daoModel.AfterField {
+		switch k {
 		default:
-			record[v] = gvar.New(nil)
+			if v == struct{}{} {
+				record[k] = gvar.New(nil)
+			} else {
+				record[k] = gvar.New(v)
+			}
 		}
 	}
-	/* for k, v := range daoModel.AfterFieldWithParam {
-		switch k {
-		case `xxxx`:
-			record[k] = gvar.New(v)
-		}
-	} */
 }
 
 // hook select
@@ -166,7 +164,6 @@ func (daoThis *uploadDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
-			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()

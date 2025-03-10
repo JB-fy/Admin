@@ -118,14 +118,14 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]an
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
-			daoModel.AfterField.Add(v) */
+			daoModel.AfterField[v] = struct{}{} */
 			case `id`:
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
 			case `role_id_arr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().AdminId)
-				daoModel.AfterField.Add(v)
+				daoModel.AfterField[v] = struct{}{}
 			default:
 				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -137,10 +137,10 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]an
 		for k, v := range fieldWithParam {
 			switch k {
 			default:
-				daoModel.AfterFieldWithParam[k] = v
+				daoModel.AfterField[k] = v
 			}
 		}
-		if daoModel.AfterField.Size() > 0 || len(daoModel.AfterFieldWithParam) > 0 {
+		if len(daoModel.AfterField) > 0 {
 			m = m.Hook(daoThis.HookSelect(daoModel))
 		}
 		return m
@@ -149,21 +149,19 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]an
 
 // 处理afterField
 func (daoThis *adminDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterFieldSlice {
-		switch v {
+	for k, v := range daoModel.AfterField {
+		switch k {
 		case `role_id_arr`:
 			roleIdArr, _ := daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, record[daoThis.Columns().AdminId]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
-			record[v] = gvar.New(roleIdArr)
+			record[k] = gvar.New(roleIdArr)
 		default:
-			record[v] = gvar.New(nil)
+			if v == struct{}{} {
+				record[k] = gvar.New(nil)
+			} else {
+				record[k] = gvar.New(v)
+			}
 		}
 	}
-	/* for k, v := range daoModel.AfterFieldWithParam {
-		switch k {
-		case `xxxx`:
-			record[k] = gvar.New(v)
-		}
-	} */
 }
 
 // hook select
@@ -177,7 +175,6 @@ func (daoThis *adminDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
-			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()

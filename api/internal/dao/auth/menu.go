@@ -146,7 +146,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]any
 			tableXxxx := Xxxx.ParseDbTable(m.GetCtx())
 			m = m.Fields(tableXxxx + `.` + v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel))
-			daoModel.AfterField.Add(v) */
+			daoModel.AfterField[v] = struct{}{} */
 			case `id`:
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
@@ -161,7 +161,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]any
 				m = m.Handler(daoThis.ParseJoin(tableP, daoModel))
 			case `is_has_child`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
-				daoModel.AfterField.Add(v)
+				daoModel.AfterField[v] = struct{}{}
 			case `tree`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().Pid)
@@ -173,7 +173,7 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]any
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraData)
 				// m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraData + `->'$.i18n' AS i18n`)	//mysql5.6版本不支持
 				// m = m.Fields(gdb.Raw(`JSON_UNQUOTE(JSON_EXTRACT(` + daoThis.Columns().ExtraData + `, '$.i18n')) AS i18n`))	//mysql不能直接转成对象返回
-				daoModel.AfterField.Add(v)
+				daoModel.AfterField[v] = struct{}{}
 			default:
 				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -185,10 +185,10 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]any
 		for k, v := range fieldWithParam {
 			switch k {
 			default:
-				daoModel.AfterFieldWithParam[k] = v
+				daoModel.AfterField[k] = v
 			}
 		}
-		if daoModel.AfterField.Size() > 0 || len(daoModel.AfterFieldWithParam) > 0 {
+		if len(daoModel.AfterField) > 0 {
 			m = m.Hook(daoThis.HookSelect(daoModel))
 		}
 		return m
@@ -197,14 +197,14 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]any
 
 // 处理afterField
 func (daoThis *menuDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
-	for _, v := range daoModel.AfterFieldSlice {
-		switch v {
+	for k, v := range daoModel.AfterField {
+		switch k {
 		case `is_has_child`:
 			isHasChild := 0
 			if count, _ := daoModel.CloneNew().Filter(daoThis.Columns().Pid, record[daoThis.Columns().MenuId]).Count(); count > 0 {
 				isHasChild = 1
 			}
-			record[v] = gvar.New(isHasChild)
+			record[k] = gvar.New(isHasChild)
 		case `show_menu`:
 			extraDataJson := gjson.New(record[daoThis.Columns().ExtraData])
 			record[`i18n`] = extraDataJson.Get(`i18n`)
@@ -212,15 +212,13 @@ func (daoThis *menuDao) HandleAfterField(ctx context.Context, record gdb.Record,
 				record[`i18n`] = gvar.New(map[string]any{`title`: map[string]any{`zh-cn`: record[daoThis.Columns().MenuName]}})
 			}
 		default:
-			record[v] = gvar.New(nil)
+			if v == struct{}{} {
+				record[k] = gvar.New(nil)
+			} else {
+				record[k] = gvar.New(v)
+			}
 		}
 	}
-	/* for k, v := range daoModel.AfterFieldWithParam {
-		switch k {
-		case `xxxx`:
-			record[k] = gvar.New(v)
-		}
-	} */
 }
 
 // hook select
@@ -234,7 +232,6 @@ func (daoThis *menuDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 
 			var wg sync.WaitGroup
 			wg.Add(len(result))
-			daoModel.AfterFieldSlice = daoModel.AfterField.Slice()
 			for _, record := range result {
 				go func(record gdb.Record) {
 					defer wg.Done()
