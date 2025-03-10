@@ -113,7 +113,7 @@ func (dao *OrderDao) Transaction(ctx context.Context, f func(ctx context.Context
 
 // 字段数组
 func (dao *OrderDao) ColumnArr() []string {
-	return dao.columnArr
+	return append([]string{}, dao.columnArr...) 
 }
 
 // 字段map

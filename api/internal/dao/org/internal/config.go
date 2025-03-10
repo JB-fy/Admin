@@ -95,7 +95,7 @@ func (dao *ConfigDao) Transaction(ctx context.Context, f func(ctx context.Contex
 
 // 字段数组
 func (dao *ConfigDao) ColumnArr() []string {
-	return dao.columnArr
+	return append([]string{}, dao.columnArr...) 
 }
 
 // 字段map

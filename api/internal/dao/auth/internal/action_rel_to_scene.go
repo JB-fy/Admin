@@ -93,7 +93,7 @@ func (dao *ActionRelToSceneDao) Transaction(ctx context.Context, f func(ctx cont
 
 // 字段数组
 func (dao *ActionRelToSceneDao) ColumnArr() []string {
-	return dao.columnArr
+	return append([]string{}, dao.columnArr...) 
 }
 
 // 字段map
