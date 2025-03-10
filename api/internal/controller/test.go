@@ -3,12 +3,11 @@ package controller
 import (
 	"api/api"
 
-	daoAuth "api/internal/dao/auth"
+	// daoAuth "api/internal/dao/auth"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/util/gutil"
 )
 
 type Test struct{}
@@ -18,10 +17,6 @@ func NewTest() *Test {
 }
 
 func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, err error) {
-	field := daoAuth.Scene.ColumnArr()
-	field = append(field, `111`)
-	gutil.Dump(daoAuth.Scene.ColumnArr())
-	gutil.Dump(field)
 	// time.Sleep(10 * time.Second) // 睡眠几秒
 	// ghttp.RestartAllServer(ctx)  // 重启服务
 	// httpServer := ctx.Value(http.ServerContextKey).(*http.Server) // 获取当前http服务配置信息
