@@ -200,7 +200,7 @@ func genDao(tpl myGenTpl) {
 	}
 	if len(dao.insertParse) > 0 {
 		insertParsePoint := `default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					insertData[k] = v
 				}`
 		tplDao = gstr.Replace(tplDao, insertParsePoint, gstr.Join(append(dao.insertParse, ``), `
@@ -231,7 +231,7 @@ func genDao(tpl myGenTpl) {
 	// 解析update
 	if len(dao.updateParse) > 0 {
 		updateParsePoint := `default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					updateData[k] = v
 				}`
 		tplDao = gstr.Replace(tplDao, updateParsePoint, gstr.Join(append(dao.updateParse, ``), `
@@ -304,7 +304,7 @@ func genDao(tpl myGenTpl) {
 	// 解析order
 	if len(dao.groupParse) > 0 {
 		groupParsePoint := `default:
-				if daoThis.ColumnArr().Contains(v) {
+				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + ` + "`.`" + ` + v)
 				} else {
 					m = m.Group(v)
@@ -316,7 +316,7 @@ func genDao(tpl myGenTpl) {
 	// 解析order
 	if len(dao.orderParse) > 0 {
 		orderParsePoint := `default:
-				if daoThis.ColumnArr().Contains(k) {
+				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + ` + "`.`" + ` + v)
 				} else {
 					m = m.Order(v)
@@ -803,7 +803,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
 
 	dao.insertParse = append(dao.insertParse, `case `+gstr.Join(tplEM.FieldColumnArr, `, `)+`:
-				if garray.NewStrArrayFrom([]string{`+"``, `0`, `[]`, `{}`"+`}).Contains(gconv.String(v)) { //gvar.New(v).IsEmpty()无法验证指针的值是空的数据
+				if slices.Contains([]string{`+"``, `0`, `[]`, `{}`"+`}, gconv.String(v)) { //gvar.New(v).IsEmpty()无法验证指针的值是空的数据
 					continue
 				}
 				insertData, ok := daoModel.AfterInsert[`+"`"+tplEM.FieldVar+"`"+`].(map[string]any)
