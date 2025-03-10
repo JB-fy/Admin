@@ -8,17 +8,17 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
 // AdminDao is the data access object for table platform_admin.
 type AdminDao struct {
-	table     string           // table is the underlying table name of the DAO.
-	group     string           // group is the database configuration group name of current DAO.
-	columns   AdminColumns     // columns contains all the column names of Table for convenient usage.
-	columnArr *garray.StrArray // 所有字段的数组
+	table     string              // table is the underlying table name of the DAO.
+	group     string              // group is the database configuration group name of current DAO.
+	columns   AdminColumns        // columns contains all the column names of Table for convenient usage.
+	columnArr []string            // 字段数组
+	columnMap map[string]struct{} // 字段map
 }
 
 // AdminColumns defines and stores column names for table platform_admin.
@@ -55,20 +55,20 @@ var adminColumns = AdminColumns{
 
 // NewAdminDao creates and returns a new DAO object for table data access.
 func NewAdminDao() *AdminDao {
-	return &AdminDao{
+	dao := &AdminDao{
 		group:   `default`,
 		table:   `platform_admin`,
 		columns: adminColumns,
-		columnArr: func() *garray.StrArray {
-			v := reflect.ValueOf(adminColumns)
-			count := v.NumField()
-			column := make([]string, count)
-			for i := 0; i < count; i++ {
-				column[i] = v.Field(i).String()
-			}
-			return garray.NewStrArrayFrom(column)
-		}(),
 	}
+	v := reflect.ValueOf(dao.columns)
+	count := v.NumField()
+	dao.columnArr = make([]string, count)
+	dao.columnMap = make(map[string]struct{}, count)
+	for i := 0; i < count; i++ {
+		dao.columnArr[i] = v.Field(i).String()
+		dao.columnMap[v.Field(i).String()] = struct{}{}
+	}
+	return dao
 }
 
 // DB retrieves and returns the underlying raw database management object of current DAO.
@@ -107,7 +107,18 @@ func (dao *AdminDao) Transaction(ctx context.Context, f func(ctx context.Context
 	return dao.Ctx(ctx).Transaction(ctx, f)
 }
 
-// 所有字段的数组
-func (dao *AdminDao) ColumnArr() *garray.StrArray {
+// 字段数组
+func (dao *AdminDao) ColumnArr() []string {
 	return dao.columnArr
+}
+
+// 字段map
+func (dao *AdminDao) ColumnMap() map[string]struct{} {
+	return dao.columnMap
+}
+
+// 判断字段是否存在
+func (dao *AdminDao) Contains(column string) (ok bool) {
+	_, ok = dao.columnMap[column]
+	return
 }
