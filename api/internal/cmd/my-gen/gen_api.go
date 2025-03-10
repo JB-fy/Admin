@@ -4,8 +4,8 @@ import (
 	"api/internal/cmd/my-gen/internal"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
+	"slices"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -45,7 +45,7 @@ func (apiThis *myGenApi) Add(apiField myGenApiField, field myGenField, tableType
 	}
 	if apiField.createType.GetData() != `` {
 		saveRuleArr := apiField.saveRule.GetData()
-		if apiField.isRequired && garray.NewFrom([]any{internal.TableTypeDefault, internal.TableTypeExtendOne, internal.TableTypeMiddleOne}).Contains(tableType) {
+		if apiField.isRequired && slices.Contains([]internal.MyGenTableType{internal.TableTypeDefault, internal.TableTypeExtendOne, internal.TableTypeMiddleOne}, tableType) {
 			saveRuleArr = append([]string{`required`}, saveRuleArr...)
 		}
 		apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(saveRuleArr, `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
@@ -485,7 +485,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		)
 	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		apiField.filterType.Method = internal.ReturnType
-		if !garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(v.FieldType) {
+		if !slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, v.FieldType) {
 			apiField.filterType.DataType = `*string`
 		}
 
@@ -552,7 +552,7 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl.Table != `` {
-			if !apiField.isRequired && garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(v.FieldType) && relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
+			if !apiField.isRequired && slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, v.FieldType) && relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
 				for index, rule := range apiField.saveRule.DataType {
 					if rule == `between:`+v.FieldLimitInt.Min+`,`+v.FieldLimitInt.Max {
 						apiField.saveRule.DataType[index] = `between:0,` + v.FieldLimitInt.Max

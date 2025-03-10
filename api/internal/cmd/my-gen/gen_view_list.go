@@ -2,8 +2,8 @@ package my_gen
 
 import (
 	"api/internal/cmd/my-gen/internal"
+	"slices"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -77,7 +77,7 @@ func genViewList(option myGenOption, tpl myGenTpl) {
 		rowHeight: 50,
 		idType:    `number`,
 	}
-	if len(tpl.Handle.Id.List) > 1 || !garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(tpl.Handle.Id.List[0].FieldType) {
+	if len(tpl.Handle.Id.List) > 1 || !slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, tpl.Handle.Id.List[0].FieldType) {
 		viewList.idType = `string`
 	}
 	for _, v := range tpl.FieldListOfDefault {

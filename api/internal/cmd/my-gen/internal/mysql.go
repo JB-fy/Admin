@@ -2,8 +2,8 @@ package internal
 
 import (
 	"context"
+	"slices"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -55,7 +55,7 @@ func (dbHandler mysql) GetKeyList(ctx context.Context, group, table string) (key
 	fieldArrMap := map[string][]string{}
 	for _, v := range keyListTmp {
 		keyName := v[`Key_name`].String()
-		if !garray.NewStrArrayFrom(keyNameList).Contains(keyName) {
+		if !slices.Contains(keyNameList, keyName) {
 			keyNameList = append(keyNameList, keyName)
 		}
 		fieldArrMap[keyName] = append(fieldArrMap[keyName], v[`Column_name`].String())

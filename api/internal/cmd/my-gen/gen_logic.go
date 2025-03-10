@@ -3,6 +3,7 @@ package my_gen
 import (
 	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
+	"slices"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
@@ -274,7 +275,7 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 				logic.i18n.Add(i18nField)
 				daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 				sliceFuncStr := `Uints`
-				if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(v.FieldType) {
+				if slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, v.FieldType) {
 					sliceFuncStr = `Strings`
 				} else if v.FieldType == internal.TypeInt && !relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
 					sliceFuncStr = `Ints`
@@ -310,7 +311,7 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 					fieldCaseCamelLower := gstr.CaseCamelLower(v.FieldCaseCamel)
 					part1 := `uint`
 					part2 := fieldCaseCamelLower + ` := gconv.Uint(item[` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `]); ` + fieldCaseCamelLower + ` > 0`
-					if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(v.FieldType) {
+					if slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, v.FieldType) {
 						part1 = `string`
 						part2 = fieldCaseCamelLower + ` := gconv.String(item[` + daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Id.List[0].FieldCaseCamel + `]); ` + fieldCaseCamelLower + ` != ` + "``"
 					} else if v.FieldType == internal.TypeInt && !relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {

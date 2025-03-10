@@ -1,7 +1,5 @@
 package internal
 
-import "github.com/gogf/gf/v2/container/garray"
-
 const ( //配置
 	ConfigMaxLenOfStrFilter = 30  // 字段是TypeVarchar或TypeChar时，字段长度大于该值时，不生成过滤条件
 	ConfigMaxLenOfStrHiddle = 120 // 字段是TypeVarchar或TypeChar时，字段长度大于等于该值时，前端列表显示设置with: 200, hidden: true
@@ -19,7 +17,7 @@ var (
 		TypeNameDeleted,
 		MyGenFieldArrOfTypeName{
 			FieldTypeName: TypeNameIsPrefix,
-			FieldArr:      garray.NewStrArrayFrom([]string{`is_stop`, `isStop`}),
+			FieldArr:      []string{`is_stop`, `isStop`},
 		},
 	}
 	// 最后处理的字段（在中间表或扩展表之前处理）
@@ -28,14 +26,14 @@ var (
 		MyGenFieldArrOfTypeName{
 			FieldType:     TypeText,
 			FieldTypeName: TypeNameRemarkSuffix,
-			FieldArr:      garray.NewStrArray(),
+			FieldArr:      nil,
 		},
 	}
 	// 最后处理的字段（在中间表或扩展表之后处理）
 	ConfigAfterField2 = []any{
 		MyGenFieldArrOfTypeName{
 			FieldTypeName: TypeNameIsPrefix,
-			FieldArr:      garray.NewStrArrayFrom([]string{`is_stop`, `isStop`}),
+			FieldArr:      []string{`is_stop`, `isStop`},
 		},
 		TypeNameDeleted,
 		TypeNameUpdated,
@@ -46,7 +44,7 @@ var (
 type MyGenFieldArrOfTypeName struct {
 	FieldType     MyGenFieldType
 	FieldTypeName MyGenFieldTypeName
-	FieldArr      *garray.StrArray
+	FieldArr      []string
 }
 
 type MyGenTableType = uint

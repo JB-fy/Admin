@@ -2,8 +2,8 @@ package my_gen
 
 import (
 	"api/internal/cmd/my-gen/internal"
+	"slices"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -210,7 +210,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 		viewQueryField.isI18nTm = true
 		viewQueryField.form.Method = internal.ReturnTypeName
 		defaultOptions := `tm('common.status.pid')`
-		if !garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(v.FieldType) {
+		if !slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, v.FieldType) {
 			defaultOptions = `tm('common.status.pidStr')`
 		}
 		viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree'` + tpl.Handle.Pid.Tpl.PidIsStr + ` }" :defaultOptions="` + defaultOptions + `" :props="{ checkStrictly: true, emitPath: false }" />`

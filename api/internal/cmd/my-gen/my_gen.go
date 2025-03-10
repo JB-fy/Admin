@@ -82,9 +82,9 @@ import (
 	daoAuth "api/internal/dao/auth"
 	"context"
 	"fmt"
+	"slices"
 
 	"github.com/fatih/color"
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
@@ -191,7 +191,7 @@ func createOption(ctx context.Context, parser *gcmd.Parser) (option myGenOption)
 		option.DbTable = gcmd.Scan(color.BlueString(`> 请输入db表：`))
 	}
 	for {
-		if option.DbTable != `` && garray.NewStrArrayFrom(tableArr).Contains(option.DbTable) {
+		if option.DbTable != `` && slices.Contains(tableArr, option.DbTable) {
 			break
 		}
 		option.DbTable = gcmd.Scan(color.RedString(`    db表不存在，请重新输入：`))

@@ -2,6 +2,7 @@ package my_gen
 
 import (
 	"api/internal/cmd/my-gen/internal"
+	"slices"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
@@ -388,7 +389,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree', param: { filter: { ` + internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`) + `: saveForm.data.id } }` + tpl.Handle.Pid.Tpl.PidIsStr + ` }" :props="{ checkStrictly: true, emitPath: false }" />`
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
 		defVal := `0`
-		if !garray.NewIntArrayFrom([]int{internal.TypeInt, internal.TypeIntU}).Contains(v.FieldType) {
+		if !slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, v.FieldType) {
 			defVal = `''`
 		}
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = ` + defVal + `)`
@@ -478,7 +479,7 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 		}
 		viewSaveField.dataInitBefore.Method = internal.ReturnTypeName
 		viewSaveField.dataInitBefore.DataTypeName = defaultVal
-		if garray.NewIntArrayFrom([]int{internal.TypeVarchar, internal.TypeChar}).Contains(v.FieldType) {
+		if slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, v.FieldType) {
 			viewSaveField.dataInitBefore.DataTypeName = `'` + defaultVal + `'`
 		}
 		viewSaveField.rule.Method = internal.ReturnTypeName

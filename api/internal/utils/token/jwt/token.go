@@ -5,9 +5,9 @@ import (
 	"api/internal/utils/token/model"
 	"context"
 	"errors"
+	"slices"
 	"time"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -35,7 +35,7 @@ type Token struct {
 func NewToken(ctx context.Context, config map[string]any) model.Token {
 	obj := &Token{}
 	gconv.Struct(config, obj)
-	if obj.ExpireTime == 0 || obj.SignType == `` || obj.PrivateKey == `` || (obj.PublicKey == `` && !garray.NewStrArrayFrom([]string{`HS256`, `HS384`, `HS512`}).Contains(obj.SignType)) {
+	if obj.ExpireTime == 0 || obj.SignType == `` || obj.PrivateKey == `` || (obj.PublicKey == `` && !slices.Contains([]string{`HS256`, `HS384`, `HS512`}, obj.SignType)) {
 		panic(`缺少配置：token-Jwt`)
 	}
 	signMethodMap := map[string]jwt.SigningMethod{

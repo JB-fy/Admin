@@ -1,7 +1,8 @@
 package my_gen
 
 import (
-	"github.com/gogf/gf/v2/container/garray"
+	"slices"
+
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 )
@@ -26,11 +27,11 @@ func (i18nThis *myGenI18n) Merge(i18nOther myGenI18n) {
 }
 
 func (i18nThis *myGenI18n) Unique() {
-	keyArr := garray.NewStrArray()
+	var keyArr []string
 	listTmp := []myGenI18nField{}
 	for _, v := range i18nThis.list {
-		if !keyArr.Contains(v.key) {
-			keyArr.Append(v.key)
+		if !slices.Contains(keyArr, v.key) {
+			keyArr = append(keyArr, v.key)
 			listTmp = append(listTmp, v)
 		}
 	}
