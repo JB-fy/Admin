@@ -45,15 +45,13 @@ type DaoModel struct {
 	AfterField        map[string]any
 	AfterInsert       map[string]any
 	AfterUpdate       map[string]any
-	IdArr             []*gvar.Var // 新增需要后置处理且主键非自增时 或 更新|删除需要后置处理时 使用。注意：一般在新增|更新|删除方法执行前调用（即在各种sql条件设置完后）
+	IdArr             []gdb.Value // 新增需要后置处理且主键非自增时 或 更新|删除需要后置处理时 使用。注意：一般在新增|更新|删除方法执行前调用（即在各种sql条件设置完后）
 	IsOnlyAfterUpdate bool        // 更新时，用于判断是否只做后置更新
 }
 
 // 对象池。性能提醒不明显，暂时不用。确实大幅减少了对象创建和销毁（内存压力减少），但却需要手动增加放入对象池的代码：defer daoModel.PutPool()
 var poolDaoModel = sync.Pool{
-	New: func() any {
-		return &DaoModel{}
-	},
+	New: func() any { return &DaoModel{} },
 }
 
 func (daoModelThis *DaoModel) PutPool() {
