@@ -34,7 +34,7 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 	valueFunc := func() (value any, ttl int64, noSetCache bool, err error) {
 		fieldArr := field
 		if len(fieldArr) > 0 {
-			if ttlField, ok := ttlOrField.(string); ok {
+			if ttlField, ok := ttlOrField.(string); ok && ttlField != `` {
 				fieldArr = append(fieldArr, ttlField)
 			}
 		}
@@ -46,15 +46,16 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 			noSetCache = true
 			return
 		}
-		if ttlField, ok := ttlOrField.(string); ok {
+		if ttlField, ok := ttlOrField.(string); ok && ttlField != `` {
 			ttl = info[ttlField].GTime().Unix()
 			if nowTime := gtime.Now().Unix(); ttl > nowTime {
 				ttl = ttl - nowTime
-			} else if ttl <= 0 || ttl > consts.CACHE_TIME_DEFAULT { //比当前时间小时，缓存时间不能超过默认缓存时间
-				ttl = consts.CACHE_TIME_DEFAULT
 			}
 		} else {
 			ttl = gconv.Int64(ttlOrField)
+		}
+		if ttl <= 0 || ttl > consts.CACHE_TIME_DEFAULT { //缓存时间不能超过默认缓存时间
+			ttl = consts.CACHE_TIME_DEFAULT
 		}
 		if len(field) == 1 {
 			value = info[field[0]].String()
