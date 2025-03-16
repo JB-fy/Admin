@@ -82,8 +82,10 @@ const (
 	TypeNameUpdated        MyGenFieldTypeName = `更新时间字段`
 	TypeNameCreated        MyGenFieldTypeName = `创建时间字段`
 	TypeNamePid            MyGenFieldTypeName = `命名：pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；`
-	TypeNameLevel          MyGenFieldTypeName = `命名：level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；`
-	TypeNameIdPath         MyGenFieldTypeName = `命名：id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；`
+	TypeNameIsLeaf         MyGenFieldTypeName = `命名：is_leaf|isLeaf，且pid同时存在时（才）有效；	类型：int等类型；`
+	TypeNameIdPath         MyGenFieldTypeName = `命名：id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；`
+	TypeNameNamePath       MyGenFieldTypeName = `命名：name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；`
+	TypeNameLevel          MyGenFieldTypeName = `命名：level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；`
 	TypeNamePasswordSuffix MyGenFieldTypeName = `命名：password,passwd后缀；	类型：char(32)；`
 	TypeNameSaltSuffix     MyGenFieldTypeName = `命名：salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；`
 	TypeNameNameSuffix     MyGenFieldTypeName = `命名：name,title后缀；	类型：varchar；`

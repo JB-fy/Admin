@@ -76,7 +76,7 @@ func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
 	}`)
 
 		updateAddStr := ``
-		if tpl.Handle.Pid.IsCoexist {
+		if tpl.Handle.Pid.IsCoexistOfIdPath {
 			updateAddStr = `
 		for _, id := range daoModelThis.IdArr {
 			if slices.Contains(gstr.Split(pInfo[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `].String(), ` + "`-`" + `), gconv.String(id)) {

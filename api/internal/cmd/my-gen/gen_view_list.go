@@ -455,12 +455,12 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
 	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		viewListField.dataKey.Method = internal.ReturnTypeName
 		viewListField.dataKey.DataTypeName = `'` + internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`) + `'`
-	case internal.TypeNameLevel: // level，且pid,level,id_path|idPath同时存在时（才）有效；	类型：int等类型；
-		viewListField.sortable.Method = internal.ReturnTypeName
-		viewListField.sortable.DataTypeName = `true`
-	case internal.TypeNameIdPath: // id_path|idPath，且pid,level,id_path|idPath同时存在时（才）有效；	类型：varchar或text；
+	case internal.TypeNameIdPath, internal.TypeNameNamePath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；	// name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		viewListField.hidden.Method = internal.ReturnTypeName
 		viewListField.hidden.DataTypeName = `true`
+	case internal.TypeNameLevel: // level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
+		viewListField.sortable.Method = internal.ReturnTypeName
+		viewListField.sortable.DataTypeName = `true`
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 		return myGenViewListField{}
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
@@ -550,12 +550,12 @@ func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath s
                 let statusIndex = statusList.findIndex((item) => item.value == props.rowData.` + v.FieldRaw + `)
                 return <el-tag type={tagType[statusIndex % tagType.length]}>{statusList[statusIndex]?.label}</el-tag>
             }`
-	case internal.TypeNameIsPrefix: // is_前缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）
+	case internal.TypeNameIsPrefix, internal.TypeNameIsLeaf: // is_前缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）	// is_leaf|isLeaf，且pid同时存在时（才）有效；	类型：int等类型；
 		viewListField.isI18nTm = true
 		viewListField.width.Method = internal.ReturnTypeName
 		viewListField.width.DataTypeName = `100`
 		cellRendererStr := `disabled={true}`
-		if option.IsUpdate {
+		if option.IsUpdate && v.FieldTypeName != internal.TypeNameIsLeaf {
 			cellRendererStr = `disabled={!authAction.isUpdate}
                         onChange={(val: any) => handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
 		}
