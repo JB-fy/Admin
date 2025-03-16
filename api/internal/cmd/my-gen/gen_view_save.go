@@ -393,11 +393,9 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
 			defVal = `''`
 		}
 		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = ` + defVal + `)`
-	case internal.TypeNameIsLeaf: // is_leaf|isLeaf，且pid同时存在时（才）有效；	类型：int等类型；
-		return myGenViewSaveField{}
 	case internal.TypeNameIdPath, internal.TypeNameNamePath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；	// name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		return myGenViewSaveField{}
-	case internal.TypeNameLevel: // level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
+	case internal.TypeNameLevel, internal.TypeNameIsLeaf: // level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；	// is_leaf|isLeaf，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
 		return myGenViewSaveField{}
 	case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 		viewSaveField.importModule = append(viewSaveField.importModule, `import md5 from 'js-md5'`)
@@ -770,9 +768,8 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 		switch v.FieldTypeName {
 		case internal.TypeNameDeleted, internal.TypeNameUpdated, internal.TypeNameCreated: // 软删除字段 // 更新时间字段 // 创建时间字段
 		case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
-		case internal.TypeNameIsLeaf: // is_leaf|isLeaf，且pid同时存在时（才）有效；	类型：int等类型；
 		case internal.TypeNameIdPath, internal.TypeNameNamePath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；	// name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
-		case internal.TypeNameLevel: // level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
+		case internal.TypeNameLevel, internal.TypeNameIsLeaf: // level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；	// is_leaf|isLeaf，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
 		case internal.TypeNamePasswordSuffix: // password,passwd后缀；	类型：char(32)；
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；

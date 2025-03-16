@@ -91,10 +91,10 @@ npm run format
 
 		固定命名：
 			父级			命名：pid；	类型：int等类型；
-			叶子节点		命名：is_leaf|isLeaf，且pid同时存在时（才）有效；	类型：int等类型；
 			ID路径			命名：id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；
 			名称路径		命名：name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 			层级			命名：level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
+			叶子			命名：is_leaf|isLeaf，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
 				ID路径和名称路径建议直接使用text，当level层级大时，不用考虑字符长度问题
 				当level层级不大时，可使用varchar，但必须设置足够的字段长度，否则会丢失路径后面的部分字符
 

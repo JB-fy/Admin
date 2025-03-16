@@ -57,16 +57,15 @@ type myGenTpl struct {
 		*/
 		LabelList   []string
 		PasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
-		Pid         struct {                  //pid和is_leaf|isLeaf 或 id_path|idPath同时存在时，需特殊处理
-			IsCoexistOfIsLeaf bool     //pid和is_leaf|isLeaf同时存在
-			IsCoexistOfIdPath bool     //pid和id_path|idPath同时存在
-			Pid               string   //父级字段
-			IsLeaf            string   //叶子节点字段
-			IdPath            string   //ID路径字段
-			NamePath          string   //名称路径字段
-			Level             string   //层级字段
-			Sort              []string //排序字段列表（当有排序字段时，树状列表对这些字段做正序排序）
-			Tpl               struct {
+		Pid         struct {                  //pid和id_path|idPath同时存在时，需特殊处理
+			IsCoexist bool     //pid和id_path|idPath同时存在
+			Pid       string   //父级字段
+			IdPath    string   //ID路径字段
+			NamePath  string   //名称路径字段
+			Level     string   //层级字段
+			IsLeaf    string   //叶子字段
+			Sort      []string //排序字段列表（当有排序字段时，树状列表对这些字段做正序排序）
+			Tpl       struct {
 				PidType        string
 				PidDefVal      string
 				PidGconvMethod string
@@ -308,7 +307,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			fieldTmp.FieldTypeName = internal.TypeNameStatusSuffix
 			if slices.Contains([]string{`is`}, fieldPrefix) {
 				fieldTmp.FieldTypeName = internal.TypeNameIsPrefix
-				if fieldTmp.FieldCaseCamel == `IsLeaf` && slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, fieldTmp.FieldType) { //is_leaf|isLeaf，且pid同时存在时（才）有效
+				if fieldTmp.FieldCaseCamel == `IsLeaf` && slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, fieldTmp.FieldType) { //is_leaf|isLeaf，且pid，id_path|idPath同时存在时（才）有效
 					fieldTmp.FieldTypeName = internal.TypeNameIsLeaf
 				}
 			}
@@ -457,25 +456,20 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				tpl.Handle.Pid.Tpl.PIdPathDefVal = "``"
 				tpl.Handle.Pid.Tpl.PidIsStr = `, pidIsStr: true`
 			}
-		case internal.TypeNameIsLeaf: // is_leaf|isLeaf，且pid同时存在时（才）有效；	类型：int等类型；
-			tpl.Handle.Pid.IsLeaf = v.FieldRaw
 		case internal.TypeNameIdPath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；
 			tpl.Handle.Pid.IdPath = v.FieldRaw
 		case internal.TypeNameNamePath: // name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 			tpl.Handle.Pid.NamePath = v.FieldRaw
 		case internal.TypeNameLevel: // level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
 			tpl.Handle.Pid.Level = v.FieldRaw
+		case internal.TypeNameIsLeaf: // is_leaf|isLeaf，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
+			tpl.Handle.Pid.IsLeaf = v.FieldRaw
 		}
 	}
 
 	if isTop {
-		if tpl.Handle.Pid.Pid != `` { //pid和is_leaf|isLeaf 或 id_path|idPath同时存在时，需特殊处理
-			if tpl.Handle.Pid.IsLeaf != `` {
-				tpl.Handle.Pid.IsCoexistOfIsLeaf = true
-			}
-			if tpl.Handle.Pid.IdPath != `` {
-				tpl.Handle.Pid.IsCoexistOfIdPath = true
-			}
+		if tpl.Handle.Pid.Pid != `` && tpl.Handle.Pid.IdPath != `` { //pid和id_path|idPath同时存在时，需特殊处理
+			tpl.Handle.Pid.IsCoexist = true
 		}
 	}
 
@@ -488,27 +482,27 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 	for k, v := range fieldList {
 		switch v.FieldTypeName {
-		case internal.TypeNameIsLeaf: // is_leaf|isLeaf，且pid同时存在时（才）有效；	类型：int等类型；
-			if !tpl.Handle.Pid.IsCoexistOfIsLeaf {
-				fieldList[k].FieldTypeName = internal.TypeNameIsPrefix
-				tpl.Handle.Pid.IsLeaf = ``
-			}
 		case internal.TypeNameIdPath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；
-			if !tpl.Handle.Pid.IsCoexistOfIdPath {
+			if !tpl.Handle.Pid.IsCoexist {
 				fieldList[k].FieldTypeName = ``
 				tpl.Handle.Pid.IdPath = ``
 			}
 		case internal.TypeNameNamePath: // name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
-			if !tpl.Handle.Pid.IsCoexistOfIdPath {
+			if !tpl.Handle.Pid.IsCoexist {
 				fieldList[k].FieldTypeName = ``
 				tpl.Handle.Pid.NamePath = ``
 			}
 		case internal.TypeNameLevel: // level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
-			if !tpl.Handle.Pid.IsCoexistOfIdPath {
+			if !tpl.Handle.Pid.IsCoexist {
 				fieldList[k].FieldTypeName = internal.TypeNameNoSuffix
 				tpl.Handle.Pid.Level = ``
 			} else {
 				fieldList[k].FieldLimitInt.Min = `1`
+			}
+		case internal.TypeNameIsLeaf: // is_leaf|isLeaf，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
+			if !tpl.Handle.Pid.IsCoexist {
+				fieldList[k].FieldTypeName = internal.TypeNameIsPrefix
+				tpl.Handle.Pid.IsLeaf = ``
 			}
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			passwordMapKey := internal.GetHandlePasswordMapKey(v.FieldRaw)
