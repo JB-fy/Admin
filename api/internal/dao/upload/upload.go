@@ -15,7 +15,6 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -214,7 +213,7 @@ func (daoThis *uploadDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			for k := range daoModel.AfterInsert {
 				switch k {
 				case daoThis.Columns().IsDefault:
-					daoModel.CloneNew().Filter(`exc_id`, id).HookUpdate(g.Map{daoThis.Columns().IsDefault: 0}).Update()
+					daoModel.CloneNew().Filter(`exc_id`, id).HookUpdateOne(daoThis.Columns().IsDefault, 0).Update()
 				}
 			}
 			return
@@ -273,11 +272,11 @@ func (daoThis *uploadDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandle
 				switch k {
 				/* case `xxxx`:
 				for _, id := range daoModel.IdArr {
-					daoModel.CloneNew().FilterPri(id).HookUpdate(g.Map{k: v}).Update()
+					daoModel.CloneNew().FilterPri(id).HookUpdateOne(k, v).Update()
 				} */
 				case daoThis.Columns().IsDefault:
 					for _, id := range daoModel.IdArr {
-						daoModel.CloneNew().Filter(`exc_id`, id).HookUpdate(g.Map{daoThis.Columns().IsDefault: 0}).Update()
+						daoModel.CloneNew().Filter(`exc_id`, id).HookUpdateOne(daoThis.Columns().IsDefault, 0).Update()
 					}
 				}
 			}

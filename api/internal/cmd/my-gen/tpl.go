@@ -468,9 +468,8 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 	}
 
-	//level,is_leaf|isLeaf,id_path|idPath存在任意一个，且pid存在时，需特殊处理
 	if isTop {
-		if tpl.Handle.Pid.Pid != `` {
+		if tpl.Handle.Pid.Pid != `` { //pid和is_leaf|isLeaf 或 id_path|idPath同时存在时，需特殊处理
 			if tpl.Handle.Pid.IsLeaf != `` {
 				tpl.Handle.Pid.IsCoexistOfIsLeaf = true
 			}
@@ -480,8 +479,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 	}
 
-	//password|passwd,salt同时存在时，需特殊处理
-	for k, v := range tpl.Handle.PasswordMap {
+	for k, v := range tpl.Handle.PasswordMap { //password|passwd,salt同时存在时，需特殊处理
 		if v.PasswordField != `` && v.SaltField != `` {
 			v.IsCoexist = true
 			tpl.Handle.PasswordMap[k] = v

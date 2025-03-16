@@ -216,7 +216,7 @@ func genDao(tpl myGenTpl) {
 			/* for k, v := range daoModel.AfterInsert {
 				switch k {
 				case ` + "`xxxx`" + `:
-					daoModel.CloneNew().FilterPri(id).HookUpdate(g.Map{k: v}).Update()
+					daoModel.CloneNew().FilterPri(id).HookUpdateOne(k, v).Update()
 				}
 			} */`
 		insertHookReplaceOfId := `id, _ := result.LastInsertId()`
@@ -251,7 +251,7 @@ func genDao(tpl myGenTpl) {
 				switch k {
 				case ` + "`xxxx`" + `:
 					for _, id := range daoModel.IdArr {
-						daoModel.CloneNew().FilterPri(id).HookUpdate(g.Map{k: v}).Update()
+						daoModel.CloneNew().FilterPri(id).HookUpdateOne(k, v).Update()
 					}
 				}
 			} */`
@@ -599,21 +599,23 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 						daoModel.AfterInsert[`+"`"+pIsLeafStr+"`"+`] = v
 					}`)
 				daoField.insertHook.DataTypeName = append(daoField.insertHook.DataTypeName, `case `+"`"+pIsLeafStr+"`"+`: //更新父级叶子节点。参数：父级ID
-					daoModel.CloneNew().FilterPri(v).HookUpdate(map[string]any{`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`: 0}).Update()`)
+					daoModel.CloneNew().FilterPri(v).HookUpdateOne(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`, 0).Update()`)
 
 				afterUpdateStrArr2 = append(afterUpdateStrArr2, `if pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`].Uint() == 1 {
 						daoModel.AfterUpdate[`+"`"+pIsLeafStr+"`"+`] = v
 					}`)
 				afterUpdateStrArr4 = append(afterUpdateStrArr4, gstr.CaseCamelLower(pIsLeafCheckStr)+` := []`+tpl.Handle.Pid.Tpl.PidType+`{} //更新原父级叶子节点`)
 				afterUpdateStrArr5 = append(afterUpdateStrArr5, gstr.CaseCamelLower(pIsLeafCheckStr)+` = append(`+gstr.CaseCamelLower(pIsLeafCheckStr)+`, oldPid)`)
-				afterUpdateStrArr6 = append(afterUpdateStrArr6, pIsLeafCheckStr+`if len(`+gstr.CaseCamelLower(pIsLeafCheckStr)+`) > 0 {
+				afterUpdateStrArr6 = append(afterUpdateStrArr6, `if len(`+gstr.CaseCamelLower(pIsLeafCheckStr)+`) > 0 {
 					daoModel.AfterUpdate[`+"`"+pIsLeafCheckStr+"`"+`] = `+gstr.CaseCamelLower(pIsLeafCheckStr)+`
 				}`)
 				daoField.updateHookAfter.DataTypeName = append(daoField.updateHookAfter.DataTypeName, `case `+"`"+pIsLeafStr+"`"+`: //更新父级叶子节点。参数：父级ID
-					daoModel.CloneNew().FilterPri(v).HookUpdate(map[string]any{`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`: 0}).Update()`)
+					daoModel.CloneNew().FilterPri(v).HookUpdateOne(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`, 0).Update()`)
 				daoField.updateHookAfter.DataTypeName = append(daoField.updateHookAfter.DataTypeName, `case `+"`"+pIsLeafCheckStr+"`"+`: //更新原父级叶子节点。参数：[]{父级ID,...}
-					pidArr, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`, v).Array(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`)
-					daoModel.CloneNew().FilterPri(gset.NewFrom(v).Diff(gset.NewFrom(gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`(pidArr))).Slice()).HookUpdate(map[string]any{`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`: 0}).Update()`)
+					pidArr, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`, v).Distinct().Array(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`)
+					if idArrOfNoLeaf := gset.NewFrom(v).Diff(gset.NewFrom(gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`s(pidArr)); len(idArrOfNoLeaf) > 0 {
+						daoModel.CloneNew().FilterPri(idArrOfNoLeaf).HookUpdateOne(daoThis.Columns().IsLeaf, 1).Update()
+					}`)
 			}
 			if tpl.Handle.Pid.IsCoexistOfIdPath {
 				selfUpdateStr := internal.GetStrByFieldStyle(tpl.FieldStyle, `self_update`)
@@ -647,7 +649,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				if tpl.Handle.Pid.NamePath != `` {
 					afterInsertMapKeyArr = append(afterInsertMapKeyArr, "`"+pNamePathStr+"`"+`: pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`],`, "`name`"+`: insert[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`],`)
 					afterInsertMapKeyArrOfEmpty = append(afterInsertMapKeyArrOfEmpty, "`"+pNamePathStr+"`"+": ``"+`,`, "`name`"+`: insert[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`],`)
-					insertHookMapKeyArr = append(insertHookMapKeyArr, daoPath+`.Columns().IdPath: gconv.String(val[`+"`"+pNamePathStr+"`"+`]) + `+"`-`"+` + gconv.String(val[`+"`name`"+`]),`)
+					insertHookMapKeyArr = append(insertHookMapKeyArr, daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`: gconv.String(val[`+"`"+pNamePathStr+"`"+`]) + `+"`-`"+` + gconv.String(val[`+"`name`"+`]),`)
 
 					afterUpdateStrArr1 = append(afterUpdateStrArr1, gstr.CaseCamelLower(pNamePathStr)+` := `+"``")
 					afterUpdateStrArr2 = append(afterUpdateStrArr2, gstr.CaseCamelLower(pNamePathStr)+` = pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`].String()`)

@@ -189,7 +189,7 @@ func (daoThis *roleRelToActionDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.H
 			/* for k, v := range daoModel.AfterInsert {
 				switch k {
 				case `xxxx`:
-					daoModel.CloneNew().FilterPri(id).HookUpdate(g.Map{k: v}).Update()
+					daoModel.CloneNew().FilterPri(id).HookUpdateOne(k, v).Update()
 				}
 			} */
 			return
@@ -243,7 +243,7 @@ func (daoThis *roleRelToActionDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.H
 				switch k {
 				case `xxxx`:
 					for _, id := range daoModel.IdArr {
-						daoModel.CloneNew().FilterPri(id).HookUpdate(g.Map{k: v}).Update()
+						daoModel.CloneNew().FilterPri(id).HookUpdateOne(k, v).Update()
 					}
 				}
 			} */

@@ -295,9 +295,17 @@ func (daoModelThis *DaoModel) HandleAfterField(result ...gdb.Record) {
 	return daoModelThis
 } */
 
+func (daoModelThis *DaoModel) HookInsertOne(key string, val any) *DaoModel {
+	return daoModelThis.HookInsert(map[string]any{key: val})
+}
+
 func (daoModelThis *DaoModel) HookInsert(data map[string]any) *DaoModel {
 	daoModelThis.Handler(daoModelThis.dao.ParseInsert(data, daoModelThis))
 	return daoModelThis
+}
+
+func (daoModelThis *DaoModel) HookUpdateOne(key string, val any) *DaoModel {
+	return daoModelThis.HookUpdate(map[string]any{key: val})
 }
 
 func (daoModelThis *DaoModel) HookUpdate(data map[string]any) *DaoModel {

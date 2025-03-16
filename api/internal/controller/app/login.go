@@ -223,7 +223,7 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	_, err = daoModelUsers.HookUpdate(g.Map{daoUsers.Privacy.Columns().Password: req.Password}).Update()
+	_, err = daoModelUsers.HookUpdateOne(daoUsers.Privacy.Columns().Password, req.Password).Update()
 	if err != nil {
 		return
 	}
