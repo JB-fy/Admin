@@ -156,11 +156,9 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 			for _, status := range v.StatusList {
 				viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: '`+status[0]+`', label: '`+status[1]+`' },`)
 			}
-		} else {
-			if v.StatusWhetherI18n == `` {
-				for _, status := range v.StatusList {
-					viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
-				}
+		} else if v.StatusWhetherI18n == `` {
+			for _, status := range v.StatusList {
+				viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
 			}
 		}
 	case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
