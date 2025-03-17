@@ -89,7 +89,7 @@ func (daoThis *configDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				for index, id := range idArr {
 					inStrArr[index] = `('` + gstr.Replace(id, `|`, `', '`) + `')`
 				}
-				m = m.Where(`(` + daoModel.DbTable + `.` + daoThis.Columns().OrgId + `, ` + daoModel.DbTable + `.` + daoThis.Columns().ConfigKey + `) IN (` + gstr.Join(inStrArr, `, `) + `)`)
+				m = m.Where(fmt.Sprintf(`(%s, %s) IN (%s)`, daoModel.DbTable+`.`+daoThis.Columns().OrgId, daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, gstr.Join(inStrArr, `, `)))
 			case `exc_id`, `exc_id_arr`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
@@ -99,7 +99,7 @@ func (daoThis *configDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				for index, id := range idArr {
 					inStrArr[index] = `('` + gstr.Replace(id, `|`, `', '`) + `')`
 				}
-				m = m.Where(`(` + daoModel.DbTable + `.` + daoThis.Columns().OrgId + `, ` + daoModel.DbTable + `.` + daoThis.Columns().ConfigKey + `) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)
+				m = m.Where(fmt.Sprintf(`(%s, %s) NOT IN (%s)`, daoModel.DbTable+`.`+daoThis.Columns().OrgId, daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, gstr.Join(inStrArr, `, `)))
 			case `label`:
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, `%`+gconv.String(v)+`%`)
 			case `time_range_start`:
@@ -315,8 +315,7 @@ func (daoThis *configDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel
 		for _, v := range group {
 			switch v {
 			case `id`:
-				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().OrgId)
-				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().ConfigKey)
+				m = m.Group(daoModel.DbTable+`.`+daoThis.Columns().OrgId, daoModel.DbTable+`.`+daoThis.Columns().ConfigKey)
 			default:
 				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -339,8 +338,7 @@ func (daoThis *configDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel
 			switch k {
 			case `id`:
 				suffix := gstr.TrimLeftStr(kArr[0], k, 1)
-				m = m.Order(daoModel.DbTable + `.` + daoThis.Columns().OrgId + suffix)
-				m = m.Order(daoModel.DbTable + `.` + daoThis.Columns().ConfigKey + suffix)
+				m = m.Order(daoModel.DbTable+`.`+daoThis.Columns().OrgId+suffix, daoModel.DbTable+`.`+daoThis.Columns().ConfigKey+suffix)
 				remain := gstr.TrimLeftStr(gstr.TrimLeftStr(v, k+suffix, 1), `,`, 1)
 				if remain != `` {
 					m = m.Order(remain)

@@ -374,18 +374,12 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				m = m.Order(daoModel.DbTable + `+"`.`"+` + gstr.Replace(v, k, daoThis.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`, 1))`)
 	} else {
 		concatStr := `|`
-		idParseStrArr := []string{}
-		filterParseStrArr := []string{}
-		groupParseStrArr := []string{}
-		orderParseStrArr := []string{}
+		idArrStrArr := []string{}
 		for _, v := range tpl.Handle.Id.List {
-			idParseStrArr = append(idParseStrArr, `daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+v.FieldCaseCamel)
-			filterParseStrArr = append(filterParseStrArr, ` + daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + `)
-			groupParseStrArr = append(groupParseStrArr, `m = m.Group(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+`)`)
-			orderParseStrArr = append(orderParseStrArr, `m = m.Order(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + suffix)`)
+			idArrStrArr = append(idArrStrArr, `daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+v.FieldCaseCamel)
 		}
 
-		dao.idParse = `fmt.Sprintf(` + "`" + `CONCAT_WS( '` + concatStr + `'` + gstr.Repeat(`, COALESCE( %s, '' )`, len(tpl.Handle.Id.List)) + ` )` + "`" + `, ` + gstr.Join(idParseStrArr, `, `) + `)`
+		dao.idParse = `fmt.Sprintf(` + "`" + `CONCAT_WS( '` + concatStr + `'` + gstr.Repeat(`, COALESCE( %s, '' )`, len(tpl.Handle.Id.List)) + ` )` + "`" + `, ` + gstr.Join(idArrStrArr, `, `) + `)`
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
@@ -395,7 +389,7 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				for index, id := range idArr {
 					inStrArr[index] = `+"`('`+gstr.Replace(id, `"+concatStr+"`, `', '`)+`')`"+`
 				}
-				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) IN (` + gstr.Join(inStrArr, `, `) + `)`)")
+				m = m.Where(fmt.Sprintf(`+"`(%s, %s) IN (%s)`, "+gstr.Join(idArrStrArr, `, `)+", gstr.Join(inStrArr, `, `)))")
 		dao.filterParse = append(dao.filterParse, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+"`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
@@ -405,13 +399,13 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				for index, id := range idArr {
 					inStrArr[index] = `+"`('`+gstr.Replace(id, `"+concatStr+"`, `', '`)+`')`"+`
 				}
-				m = m.Where(`+"`(`"+gstr.Join(filterParseStrArr, "`, `")+"`) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`)")
-		dao.groupParse = append(dao.groupParse, `case `+"`id`"+`:`+gstr.Join(append([]string{``}, groupParseStrArr...), `
-				`))
+				m = m.Where(fmt.Sprintf(`+"`(%s, %s) NOT IN (%s)`, "+gstr.Join(idArrStrArr, `, `)+", gstr.Join(inStrArr, `, `)))")
+		dao.groupParse = append(dao.groupParse, `case `+"`id`"+`:
+				m = m.Group(`+gstr.Join(idArrStrArr, `, `)+`)`)
 		dao.orderParse = append(dao.orderParse, `case `+"`id`"+`:
 				suffix := gstr.TrimLeftStr(kArr[0], k, 1)
-				`+gstr.Join(append(orderParseStrArr, ``), `
-				`)+`remain := gstr.TrimLeftStr(gstr.TrimLeftStr(v, k+suffix, 1), `+"`,`"+`, 1)
+				m = m.Order(`+gstr.TrimRightStr(gstr.Join(append(idArrStrArr, ``), `+suffix, `), `, `)+`)
+				remain := gstr.TrimLeftStr(gstr.TrimLeftStr(v, k+suffix, 1), `+"`,`"+`, 1)
 				if remain != `+"``"+` {
 					m = m.Order(remain)
 				}`)
@@ -434,7 +428,7 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			}
 		}
-		dao.labelParse = `fmt.Sprintf(` + "`" + `COALESCE( ` + gstr.Trim(gstr.Repeat(`, NULLIF( %s, '' )`, labelListLen), `, `) + ` )` + "`" + `, ` + gstr.Join(labelParseStrArr, `, `) + `)`
+		dao.labelParse = `fmt.Sprintf(` + "`" + `COALESCE( ` + gstr.TrimLeftStr(gstr.Repeat(`, NULLIF( %s, '' )`, labelListLen), `, `, 1) + ` )` + "`" + `, ` + gstr.Join(labelParseStrArr, `, `) + `)`
 
 		filterParseStr = `case ` + "`label`" + `:
 				m = m.Where(m.Builder().` + parseFilterStr + `)`
