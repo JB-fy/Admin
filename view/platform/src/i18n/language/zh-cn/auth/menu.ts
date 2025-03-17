@@ -13,12 +13,7 @@ export default {
         sort: '排序值',
         is_stop: '停用',
     },
-    status: {
-        is_leaf: [
-            { value: 0, label: '否' },
-            { value: 1, label: '是' },
-        ],
-    },
+    status: {},
     tip: {
         menu_icon: '常用格式：autoicon-' + "{'{'}" + '集合' + "{'}-{'}" + '标识' + "{'}'}" + '；vant格式：vant-' + "{'{'}" + '标识' + "{'}'}",
         extra_data: 'JSON格式：' + "{'{'}" + '"i18n（国际化设置）": ' + "{'{'}" + '"title": ' + "{'{'}" + '"语言标识":"标题",...' + "{'}'}" + '' + "{'}'}" + '',
