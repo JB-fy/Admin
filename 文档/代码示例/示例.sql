@@ -11,6 +11,7 @@ CONCAT(字符串,...)                                                           
 CONCAT_WS(分隔符, 字符串,...)                                                  // 拼接字符串。可指定分隔符                  //Postgresql通用
 GROUP_CONCAT([DISTINCT] 字段 [ORDER BY 排序字段 ASC/DESC] [SEPARATOR 分隔符])  // 拼接字符串。一般在GROUP BY语句中使用
 REPLACE(字符串, ',', '')                                                       // 替换字符串。                              //Postgresql通用（差别：数字字段需加::TEXT转成字符串）
+REGEXP_REPLACE(字符串, '正则表达式', '')                                       // 正则替换字符串。                          //Postgresql通用（差别：数字字段需加::TEXT转成字符串）
 LENGTH(字符串)                                                                 // 字符串长度。中文根据编码不同，算多个字符
 CHAR_LENGTH(字符串)                                                            // 字符串长度。中英文都算1个字符
 

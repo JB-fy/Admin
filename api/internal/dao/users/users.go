@@ -11,6 +11,7 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"fmt"
 	"slices"
 	"sync"
 
@@ -70,7 +71,7 @@ func (daoThis *usersDao) ParseId(daoModel *daoIndex.DaoModel) string {
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
 func (daoThis *usersDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return `COALESCE( NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, '' ), NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Email + `, '' ), NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, '' ), NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, '' ) )`
+	return fmt.Sprintf("COALESCE( NULLIF( %s, '' ), NULLIF( %s, '' ), NULLIF( %s, '' ), NULLIF( %s, '' ) )", daoModel.DbTable+`.`+daoThis.Columns().Phone, daoModel.DbTable+`.`+daoThis.Columns().Email, daoModel.DbTable+`.`+daoThis.Columns().Account, daoModel.DbTable+`.`+daoThis.Columns().Nickname)
 }
 
 // 解析filter

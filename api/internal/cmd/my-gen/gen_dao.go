@@ -3,7 +3,6 @@ package my_gen
 import (
 	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
-	"fmt"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
@@ -380,12 +379,13 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 		groupParseStrArr := []string{}
 		orderParseStrArr := []string{}
 		for _, v := range tpl.Handle.Id.List {
-			idParseStrArr = append(idParseStrArr, fmt.Sprintf("COALESCE( %s, '' )", tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeCOALESCE, "` + daoModel.DbTable + `.` + daoThis.Columns()."+v.FieldCaseCamel+" + `")))
+			idParseStrArr = append(idParseStrArr, `daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+v.FieldCaseCamel)
 			filterParseStrArr = append(filterParseStrArr, ` + daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + `)
 			groupParseStrArr = append(groupParseStrArr, `m = m.Group(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+`)`)
 			orderParseStrArr = append(orderParseStrArr, `m = m.Order(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + suffix)`)
 		}
-		dao.idParse = fmt.Sprintf("`CONCAT_WS( '%s', %s )`", concatStr, gstr.Join(idParseStrArr, `, `))
+
+		dao.idParse = `fmt.Sprintf("CONCAT_WS( '` + concatStr + `'` + gstr.Repeat(`, COALESCE( %s, '' )`, len(tpl.Handle.Id.List)) + ` )", ` + gstr.Join(idParseStrArr, `, `) + `)`
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
@@ -424,17 +424,17 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
 	labelListLen := len(tpl.Handle.LabelList)
 	if labelListLen > 1 {
-		labelParseStrArr := []string{fmt.Sprintf("NULLIF( %s, '' )", tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1])+" + `"))}
+		labelParseStrArr := []string{`daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1])}
 		parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + ", `%`+gconv.String(v)+`%`)"
 		for i := labelListLen - 2; i >= 0; i-- {
-			labelParseStrArr = append([]string{fmt.Sprintf("NULLIF( %s, '' )", tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[i])+" + `"))}, labelParseStrArr...)
+			labelParseStrArr = append([]string{`daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[i])}, labelParseStrArr...)
 			if i == 0 {
 				parseFilterStr = "WhereLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			} else {
 				parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			}
 		}
-		dao.labelParse = fmt.Sprintf("`COALESCE( %s )`", gstr.Join(labelParseStrArr, `, `))
+		dao.labelParse = `fmt.Sprintf("COALESCE( ` + gstr.Trim(gstr.Repeat(`, NULLIF( %s, '' )`, labelListLen), `, `) + ` )", ` + gstr.Join(labelParseStrArr, `, `) + `)`
 
 		filterParseStr = `case ` + "`label`" + `:
 				m = m.Where(m.Builder().` + parseFilterStr + `)`

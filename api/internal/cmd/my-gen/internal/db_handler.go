@@ -9,11 +9,12 @@ import (
 type MyGenDbFuncCode = string
 
 const (
-	DbFuncCodeNULLIF    MyGenDbFuncCode = `NULLIF`    //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
-	DbFuncCodeCOALESCE  MyGenDbFuncCode = `COALESCE`  //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
-	DbFuncCodeREPLACE   MyGenDbFuncCode = `REPLACE`   //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
-	DbFuncCodeCONCAT    MyGenDbFuncCode = `CONCAT`    //Mysql和Postgresql通用
-	DbFuncCodeCONCAT_WS MyGenDbFuncCode = `CONCAT_WS` //Mysql和Postgresql通用
+	DbFuncCodeNULLIF         MyGenDbFuncCode = `NULLIF`         //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
+	DbFuncCodeCOALESCE       MyGenDbFuncCode = `COALESCE`       //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
+	DbFuncCodeREPLACE        MyGenDbFuncCode = `REPLACE`        //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
+	DbFuncCodeREGEXP_REPLACE MyGenDbFuncCode = `REGEXP_REPLACE` //Mysql和Postgresql通用（差别：Postgresql数字字段需加::TEXT转成字符串）
+	DbFuncCodeCONCAT         MyGenDbFuncCode = `CONCAT`         //Mysql和Postgresql通用
+	DbFuncCodeCONCAT_WS      MyGenDbFuncCode = `CONCAT_WS`      //Mysql和Postgresql通用
 )
 
 type MyGenDbHandler interface {
