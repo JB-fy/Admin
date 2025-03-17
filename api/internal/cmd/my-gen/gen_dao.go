@@ -786,10 +786,11 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				`))
 			if tpl.Handle.Pid.NamePath != `` {
 				daoField.updateParse.DataTypeName = append(daoField.updateParse.DataTypeName, `case `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`:
-				updateData[k] = v
-				nameOfNew := gconv.String(v)
-				// updateData[daoThis.Columns().NamePath] = gdb.Raw(`+"`REGEXP_REPLACE(`"+` + daoThis.Columns().NamePath + `+"`, CONCAT(`"+` + daoThis.Columns().TestName + `+"`, '$'), '` + nameOfNew + `')`)"+`
-				if _, ok := update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; !ok {
+				if _, ok := update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`]; ok {
+					updateData[k] = v
+				} else {
+					nameOfNew := gconv.String(v)
+					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("REGEXP_REPLACE ( %s, CONCAT( %s, '$' ), '%s' ),%s = '%s'", `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`, nameOfNew, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`, nameOfNew))
 					`+gstr.CaseCamelLower(childUpdateStr)+` := []map[string]any{} //更新所有子孙级的名称路径
 					oldList, _ := daoModel.CloneNew().FilterPri(daoModel.IdArr).All()
 					for _, oldInfo := range oldList {
