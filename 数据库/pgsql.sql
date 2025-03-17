@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 03/03/2025 16:45:45
+ Date: 17/03/2025 15:15:01
 */
 
 
@@ -421,8 +421,10 @@ CREATE TABLE "public"."auth_menu" (
   "menu_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "scene_id" varchar(15) COLLATE "pg_catalog"."default" NOT NULL,
   "pid" int4 NOT NULL DEFAULT 0,
+  "is_leaf" int2 NOT NULL DEFAULT 1,
   "level" int2 NOT NULL DEFAULT 0,
   "id_path" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
+  "name_path" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
   "menu_icon" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "menu_url" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "extra_data" json,
@@ -436,8 +438,10 @@ COMMENT ON COLUMN "public"."auth_menu"."menu_id" IS '菜单ID';
 COMMENT ON COLUMN "public"."auth_menu"."menu_name" IS '名称';
 COMMENT ON COLUMN "public"."auth_menu"."scene_id" IS '场景ID';
 COMMENT ON COLUMN "public"."auth_menu"."pid" IS '父ID';
+COMMENT ON COLUMN "public"."auth_menu"."is_leaf" IS '叶子：0否 1是';
 COMMENT ON COLUMN "public"."auth_menu"."level" IS '层级';
-COMMENT ON COLUMN "public"."auth_menu"."id_path" IS '层级路径';
+COMMENT ON COLUMN "public"."auth_menu"."id_path" IS 'ID路径';
+COMMENT ON COLUMN "public"."auth_menu"."name_path" IS '名称路径';
 COMMENT ON COLUMN "public"."auth_menu"."menu_icon" IS '图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}';
 COMMENT ON COLUMN "public"."auth_menu"."menu_url" IS '链接';
 COMMENT ON COLUMN "public"."auth_menu"."extra_data" IS '额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}';
@@ -447,34 +451,34 @@ COMMENT ON TABLE "public"."auth_menu" IS '权限菜单表';
 -- ----------------------------
 -- Records of auth_menu
 -- ----------------------------
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '主页', 'platform', 0, 1, '0-1', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, '权限管理', 'platform', 0, 1, '0-2', 'autoicon-ep-lock', '', '{"i18n": {"title": {"en": "Auth Manage", "zh-cn": "权限管理"}}}', 10);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, '场景', 'platform', 2, 2, '0-2-3', 'autoicon-ep-flag', '/auth/scene', '{"i18n": {"title": {"en": "Scene", "zh-cn": "场景"}}}', 0);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 4, '操作', 'platform', 2, 2, '0-2-4', 'autoicon-ep-coordinate', '/auth/action', '{"i18n": {"title": {"en": "Action", "zh-cn": "操作"}}}', 10);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 5, '菜单', 'platform', 2, 2, '0-2-5', 'autoicon-ep-menu', '/auth/menu', '{"i18n": {"title": {"en": "Menu", "zh-cn": "菜单"}}}', 30);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 6, '角色', 'platform', 2, 2, '0-2-6', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 7, '平台管理员', 'platform', 2, 2, '0-2-7', 'vant-manager-o', '/platform/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "平台管理员"}}}', 50);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 8, '系统管理', 'platform', 0, 1, '0-8', 'autoicon-ep-platform', '', '{"i18n": {"title": {"en": "System Manage", "zh-cn": "系统管理"}}}', 20);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 9, '配置中心', 'platform', 8, 2, '0-8-9', 'autoicon-ep-setting', '', '{"i18n": {"title": {"en": "Config Center", "zh-cn": "配置中心"}}}', 0);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 10, '上传配置', 'platform', 9, 3, '0-8-9-10', 'autoicon-ep-upload', '/upload/upload', '{"i18n": {"title": {"en": "Upload", "zh-cn": "上传配置"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 11, '支付管理', 'platform', 9, 3, '0-8-9-11', 'autoicon-ep-coin', '', '{"i18n": {"title": {"en": "", "zh-cn": "支付管理"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 12, '支付配置', 'platform', 11, 4, '0-8-9-11-12', 'autoicon-ep-money', '/pay/pay', '{"i18n": {"title": {"en": "Pay", "zh-cn": "支付配置"}}}', 50);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 13, '支付场景', 'platform', 11, 4, '0-8-9-11-13', 'autoicon-ep-guide', '/pay/scene', '{"i18n": {"title": {"en": "Scene", "zh-cn": "支付场景"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 14, '支付通道', 'platform', 11, 4, '0-8-9-11-14', 'autoicon-ep-connection', '/pay/channel', '{"i18n": {"title": {"en": "Channel", "zh-cn": "支付通道"}}}', 150);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 15, '插件配置', 'platform', 9, 3, '0-8-9-15', 'autoicon-ep-ticket', '/platform/config/plugin', '{"i18n": {"title": {"en": "Plugin Config", "zh-cn": "插件配置"}}}', 150);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '应用配置', 'platform', 9, 3, '0-8-9-16', 'autoicon-ep-set-up', '/platform/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, 'APP', 'platform', 8, 2, '0-8-17', 'vant-apps-o', '/app/app', '{"i18n": {"title": {"en": "App", "zh-cn": "APP"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, '用户管理', 'platform', 0, 1, '0-18', 'vant-friends', '', '{"i18n": {"title": {"en": "User Manage", "zh-cn": "用户管理"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '用户', 'platform', 18, 2, '0-18-19', 'vant-user-o', '/users/users', '{"i18n": {"title": {"en": "Users", "zh-cn": "用户"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 20, '机构管理', 'platform', 0, 1, '0-20', 'autoicon-ep-office-building', '', '{"i18n": {"title": {"en": "", "zh-cn": "机构管理"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 21, '机构', 'platform', 20, 2, '0-20-21', 'autoicon-ep-school', '/org/org', '{"i18n": {"title": {"en": "Org", "zh-cn": "机构"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 22, '机构管理员', 'platform', 2, 2, '0-2-22', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "机构管理员"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 23, '主页', 'org', 0, 1, '0-23', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 24, '权限管理', 'org', 0, 1, '0-24', 'autoicon-ep-menu', '', '{"i18n": {"title": {"en": "", "zh-cn": "权限管理"}}}', 10);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 25, '角色', 'org', 24, 2, '0-24-25', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 26, '管理员', 'org', 24, 2, '0-24-26', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "管理员"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 27, '配置中心', 'org', 0, 1, '0-27', 'autoicon-ep-setting', '', '{"i18n": {"title": {"en": "Config Center", "zh-cn": "配置中心"}}}', 20);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 28, '应用配置', 'org', 27, 2, '0-27-28', 'autoicon-ep-set-up', '/org/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 5, '菜单', 'platform', 2, 1, 2, '0-2-5', '-权限管理-菜单', 'autoicon-ep-menu', '/auth/menu', '{"i18n": {"title": {"en": "Menu", "zh-cn": "菜单"}}}', 30);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 6, '角色', 'platform', 2, 1, 2, '0-2-6', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 7, '平台管理员', 'platform', 2, 1, 2, '0-2-7', '-权限管理-平台管理员', 'vant-manager-o', '/platform/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "平台管理员"}}}', 50);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 8, '系统管理', 'platform', 0, 0, 1, '0-8', '-系统管理', 'autoicon-ep-platform', '', '{"i18n": {"title": {"en": "System Manage", "zh-cn": "系统管理"}}}', 20);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '主页', 'platform', 0, 1, 1, '0-1', '-主页', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, '权限管理', 'platform', 0, 0, 1, '0-2', '-权限管理', 'autoicon-ep-lock', '', '{"i18n": {"title": {"en": "Auth Manage", "zh-cn": "权限管理"}}}', 10);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, '场景', 'platform', 2, 1, 2, '0-2-3', '-权限管理-场景', 'autoicon-ep-flag', '/auth/scene', '{"i18n": {"title": {"en": "Scene", "zh-cn": "场景"}}}', 0);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 4, '操作', 'platform', 2, 1, 2, '0-2-4', '-权限管理-操作', 'autoicon-ep-coordinate', '/auth/action', '{"i18n": {"title": {"en": "Action", "zh-cn": "操作"}}}', 10);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 9, '配置中心', 'platform', 8, 0, 2, '0-8-9', '-系统管理-配置中心', 'autoicon-ep-setting', '', '{"i18n": {"title": {"en": "Config Center", "zh-cn": "配置中心"}}}', 0);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 10, '上传配置', 'platform', 9, 1, 3, '0-8-9-10', '-系统管理-配置中心-上传配置', 'autoicon-ep-upload', '/upload/upload', '{"i18n": {"title": {"en": "Upload", "zh-cn": "上传配置"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 11, '支付管理', 'platform', 9, 0, 3, '0-8-9-11', '-系统管理-配置中心-支付管理', 'autoicon-ep-coin', '', '{"i18n": {"title": {"en": "", "zh-cn": "支付管理"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 12, '支付配置', 'platform', 11, 1, 4, '0-8-9-11-12', '-系统管理-配置中心-支付管理-支付配置', 'autoicon-ep-money', '/pay/pay', '{"i18n": {"title": {"en": "Pay", "zh-cn": "支付配置"}}}', 50);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 13, '支付场景', 'platform', 11, 1, 4, '0-8-9-11-13', '-系统管理-配置中心-支付管理-支付场景', 'autoicon-ep-guide', '/pay/scene', '{"i18n": {"title": {"en": "Scene", "zh-cn": "支付场景"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 14, '支付通道', 'platform', 11, 1, 4, '0-8-9-11-14', '-系统管理-配置中心-支付管理-支付通道', 'autoicon-ep-connection', '/pay/channel', '{"i18n": {"title": {"en": "Channel", "zh-cn": "支付通道"}}}', 150);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 15, '插件配置', 'platform', 9, 1, 3, '0-8-9-15', '-系统管理-配置中心-插件配置', 'autoicon-ep-ticket', '/platform/config/plugin', '{"i18n": {"title": {"en": "Plugin Config", "zh-cn": "插件配置"}}}', 150);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '应用配置', 'platform', 9, 1, 3, '0-8-9-16', '-系统管理-配置中心-应用配置', 'autoicon-ep-set-up', '/platform/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, 'APP', 'platform', 8, 1, 2, '0-8-17', '-系统管理-APP', 'vant-apps-o', '/app/app', '{"i18n": {"title": {"en": "App", "zh-cn": "APP"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, '用户管理', 'platform', 0, 0, 1, '0-18', '-用户管理', 'vant-friends', '', '{"i18n": {"title": {"en": "User Manage", "zh-cn": "用户管理"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '用户', 'platform', 18, 1, 2, '0-18-19', '-用户管理-用户', 'vant-user-o', '/users/users', '{"i18n": {"title": {"en": "Users", "zh-cn": "用户"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 20, '机构管理', 'platform', 0, 0, 1, '0-20', '-机构管理', 'autoicon-ep-office-building', '', '{"i18n": {"title": {"en": "", "zh-cn": "机构管理"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 21, '机构', 'platform', 20, 1, 2, '0-20-21', '-机构管理-机构', 'autoicon-ep-school', '/org/org', '{"i18n": {"title": {"en": "Org", "zh-cn": "机构"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 22, '机构管理员', 'platform', 2, 1, 2, '0-2-22', '-权限管理-机构管理员', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "机构管理员"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 23, '主页', 'org', 0, 1, 1, '0-23', '-主页', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 24, '权限管理', 'org', 0, 0, 1, '0-24', '-权限管理', 'autoicon-ep-menu', '', '{"i18n": {"title": {"en": "", "zh-cn": "权限管理"}}}', 10);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 25, '角色', 'org', 24, 1, 2, '0-24-25', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 26, '管理员', 'org', 24, 1, 2, '0-24-26', '-权限管理-管理员', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "管理员"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 27, '配置中心', 'org', 0, 0, 1, '0-27', '-配置中心', 'autoicon-ep-setting', '', '{"i18n": {"title": {"en": "Config Center", "zh-cn": "配置中心"}}}', 20);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 28, '应用配置', 'org', 27, 1, 2, '0-27-28', '-配置中心-应用配置', 'autoicon-ep-set-up', '/org/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -1075,7 +1079,7 @@ SELECT setval('"public"."auth_action_action_id_seq"', 1, false);
 -- ----------------------------
 ALTER SEQUENCE "public"."auth_menu_menu_id_seq"
 OWNED BY "public"."auth_menu"."menu_id";
-SELECT setval('"public"."auth_menu_menu_id_seq"', 1, false);
+SELECT setval('"public"."auth_menu_menu_id_seq"', 28, true);
 
 -- ----------------------------
 -- Alter sequences owned by
