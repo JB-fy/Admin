@@ -17,8 +17,10 @@ type Menu struct {
 	MenuName  string      `json:"menuName"  orm:"menu_name"  ` // 名称
 	SceneId   string      `json:"sceneId"   orm:"scene_id"   ` // 场景ID
 	Pid       uint        `json:"pid"       orm:"pid"        ` // 父ID
+	IsLeaf    uint        `json:"isLeaf"    orm:"is_leaf"    ` // 叶子：0否 1是
 	Level     uint        `json:"level"     orm:"level"      ` // 层级
-	IdPath    string      `json:"idPath"    orm:"id_path"    ` // 层级路径
+	IdPath    string      `json:"idPath"    orm:"id_path"    ` // ID路径
+	NamePath  string      `json:"namePath"  orm:"name_path"  ` // 名称路径
 	MenuIcon  string      `json:"menuIcon"  orm:"menu_icon"  ` // 图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}
 	MenuUrl   string      `json:"menuUrl"   orm:"menu_url"   ` // 链接
 	ExtraData string      `json:"extraData" orm:"extra_data" ` // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}

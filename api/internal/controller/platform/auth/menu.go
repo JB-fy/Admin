@@ -22,7 +22,7 @@ type Menu struct {
 
 func NewMenu() *Menu {
 	field := daoAuth.Menu.ColumnArr()
-	defaultFieldOfList := []string{`id`, `label`, daoAuth.Scene.Columns().SceneName, `p_menu_name`, `is_has_child`}
+	defaultFieldOfList := []string{`id`, `label`, daoAuth.Scene.Columns().SceneName, `p_menu_name`, daoAuth.Menu.Columns().IsLeaf}
 	defaultFieldOfInfo := []string{`id`, `label`}
 	defaultFieldOfTree := []string{`id`, `label`}
 	return &Menu{
@@ -30,7 +30,7 @@ func NewMenu() *Menu {
 		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
 		defaultFieldOfTree: append(field, defaultFieldOfTree...),
 		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Merge(gset.NewStrSetFrom(defaultFieldOfTree)).Slice()...),
-		noAuthField:        []string{`id`, `label`, `is_has_child`},
+		noAuthField:        []string{`id`, `label`, daoAuth.Menu.Columns().IsLeaf},
 	}
 }
 

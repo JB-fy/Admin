@@ -42,6 +42,9 @@ const queryForm = reactive({
                 :props="{ checkStrictly: true, emitPath: false }"
             />
         </el-form-item>
+        <el-form-item prop="is_leaf">
+            <el-select-v2 v-model="queryCommon.data.is_leaf" :options="tm('common.status.whether')" :placeholder="t('auth.menu.name.is_leaf')" :clearable="true" style="width: 86px" />
+        </el-form-item>
         <el-form-item prop="level">
             <el-input-number v-model="queryCommon.data.level" :placeholder="t('auth.menu.name.level')" :min="1" :max="255" :precision="0" :controls="false" />
         </el-form-item>

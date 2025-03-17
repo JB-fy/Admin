@@ -19,8 +19,10 @@ type Menu struct {
 	MenuName  interface{} // 名称
 	SceneId   interface{} // 场景ID
 	Pid       interface{} // 父ID
+	IsLeaf    interface{} // 叶子：0否 1是
 	Level     interface{} // 层级
-	IdPath    interface{} // 层级路径
+	IdPath    interface{} // ID路径
+	NamePath  interface{} // 名称路径
 	MenuIcon  interface{} // 图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}
 	MenuUrl   interface{} // 链接
 	ExtraData interface{} // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}

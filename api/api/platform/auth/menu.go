@@ -7,25 +7,26 @@ import (
 
 // 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
 type MenuInfo struct {
-	Id         *uint       `json:"id,omitempty" dc:"ID"`
-	Label      *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	MenuId     *uint       `json:"menu_id,omitempty" dc:"菜单ID"`
-	MenuName   *string     `json:"menu_name,omitempty" dc:"名称"`
-	SceneId    *string     `json:"scene_id,omitempty" dc:"场景ID"`
-	Pid        *uint       `json:"pid,omitempty" dc:"父ID"`
-	Level      *uint       `json:"level,omitempty" dc:"层级"`
-	IdPath     *string     `json:"id_path,omitempty" dc:"层级路径"`
-	MenuIcon   *string     `json:"menu_icon,omitempty" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
-	MenuUrl    *string     `json:"menu_url,omitempty" dc:"链接"`
-	ExtraData  *string     `json:"extra_data,omitempty" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
-	Sort       *uint       `json:"sort,omitempty" dc:"排序值。从大到小排序"`
-	IsStop     *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
-	UpdatedAt  *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
-	CreatedAt  *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	SceneName  *string     `json:"scene_name,omitempty" dc:"场景"`
-	PMenuName  *string     `json:"p_menu_name,omitempty" dc:"父级"`
-	IsHasChild *uint       `json:"is_has_child,omitempty" dc:"有子级：0否 1是"`
-	Children   []MenuInfo  `json:"children" dc:"子级列表"`
+	Id        *uint       `json:"id,omitempty" dc:"ID"`
+	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	MenuId    *uint       `json:"menu_id,omitempty" dc:"菜单ID"`
+	MenuName  *string     `json:"menu_name,omitempty" dc:"名称"`
+	SceneId   *string     `json:"scene_id,omitempty" dc:"场景ID"`
+	Pid       *uint       `json:"pid,omitempty" dc:"父ID"`
+	IsLeaf    *uint       `json:"is_leaf,omitempty" dc:"叶子：0否 1是"`
+	Level     *uint       `json:"level,omitempty" dc:"层级"`
+	IdPath    *string     `json:"id_path,omitempty" dc:"ID路径"`
+	NamePath  *string     `json:"name_path,omitempty" dc:"名称路径"`
+	MenuIcon  *string     `json:"menu_icon,omitempty" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
+	MenuUrl   *string     `json:"menu_url,omitempty" dc:"链接"`
+	ExtraData *string     `json:"extra_data,omitempty" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
+	Sort      *uint       `json:"sort,omitempty" dc:"排序值。从大到小排序"`
+	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
+	SceneName *string     `json:"scene_name,omitempty" dc:"场景"`
+	PMenuName *string     `json:"p_menu_name,omitempty" dc:"父级"`
+	Children  []MenuInfo  `json:"children" dc:"子级列表"`
 }
 
 type MenuFilter struct {
@@ -40,6 +41,7 @@ type MenuFilter struct {
 	MenuName       string      `json:"menu_name,omitempty" v:"max-length:30" dc:"名称"`
 	SceneId        string      `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
 	Pid            *uint       `json:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
+	IsLeaf         *uint       `json:"is_leaf,omitempty" v:"between:0,255" dc:"叶子：0否 1是"`
 	Level          *uint       `json:"level,omitempty" v:"between:1,255" dc:"层级"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }

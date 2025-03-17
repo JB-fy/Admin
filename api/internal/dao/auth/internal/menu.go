@@ -30,8 +30,10 @@ type MenuColumns struct {
 	MenuName  string // 名称
 	SceneId   string // 场景ID
 	Pid       string // 父ID
+	IsLeaf    string // 叶子：0否 1是
 	Level     string // 层级
-	IdPath    string // 层级路径
+	IdPath    string // ID路径
+	NamePath  string // 名称路径
 	MenuIcon  string // 图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}
 	MenuUrl   string // 链接
 	ExtraData string // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
@@ -47,8 +49,10 @@ var menuColumns = MenuColumns{
 	MenuName:  "menu_name",
 	SceneId:   "scene_id",
 	Pid:       "pid",
+	IsLeaf:    "is_leaf",
 	Level:     "level",
 	IdPath:    "id_path",
+	NamePath:  "name_path",
 	MenuIcon:  "menu_icon",
 	MenuUrl:   "menu_url",
 	ExtraData: "extra_data",

@@ -89,6 +89,28 @@ const table = reactive({
             width: 150,
         },
         {
+            dataKey: 'is_leaf',
+            title: t('auth.menu.name.is_leaf'),
+            key: 'is_leaf',
+            align: 'center',
+            width: 100,
+            cellRenderer: (props: any): any => {
+                let statusList = tm('common.status.whether') as { value: any; label: string }[]
+                return [
+                    <el-switch
+                        model-value={props.rowData.is_leaf}
+                        active-value={statusList[1].value}
+                        inactive-value={statusList[0].value}
+                        active-text={statusList[1].label}
+                        inactive-text={statusList[0].label}
+                        inline-prompt={true}
+                        disabled={true}
+                        style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
+                    />,
+                ]
+            },
+        },
+        {
             dataKey: 'level',
             title: t('auth.menu.name.level'),
             key: 'level',
@@ -100,6 +122,14 @@ const table = reactive({
             dataKey: 'id_path',
             title: t('auth.menu.name.id_path'),
             key: 'id_path',
+            align: 'center',
+            width: 200,
+            hidden: true,
+        },
+        {
+            dataKey: 'name_path',
+            title: t('auth.menu.name.name_path'),
+            key: 'name_path',
             align: 'center',
             width: 200,
             hidden: true,
