@@ -392,7 +392,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 					updateData[k] = v
 				} else {
 					nameOfNew := gconv.String(v)
-					updateData[daoThis.Columns().NamePath] = gdb.Raw(fmt.Sprintf("REGEXP_REPLACE( %s, CONCAT( %s, '$' ), '%s' ),%s = '%s'", daoThis.Columns().NamePath, daoThis.Columns().MenuName, nameOfNew, daoThis.Columns().MenuName, nameOfNew))
+					updateData[daoThis.Columns().NamePath] = gdb.Raw(fmt.Sprintf(`REGEXP_REPLACE( %s, CONCAT( %s, '$' ), '%s' ),%s = '%s'`, daoThis.Columns().NamePath, daoThis.Columns().MenuName, nameOfNew, daoThis.Columns().MenuName, nameOfNew))
 					childUpdateList := []map[string]any{} //更新所有子孙级的名称路径
 					oldList, _ := daoModel.CloneNew().FilterPri(daoModel.IdArr).All()
 					for _, oldInfo := range oldList {
@@ -413,10 +413,10 @@ func (daoThis *menuDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 				}
 			case `child_id_path`: //更新所有子孙级的ID路径。参数：map[string]any{`p_id_path_of_old`: `父级ID路径（旧）`, `p_id_path_of_new`: `父级ID路径（新）`}
 				val := gconv.Map(v)
-				updateData[daoThis.Columns().IdPath] = gdb.Raw(fmt.Sprintf("REPLACE( %s, '%s', '%s' )", daoThis.Columns().IdPath, gconv.String(val[`p_id_path_of_old`]), gconv.String(val[`p_id_path_of_new`])))
+				updateData[daoThis.Columns().IdPath] = gdb.Raw(fmt.Sprintf(`REPLACE( %s, '%s', '%s' )`, daoThis.Columns().IdPath, gconv.String(val[`p_id_path_of_old`]), gconv.String(val[`p_id_path_of_new`])))
 			case `child_name_path`: //更新所有子孙级的名称路径。参数：map[string]any{`p_name_path_of_old`: `父级名称路径（旧）`, `p_name_path_of_new`: `父级名称路径（新）`}
 				val := gconv.Map(v)
-				updateData[daoThis.Columns().NamePath] = gdb.Raw(fmt.Sprintf("REGEXP_REPLACE( %s, CONCAT( '^', '%s' ), '%s' )", daoThis.Columns().NamePath, gconv.String(val[`p_name_path_of_old`]), gconv.String(val[`p_name_path_of_new`])))
+				updateData[daoThis.Columns().NamePath] = gdb.Raw(fmt.Sprintf(`REGEXP_REPLACE( %s, CONCAT( '^', '%s' ), '%s' )`, daoThis.Columns().NamePath, gconv.String(val[`p_name_path_of_old`]), gconv.String(val[`p_name_path_of_new`])))
 			case `child_level`: //更新所有子孙级的层级。参数：map[string]any{`p_level_of_old`: `父级层级（旧）`, `p_level_of_new`: `父级层级（新）`}
 				val := gconv.Map(v)
 				pLevelOfOld := gconv.Uint(val[`p_level_of_old`])

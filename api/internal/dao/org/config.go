@@ -63,7 +63,7 @@ func (daoThis *configDao) ParseDbTable(ctx context.Context, dbTableOpt ...any) s
 
 // 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
 func (daoThis *configDao) ParseId(daoModel *daoIndex.DaoModel) string {
-	return fmt.Sprintf("CONCAT_WS( '|', COALESCE( %s, '' ), COALESCE( %s, '' ) )", daoModel.DbTable+`.`+daoThis.Columns().OrgId, daoModel.DbTable+`.`+daoThis.Columns().ConfigKey)
+	return fmt.Sprintf(`CONCAT_WS( '|', COALESCE( %s, '' ), COALESCE( %s, '' ) )`, daoModel.DbTable+`.`+daoThis.Columns().OrgId, daoModel.DbTable+`.`+daoThis.Columns().ConfigKey)
 }
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
