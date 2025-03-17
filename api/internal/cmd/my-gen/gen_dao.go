@@ -385,7 +385,7 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 			orderParseStrArr = append(orderParseStrArr, `m = m.Order(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + suffix)`)
 		}
 
-		dao.idParse = `fmt.Sprintf("CONCAT_WS( '` + concatStr + `'` + gstr.Repeat(`, COALESCE( %s, '' )`, len(tpl.Handle.Id.List)) + ` )", ` + gstr.Join(idParseStrArr, `, `) + `)`
+		dao.idParse = `fmt.Sprintf(` + "`" + `CONCAT_WS( '` + concatStr + `'` + gstr.Repeat(`, COALESCE( %s, '' )`, len(tpl.Handle.Id.List)) + ` )` + "`" + `, ` + gstr.Join(idParseStrArr, `, `) + `)`
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
@@ -434,7 +434,7 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			}
 		}
-		dao.labelParse = `fmt.Sprintf("COALESCE( ` + gstr.Trim(gstr.Repeat(`, NULLIF( %s, '' )`, labelListLen), `, `) + ` )", ` + gstr.Join(labelParseStrArr, `, `) + `)`
+		dao.labelParse = `fmt.Sprintf(` + "`" + `COALESCE( ` + gstr.Trim(gstr.Repeat(`, NULLIF( %s, '' )`, labelListLen), `, `) + ` )` + "`" + `, ` + gstr.Join(labelParseStrArr, `, `) + `)`
 
 		filterParseStr = `case ` + "`label`" + `:
 				m = m.Where(m.Builder().` + parseFilterStr + `)`
@@ -610,7 +610,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 
 			afterUpdateStrArr1 := []string{gstr.CaseCamelLower(pIdPathStr) + ` := ` + tpl.Handle.Pid.Tpl.PIdPathDefVal}
 			afterUpdateStrArr2 := []string{gstr.CaseCamelLower(pIdPathStr) + ` = pInfo[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `].String()`}
-			afterUpdateStrArr3 := []string{`updateData[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `] = gdb.Raw(fmt.Sprintf("CONCAT( '%s-', %s )", ` + gstr.CaseCamelLower(pIdPathStr) + `, ` + daoPath + `.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `))`}
+			afterUpdateStrArr3 := []string{`updateData[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `] = gdb.Raw(fmt.Sprintf(` + "`" + `CONCAT( '%s-', %s )` + "`" + `, ` + gstr.CaseCamelLower(pIdPathStr) + `, ` + daoPath + `.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `))`}
 			afterUpdateStrArr4 := []string{}
 			afterUpdateStrArr5 := []string{}
 			afterUpdateStrArr6 := []string{}
@@ -624,7 +624,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			}
 			updateParseArr := []string{`case ` + "`" + childIdPathStr + "`" + `: //更新所有子孙级的ID路径。参数：map[string]any{` + "`" + pIdPathOfOldStr + "`" + ": `父级ID路径（旧）`" + `, ` + "`" + pIdPathOfNewStr + "`" + ": `父级ID路径（新）`" + `}
 				val := gconv.Map(v)
-				updateData[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `] = gdb.Raw(fmt.Sprintf("REPLACE( %s, '%s', '%s' )", ` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `, gconv.String(val[` + "`" + pIdPathOfOldStr + "`" + `]), gconv.String(val[` + "`" + pIdPathOfNewStr + "`" + `])))`}
+				updateData[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `] = gdb.Raw(fmt.Sprintf(` + "`" + `REPLACE( %s, '%s', '%s' )` + "`" + `, ` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `, gconv.String(val[` + "`" + pIdPathOfOldStr + "`" + `]), gconv.String(val[` + "`" + pIdPathOfNewStr + "`" + `])))`}
 			if tpl.Handle.Pid.NamePath != `` {
 				afterInsertMapKeyArr = append(afterInsertMapKeyArr, "`"+pNamePathStr+"`"+`: pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`],`, "`name`"+`: insert[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`],`)
 				afterInsertMapKeyArrOfEmpty = append(afterInsertMapKeyArrOfEmpty, "`"+pNamePathStr+"`"+": ``"+`,`, "`name`"+`: insert[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`],`)
@@ -632,10 +632,10 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 
 				afterUpdateStrArr1 = append(afterUpdateStrArr1, gstr.CaseCamelLower(pNamePathStr)+` := `+"``")
 				afterUpdateStrArr2 = append(afterUpdateStrArr2, gstr.CaseCamelLower(pNamePathStr)+` = pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`].String()`)
-				afterUpdateStrArr3 = append(afterUpdateStrArr3, `updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("CONCAT( '%s-', %s )", `+gstr.CaseCamelLower(pNamePathStr)+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`))`)
+				afterUpdateStrArr3 = append(afterUpdateStrArr3, `updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf(`+"`"+`CONCAT( '%s-', %s )`+"`"+`, `+gstr.CaseCamelLower(pNamePathStr)+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`))`)
 				afterUpdateStrArr3 = append(afterUpdateStrArr3, `_, ok`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` := update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`]
 				if ok`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` {
-					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("CONCAT('%s-', '%s')", `+gstr.CaseCamelLower(pNamePathStr)+`, gconv.String(update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`])))
+					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf(`+"`"+`CONCAT('%s-', '%s')`+"`"+`, `+gstr.CaseCamelLower(pNamePathStr)+`, gconv.String(update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`])))
 				}`)
 				childUpdateMapKeyArr = append(childUpdateMapKeyArr, "`"+childNamePathStr+"`"+`: map[string]any{
 								`+"`"+pNamePathOfOldStr+"`"+`: oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`],
@@ -643,7 +643,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 							},`)
 				updateParseArr = append(updateParseArr, `case `+"`"+childNamePathStr+"`"+`: //更新所有子孙级的名称路径。参数：map[string]any{`+"`"+pNamePathOfOldStr+"`"+": `父级名称路径（旧）`"+`, `+"`"+pNamePathOfNewStr+"`"+": `父级名称路径（新）`"+`}
 				val := gconv.Map(v)
-				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("REGEXP_REPLACE( %s, CONCAT( '^', '%s' ), '%s' )", `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`, gconv.String(val[`+"`"+pNamePathOfOldStr+"`"+`]), gconv.String(val[`+"`"+pNamePathOfNewStr+"`"+`])))`)
+				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf(`+"`"+`REGEXP_REPLACE( %s, CONCAT( '^', '%s' ), '%s' )`+"`"+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`, gconv.String(val[`+"`"+pNamePathOfOldStr+"`"+`]), gconv.String(val[`+"`"+pNamePathOfNewStr+"`"+`])))`)
 			}
 			if tpl.Handle.Pid.Level != `` {
 				afterInsertMapKeyArr = append(afterInsertMapKeyArr, "`"+pLevelStr+"`"+`:   pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`],`)
@@ -794,7 +794,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 					updateData[k] = v
 				} else {
 					nameOfNew := gconv.String(v)
-					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("REGEXP_REPLACE( %s, CONCAT( %s, '$' ), '%s' ),%s = '%s'", `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`, nameOfNew, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`, nameOfNew))
+					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf(`+"`"+`REGEXP_REPLACE( %s, CONCAT( %s, '$' ), '%s' ),%s = '%s'`+"`"+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`, nameOfNew, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`, nameOfNew))
 					`+gstr.CaseCamelLower(childUpdateStr)+` := []map[string]any{} //更新所有子孙级的名称路径
 					oldList, _ := daoModel.CloneNew().FilterPri(daoModel.IdArr).All()
 					for _, oldInfo := range oldList {
