@@ -3,6 +3,7 @@ package my_gen
 import (
 	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
+	"fmt"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
@@ -379,12 +380,12 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 		groupParseStrArr := []string{}
 		orderParseStrArr := []string{}
 		for _, v := range tpl.Handle.Id.List {
-			idParseStrArr = append(idParseStrArr, "COALESCE("+tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeCOALESCE, "` + daoModel.DbTable + `.` + daoThis.Columns()."+v.FieldCaseCamel+" + `")+", '')")
+			idParseStrArr = append(idParseStrArr, fmt.Sprintf("COALESCE( %s, '' )", tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeCOALESCE, "` + daoModel.DbTable + `.` + daoThis.Columns()."+v.FieldCaseCamel+" + `")))
 			filterParseStrArr = append(filterParseStrArr, ` + daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + `)
 			groupParseStrArr = append(groupParseStrArr, `m = m.Group(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+`)`)
 			orderParseStrArr = append(orderParseStrArr, `m = m.Order(daoModel.DbTable + `+"`.`"+` + daoThis.Columns().`+v.FieldCaseCamel+` + suffix)`)
 		}
-		dao.idParse = "`" + `CONCAT_WS('` + concatStr + `', ` + gstr.Join(idParseStrArr, `, `) + ")`"
+		dao.idParse = fmt.Sprintf("`CONCAT_WS( '%s', %s )`", concatStr, gstr.Join(idParseStrArr, `, `))
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
@@ -423,17 +424,18 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
 	labelListLen := len(tpl.Handle.LabelList)
 	if labelListLen > 1 {
-		labelParseStrArr := []string{"NULLIF(" + tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1])+" + `") + ", '')"}
+		labelParseStrArr := []string{fmt.Sprintf("NULLIF( %s, '' )", tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1])+" + `"))}
 		parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[labelListLen-1]) + ", `%`+gconv.String(v)+`%`)"
 		for i := labelListLen - 2; i >= 0; i-- {
-			labelParseStrArr = append([]string{"NULLIF(" + tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[i])+" + `") + ", '')"}, labelParseStrArr...)
+			labelParseStrArr = append([]string{fmt.Sprintf("NULLIF( %s, '' )", tpl.DbHandler.GetFuncFieldFormat(internal.DbFuncCodeNULLIF, "` + daoModel.DbTable + `.` + daoThis.Columns()."+gstr.CaseCamel(tpl.Handle.LabelList[i])+" + `"))}, labelParseStrArr...)
 			if i == 0 {
 				parseFilterStr = "WhereLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			} else {
 				parseFilterStr = "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + gstr.CaseCamel(tpl.Handle.LabelList[i]) + ", `%`+gconv.String(v)+`%`)." + parseFilterStr
 			}
 		}
-		dao.labelParse = "`COALESCE(" + gstr.Join(labelParseStrArr, `, `) + ")`"
+		dao.labelParse = fmt.Sprintf("`COALESCE( %s )`", gstr.Join(labelParseStrArr, `, `))
+
 		filterParseStr = `case ` + "`label`" + `:
 				m = m.Where(m.Builder().` + parseFilterStr + `)`
 	}
@@ -606,7 +608,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 
 			afterUpdateStrArr1 := []string{gstr.CaseCamelLower(pIdPathStr) + ` := ` + tpl.Handle.Pid.Tpl.PIdPathDefVal}
 			afterUpdateStrArr2 := []string{gstr.CaseCamelLower(pIdPathStr) + ` = pInfo[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `].String()`}
-			afterUpdateStrArr3 := []string{`updateData[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `] = gdb.Raw(` + "`CONCAT('`" + ` + ` + gstr.CaseCamelLower(pIdPathStr) + ` + ` + "`-', `" + ` + ` + daoPath + `.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + ` + ` + "`)`" + `)`}
+			afterUpdateStrArr3 := []string{`updateData[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `] = gdb.Raw(fmt.Sprintf("CONCAT( '%s-', %s )", ` + gstr.CaseCamelLower(pIdPathStr) + `, ` + daoPath + `.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel + `))`}
 			afterUpdateStrArr4 := []string{}
 			afterUpdateStrArr5 := []string{}
 			afterUpdateStrArr6 := []string{}
@@ -620,9 +622,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 			}
 			updateParseArr := []string{`case ` + "`" + childIdPathStr + "`" + `: //更新所有子孙级的ID路径。参数：map[string]any{` + "`" + pIdPathOfOldStr + "`" + ": `父级ID路径（旧）`" + `, ` + "`" + pIdPathOfNewStr + "`" + ": `父级ID路径（新）`" + `}
 				val := gconv.Map(v)
-				pIdPathOfOld := gconv.String(val[` + "`" + pIdPathOfOldStr + "`" + `])
-				pIdPathOfNew := gconv.String(val[` + "`" + pIdPathOfNewStr + "`" + `])
-				updateData[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `] = gdb.Raw(` + "`REPLACE(`" + ` + ` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + ` + ` + "`, '`" + ` + pIdPathOfOld + ` + "`', '`" + ` + pIdPathOfNew + ` + "`')`" + `)`}
+				updateData[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `] = gdb.Raw(fmt.Sprintf("REPLACE( %s, '%s', '%s' )", ` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `, gconv.String(val[` + "`" + pIdPathOfOldStr + "`" + `]), gconv.String(val[` + "`" + pIdPathOfNewStr + "`" + `])))`}
 			if tpl.Handle.Pid.NamePath != `` {
 				afterInsertMapKeyArr = append(afterInsertMapKeyArr, "`"+pNamePathStr+"`"+`: pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`],`, "`name`"+`: insert[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`],`)
 				afterInsertMapKeyArrOfEmpty = append(afterInsertMapKeyArrOfEmpty, "`"+pNamePathStr+"`"+": ``"+`,`, "`name`"+`: insert[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`],`)
@@ -630,16 +630,18 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 
 				afterUpdateStrArr1 = append(afterUpdateStrArr1, gstr.CaseCamelLower(pNamePathStr)+` := `+"``")
 				afterUpdateStrArr2 = append(afterUpdateStrArr2, gstr.CaseCamelLower(pNamePathStr)+` = pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`].String()`)
-				afterUpdateStrArr3 = append(afterUpdateStrArr3, `updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(`+"`CONCAT('`"+` + `+gstr.CaseCamelLower(pNamePathStr)+` + `+"`-', `"+` + `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` + `+"`)`"+`)`)
+				afterUpdateStrArr3 = append(afterUpdateStrArr3, `updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("CONCAT( '%s-', %s )", `+gstr.CaseCamelLower(pNamePathStr)+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`))`)
+				afterUpdateStrArr3 = append(afterUpdateStrArr3, `_, ok`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` := update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`]
+				if ok`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` {
+					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("CONCAT('%s-', %s)", `+gstr.CaseCamelLower(pNamePathStr)+`, gconv.String(update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`])))
+				}`)
 				childUpdateMapKeyArr = append(childUpdateMapKeyArr, "`"+childNamePathStr+"`"+`: map[string]any{
 								`+"`"+pNamePathOfOldStr+"`"+`: oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`],
 								`+"`"+pNamePathOfNewStr+"`"+`: `+gstr.CaseCamelLower(pNamePathStr)+` + `+"`-`"+` + oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`].String(),
 							},`)
 				updateParseArr = append(updateParseArr, `case `+"`"+childNamePathStr+"`"+`: //更新所有子孙级的名称路径。参数：map[string]any{`+"`"+pNamePathOfOldStr+"`"+": `父级名称路径（旧）`"+`, `+"`"+pNamePathOfNewStr+"`"+": `父级名称路径（新）`"+`}
 				val := gconv.Map(v)
-				pNamePathOfOld := gconv.String(val[`+"`"+pNamePathOfOldStr+"`"+`])
-				pNamePathOfNew := gconv.String(val[`+"`"+pNamePathOfNewStr+"`"+`])
-				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(`+"`REPLACE(`"+` + `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+` + `+"`, '`"+` + pNamePathOfOld + `+"`', '`"+` + pNamePathOfNew + `+"`')`"+`)`)
+				updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("REGEXP_REPLACE( %s, CONCAT( '^', '%s' ), '%s' )", `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`, gconv.String(val[`+"`"+pNamePathOfOldStr+"`"+`]), gconv.String(val[`+"`"+pNamePathOfNewStr+"`"+`])))`)
 			}
 			if tpl.Handle.Pid.Level != `` {
 				afterInsertMapKeyArr = append(afterInsertMapKeyArr, "`"+pLevelStr+"`"+`:   pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Level)+`],`)
@@ -680,10 +682,10 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 							`)+`
 						})`)
 			if tpl.Handle.Pid.NamePath != `` {
-				afterUpdateStrArr5 = append(afterUpdateStrArr5, `if _, ok := update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`]; ok {
+				afterUpdateStrArr5 = append(afterUpdateStrArr5, `if ok`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` {
 							`+gstr.CaseCamelLower(childUpdateStr)+`[len(`+gstr.CaseCamelLower(childUpdateStr)+`)-1][`+"`"+childNamePathStr+"`"+`].(map[string]any)[`+"`"+pNamePathOfNewStr+"`"+`] = `+gstr.CaseCamelLower(pNamePathStr)+` + `+"`-`"+` + gconv.String(update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`])
 						}`)
-				childUpdateNamePathStr = ` else if _, ok := update[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `]; ok {
+				childUpdateNamePathStr = ` else if ok` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + ` {
 						if name := gconv.String(update[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `]); name != oldInfo[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.LabelList[0]) + `].String() {
 							` + gstr.CaseCamelLower(childUpdateStr) + ` = append(` + gstr.CaseCamelLower(childUpdateStr) + `, map[string]any{
 								` + "`" + pIdPathOfOldStr + "`" + `: oldInfo[` + daoPath + `.Columns().` + gstr.CaseCamel(tpl.Handle.Pid.IdPath) + `],
@@ -790,7 +792,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 					updateData[k] = v
 				} else {
 					nameOfNew := gconv.String(v)
-					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("REGEXP_REPLACE ( %s, CONCAT( %s, '$' ), '%s' ),%s = '%s'", `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`, nameOfNew, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`, nameOfNew))
+					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("REGEXP_REPLACE( %s, CONCAT( %s, '$' ), '%s' ),%s = '%s'", `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`, nameOfNew, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`, nameOfNew))
 					`+gstr.CaseCamelLower(childUpdateStr)+` := []map[string]any{} //更新所有子孙级的名称路径
 					oldList, _ := daoModel.CloneNew().FilterPri(daoModel.IdArr).All()
 					for _, oldInfo := range oldList {
