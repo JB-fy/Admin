@@ -156,9 +156,8 @@ func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nFi
 			for _, status := range v.StatusList {
 				viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: '`+status[0]+`', label: '`+status[1]+`' },`)
 			}
-
 		} else {
-			if !(v.FieldTypeName == internal.TypeNameIsPrefix && v.StatusWhetherI18n != ``) {
+			if v.StatusWhetherI18n == `` {
 				for _, status := range v.StatusList {
 					viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
 				}
@@ -248,7 +247,7 @@ func getViewI18nExtendMiddleMany(tplEM handleExtendMiddle) (viewI18n myGenViewI1
 					viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: '`+status[0]+`', label: '`+status[1]+`' },`)
 				}
 			} else {
-				if !(v.FieldTypeName == internal.TypeNameIsPrefix && v.StatusWhetherI18n != ``) {
+				if v.StatusWhetherI18n == `` {
 					for _, status := range v.StatusList {
 						viewI18nField.status.DataTypeName = append(viewI18nField.status.DataTypeName, `{ value: `+status[0]+`, label: '`+status[1]+`' },`)
 					}
