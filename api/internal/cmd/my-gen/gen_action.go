@@ -40,8 +40,8 @@ func genAction(ctx context.Context, option myGenOption, tpl myGenTpl) {
 	}
 
 	for _, v := range actionList {
-		daoAuth.Action.CtxDaoModel(ctx).HookInsert(v).Insert()
-		/* _, err := daoAuth.Action.CtxDaoModel(ctx).HookInsert(v).Insert()
+		daoAuth.Action.CtxDaoModel(ctx).HookInsert(v).InsertIgnore()
+		/* _, err := daoAuth.Action.CtxDaoModel(ctx).HookInsert(v).InsertIgnore()
 		if err != nil { //报错就是操作权限已存在（主键冲突）
 			// daoAuth.Action.CtxDaoModel(ctx).FilterPri(v[daoAuth.Action.Columns().ActionId]).HookUpdate(v).Update()	//已存在不再更新
 		} */

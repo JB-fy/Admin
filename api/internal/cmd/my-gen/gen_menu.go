@@ -49,7 +49,7 @@ func genMenu(ctx context.Context, option myGenOption, tpl myGenTpl) {
 			daoAuth.Menu.Columns().MenuIcon:  `autoicon-ep-link`,
 			daoAuth.Menu.Columns().MenuUrl:   menuUrl,
 			daoAuth.Menu.Columns().ExtraData: `{"i18n": {"title": {"en": "` + menuNameOfEn + `", "zh-cn": "` + menuName + `"}}}`,
-		}).Insert()
+		}).InsertIgnore()
 	} else {
 		daoAuth.Menu.CtxDaoModel(ctx).SetIdArr(g.Map{`id`: id}).HookUpdate(g.Map{
 			daoAuth.Menu.Columns().MenuName:  menuName,

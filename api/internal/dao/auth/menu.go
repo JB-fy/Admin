@@ -340,7 +340,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 				updateData[daoThis.Columns().NamePath] = gdb.Raw(fmt.Sprintf("CONCAT( '%s-', %s )", pNamePath, daoThis.Columns().MenuName))
 				_, okMenuName := update[daoThis.Columns().MenuName]
 				if okMenuName {
-					updateData[daoThis.Columns().NamePath] = gdb.Raw(fmt.Sprintf("CONCAT('%s-', %s)", pNamePath, gconv.String(update[daoThis.Columns().MenuName])))
+					updateData[daoThis.Columns().NamePath] = gdb.Raw(fmt.Sprintf("CONCAT('%s-', '%s')", pNamePath, gconv.String(update[daoThis.Columns().MenuName])))
 				}
 				updateData[daoThis.Columns().Level] = pLevel + 1
 				childUpdateList := []map[string]any{} //更新所有子孙级的ID路径，名称路径和层级

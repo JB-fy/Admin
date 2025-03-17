@@ -67,7 +67,7 @@ func (daoThis *adminDao) ParseId(daoModel *daoIndex.DaoModel) string {
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
 func (daoThis *adminDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return `COALESCE(NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Email + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, ''))`
+	return `COALESCE( NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, '' ), NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Email + `, '' ), NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, '' ), NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, '' ) )`
 }
 
 // 解析filter

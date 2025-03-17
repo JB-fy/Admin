@@ -635,7 +635,7 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				afterUpdateStrArr3 = append(afterUpdateStrArr3, `updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("CONCAT( '%s-', %s )", `+gstr.CaseCamelLower(pNamePathStr)+`, `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`))`)
 				afterUpdateStrArr3 = append(afterUpdateStrArr3, `_, ok`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` := update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`]
 				if ok`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` {
-					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("CONCAT('%s-', %s)", `+gstr.CaseCamelLower(pNamePathStr)+`, gconv.String(update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`])))
+					updateData[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`] = gdb.Raw(fmt.Sprintf("CONCAT('%s-', '%s')", `+gstr.CaseCamelLower(pNamePathStr)+`, gconv.String(update[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+`])))
 				}`)
 				childUpdateMapKeyArr = append(childUpdateMapKeyArr, "`"+childNamePathStr+"`"+`: map[string]any{
 								`+"`"+pNamePathOfOldStr+"`"+`: oldInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.NamePath)+`],

@@ -11,9 +11,9 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"slices"
 	"sync"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -70,7 +70,7 @@ func (daoThis *usersDao) ParseId(daoModel *daoIndex.DaoModel) string {
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
 func (daoThis *usersDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return `COALESCE(NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Email + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, ''), NULLIF(` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, ''))`
+	return `COALESCE( NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Phone + `, '' ), NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Email + `, '' ), NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Account + `, '' ), NULLIF( ` + daoModel.DbTable + `.` + daoThis.Columns().Nickname + `, '' ) )`
 }
 
 // 解析filter
@@ -224,7 +224,7 @@ func (daoThis *usersDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 				}
 				insertData[k] = v
 			case Privacy.Columns().Password, Privacy.Columns().Salt, Privacy.Columns().IdCardNo, Privacy.Columns().IdCardName, Privacy.Columns().IdCardGender, Privacy.Columns().IdCardBirthday, Privacy.Columns().IdCardAddress:
-				if garray.NewStrArrayFrom([]string{``, `0`, `[]`, `{}`}).Contains(gconv.String(v)) { //gvar.New(v).IsEmpty()无法验证指针的值是空的数据
+				if slices.Contains([]string{``, `0`, `[]`, `{}`}, gconv.String(v)) { //gvar.New(v).IsEmpty()无法验证指针的值是空的数据
 					continue
 				}
 				insertData, ok := daoModel.AfterInsert[`privacy`].(map[string]any)
