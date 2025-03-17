@@ -532,21 +532,23 @@ func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
 				tableP := `+"`p_`"+` + `+daoTable+`
 				m = m.Fields(tableP + `+"`.`"+` + `+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])+` + `+"` AS `"+` + v)
 				m = m.Handler(`+daoPath+`.ParseJoin(tableP, daoModel))`)
-		daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_has_child`)+"`"+`:
+		if tpl.Handle.Pid.IsLeaf == `` {
+			daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_leaf`)+"`"+`:
 				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)
 				daoModel.AfterField[v] = struct{}{}`)
+
+			daoField.fieldHook.Method = internal.ReturnTypeName
+			daoField.fieldHook.DataTypeName = append(daoField.fieldHook.DataTypeName, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_leaf`)+"`"+`:
+			isLeaf := 0
+			if count, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+v.FieldCaseCamel+`, record[`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`]).Count(); count > 0 {
+				isLeaf = 1
+			}
+			record[k] = gvar.New(isLeaf)`)
+		}
 		daoField.fieldParse.DataTypeName = append(daoField.fieldParse.DataTypeName, `case `+"`tree`"+`:
 				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`)
 				m = m.Fields(`+daoTable+` + `+"`.`"+` + `+daoPath+`.Columns().`+v.FieldCaseCamel+`)
 				m = m.Handler(`+daoPath+`.ParseOrder([]string{`+"`tree`"+`}, daoModel))`)
-
-		daoField.fieldHook.Method = internal.ReturnTypeName
-		daoField.fieldHook.DataTypeName = append(daoField.fieldHook.DataTypeName, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_has_child`)+"`"+`:
-			isHasChild := 0
-			if count, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+v.FieldCaseCamel+`, record[`+daoPath+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel+`]).Count(); count > 0 {
-				isHasChild = 1
-			}
-			record[k] = gvar.New(isHasChild)`)
 
 		orderParseStr := `case ` + "`tree`" + `:`
 		if tpl.Handle.Pid.Level != `` {

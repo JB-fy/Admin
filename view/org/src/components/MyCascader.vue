@@ -124,9 +124,9 @@ const cascader = reactive({
             }
             if (cascader.props.lazy /* && !cascader.props.checkStrictly */) {
                 // 当checkStrictly=true时，可在cascader.props.lazyLoad中动态改变leaf=true
-                // 当checkStrictly=false时，可在cascader.props.lazyLoad中动态改变leaf=true。但选项选中后值为null，故服务器必须返回是否有子级is_has_child字段，用于直接确定leaf
+                // 当checkStrictly=false时，可在cascader.props.lazyLoad中动态改变leaf=true。但选项选中后值为null，故服务器必须返回是否叶子is_leaf字段，用于直接确定leaf
                 // 无子级设置leaf=true
-                param.field.push('is_has_child')
+                param.field.push('is_leaf')
             }
             return param
         }),
@@ -142,8 +142,8 @@ const cascader = reactive({
                                   [cascader.props.value]: item[cascader.api.param.field[0]],
                                   [cascader.props.label]: item[cascader.api.param.field[1]],
                               }
-                              if ('is_has_child' in item) {
-                                  treeTmp[index][cascader.props.leaf] = item.is_has_child === 0 ? true : false
+                              if ('is_leaf' in item) {
+                                  treeTmp[index][cascader.props.leaf] = item.is_leaf ? true : false
                               }
                               if (item.children?.length) {
                                   treeTmp[index][cascader.props.children] = handle(item.children)

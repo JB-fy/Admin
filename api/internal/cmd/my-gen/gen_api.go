@@ -488,11 +488,10 @@ func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
 		if !slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, v.FieldType) {
 			apiField.filterType.DataType = `*string`
 		}
-
-		apiField.resOfAdd = append(apiField.resOfAdd,
-			internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, tpl.Handle.LabelList[0], `p`)+` *string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+`,omitempty" dc:"父级"`+"`",
-			internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, `is_has_child`)+` *uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_has_child`)+`,omitempty" dc:"有子级：0否 1是"`+"`",
-		)
+		apiField.resOfAdd = append(apiField.resOfAdd, internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, tpl.Handle.LabelList[0], `p`)+` *string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+`,omitempty" dc:"父级"`+"`")
+		if tpl.Handle.Pid.IsLeaf == `` {
+			apiField.resOfAdd = append(apiField.resOfAdd, internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, `is_leaf`)+` *uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_leaf`)+`,omitempty" dc:"叶子：0否 1是"`+"`")
+		}
 	case internal.TypeNameIdPath, internal.TypeNameNamePath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；	// name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		apiField.filterType.Method = internal.ReturnEmpty
 		apiField.createType.Method = internal.ReturnEmpty
