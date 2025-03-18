@@ -20,12 +20,12 @@ const props = defineProps({
         default: () => [],
     },
     /**
-     * 接口。格式：{ code: string, param: object, transform: function, pidField: string, pidIsStr: true }
+     * 接口。格式：{ code: string, param: object, transform: function, pidField: string, pidDefVal: 0 }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
      *      param：必须。接口函数所需参数。格式：{ filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number }。其中field内第0，1字段默认用于cascader.props的value，label属性，cascader.api的transform属性，使用时请注意。或直接在props.props中设置对应参数
      *      transform：非必须。接口返回数据转换方法
      *      pidField：非必须。动态加载时用于获取子级，接口参数filter中使用的字段名
-     *      pidIsStr：非必须。pid是否字符串类型
+     *      pidDefVal：非必须。pid默认值，默认0，字符串类型传空字符串''
      */
     api: {
         type: Object,
@@ -88,7 +88,7 @@ const cascader = reactive({
         lazy: false,
         lazyLoad: (node: any, resolve: any) => {
             if (node.level == 0) {
-                cascader.api.param.filter[cascader.api.pidField] = props.api.pidIsStr ? '' : 0
+                cascader.api.param.filter[cascader.api.pidField] = props.api.pidDefVal ?? 0
             } else {
                 cascader.api.param.filter[cascader.api.pidField] = node.data[cascader.props.value]
             }

@@ -66,12 +66,12 @@ type myGenTpl struct {
 			IsLeaf    string   //叶子字段
 			Sort      []string //排序字段列表（当有排序字段时，树状列表对这些字段做正序排序）
 			Tpl       struct {
-				PidType        string
-				PidDefVal      string
-				PidGconvMethod string
-				PidJudge       string
-				PIdPathDefVal  string
-				PidIsStr       string
+				PidType         string
+				PidDefVal       string
+				PidGconvMethod  string
+				PidJudge        string
+				PIdPathDefVal   string
+				PidDefValOfView string
 			}
 		}
 		RelIdMap            map[string]handleRelId //id后缀字段，需特殊处理
@@ -443,7 +443,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				tpl.Handle.Pid.Tpl.PidGconvMethod = `Int`
 				tpl.Handle.Pid.Tpl.PidJudge = `!= 0`
 				tpl.Handle.Pid.Tpl.PIdPathDefVal = "`0`"
-				tpl.Handle.Pid.Tpl.PidIsStr = ``
+				tpl.Handle.Pid.Tpl.PidDefValOfView = ``
 				if v.FieldType == internal.TypeIntU {
 					tpl.Handle.Pid.Tpl.PidType = `uint`
 					tpl.Handle.Pid.Tpl.PidGconvMethod = `Uint`
@@ -454,7 +454,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				tpl.Handle.Pid.Tpl.PidGconvMethod = `String`
 				tpl.Handle.Pid.Tpl.PidJudge = "!= ``"
 				tpl.Handle.Pid.Tpl.PIdPathDefVal = "``"
-				tpl.Handle.Pid.Tpl.PidIsStr = `, pidIsStr: true`
+				tpl.Handle.Pid.Tpl.PidDefValOfView = `, pidDefVal: ''`
 			}
 		case internal.TypeNameIdPath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；
 			tpl.Handle.Pid.IdPath = v.FieldRaw

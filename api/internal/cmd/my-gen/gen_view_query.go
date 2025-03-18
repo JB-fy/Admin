@@ -213,7 +213,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 		if !slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, v.FieldType) {
 			defaultOptions = `tm('common.status.pidStr')`
 		}
-		viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree'` + tpl.Handle.Pid.Tpl.PidIsStr + ` }" :defaultOptions="` + defaultOptions + `" :props="{ checkStrictly: true, emitPath: false }" />`
+		viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree'` + tpl.Handle.Pid.Tpl.PidDefValOfView + ` }" :defaultOptions="` + defaultOptions + `" :props="{ checkStrictly: true, emitPath: false }" />`
 	case internal.TypeNameIdPath, internal.TypeNameNamePath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；	// name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		return myGenViewQueryField{}
 	case internal.TypeNameLevel: // level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；
@@ -237,7 +237,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 		if relIdObj.tpl.Table != `` {
 			apiUrl := relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 			if relIdObj.tpl.Handle.Pid.Pid != `` {
-				viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree'` + tpl.Handle.Pid.Tpl.PidIsStr + ` }" :props="{ emitPath: false }" />`
+				viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree'` + tpl.Handle.Pid.Tpl.PidDefValOfView + ` }" :props="{ emitPath: false }" />`
 			} else {
 				viewQueryField.form.DataTypeName = `<my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" />`
 			}
@@ -246,7 +246,7 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 			viewQueryField.form.DataTypeName = `<!-- 可选择组件<my-select>或<my-cascader>使用，但需手动确认关联表，并修改接口路径 -->
             ` + viewQueryField.form.DataType + `
             <!-- <my-select v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/list' }" /> -->
-            <!-- <my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree'` + tpl.Handle.Pid.Tpl.PidIsStr + ` }" :props="{ emitPath: false }" /> -->`
+            <!-- <my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree'` + tpl.Handle.Pid.Tpl.PidDefValOfView + ` }" :props="{ emitPath: false }" /> -->`
 		}
 	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		viewQueryField.isI18nTm = true
