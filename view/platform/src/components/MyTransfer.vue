@@ -1,19 +1,15 @@
 <!-------- 使用示例 开始-------->
 <!-- <my-transfer v-model="saveForm.data.scene_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 
-<my-transfer v-model="saveForm.data.scene_id_arr" :defaultOptions="tm('common.status.xxxx')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'scene_name'] } }" /> -->
+<my-transfer v-model="saveForm.data.scene_id_arr" :options="tm('common.status.xxxx')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'scene_name'] } }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
+defineOptions({ inheritAttrs: false })
+const attrs = useAttrs()
 const slots = useSlots()
+const model = defineModel()
+const emits = defineEmits(['change'])
 const props = defineProps({
-    modelValue: {
-        type: Array,
-    },
-    defaultOptions: {
-        //选项初始默认值。格式：{ [transfer.props.key]: any, [transfer.props.label]: any, [propName: string]: any }[]
-        type: Array,
-        default: () => [],
-    },
     /**
      * 接口。格式：{ code: string, param: object, transform: function }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
@@ -24,43 +20,17 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    placeholder: {
-        type: String,
-    },
-    filterable: {
-        type: Boolean,
-        default: true,
-    },
-    props: {
-        type: Object,
-        default: () => {},
-    },
 })
 
-const emits = defineEmits(['update:modelValue', 'change'])
 const transfer = reactive({
     ref: null as any,
-    value: computed({
-        get: (): any => {
-            return props.modelValue
-        },
-        set: (val) => {
-            emits('update:modelValue', val)
-            emits(
-                'change',
-                transfer.options.filter((item: any) => val.includes(item[transfer.props.key]))
-            )
-        },
-    }),
-    options: [...props.defaultOptions] as any,
+    options: [] as any,
     props: {
         key: 'value',
         label: 'label',
-        ...props.props,
+        ...(attrs.props ?? {}),
     },
-    initOptions: () => {
-        transfer.api.addOptions()
-    },
+    initOptions: () => transfer.api.addOptions(),
     api: {
         loading: false,
         param: computed((): { filter: { [propName: string]: any }; field: string[]; sort: string; page: number; limit: number } => {
@@ -101,11 +71,7 @@ const transfer = reactive({
             }
             return options
         },
-        addOptions: () => {
-            transfer.api.getOptions().then((options) => {
-                transfer.options = [...props.defaultOptions, ...(options ?? [])]
-            })
-        },
+        addOptions: () => transfer.api.getOptions().then((options) => (transfer.options = [...(options ?? [])])),
     },
 })
 //组件创建时，初始化options
@@ -124,14 +90,20 @@ watch(
 
 //暴露组件属性给父组件
 defineExpose({
-    options: computed(() => {
-        return transfer.options
-    }),
+    options: computed(() => transfer.options),
 })
 </script>
 
 <template>
-    <el-transfer :ref="(el: any) => transfer.ref = el" v-model="transfer.value" :data="transfer.options" :filterable="filterable" :filter-placeholder="placeholder" :props="transfer.props">
+    <el-transfer
+        :ref="(el: any) => transfer.ref = el"
+        v-model="(model as any)"
+        :filterable="true"
+        v-bind="$attrs"
+        :data="[...(($attrs.options as any[]) ?? []), ...(transfer.options ?? [])]"
+        :props="transfer.props"
+        @change="(value, direction, movedKeys) => emits('change', value, direction, movedKeys, transfer.options.filter((item: any) => value.includes(item[transfer.props.key])))"
+    >
         <template v-if="slots.default" #default="{ option }">
             <slot name="default" :option="option"></slot>
         </template>

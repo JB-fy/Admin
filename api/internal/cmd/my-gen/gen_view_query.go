@@ -209,11 +209,11 @@ func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPat
 	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		viewQueryField.isI18nTm = true
 		viewQueryField.form.Method = internal.ReturnTypeName
-		defaultOptions := `tm('common.status.pid')`
+		options := `tm('common.status.pid')`
 		if !slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, v.FieldType) {
-			defaultOptions = `tm('common.status.pidStr')`
+			options = `tm('common.status.pidStr')`
 		}
-		viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree'` + tpl.Handle.Pid.Tpl.PidDefValOfView + ` }" :defaultOptions="` + defaultOptions + `" :props="{ checkStrictly: true, emitPath: false }" />`
+		viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/tree'` + tpl.Handle.Pid.Tpl.PidDefValOfView + ` }" :options="` + options + `" :props="{ checkStrictly: true, emitPath: false }" />`
 	case internal.TypeNameIdPath, internal.TypeNameNamePath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；	// name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		return myGenViewQueryField{}
 	case internal.TypeNameLevel: // level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；

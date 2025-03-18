@@ -6,19 +6,14 @@
 <my-cascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree', param: { filter: { scene_id: saveForm.data.scene_id } } }" :props="{ checkStrictly: true, emitPath: false }" />
 <my-cascader v-model="saveForm.data.pid" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/list', param: { filter: { scene_id: saveForm.data.scene_id } } }" :props="{ checkStrictly: true, emitPath: false, lazy: true }" />
 
-<my-cascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')" :defaultOptions="tm('common.status.pid')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }" :props="{ checkStrictly: true, emitPath: false }" /> -->
+<my-cascader v-model="queryCommon.data.pid" :placeholder="t('auth.menu.name.pid')" :options="tm('common.status.pid')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/menu/tree' }" :props="{ checkStrictly: true, emitPath: false }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
+defineOptions({ inheritAttrs: false })
+const attrs = useAttrs()
 const slots = useSlots()
+const model = defineModel()
 const props = defineProps({
-    modelValue: {
-        type: [String, Number, Array],
-    },
-    defaultOptions: {
-        //选项初始默认值。格式：{ [cascader.props.value]: any, [cascader.props.label]: any, [cascader.props.leaf]: boolean, [cascader.props.children]: { [propName: string]: any }[], [propName: string]: any }[]
-        type: Array,
-        default: () => [],
-    },
     /**
      * 接口。格式：{ code: string, param: object, transform: function, pidField: string, pidDefVal: 0 }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
@@ -36,52 +31,10 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-    placeholder: {
-        type: String,
-    },
-    clearable: {
-        type: Boolean,
-        default: true,
-    },
-    filterable: {
-        type: Boolean,
-        default: true,
-    },
-    disabled: {
-        type: Boolean,
-        default: false,
-    },
-    collapseTags: {
-        type: Boolean,
-        default: true,
-    },
-    collapseTagsTooltip: {
-        type: Boolean,
-        default: true,
-    },
-    separator: {
-        type: String,
-        default: '/',
-    },
-    props: {
-        type: Object,
-        default: () => {},
-    },
 })
-
-const emits = defineEmits(['update:modelValue', 'change'])
 const cascader = reactive({
     ref: null as any,
-    value: computed({
-        get: (): any => {
-            return props.modelValue
-        },
-        set: (val) => {
-            emits('update:modelValue', val)
-            emits('change')
-        },
-    }),
-    options: [...props.defaultOptions] as any,
+    options: [] as any,
     props: {
         expandTrigger: 'hover' as any, //子级展开方式。click或hover
         checkStrictly: false,
@@ -97,7 +50,7 @@ const cascader = reactive({
                     node.data.leaf = true
                 }
                 if (node.level == 0) {
-                    options = [...props.defaultOptions, ...options]
+                    options = [...((attrs.options as any[]) ?? []), ...options]
                 }
                 resolve(options)
             })
@@ -107,11 +60,9 @@ const cascader = reactive({
         label: 'label',
         leaf: 'leaf',
         children: 'children',
-        ...props.props,
+        ...(attrs.props ?? {}),
     },
-    initOptions: () => {
-        cascader.api.addOptions()
-    },
+    initOptions: () => cascader.api.addOptions(),
     api: {
         loading: false,
         param: computed((): { filter: { [propName: string]: any }; field: string[]; sort: string; page: number; limit: number } => {
@@ -157,9 +108,7 @@ const cascader = reactive({
                       return handle(res.data.list ?? [])
                   }
         }),
-        pidField: computed((): string => {
-            return props.api.pidField ?? 'pid'
-        }),
+        pidField: computed((): string => props.api.pidField ?? 'pid'),
         getOptions: async () => {
             if (cascader.api.loading) {
                 return
@@ -174,11 +123,7 @@ const cascader = reactive({
             }
             return options
         },
-        addOptions: () => {
-            cascader.api.getOptions().then((options) => {
-                cascader.options = [...props.defaultOptions, ...(options ?? [])]
-            })
-        },
+        addOptions: () => cascader.api.getOptions().then((options) => (cascader.options = [...(options ?? [])])),
     },
     visibleChange: (val: boolean) => {
         if (val) {
@@ -194,30 +139,24 @@ const cascader = reactive({
     },
 })
 //组件创建时，如有初始值，需初始化options
-if (props.isPanel || (!cascader.props.lazy && ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue))) {
+if (props.isPanel || (!cascader.props.lazy && (model.value || (Array.isArray(model.value) && model.value.length)))) {
     cascader.initOptions()
 }
 
 //当外部环境filter变化时，重置options
 watch(
     () => props.api?.param?.filter,
-    (newVal: any, oldVal: any) => {
-        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-            cascader.api.addOptions()
-        }
-    }
+    (newVal: any, oldVal: any) => JSON.stringify(newVal) !== JSON.stringify(oldVal) && cascader.api.addOptions()
 )
 
 //暴露组件属性给父组件
 defineExpose({
-    options: computed(() => {
-        return cascader.options
-    }),
+    options: computed(() => cascader.options),
 })
 </script>
 
 <template>
-    <el-cascader-panel v-if="props.isPanel" :ref="(el: any) => cascader.ref = el" v-model="cascader.value" :options="cascader.options" :props="cascader.props">
+    <el-cascader-panel v-if="props.isPanel" :ref="(el: any) => cascader.ref = el" v-model="(model as any)" v-bind="$attrs" :options="[...(($attrs.options as any[]) ?? []), ...(cascader.options ?? [])]" :props="cascader.props">
         <template v-if="slots.default" #default="{ node, data }">
             <slot name="default" :node="node" :data="data"></slot>
         </template>
@@ -225,15 +164,13 @@ defineExpose({
     <el-cascader
         v-else-if="cascader.props.lazy"
         :ref="(el: any) => cascader.ref = el"
-        v-model="cascader.value"
-        :placeholder="placeholder"
-        :clearable="clearable"
-        :props="cascader.props"
+        v-model="(model as any)"
+        :clearable="true"
+        :collapse-tags="true"
+        :collapse-tags-tooltip="true"
         @visible-change="cascader.visibleChange"
-        :disabled="disabled"
-        :collapse-tags="collapseTags"
-        :collapse-tags-tooltip="collapseTagsTooltip"
-        :separator="separator"
+        v-bind="$attrs"
+        :props="cascader.props"
     >
         <template v-if="slots.default" #default="{ node, data }">
             <slot name="default" :node="node" :data="data"></slot>
@@ -245,17 +182,15 @@ defineExpose({
     <el-cascader
         v-else
         :ref="(el: any) => cascader.ref = el"
-        v-model="cascader.value"
-        :placeholder="placeholder"
-        :clearable="clearable"
-        :options="cascader.options"
-        :props="cascader.props"
-        :filterable="filterable"
+        v-model="(model as any)"
+        :clearable="true"
+        :filterable="true"
+        :collapse-tags="true"
+        :collapse-tags-tooltip="true"
         @visible-change="cascader.visibleChange"
-        :disabled="disabled"
-        :collapse-tags="collapseTags"
-        :collapse-tags-tooltip="collapseTagsTooltip"
-        :separator="separator"
+        v-bind="$attrs"
+        :options="[...(($attrs.options as any[]) ?? []), ...(cascader.options ?? [])]"
+        :props="cascader.props"
     >
         <template v-if="slots.default" #default="{ node, data }">
             <slot name="default" :node="node" :data="data"></slot>

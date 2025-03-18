@@ -8,11 +8,9 @@ import editor from '@tinymce/tinymce-vue'
 
 const { t } = useI18n()
 const languageStore = useLanguageStore()
-
+defineOptions({ inheritAttrs: false })
+const model = defineModel()
 const props = defineProps({
-    modelValue: {
-        type: String,
-    },
     /**
      * 接口。格式：{ code: string, param: Object }
      *      code：非必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
@@ -21,29 +19,10 @@ const props = defineProps({
     api: {
         type: Object,
     },
-    init: {
-        type: Object,
-        default: () => {},
-    },
-    disabled: {
-        type: Boolean,
-        default: false,
-    },
 })
 
-const emits = defineEmits(['update:modelValue', 'change'])
 const myEditor = reactive({
-    id: ('my_editor' + new Date().getTime() + '_' + randomInt(1000, 9999)) as string, //用于判断组件是否已经销毁，防止倒计时重复执行
-    ref: null as any,
-    value: computed({
-        get: () => {
-            return props.modelValue
-        },
-        set: (val) => {
-            emits('update:modelValue', val)
-            emits('change')
-        },
-    }),
+    id: ('my_editor_' + new Date().getTime() + '_' + randomInt(1000, 9999)) as string, //用于判断组件是否已经销毁，防止倒计时重复执行
     init: {
         width: '100%',
         // height: 'auto',
@@ -59,13 +38,7 @@ const myEditor = reactive({
                 data.key = myEditor.signInfo.dir + blobInfo.id() + '_' + randomInt(1000, 9999) + filename.slice(filename.lastIndexOf('.'))
                 data.file = blobInfo.blob()
                 request(myEditor.signInfo.upload_url, data, false, false, 'post', { 'Content-Type': 'multipart/form-data' })
-                    .then((res) => {
-                        let imgUrl = myEditor.signInfo.host + '/' + data.key
-                        if (myEditor.signInfo?.is_res) {
-                            imgUrl = res.data.url
-                        }
-                        resolve(imgUrl)
-                    })
+                    .then((res) => resolve(myEditor.signInfo?.is_res ? res.data.url : myEditor.signInfo.host + '/' + data.key))
                     .catch(() => reject(t('common.tip.uploadFail')))
             })
         },
@@ -74,7 +47,6 @@ const myEditor = reactive({
             console.log(value)
             console.log(meta)
         } */
-        ...props.init,
     },
     signInfo: {} as { [propName: string]: any }, //缓存的签名信息。示例：{ upload_url: "https://xxxxx.com/upload", upload_data: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, is_res: 1 }
     initSignInfo: async () => {
@@ -96,9 +68,7 @@ const myEditor = reactive({
     api: {
         loading: false,
         code: props.api?.code ?? t('config.VITE_HTTP_API_PREFIX') + '/upload/sign',
-        param: {
-            ...props.api?.param,
-        },
+        param: { ...props.api?.param },
         getSignInfo: async () => {
             if (myEditor.api.loading) {
                 return
@@ -120,9 +90,7 @@ myEditor.initSignInfo() //初始化签名信息
 </script>
 
 <template>
-    <div :id="myEditor.id" style="width: 100%">
-        <editor :ref="(el: any) => myEditor.ref = el" v-model="myEditor.value" :init="myEditor.init" :disabled="disabled" />
-    </div>
+    <editor :id="myEditor.id" v-model="model" v-bind="$attrs" :init="{ ...myEditor.init, ...($attrs.init ?? {}) }" />
 </template>
 
 <!-- <style scoped> -->

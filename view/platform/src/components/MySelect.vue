@@ -1,18 +1,17 @@
 <!-------- 使用示例 开始-------->
 <!-- <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" />
 
-<my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.role.name.scene_id')" :defaultOptions="tm('common.status.whether')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'scene_name'] } }" /> -->
+<my-select v-model="queryCommon.data.scene_id" :placeholder="t('auth.role.name.scene_id')" :options="tm('common.status.whether')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list', param: { field: ['id', 'scene_name'] } }" /> -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
+defineOptions({ inheritAttrs: false })
+const attrs = useAttrs()
 const slots = useSlots()
+const model = defineModel()
+const emits = defineEmits(['change'])
 const props = defineProps({
     modelValue: {
         type: [String, Number, Array],
-    },
-    defaultOptions: {
-        //选项初始默认值。格式：{ [select.props.value]: any, [select.props.label]: any, [propName: string]: any }[]
-        type: Array,
-        default: () => [],
     },
     /**
      * 接口。格式：{ code: string, param: object, transform: function, selectedField: string, searchField: string }
@@ -26,64 +25,15 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    placeholder: {
-        type: String,
-    },
-    clearable: {
-        type: Boolean,
-        default: true,
-    },
-    filterable: {
-        type: Boolean,
-        default: true,
-    },
-    remote: {
-        type: Boolean,
-        default: true,
-    },
-    disabled: {
-        type: Boolean,
-        default: false,
-    },
-    multiple: {
-        type: Boolean,
-        default: false,
-    },
-    multipleLimit: {
-        type: Number,
-        default: 0,
-    },
-    collapseTags: {
-        type: Boolean,
-        default: true,
-    },
-    collapseTagsTooltip: {
-        type: Boolean,
-        default: true,
-    },
-    props: {
-        type: Object,
-        default: () => {},
-    },
 })
 
-const emits = defineEmits(['update:modelValue', 'change'])
 const select = reactive({
     ref: null as any,
-    value: computed({
-        get: () => {
-            return props.modelValue
-        },
-        set: (val) => {
-            emits('update:modelValue', val)
-            emits('change', props.multiple ? select.options.filter((item) => (val as any).includes(item[select.props.value])) : select.options.find((item) => item[select.props.value] == val))
-        },
-    }),
-    options: [...props.defaultOptions] as { value: any; label: any; [propName: string]: any }[],
+    options: [] as { value: any; label: any; [propName: string]: any }[],
     props: {
         value: 'value',
         label: 'label',
-        ...props.props,
+        ...(attrs.props ?? {}),
     },
     initOptions: () => {
         select.api.param.filter[select.api.selectedField] = props.modelValue
@@ -130,7 +80,7 @@ const select = reactive({
                 return props.api.selectedField
             }
             if (select.api.param.field[0] == 'id') {
-                return props.multiple ? 'id_arr' : 'id'
+                return attrs.multiple ? 'id_arr' : 'id'
             }
             return select.api.param.field[0]
         }),
@@ -154,11 +104,7 @@ const select = reactive({
             }
             return options
         },
-        addOptions: () => {
-            select.api.getOptions().then((options) => {
-                select.options = select.api.param.page === 1 ? [...props.defaultOptions, ...(options ?? [])] : select.options.concat(options ?? [])
-            })
-        },
+        addOptions: () => select.api.getOptions().then((options) => (select.options = select.api.param.page === 1 ? [...(options ?? [])] : select.options.concat(options ?? []))),
     },
     visibleChange: (val: boolean) => {
         if (val) {
@@ -245,30 +191,26 @@ watch(
 
 //暴露组件属性给父组件
 defineExpose({
-    options: computed(() => {
-        return select.options
-    }),
+    options: computed(() => select.options),
 })
 </script>
 
 <template>
     <el-select-v2
         :ref="(el: any) => select.ref = el"
-        v-model="select.value"
-        :placeholder="placeholder"
-        :options="select.options"
-        :clearable="clearable"
-        :filterable="filterable"
-        @visible-change="select.visibleChange"
-        :remote="remote"
+        v-model="model"
+        :clearable="true"
+        :filterable="true"
+        :collapse-tags="true"
+        :collapse-tags-tooltip="true"
+        :remote="true"
         :remote-method="select.remoteMethod"
+        @visible-change="select.visibleChange"
+        v-bind="$attrs"
+        :options="[...(($attrs.options as any[]) ?? []), ...(select.options ?? [])]"
         :loading="select.loading"
-        :disabled="disabled"
-        :multiple="multiple"
-        :multiple-limit="multipleLimit"
-        :collapse-tags="collapseTags"
-        :collapse-tags-tooltip="collapseTagsTooltip"
         :props="select.props"
+        @change="(val) => emits('change', val, attrs.multiple ? select.options.filter((item) => (val as any).includes(item[select.props.value])) : select.options.find((item) => item[select.props.value] == val))"
     >
         <template v-if="slots.default" #default="{ item }">
             <slot name="default" :item="item"></slot>

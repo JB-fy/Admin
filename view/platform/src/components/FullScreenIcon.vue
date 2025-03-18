@@ -4,20 +4,11 @@ import screenfull from 'screenfull'
 const { t } = useI18n()
 
 const fullScreenIcon = reactive({
-    ref: null as any,
     isFullscreen: screenfull.isFullscreen,
-    click: () => {
-        if (!screenfull.isEnabled) {
-            ElMessage.warning(t('common.tip.notFullScreen'))
-            return
-        }
-        screenfull.toggle()
-    },
+    click: () => (screenfull.isEnabled ? screenfull.toggle() : ElMessage.warning(t('common.tip.notFullScreen'))),
 })
 
-screenfull.onchange(() => {
-    fullScreenIcon.isFullscreen = screenfull.isFullscreen
-})
+screenfull.onchange(() => (fullScreenIcon.isFullscreen = screenfull.isFullscreen))
 </script>
 
 <template>

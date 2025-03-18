@@ -9,6 +9,16 @@
 const { t, tm } = useI18n()
 
 const props = defineProps({
+    /**
+     * 接口。格式：{ code: string, param: object, transform: function }
+     *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
+     *      param：必须。接口函数所需参数。格式：{ filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number }。
+     *      transform：非必须。接口返回数据转换方法。当有字段转化时必须
+     */
+    api: {
+        type: Object,
+        required: true,
+    },
     fileName: {
         type: String,
     },
@@ -20,16 +30,6 @@ const props = defineProps({
     headerList: {
         //表头。格式：{ [propName: string]: string }。也可直接传table.columns，即各个页面table组件的列定义
         type: [Object, Array],
-        required: true,
-    },
-    /**
-     * 接口。格式：{ code: string, param: object, transform: function }
-     *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
-     *      param：必须。接口函数所需参数。格式：{ filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number }。
-     *      transform：非必须。接口返回数据转换方法。当有字段转化时必须
-     */
-    api: {
-        type: Object,
         required: true,
     },
 })

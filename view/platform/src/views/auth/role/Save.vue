@@ -91,16 +91,7 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.role_name" :placeholder="t('auth.role.name.role_name')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('auth.role.name.scene_id')" prop="scene_id">
-                    <my-select
-                        v-model="saveForm.data.scene_id"
-                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }"
-                        @change="
-                            () => {
-                                saveForm.data.action_id_arr = []
-                                saveForm.data.menu_id_arr = []
-                            }
-                        "
-                    />
+                    <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => ((saveForm.data.action_id_arr = []), (saveForm.data.menu_id_arr = []))" />
                 </el-form-item>
                 <!-- <el-form-item :label="t('auth.role.name.rel_id')" prop="rel_id"> -->
                 <!-- 可选择组件<my-select>或<my-cascader>使用，但需手动确认关联表，并修改接口路径 -->
