@@ -12,16 +12,17 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// ActionDao is the data access object for table auth_action.
+// ActionDao is the data access object for the table auth_action.
 type ActionDao struct {
 	table     string              // table is the underlying table name of the DAO.
-	group     string              // group is the database configuration group name of current DAO.
+	group     string              // group is the database configuration group name of the current DAO.
 	columns   ActionColumns       // columns contains all the column names of Table for convenient usage.
+	handlers  []gdb.ModelHandler  // handlers for customized model modification.
 	columnArr []string            // 字段数组
 	columnMap map[string]struct{} // 字段map
 }
 
-// ActionColumns defines and stores column names for table auth_action.
+// ActionColumns defines and stores column names for the table auth_action.
 type ActionColumns struct {
 	CreatedAt  string // 创建时间
 	UpdatedAt  string // 更新时间
@@ -31,7 +32,7 @@ type ActionColumns struct {
 	Remark     string // 备注
 }
 
-// actionColumns holds the columns for table auth_action.
+// actionColumns holds the columns for the table auth_action.
 var actionColumns = ActionColumns{
 	CreatedAt:  "created_at",
 	UpdatedAt:  "updated_at",
@@ -42,11 +43,12 @@ var actionColumns = ActionColumns{
 }
 
 // NewActionDao creates and returns a new DAO object for table data access.
-func NewActionDao() *ActionDao {
+func NewActionDao(handlers ...gdb.ModelHandler) *ActionDao {
 	dao := &ActionDao{
-		group:   `default`,
-		table:   `auth_action`,
-		columns: actionColumns,
+		group:    "default",
+		table:    "auth_action",
+		columns:  actionColumns,
+		handlers: handlers,
 	}
 	v := reflect.ValueOf(dao.columns)
 	count := v.NumField()
@@ -59,37 +61,41 @@ func NewActionDao() *ActionDao {
 	return dao
 }
 
-// DB retrieves and returns the underlying raw database management object of current DAO.
+// DB retrieves and returns the underlying raw database management object of the current DAO.
 func (dao *ActionDao) DB() gdb.DB {
 	return g.DB(dao.group)
 }
 
-// Table returns the table name of current dao.
+// Table returns the table name of the current DAO.
 func (dao *ActionDao) Table() string {
 	return dao.table
 }
 
-// Columns returns all column names of current dao.
+// Columns returns all column names of the current DAO.
 // 使用较为频繁。为优化内存考虑，改成返回指针更为合适，但切忌使用过程中不可修改，否则会污染全局
 func (dao *ActionDao) Columns() *ActionColumns {
 	return &dao.columns
 }
 
-// Group returns the configuration group name of database of current dao.
+// Group returns the database configuration group name of the current DAO.
 func (dao *ActionDao) Group() string {
 	return dao.group
 }
 
-// Ctx creates and returns the Model for current DAO, It automatically sets the context for current operation.
+// Ctx creates and returns a Model for the current DAO. It automatically sets the context for the current operation.
 func (dao *ActionDao) Ctx(ctx context.Context) *gdb.Model {
-	return dao.DB().Model(dao.table).Safe().Ctx(ctx)
+	model := dao.DB().Model(dao.table)
+	for _, handler := range dao.handlers {
+		model = handler(model)
+	}
+	return model.Safe().Ctx(ctx)
 }
 
 // Transaction wraps the transaction logic using function f.
-// It rollbacks the transaction and returns the error from function f if it returns non-nil error.
+// It rolls back the transaction and returns the error if function f returns a non-nil error.
 // It commits the transaction and returns nil if function f returns nil.
 //
-// Note that, you should not Commit or Rollback the transaction in function f
+// Note: Do not commit or roll back the transaction in function f,
 // as it is automatically handled by this function.
 func (dao *ActionDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return dao.Ctx(ctx).Transaction(ctx, f)

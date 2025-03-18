@@ -12,16 +12,17 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// UploadDao is the data access object for table upload.
+// UploadDao is the data access object for the table upload.
 type UploadDao struct {
 	table     string              // table is the underlying table name of the DAO.
-	group     string              // group is the database configuration group name of current DAO.
+	group     string              // group is the database configuration group name of the current DAO.
 	columns   UploadColumns       // columns contains all the column names of Table for convenient usage.
+	handlers  []gdb.ModelHandler  // handlers for customized model modification.
 	columnArr []string            // 字段数组
 	columnMap map[string]struct{} // 字段map
 }
 
-// UploadColumns defines and stores column names for table upload.
+// UploadColumns defines and stores column names for the table upload.
 type UploadColumns struct {
 	CreatedAt    string // 创建时间
 	UpdatedAt    string // 更新时间
@@ -32,7 +33,7 @@ type UploadColumns struct {
 	Remark       string // 备注
 }
 
-// uploadColumns holds the columns for table upload.
+// uploadColumns holds the columns for the table upload.
 var uploadColumns = UploadColumns{
 	CreatedAt:    "created_at",
 	UpdatedAt:    "updated_at",
@@ -44,11 +45,12 @@ var uploadColumns = UploadColumns{
 }
 
 // NewUploadDao creates and returns a new DAO object for table data access.
-func NewUploadDao() *UploadDao {
+func NewUploadDao(handlers ...gdb.ModelHandler) *UploadDao {
 	dao := &UploadDao{
-		group:   `default`,
-		table:   `upload`,
-		columns: uploadColumns,
+		group:    "default",
+		table:    "upload",
+		columns:  uploadColumns,
+		handlers: handlers,
 	}
 	v := reflect.ValueOf(dao.columns)
 	count := v.NumField()
@@ -61,37 +63,41 @@ func NewUploadDao() *UploadDao {
 	return dao
 }
 
-// DB retrieves and returns the underlying raw database management object of current DAO.
+// DB retrieves and returns the underlying raw database management object of the current DAO.
 func (dao *UploadDao) DB() gdb.DB {
 	return g.DB(dao.group)
 }
 
-// Table returns the table name of current dao.
+// Table returns the table name of the current DAO.
 func (dao *UploadDao) Table() string {
 	return dao.table
 }
 
-// Columns returns all column names of current dao.
+// Columns returns all column names of the current DAO.
 // 使用较为频繁。为优化内存考虑，改成返回指针更为合适，但切忌使用过程中不可修改，否则会污染全局
 func (dao *UploadDao) Columns() *UploadColumns {
 	return &dao.columns
 }
 
-// Group returns the configuration group name of database of current dao.
+// Group returns the database configuration group name of the current DAO.
 func (dao *UploadDao) Group() string {
 	return dao.group
 }
 
-// Ctx creates and returns the Model for current DAO, It automatically sets the context for current operation.
+// Ctx creates and returns a Model for the current DAO. It automatically sets the context for the current operation.
 func (dao *UploadDao) Ctx(ctx context.Context) *gdb.Model {
-	return dao.DB().Model(dao.table).Safe().Ctx(ctx)
+	model := dao.DB().Model(dao.table)
+	for _, handler := range dao.handlers {
+		model = handler(model)
+	}
+	return model.Safe().Ctx(ctx)
 }
 
 // Transaction wraps the transaction logic using function f.
-// It rollbacks the transaction and returns the error from function f if it returns non-nil error.
+// It rolls back the transaction and returns the error if function f returns a non-nil error.
 // It commits the transaction and returns nil if function f returns nil.
 //
-// Note that, you should not Commit or Rollback the transaction in function f
+// Note: Do not commit or roll back the transaction in function f,
 // as it is automatically handled by this function.
 func (dao *UploadDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return dao.Ctx(ctx).Transaction(ctx, f)
