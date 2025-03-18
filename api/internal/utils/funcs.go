@@ -161,7 +161,7 @@ func BaseToDecimal(numStr string, base int) (decimal int /* , err error */) {
 	}
 	chars := `0123456789abcdefghijklmnopqrstuvwxyz`
 	chars = chars[:base]
-	for i := 0; i < len(numStr); i++ {
+	for i := range len(numStr) {
 		// remainder := strings.IndexByte(chars, numStr[i])
 		remainder := gstr.PosI(chars, string(numStr[i]))
 		if remainder == -1 {
