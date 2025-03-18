@@ -50,7 +50,7 @@ func NewActionRelToSceneDao(handlers ...gdb.ModelHandler) *ActionRelToSceneDao {
 	count := v.NumField()
 	dao.columnArr = make([]string, count)
 	dao.columnMap = make(map[string]struct{}, count)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		dao.columnArr[i] = v.Field(i).String()
 		dao.columnMap[v.Field(i).String()] = struct{}{}
 	}
