@@ -102,7 +102,7 @@ defineExpose({
         v-bind="$attrs"
         :data="[...(($attrs.options as any[]) ?? []), ...(transfer.options ?? [])]"
         :props="transfer.props"
-        @change="(value, direction, movedKeys) => emits('change', value, direction, movedKeys, transfer.options.filter((item: any) => value.includes(item[transfer.props.key])))"
+        @change="(value: any, direction: any, movedKeys: any) => emits('change', value, direction, movedKeys, transfer.options.filter((item: any) => value.includes(item[transfer.props.key])))"
     >
         <template v-if="slots.default" #default="{ option }">
             <slot name="default" :option="option"></slot>

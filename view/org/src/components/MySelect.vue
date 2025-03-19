@@ -210,7 +210,7 @@ defineExpose({
         :options="[...(($attrs.options as any[]) ?? []), ...(select.options ?? [])]"
         :loading="select.loading"
         :props="select.props"
-        @change="(val) => emits('change', val, attrs.multiple ? select.options.filter((item) => (val as any).includes(item[select.props.value])) : select.options.find((item) => item[select.props.value] == val))"
+        @change="(val: any) => emits('change', val, attrs.multiple ? select.options.filter((item) => (val as any).includes(item[select.props.value])) : select.options.find((item) => item[select.props.value] == val))"
     >
         <template v-if="slots.default" #default="{ item }">
             <slot name="default" :item="item"></slot>
