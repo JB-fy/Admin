@@ -362,7 +362,7 @@ func (daoThis *configDao) GetOne(ctx context.Context, configKey string) (configV
 
 // 获取配置
 func (daoThis *configDao) Get(ctx context.Context, configKeyArr ...string) (config gdb.Record, err error) {
-	// return daoThis.CtxDaoModel(ctx).FilterPri(configKeyArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
+	// return daoThis.CtxDaoModel(ctx).FilterPri(configKeyArr).PluckStr(daoThis.Columns().ConfigKey, daoThis.Columns().ConfigValue)
 	return cache.DbData.GetOrSetPluck(ctx, daoThis.CtxDaoModel(ctx), gconv.SliceAny(configKeyArr), consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
 }
 

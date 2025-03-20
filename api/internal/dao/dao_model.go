@@ -670,15 +670,6 @@ func (daoModelThis *DaoModel) ArrayStr(fieldsAndWhere ...any) ([]string, error) 
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...any) ([]uint, error) {
-	result, err := daoModelThis.Array(fieldsAndWhere...)
-	if err != nil {
-		return nil, err
-	}
-	return gconv.Uints(result), nil
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...any) ([]int, error) {
 	result, err := daoModelThis.Array(fieldsAndWhere...)
 	if err != nil {
@@ -688,8 +679,17 @@ func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...any) ([]int, error) {
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) Pluck(field string, key string) (map[gdb.Value]gdb.Value, error) {
-	list, err := daoModelThis.Fields(field, key).All()
+func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...any) ([]uint, error) {
+	result, err := daoModelThis.Array(fieldsAndWhere...)
+	if err != nil {
+		return nil, err
+	}
+	return gconv.Uints(result), nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) Pluck(key string, field string) (map[gdb.Value]gdb.Value, error) {
+	list, err := daoModelThis.Fields(key, field).All()
 	if err != nil {
 		return nil, err
 	}
@@ -704,8 +704,8 @@ func (daoModelThis *DaoModel) Pluck(field string, key string) (map[gdb.Value]gdb
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) PluckStr(field string, key string) (gdb.Record, error) {
-	list, err := daoModelThis.Fields(field, key).All()
+func (daoModelThis *DaoModel) PluckStr(key string, field string) (map[string]gdb.Value, error) {
+	list, err := daoModelThis.Fields(key, field).All()
 	if err != nil {
 		return nil, err
 	}
@@ -720,24 +720,24 @@ func (daoModelThis *DaoModel) PluckStr(field string, key string) (gdb.Record, er
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) PluckStrStr(field string, key string) (g.MapStrStr, error) {
-	list, err := daoModelThis.Fields(field, key).All()
+func (daoModelThis *DaoModel) PluckInt(key string, field string) (map[int]gdb.Value, error) {
+	list, err := daoModelThis.Fields(key, field).All()
 	if err != nil {
 		return nil, err
 	}
 	if list.IsEmpty() {
 		return nil, nil
 	}
-	result := make(g.MapStrStr, len(list))
+	result := make(map[int]gdb.Value, len(list))
 	for _, v := range list {
-		result[v[key].String()] = v[field].String()
+		result[v[key].Int()] = v[field]
 	}
 	return result, nil
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) PluckUint(field string, key string) (map[uint]gdb.Value, error) {
-	list, err := daoModelThis.Fields(field, key).All()
+func (daoModelThis *DaoModel) PluckUint(key string, field string) (map[uint]gdb.Value, error) {
+	list, err := daoModelThis.Fields(key, field).All()
 	if err != nil {
 		return nil, err
 	}
@@ -752,17 +752,69 @@ func (daoModelThis *DaoModel) PluckUint(field string, key string) (map[uint]gdb.
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) PluckInt(field string, key string) (map[int]gdb.Value, error) {
-	list, err := daoModelThis.Fields(field, key).All()
+func (daoModelThis *DaoModel) Set(fieldsAndWhere ...any) (map[gdb.Value]struct{}, error) {
+	arr, err := daoModelThis.model.Distinct().Array(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
 	}
-	if list.IsEmpty() {
+	arrLen := len(arr)
+	if arrLen == 0 {
 		return nil, nil
 	}
-	result := make(map[int]gdb.Value, len(list))
-	for _, v := range list {
-		result[v[key].Int()] = v[field]
+	result := make(map[gdb.Value]struct{}, arrLen)
+	for _, v := range arr {
+		result[v] = struct{}{}
+	}
+	return result, nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) SetStr(fieldsAndWhere ...any) (map[string]struct{}, error) {
+	arr, err := daoModelThis.model.Distinct().Array(fieldsAndWhere...)
+	if err != nil {
+		return nil, err
+	}
+	arrLen := len(arr)
+	if arrLen == 0 {
+		return nil, nil
+	}
+	result := make(map[string]struct{}, arrLen)
+	for _, v := range arr {
+		result[v.String()] = struct{}{}
+	}
+	return result, nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) SetInt(fieldsAndWhere ...any) (map[int]struct{}, error) {
+	arr, err := daoModelThis.model.Distinct().Array(fieldsAndWhere...)
+	if err != nil {
+		return nil, err
+	}
+	arrLen := len(arr)
+	if arrLen == 0 {
+		return nil, nil
+	}
+	result := make(map[int]struct{}, arrLen)
+	for _, v := range arr {
+		result[v.Int()] = struct{}{}
+	}
+	return result, nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) SetUint(fieldsAndWhere ...any) (map[uint]struct{}, error) {
+	arr, err := daoModelThis.model.Distinct().Array(fieldsAndWhere...)
+	if err != nil {
+		return nil, err
+	}
+	arrLen := len(arr)
+	if arrLen == 0 {
+		return nil, nil
+	}
+	result := make(map[uint]struct{}, arrLen)
+	for _, v := range arr {
+		result[v.Uint()] = struct{}{}
 	}
 	return result, nil
 }
@@ -781,21 +833,21 @@ func (daoModelThis *DaoModel) ValueStr(fieldsAndWhere ...any) (string, error) {
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) ValueUint(fieldsAndWhere ...any) (uint, error) {
-	result, err := daoModelThis.Value(fieldsAndWhere...)
-	if err != nil {
-		return 0, err
-	}
-	return result.Uint(), nil
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) ValueInt(fieldsAndWhere ...any) (int, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
 		return 0, err
 	}
 	return result.Int(), nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) ValueUint(fieldsAndWhere ...any) (uint, error) {
+	result, err := daoModelThis.Value(fieldsAndWhere...)
+	if err != nil {
+		return 0, err
+	}
+	return result.Uint(), nil
 }
 
 // 封装常用方法

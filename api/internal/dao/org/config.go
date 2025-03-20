@@ -383,7 +383,7 @@ func (daoThis *configDao) Get(ctx context.Context, orgId string, configKeyArr ..
 	for index, configKey := range configKeyArr {
 		idArr[index] = orgId + `|` + configKey
 	}
-	// configTmp, err := daoThis.CtxDaoModel(ctx).FilterPri(idArr).PluckStr(daoThis.Columns().ConfigValue, daoThis.Columns().ConfigKey)
+	// configTmp, err := daoThis.CtxDaoModel(ctx).FilterPri(idArr).PluckStr(daoThis.Columns().ConfigKey, daoThis.Columns().ConfigValue)
 	configTmp, err := cache.DbData.GetOrSetPluck(ctx, daoThis.CtxDaoModel(ctx), idArr, consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
 	if err != nil {
 		return
