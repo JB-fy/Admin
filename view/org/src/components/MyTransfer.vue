@@ -24,7 +24,7 @@ const props = defineProps({
 
 const transfer = reactive({
     ref: null as any,
-    options: [] as any,
+    options: [...((attrs.options as any[]) ?? [])] as any,
     props: {
         key: 'value',
         label: 'label',
@@ -71,7 +71,7 @@ const transfer = reactive({
             }
             return options
         },
-        addOptions: () => transfer.api.getOptions().then((options) => (transfer.options = [...(options ?? [])])),
+        addOptions: () => transfer.api.getOptions().then((options) => (transfer.options = [...((attrs.options as any[]) ?? []), ...(options ?? [])])),
     },
 })
 //组件创建时，初始化options
@@ -100,7 +100,7 @@ defineExpose({
         v-model="(model as any)"
         :filterable="true"
         v-bind="$attrs"
-        :data="[...(($attrs.options as any[]) ?? []), ...(transfer.options ?? [])]"
+        :data="transfer.options"
         :props="transfer.props"
         @change="(value: any, direction: any, movedKeys: any) => emits('change', value, direction, movedKeys, transfer.options.filter((item: any) => value.includes(item[transfer.props.key])))"
     >

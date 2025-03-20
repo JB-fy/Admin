@@ -10,15 +10,12 @@ const slots = useSlots()
 const model = defineModel()
 const emits = defineEmits(['change'])
 const props = defineProps({
-    modelValue: {
-        type: [String, Number, Array],
-    },
     /**
      * 接口。格式：{ code: string, param: object, transform: function, selectedField: string, searchField: string }
      *      code：必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
      *      param：必须。接口函数所需参数。格式：{ filter: { [propName: string]: any }, field: string[], sort: string, page: number, limit: number }。其中field内第0，1字段默认用于select.api的transform，selectedField，searchField属性，使用时请注意。或直接在props.api中设置对应参数
      *      transform：非必须。接口返回数据转换方法。返回值格式：[{ value: any, label: any },...]
-     *      selectedField：非必须。当组件初始化，modelValue有初始值时，接口参数filter中使用的字段名。默认：props.api.param.field[0]
+     *      selectedField：非必须。当组件初始化，有初始值时，接口参数filter中使用的字段名。默认：props.api.param.field[0]
      *      searchField：非必须。当用户输入关键字做查询时，接口参数filter中使用的字段名。默认：props.api.param.field[1]
      */
     api: {
@@ -29,14 +26,14 @@ const props = defineProps({
 
 const select = reactive({
     ref: null as any,
-    options: [] as { value: any; label: any; [propName: string]: any }[],
+    options: [...((attrs.options as any[]) ?? [])] as { value: any; label: any; [propName: string]: any }[],
     props: {
         value: 'value',
         label: 'label',
         ...(attrs.props ?? {}),
     },
     initOptions: () => {
-        select.api.param.filter[select.api.selectedField] = props.modelValue
+        select.api.param.filter[select.api.selectedField] = model.value
         select.api.addOptions()
         delete select.api.param.filter[select.api.selectedField]
     },
@@ -104,7 +101,7 @@ const select = reactive({
             }
             return options
         },
-        addOptions: () => select.api.getOptions().then((options) => (select.options = select.api.param.page === 1 ? [...(options ?? [])] : select.options.concat(options ?? []))),
+        addOptions: () => select.api.getOptions().then((options) => (select.options = select.api.param.page === 1 ? [...((attrs.options as any[]) ?? []), ...(options ?? [])] : select.options.concat(options ?? []))),
     },
     visibleChange: (val: boolean) => {
         if (val) {
@@ -130,7 +127,7 @@ const select = reactive({
     },
 })
 //组件创建时，如有初始值，需初始化options
-if ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelValue) {
+if (model.value || (Array.isArray(model.value) && model.value.length)) {
     select.initOptions()
 }
 /**
@@ -142,17 +139,17 @@ if ((Array.isArray(props.modelValue) && props.modelValue.length) || props.modelV
  *          优点：可减少对服务器的请求。当切换记录编辑时，如果两条记录数据是一样，不用重新请求接口初始化options
  *          缺点：必须设置validateEvent为false，否则当点击编辑，再点击新增，会直接提示错误信息
  */
-/* watch(() => props.modelValue, (newVal: any, oldVal: any) => {
-    if (Array.isArray(props.modelValue)) {
-        if (props.modelValue.length && select.options.filter((item) => {
-            //return (<string[] | number[]>props.modelValue).includes(item[select.props.value])
-            return (<any>props.modelValue).includes(item[select.props.value])
-        }).length !== props.modelValue.length) {
+/* watch(() => model.value, (newVal: any, oldVal: any) => {
+    if (Array.isArray(model.value)) {
+        if (model.value.length && select.options.filter((item) => {
+            //return (<string[] | number[]>model.value).includes(item[select.props.value])
+            return (<any>model.value).includes(item[select.props.value])
+        }).length !== model.value.length) {
             select.resetOptions()
             select.initOptions()
         }
-    } else if (props.modelValue && select.options.findIndex((item) => {
-        return item[select.props.value] == props.modelValue
+    } else if (model.value && select.options.findIndex((item) => {
+        return item[select.props.value] == model.value
     }) === -1) {
         select.resetOptions()
         select.initOptions()
@@ -207,7 +204,7 @@ defineExpose({
         :remote-method="select.remoteMethod"
         @visible-change="select.visibleChange"
         v-bind="$attrs"
-        :options="[...(($attrs.options as any[]) ?? []), ...(select.options ?? [])]"
+        :options="select.options"
         :loading="select.loading"
         :props="select.props"
         @change="(val: any) => emits('change', val, attrs.multiple ? select.options.filter((item) => (val as any).includes(item[select.props.value])) : select.options.find((item) => item[select.props.value] == val))"
