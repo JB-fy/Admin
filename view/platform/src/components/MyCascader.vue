@@ -34,27 +34,17 @@ const props = defineProps({
 })
 const cascader = reactive({
     ref: null as any,
-    options: [] as any,
+    options: [...((attrs.options as any[]) ?? [])] as any,
     props: {
         expandTrigger: 'hover' as any, //子级展开方式。click或hover
         checkStrictly: false,
         lazy: false,
         lazyLoad: (node: any, resolve: any) => {
-            if (node.level == 0) {
-                cascader.api.param.filter[cascader.api.pidField] = props.api.pidDefVal ?? 0
-            } else {
-                cascader.api.param.filter[cascader.api.pidField] = node.data[cascader.props.value]
+            let pid = props.api.pidDefVal ?? 0
+            if (node.level != 0) {
+                pid = node.data[cascader.props.value]
             }
-            cascader.api.getOptions().then((options) => {
-                if (!options?.length) {
-                    node.data.leaf = true
-                }
-                if (node.level == 0) {
-                    options = [...((attrs.options as any[]) ?? []), ...options]
-                }
-                resolve(options)
-            })
-            delete cascader.api.param.filter[cascader.api.pidField]
+            cascader.api.getOptions(pid).then((options) => resolve(node.level == 0 ? [...((attrs.options as any[]) ?? []), ...options] : options))
         },
         value: 'value',
         label: 'label',
@@ -109,21 +99,25 @@ const cascader = reactive({
                   }
         }),
         pidField: computed((): string => props.api.pidField ?? 'pid'),
-        getOptions: async () => {
-            if (cascader.api.loading) {
+        getOptions: async (pid: any = undefined) => {
+            if (cascader.api.loading && !cascader.props.lazy) {
                 return
             }
             cascader.api.loading = true
             let options = []
             try {
-                const res = await request(props.api.code, cascader.api.param)
+                const param = { ...cascader.api.param }
+                if (cascader.props.lazy) {
+                    param.filter = { ...cascader.api.param.filter, [cascader.api.pidField]: pid }
+                }
+                const res = await request(props.api.code, param)
                 options = cascader.api.transform(res)
             } finally {
                 cascader.api.loading = false
             }
             return options
         },
-        addOptions: () => cascader.api.getOptions().then((options) => (cascader.options = [...(options ?? [])])),
+        addOptions: () => cascader.api.getOptions().then((options) => (cascader.options = [...((attrs.options as any[]) ?? []), ...(options ?? [])])),
     },
     visibleChange: (val: boolean) => {
         if (val) {
@@ -156,7 +150,7 @@ defineExpose({
 </script>
 
 <template>
-    <el-cascader-panel v-if="props.isPanel" :ref="(el: any) => cascader.ref = el" v-model="(model as any)" v-bind="$attrs" :options="[...(($attrs.options as any[]) ?? []), ...(cascader.options ?? [])]" :props="cascader.props">
+    <el-cascader-panel v-if="props.isPanel" :ref="(el: any) => cascader.ref = el" v-model="(model as any)" v-bind="$attrs" :options="cascader.options" :props="cascader.props">
         <template v-if="slots.default" #default="{ node, data }">
             <slot name="default" :node="node" :data="data"></slot>
         </template>
@@ -189,7 +183,7 @@ defineExpose({
         :collapse-tags-tooltip="true"
         @visible-change="cascader.visibleChange"
         v-bind="$attrs"
-        :options="[...(($attrs.options as any[]) ?? []), ...(cascader.options ?? [])]"
+        :options="cascader.options"
         :props="cascader.props"
     >
         <template v-if="slots.default" #default="{ node, data }">
