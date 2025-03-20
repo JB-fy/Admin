@@ -688,70 +688,6 @@ func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...any) ([]uint, error) {
 }
 
 // 封装常用方法
-func (daoModelThis *DaoModel) Pluck(key string, field string) (map[gdb.Value]gdb.Value, error) {
-	list, err := daoModelThis.Fields(key, field).All()
-	if err != nil {
-		return nil, err
-	}
-	if list.IsEmpty() {
-		return nil, nil
-	}
-	result := make(map[gdb.Value]gdb.Value, len(list))
-	for _, v := range list {
-		result[v[key]] = v[field]
-	}
-	return result, nil
-}
-
-// 封装常用方法
-func (daoModelThis *DaoModel) PluckStr(key string, field string) (map[string]gdb.Value, error) {
-	list, err := daoModelThis.Fields(key, field).All()
-	if err != nil {
-		return nil, err
-	}
-	if list.IsEmpty() {
-		return nil, nil
-	}
-	result := make(gdb.Record, len(list))
-	for _, v := range list {
-		result[v[key].String()] = v[field]
-	}
-	return result, nil
-}
-
-// 封装常用方法
-func (daoModelThis *DaoModel) PluckInt(key string, field string) (map[int]gdb.Value, error) {
-	list, err := daoModelThis.Fields(key, field).All()
-	if err != nil {
-		return nil, err
-	}
-	if list.IsEmpty() {
-		return nil, nil
-	}
-	result := make(map[int]gdb.Value, len(list))
-	for _, v := range list {
-		result[v[key].Int()] = v[field]
-	}
-	return result, nil
-}
-
-// 封装常用方法
-func (daoModelThis *DaoModel) PluckUint(key string, field string) (map[uint]gdb.Value, error) {
-	list, err := daoModelThis.Fields(key, field).All()
-	if err != nil {
-		return nil, err
-	}
-	if list.IsEmpty() {
-		return nil, nil
-	}
-	result := make(map[uint]gdb.Value, len(list))
-	for _, v := range list {
-		result[v[key].Uint()] = v[field]
-	}
-	return result, nil
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) Set(fieldsAndWhere ...any) (map[gdb.Value]struct{}, error) {
 	arr, err := daoModelThis.model.Distinct().Array(fieldsAndWhere...)
 	if err != nil {
@@ -815,6 +751,70 @@ func (daoModelThis *DaoModel) SetUint(fieldsAndWhere ...any) (map[uint]struct{},
 	result := make(map[uint]struct{}, arrLen)
 	for _, v := range arr {
 		result[v.Uint()] = struct{}{}
+	}
+	return result, nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) Pluck(key string, field string) (map[gdb.Value]gdb.Value, error) {
+	list, err := daoModelThis.Fields(key, field).All()
+	if err != nil {
+		return nil, err
+	}
+	if list.IsEmpty() {
+		return nil, nil
+	}
+	result := make(map[gdb.Value]gdb.Value, len(list))
+	for _, v := range list {
+		result[v[key]] = v[field]
+	}
+	return result, nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) PluckStr(key string, field string) (map[string]gdb.Value, error) {
+	list, err := daoModelThis.Fields(key, field).All()
+	if err != nil {
+		return nil, err
+	}
+	if list.IsEmpty() {
+		return nil, nil
+	}
+	result := make(gdb.Record, len(list))
+	for _, v := range list {
+		result[v[key].String()] = v[field]
+	}
+	return result, nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) PluckInt(key string, field string) (map[int]gdb.Value, error) {
+	list, err := daoModelThis.Fields(key, field).All()
+	if err != nil {
+		return nil, err
+	}
+	if list.IsEmpty() {
+		return nil, nil
+	}
+	result := make(map[int]gdb.Value, len(list))
+	for _, v := range list {
+		result[v[key].Int()] = v[field]
+	}
+	return result, nil
+}
+
+// 封装常用方法
+func (daoModelThis *DaoModel) PluckUint(key string, field string) (map[uint]gdb.Value, error) {
+	list, err := daoModelThis.Fields(key, field).All()
+	if err != nil {
+		return nil, err
+	}
+	if list.IsEmpty() {
+		return nil, nil
+	}
+	result := make(map[uint]gdb.Value, len(list))
+	for _, v := range list {
+		result[v[key].Uint()] = v[field]
 	}
 	return result, nil
 }
