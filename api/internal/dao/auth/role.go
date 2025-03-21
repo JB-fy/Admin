@@ -15,7 +15,6 @@ import (
 	"database/sql/driver"
 	"sync"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -490,33 +489,38 @@ func (daoThis *roleDao) CacheDeleteInfo(ctx context.Context, idArr ...uint) (row
 }
 
 func (daoThis *roleDao) CacheGetActionIdArr(ctx context.Context, idArr ...uint) (actionIdArr []string, err error) {
+	actionIdSet := map[string]struct{}{}
+	var info gdb.Record
 	for _, id := range idArr {
-		var info gdb.Record
 		info, err = daoThis.CacheGetInfo(ctx, id)
 		if err != nil {
 			return
 		}
-		if !info.IsEmpty() {
-			actionIdArr = append(actionIdArr, info[`action_id_arr`].Strings()...)
+		for _, actionId := range info[`action_id_arr`].Strings() {
+			actionIdSet[actionId] = struct{}{}
 		}
 	}
-	actionIdArr = garray.NewStrArrayFrom(actionIdArr).Unique().Slice()
+	for actionId := range actionIdSet {
+		actionIdArr = append(actionIdArr, actionId)
+	}
 	return
 }
 
 func (daoThis *roleDao) CacheGetMenuIdArr(ctx context.Context, idArr ...uint) (menuIdArr []uint, err error) {
-	menuIdArrG := garray.New()
+	menuIdSet := map[uint]struct{}{}
+	var info gdb.Record
 	for _, id := range idArr {
-		var info gdb.Record
 		info, err = daoThis.CacheGetInfo(ctx, id)
 		if err != nil {
 			return
 		}
-		if !info.IsEmpty() {
-			menuIdArrG.Append(info[`menu_id_arr`].Interfaces()...)
+		for _, menuId := range info[`menu_id_arr`].Uints() {
+			menuIdSet[menuId] = struct{}{}
 		}
 	}
-	menuIdArr = gconv.Uints(menuIdArrG.Unique())
+	for menuId := range menuIdSet {
+		menuIdArr = append(menuIdArr, menuId)
+	}
 	return
 }
 

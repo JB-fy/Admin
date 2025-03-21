@@ -6,7 +6,6 @@ import (
 	"api/internal/utils"
 	"context"
 
-	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -115,9 +114,9 @@ func (logicThis *sAuthRole) Update(ctx context.Context, filter map[string]any, d
 		if _, ok := data[`scene_id`]; ok {
 			filterTmp[daoAuth.Menu.Columns().SceneId] = data[`scene_id`]
 		} else {
-			sceneIdArr, _ := daoModelThis.CloneNew().FilterPri(daoModelThis.IdArr).ArrayUint(daoAuth.Role.Columns().SceneId)
-			if garray.NewArrayFrom(gconv.SliceAny(sceneIdArr)).Unique().Len() != 1 {
-				err = utils.NewErrorCode(ctx, 89999998, ``) //因菜单所属场景ID只能一个，故只能允许相同场景ID下的角色一起修改菜单
+			sceneIdArr, _ := daoModelThis.CloneNew().FilterPri(daoModelThis.IdArr).Distinct().ArrayUint(daoAuth.Role.Columns().SceneId)
+			if len(sceneIdArr) != 1 {
+				err = utils.NewErrorCode(ctx, 89999998, ``) //菜单所属场景只能设置一个，故必须同一场景下的角色才能一起修改菜单
 				return
 			}
 			filterTmp[daoAuth.Menu.Columns().SceneId] = sceneIdArr[0]
