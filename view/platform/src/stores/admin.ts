@@ -30,7 +30,7 @@ export const useAdminStore = defineStore('admin', {
                         },
                         icon: 'autoicon-ep-document',
                         //"url": "https://www.baidu.com/",  //新窗口打开
-                        url: '/thirdSite?url=https://www.baidu.com/', //标签页打开
+                        url: '/thirdSite?url=' + encodeURIComponent('https://www.baidu.com/'), //标签页打开
                         children: [],
                     }, */
                     {
