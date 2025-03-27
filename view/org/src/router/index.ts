@@ -121,8 +121,7 @@ router.beforeEach(async (to: any) => {
     }
 
     /**--------判断登录状态 开始--------**/
-    const accessToken = getAccessToken()
-    if (!accessToken) {
+    if (!getAccessToken()) {
         if (to.meta.isAuth) {
             /* //不需要做这步，清理工作换到登录操作中执行，应变能力更好
             adminStore.logout(to.path)
