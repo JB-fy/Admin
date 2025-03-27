@@ -5,6 +5,7 @@ import (
 	"api/internal/middleware"
 	"api/internal/router"
 	"context"
+	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
@@ -70,7 +71,7 @@ var (
 						if r.URL.RawQuery != `` {
 							vueRouterPath += `?` + r.URL.RawQuery
 						}
-						r.Response.RedirectTo(`/admin/` + r.Get(`vueDir`).String() + `?redirectOfApi=/` + vueRouterPath)
+						r.Response.RedirectTo(`/admin/` + r.Get(`vueDir`).String() + `?redirectOfApi=` + url.QueryEscape(`/`+vueRouterPath))
 					}
 				})
 			}
