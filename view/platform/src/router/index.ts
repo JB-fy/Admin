@@ -221,7 +221,6 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to: any) => {
-    const adminStore = useAdminStore()
     // 服务器部署直接使用后端Golang处理路由时（不使用nginx代理），会有一个跳转地址字段：redirectOfApi，用于提示前端打开指定页面
     let redirectOfApi = to.query.redirectOfApi as string
     if (redirectOfApi) {
@@ -234,7 +233,7 @@ router.beforeEach(async (to: any) => {
             /* //不需要做这步，清理工作换到登录操作中执行，应变能力更好
             adminStore.logout(to.path)
             return false */
-            return '/login?redirect=' + to.fullPath
+            return '/login?redirect=' + encodeURIComponent(to.fullPath)
         }
         document.title = useLanguageStore().getWebTitle(to.fullPath)
         return true
@@ -248,6 +247,7 @@ router.beforeEach(async (to: any) => {
     }
     /**--------判断登录状态 结束--------**/
 
+    const adminStore = useAdminStore()
     /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致pinia数据全部重置） 开始--------**/
     if (!adminStore.infoIsExist) {
         try {
