@@ -125,10 +125,14 @@ func GetFileBytes(ctx context.Context, fileUrl string) (fileBytes []byte, err er
 }
 
 // 获取文件内容（本地文件）
-func GetFileBytesByLocal(ctx context.Context, fileUrl string) (fileBytes []byte, err error) {
+func GetFileBytesByLocal(ctx context.Context, fileUrl string, serverNameOpt ...string) (fileBytes []byte, err error) {
 	serverRoot := `server.serverRoot`
-	if serverName := g.RequestFromCtx(ctx).Server.GetName(); serverName != ghttp.DefaultServerName {
-		serverRoot = `server.` + serverName + `.serverRoot`
+	if len(serverNameOpt) > 0 && serverNameOpt[0] != `` {
+		serverRoot = `server.` + serverNameOpt[0] + `.serverRoot`
+	} else if r := g.RequestFromCtx(ctx); r != nil {
+		if serverName := r.Server.GetName(); serverName != ghttp.DefaultServerName {
+			serverRoot = `server.` + serverName + `.serverRoot`
+		}
 	}
 	urlObj, err := url.Parse(fileUrl)
 	file := g.Cfg().MustGet(ctx, serverRoot).String() + urlObj.Path
