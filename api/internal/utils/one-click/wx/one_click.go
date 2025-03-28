@@ -30,19 +30,19 @@ func NewOneClick(ctx context.Context, config map[string]any) *OneClick {
 
 // 获取用户同意授权地址（也可以让前端自己处理。坏处：前端需要存appId，更新appId需同步修改前端）
 // scope		应用授权作用域。 snsapi_base：不弹出授权页面，直接跳转，只能获取用户openid；snsapi_userinfo：弹出授权页面，可通过openid拿到昵称、性别、所在地
-// state		重定向后会带上state参数。开发者可以填写a-zA-Z0-9的参数值，最多128字节
 // forcePopup	强制此次授权需要用户弹窗确认。默认为false
-func (oneClickThis *OneClick) CodeUrl(redirectUri string, scope string, state string, forcePopup bool) (codeUrl string, err error) {
+// state		重定向后会带上state参数。开发者可以填写a-zA-Z0-9的参数值，最多128字节
+func (oneClickThis *OneClick) CodeUrl(redirectUri string, scope string, forcePopup bool, state string) (codeUrl string, err error) {
 	query := url.Values{}
 	query.Set(`appid`, oneClickThis.AppId)
 	query.Set(`redirect_uri`, redirectUri)
 	query.Set(`scope`, scope)
 	query.Set(`response_type`, `code`)
-	if state != `` {
-		query.Set(`state`, state)
-	}
 	if forcePopup {
 		query.Set(`forcePopup`, `1`)
+	}
+	if state != `` {
+		query.Set(`state`, state)
 	}
 	codeUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?` + query.Encode() + `#wechat_redirect`
 	return

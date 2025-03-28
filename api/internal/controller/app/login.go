@@ -235,7 +235,7 @@ func (controllerThis *Login) OneClickPreInfo(ctx context.Context, req *apiCurren
 	res = &apiCurrent.LoginOneClickPreInfoRes{}
 	switch req.OneClickType {
 	case `oneClickOfWx`: //微信
-		res.CodeUrlOfWx, err = one_click.NewOneClickOfWx(ctx).CodeUrl(req.RedirectUriOfWx, req.ScopeOfWx, req.StateOfWx, req.ForcePopupOfWx)
+		res.CodeUrlOfWx, err = one_click.NewOneClickOfWx(ctx).CodeUrl(req.RedirectUriOfWx, req.ScopeOfWx, req.ForcePopupOfWx, req.StateOfWx)
 	case `oneClickOfYidun`: //易盾
 	}
 	return
