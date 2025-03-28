@@ -33,14 +33,18 @@ func NewOneClick(ctx context.Context, config map[string]any) *OneClick {
 // state		重定向后会带上state参数。开发者可以填写a-zA-Z0-9的参数值，最多128字节
 // forcePopup	强制此次授权需要用户弹窗确认。默认为false
 func (oneClickThis *OneClick) CodeUrl(redirectUri string, scope string, state string, forcePopup bool) (codeUrl string, err error) {
-	codeUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=` + oneClickThis.AppId + `&redirect_uri=` + url.QueryEscape(redirectUri) + `&response_type=code&scope=` + scope
+	query := url.Values{}
+	query.Set(`appid`, oneClickThis.AppId)
+	query.Set(`redirect_uri`, redirectUri)
+	query.Set(`scope`, scope)
+	query.Set(`response_type`, `code`)
 	if state != `` {
-		codeUrl += `&state=` + state
+		query.Set(`state`, state)
 	}
 	if forcePopup {
-		codeUrl += `&forcePopup=1`
+		query.Set(`forcePopup`, `1`)
 	}
-	codeUrl += `#wechat_redirect`
+	codeUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?` + query.Encode() + `#wechat_redirect`
 	return
 }
 
