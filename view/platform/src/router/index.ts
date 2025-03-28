@@ -227,49 +227,41 @@ router.beforeEach(async (to: any) => {
         return redirectOfApi
     }
 
-    /**--------判断登录状态 开始--------**/
-    if (!getAccessToken()) {
-        if (to.meta.isAuth) {
-            /* //不需要做这步，清理工作换到登录操作中执行，应变能力更好
-            adminStore.logout(to.path)
-            return false */
+   /**--------当前是登录页面且已登录时，则跳转首页或redirect 开始--------**/
+    if (to.path === '/login' && getAccessToken()) {
+        return to.query.redirect ? to.query.redirect : '/'
+    }
+    /**--------当前是登录页面且已登录时，则跳转首页或redirect 结束--------**/
+
+    if (to.meta.isAuth) {
+        /**--------当前页面需要登录但未登录时，跳转登录页并指定redirect 开始--------**/
+        if (!getAccessToken()) {
             return '/login?redirect=' + encodeURIComponent(to.fullPath)
         }
-        document.title = useLanguageStore().getWebTitle(to.fullPath)
-        return true
-    }
-    if (to.path === '/login') {
-        //已登录且链接是登录页面时，则跳到首页
-        if (to.query.redirect) {
-            return to.query.redirect
-        }
-        return '/'
-    }
-    /**--------判断登录状态 结束--------**/
+        /**--------当前页面需要登录但未登录时，跳转登录页并指定redirect 结束--------**/
 
-    const adminStore = useAdminStore()
-    /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致pinia数据全部重置） 开始--------**/
-    if (!adminStore.infoIsExist) {
-        try {
-            await adminStore.setInfo() //记录用户信息
-            await adminStore.setMenuTree() //设置左侧菜单
-            await adminStore.setActionIdArr() //设置操作权限数组
-        } catch (error) {
-            return false
+        const adminStore = useAdminStore()
+        /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致pinia数据全部重置） 开始--------**/
+        if (!adminStore.infoIsExist) {
+            try {
+                await adminStore.setInfo() //记录用户信息
+                await adminStore.setMenuTree() //设置左侧菜单
+                await adminStore.setActionIdArr() //设置操作权限数组
+            } catch (error) {
+                return false
+            }
         }
-    }
-    /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致pinia数据全部重置） 结束--------**/
+        /**--------设置用户相关的数据（因用户在浏览器层面刷新页面，会导致pinia数据全部重置） 结束--------**/
 
-    /**--------设置菜单标签 开始--------**/
-    if (to.meta.isAuth) {
+        /**--------设置菜单标签 开始--------**/
         adminStore.pushMenuTabList({
             keepAlive: to.meta?.keepAlive ?? false,
             componentName: to.meta?.componentName,
             url: to.fullPath,
             ...to.meta?.menu,
         })
+        /**--------设置菜单标签 结束--------**/
     }
-    /**--------设置菜单标签 结束--------**/
 
     document.title = useLanguageStore().getWebTitle(to.fullPath)
     return true
