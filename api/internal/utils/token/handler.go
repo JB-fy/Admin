@@ -34,10 +34,11 @@ func NewHandler(ctx context.Context /* , sceneIdOpt ...string */) model.Handler 
 }
 
 func (handlerThis *Handler) Create(loginId string, opt ...map[string]any) (token string, err error) {
-	tokenInfo := model.TokenInfo{LoginId: loginId}
+	tokenInfo := model.TokenInfo{}
 	if len(opt) > 0 {
 		gconv.Struct(opt[0], &tokenInfo)
 	}
+	tokenInfo.LoginId = loginId
 	if handlerThis.IsIP {
 		tokenInfo.IP = g.RequestFromCtx(handlerThis.Ctx).GetClientIp()
 	}
