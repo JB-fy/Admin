@@ -28,7 +28,7 @@ type MenuInfo struct {
 
 /*--------菜单列表（树状） 开始--------*/
 type MenuTreeReq struct {
-	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/我的" sm:"菜单列表（树状）"`
+	g.Meta `path:"/menu/tree" method:"post" tags:"机构后台/我的" sm:"菜单列表（树状）"`
 }
 
 type MenuTreeRes struct {
