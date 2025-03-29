@@ -72,8 +72,7 @@ func (tokenThis *Token) Create(ctx context.Context, tokenInfo model.TokenInfo) (
 	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Duration(tokenThis.ExpireTime) * time.Second)) // 过期时间
 	claims.IssuedAt = jwt.NewNumericDate(time.Now())                                                         // 签发时间
 	claims.NotBefore = jwt.NewNumericDate(time.Now())                                                        // 生效时间
-	claims.ID = tokenInfo.LoginId
-	claims.IP = tokenInfo.IP
+	claims.TokenInfo = tokenInfo
 	token, err = jwt.NewWithClaims(tokenThis.SignMethod, claims).SignedString(privateKeyFunc())
 	return
 }
@@ -100,8 +99,7 @@ func (tokenThis *Token) Parse(ctx context.Context, token string) (tokenInfo mode
 		return
 	}
 
-	tokenInfo.LoginId = claims.ID
-	tokenInfo.IP = claims.IP
+	tokenInfo = claims.TokenInfo
 	return
 }
 

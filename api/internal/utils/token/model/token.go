@@ -14,5 +14,5 @@ type Token interface {
 
 type TokenInfo struct {
 	LoginId string `json:"login_id"`
-	IP      string `json:"ip"` // 要做验证IP时启用
+	IP      string `json:"ip"` // 验证IP时用
 }
