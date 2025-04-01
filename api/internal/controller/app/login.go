@@ -126,7 +126,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		}
 	}
 
-	token, err := token.NewHandler(ctx).Create(info[daoUsers.Users.Columns().UserId].String())
+	token, err := token.NewHandler(ctx).Create(info[daoUsers.Users.Columns().UserId].String(), nil)
 	if err != nil {
 		return
 	}
@@ -188,7 +188,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		return
 	}
 
-	token, err := token.NewHandler(ctx).Create(gconv.String(userId))
+	token, err := token.NewHandler(ctx).Create(gconv.String(userId), nil)
 	if err != nil {
 		return
 	}
@@ -290,7 +290,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 		daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Update(saveData) //一般情况下用户昵称，性别等字段不会每次登录都随第三方变动
 	} */
 
-	token, err := token.NewHandler(ctx).Create(gconv.String(userId))
+	token, err := token.NewHandler(ctx).Create(gconv.String(userId), nil)
 	if err != nil {
 		return
 	}

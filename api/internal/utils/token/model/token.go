@@ -13,6 +13,7 @@ type Token interface {
 }
 
 type TokenInfo struct {
-	LoginId string `json:"login_id"`
-	IP      string `json:"ip"` // 验证IP时用
+	LoginId string         `json:"login_id"`
+	ExtData map[string]any `json:"ext_data"`
+	IP      string         `json:"ip"` // 验证IP时用
 }

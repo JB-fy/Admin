@@ -33,12 +33,8 @@ func NewHandler(ctx context.Context /* , sceneIdOpt ...string */) model.Handler 
 	return handlerObj
 }
 
-func (handlerThis *Handler) Create(loginId string, opt ...map[string]any) (token string, err error) {
-	tokenInfo := model.TokenInfo{}
-	if len(opt) > 0 {
-		gconv.Struct(opt[0], &tokenInfo)
-	}
-	tokenInfo.LoginId = loginId
+func (handlerThis *Handler) Create(loginId string, extData map[string]any) (token string, err error) {
+	tokenInfo := model.TokenInfo{LoginId: loginId, ExtData: map[string]any{`use_flag`: uint8(2)}}
 	if handlerThis.IsIP {
 		tokenInfo.IP = g.RequestFromCtx(handlerThis.Ctx).GetClientIp()
 	}

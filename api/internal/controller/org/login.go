@@ -91,7 +91,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
-	token, err := token.NewHandler(ctx).Create(info[daoOrg.Admin.Columns().AdminId].String())
+	token, err := token.NewHandler(ctx).Create(info[daoOrg.Admin.Columns().AdminId].String(), nil)
 	if err != nil {
 		return
 	}
