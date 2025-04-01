@@ -7,10 +7,10 @@ const { t } = useI18n()
 const adminStore = useAdminStore()
 
 const authAction: { [propName: string]: boolean } = {
-    isRead: adminStore.IsAction('payRead'),
-    isCreate: adminStore.IsAction('payCreate'),
-    isUpdate: adminStore.IsAction('payUpdate'),
-    isDelete: adminStore.IsAction('payDelete'),
+    isRead: adminStore.isAction('payRead'),
+    isCreate: adminStore.isAction('payCreate'),
+    isUpdate: adminStore.isAction('payUpdate'),
+    isDelete: adminStore.isAction('payDelete'),
 }
 provide('authAction', authAction)
 

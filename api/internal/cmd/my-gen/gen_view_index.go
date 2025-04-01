@@ -27,14 +27,14 @@ const adminStore = useAdminStore()`
 const authAction: { [propName: string]: boolean } = {`
 	isReadStr := `true`
 	if option.IsAuthAction {
-		isReadStr = `adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Read')`
+		isReadStr = `adminStore.isAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Read')`
 	}
 	tplView += `
     isRead: ` + isReadStr + `,`
 	if option.IsCreate {
 		isCreateStr := `true`
 		if option.IsAuthAction {
-			isCreateStr = `adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Create')`
+			isCreateStr = `adminStore.isAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Create')`
 		}
 		tplView += `
     isCreate: ` + isCreateStr + `,`
@@ -42,7 +42,7 @@ const authAction: { [propName: string]: boolean } = {`
 	if option.IsUpdate {
 		isUpdateStr := `true`
 		if option.IsAuthAction {
-			isUpdateStr = `adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Update')`
+			isUpdateStr = `adminStore.isAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Update')`
 		}
 		tplView += `
     isUpdate: ` + isUpdateStr + `,`
@@ -50,7 +50,7 @@ const authAction: { [propName: string]: boolean } = {`
 	if option.IsDelete {
 		isDeleteStr := `true`
 		if option.IsAuthAction {
-			isDeleteStr = `adminStore.IsAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Delete')`
+			isDeleteStr = `adminStore.isAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Delete')`
 		}
 		tplView += `
     isDelete: ` + isDeleteStr + `,`

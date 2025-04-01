@@ -347,27 +347,27 @@ export const useAdminStore = defineStore('admin', {
         /**
          * 判断是否有操作权限
          */
-        IsAction(actionId: string): boolean {
+        isAction(actionId: string): boolean {
             return this.actionIdArr.includes(actionId)
         },
         /**
          * 判断是否有操作权限（多个一起判断）
          */
-        IsActionMany(actionIdArr: string[], condition: string = 'and'): boolean {
+        isActionMany(actionIdArr: string[], condition: string = 'and'): boolean {
             if (actionIdArr.length == 0) {
                 return false
             }
             switch (condition) {
                 case 'and':
                     for (let i = 0; i < actionIdArr.length; i++) {
-                        if (!this.IsAction(actionIdArr[i])) {
+                        if (!this.isAction(actionIdArr[i])) {
                             return false
                         }
                     }
                     return true
                 case 'or':
                     for (let i = 0; i < actionIdArr.length; i++) {
-                        if (this.IsAction(actionIdArr[i])) {
+                        if (this.isAction(actionIdArr[i])) {
                             return true
                         }
                     }

@@ -7,10 +7,10 @@ const { t } = useI18n()
 const adminStore = useAdminStore()
 
 const authAction: { [propName: string]: boolean } = {
-    isRead: adminStore.IsAction('uploadRead'),
-    isCreate: adminStore.IsAction('uploadCreate'),
-    isUpdate: adminStore.IsAction('uploadUpdate'),
-    isDelete: adminStore.IsAction('uploadDelete'),
+    isRead: adminStore.isAction('uploadRead'),
+    isCreate: adminStore.isAction('uploadCreate'),
+    isUpdate: adminStore.isAction('uploadUpdate'),
+    isDelete: adminStore.isAction('uploadDelete'),
 }
 provide('authAction', authAction)
 
