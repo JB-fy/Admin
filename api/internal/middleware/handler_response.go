@@ -39,14 +39,14 @@ func HandlerResponse(r *ghttp.Request) {
 		code = utils.NewCode(r.GetCtx(), 0, ``, r.GetHandlerResponse())
 	} else {
 		code = gerror.Code(err)
-		if code != gcode.CodeInternalPanic && r.Response.BufferLength() > 0 {
+		if r.Response.BufferLength() > 0 && code != gcode.CodeInternalPanic {
 			return
 		}
 		switch code {
 		case gcode.CodeNil:
-			code = utils.NewCode(r.GetCtx(), 99999999, err.Error())
+			code = utils.NewCode(r.GetCtx(), 99999999, err.Error(), r.GetHandlerResponse())
 		case gcode.CodeValidationFailed:
-			code = utils.NewCode(r.GetCtx(), 89999999, err.Error())
+			code = utils.NewCode(r.GetCtx(), 89999999, err.Error(), r.GetHandlerResponse())
 		case gcode.CodeDbOperationError:
 			match, _ := gregex.MatchString(`Error 1062.*: Duplicate.*for key '(?:[^\.]*\.)?([^']*)'$`, err.Error()) //mysql
 			// match, _ := gregex.MatchString(`pq: duplicate key.*constraint "([^"]*)"$`, err.Error()) //pgsql
@@ -57,12 +57,16 @@ func HandlerResponse(r *ghttp.Request) {
 				if utils.IsDev(r.GetCtx()) { //开发环境抛出sql错误语句
 					msg = err.Error()
 				}
-				code = utils.NewCode(r.GetCtx(), 29999999, msg)
+				code = utils.NewCode(r.GetCtx(), 29999999, msg, r.GetHandlerResponse())
 			}
 		case gcode.CodeInternalPanic:
 			r.Response.WriteHeader(http.StatusOK)
 			r.Response.ClearBuffer()
-			code = utils.NewCode(r.GetCtx(), 19999998, err.Error())
+			code = utils.NewCode(r.GetCtx(), 19999998, err.Error(), r.GetHandlerResponse())
+		default:
+			if code.Detail() == nil {
+				code = utils.NewCode(r.GetCtx(), code.Code(), code.Message(), r.GetHandlerResponse())
+			}
 		}
 	}
 
