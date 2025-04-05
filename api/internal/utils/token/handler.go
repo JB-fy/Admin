@@ -7,6 +7,7 @@ import (
 	"api/internal/utils/token/model"
 	"context"
 
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -20,12 +21,14 @@ type Handler struct {
 	IsUnique   bool   `json:"is_unique"`   //Token唯一。开启后，可限制用户多地、多设备登录（同时只会有一个Token有效，生成新Token时，旧Token失效）
 }
 
-func NewHandler(ctx context.Context /* , sceneIdOpt ...string */) model.Handler {
+func NewHandler(ctx context.Context, sceneIdOpt ...string) model.Handler {
 	handlerObj := &Handler{Ctx: ctx}
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	/* if len(sceneIdOpt) > 0 {
-		sceneInfo, _ = daoAuth.Scene.GetInfoFromCache(ctx, sceneIdOpt[0])
-	} */
+	var sceneInfo gdb.Record
+	if len(sceneIdOpt) == 0 {
+		sceneInfo = utils.GetCtxSceneInfo(ctx)
+	} else {
+		sceneInfo, _ = daoAuth.Scene.CacheGetInfo(ctx, sceneIdOpt[0])
+	}
 	config, _ := sceneInfo[daoAuth.Scene.Columns().SceneConfig].Map()[`token_config`].(g.Map)
 	gconv.Struct(config, handlerObj)
 	handlerObj.SceneId = sceneInfo[daoAuth.Scene.Columns().SceneId].String()
