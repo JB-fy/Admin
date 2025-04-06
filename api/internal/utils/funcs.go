@@ -208,7 +208,7 @@ func GetValueFromStruct(Obj any, name string) (val any) {
 
 // 获取图片后缀
 func GetImageExt(imageBytes []byte, defExt string) (imageExt string) {
-	imageExt = imageMimeTypeExtMap[http.DetectContentType(imageBytes[:512])]
+	imageExt = imageMimeTypeExtMap[http.DetectContentType(imageBytes[:min(512, len(imageBytes))])]
 	if imageExt == `` {
 		imageExt = defExt
 	}
@@ -218,7 +218,7 @@ func GetImageExt(imageBytes []byte, defExt string) (imageExt string) {
 /* // 转成jpeg图片。目前只支持webp转换
 func JpegEncode(imageBytes []byte, quality int, imageTypeArr ...string) ([]byte, error) {
 	var err error
-	imageType := http.DetectContentType(imageBytes[:512])
+	imageType := http.DetectContentType(imageBytes[:min(512, len(imageBytes))])
 	for _, v := range imageTypeArr {
 		if imageType != v {
 			continue
