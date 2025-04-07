@@ -369,12 +369,12 @@ func (daoThis *uploadDao) CacheSet(ctx context.Context) {
 
 func (daoThis *uploadDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
 	if id > 0 {
-		info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
+		info = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
 		if info.IsEmpty() {
 			info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
 		}
 	} else {
-		info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), `default`)
+		info = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), `default`)
 		if info.IsEmpty() {
 			info, err = daoThis.CtxDaoModel(ctx).OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
 		}

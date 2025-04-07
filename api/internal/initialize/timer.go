@@ -9,11 +9,12 @@ import (
 	"time"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/genv"
 	"github.com/gogf/gf/v2/os/gtimer"
 )
 
 func initTimer(ctx context.Context) {
-	if !utils.IsDev(ctx) && g.Cfg().MustGet(ctx, `timerServerNetworkIp`).String() != g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String() {
+	if !utils.IsDev(ctx) && g.Cfg().MustGet(ctx, `timerServerNetworkIp`).String() != genv.Get(consts.LOCAL_SERVER_NETWORK_IP).String() {
 		return
 	}
 

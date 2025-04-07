@@ -16,6 +16,7 @@ import (
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/os/genv"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -97,9 +98,9 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 		url = r.GetUrl()
 	case 10, 20: //http(s)://外网IP:端口	//http(s)://内网IP:端口
 		url = r.GetUrl()
-		ip := g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String()
+		ip := genv.Get(consts.LOCAL_SERVER_NETWORK_IP).String()
 		if flag == 20 {
-			ip = g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()
+			ip = genv.Get(consts.LOCAL_SERVER_LOCAL_IP).String()
 		}
 		addr := ctx.Value(http.ServerContextKey).(*http.Server).Addr
 		if gstr.Pos(url, `https`) == 0 {
@@ -116,7 +117,7 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 
 // 获取文件内容（通用）
 func GetFileBytes(ctx context.Context, fileUrl string) (fileBytes []byte, err error) {
-	for _, ip := range []string{g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_NETWORK_IP).String(), g.Cfg().MustGetWithEnv(ctx, consts.LOCAL_SERVER_LOCAL_IP).String()} {
+	for _, ip := range []string{genv.Get(consts.LOCAL_SERVER_NETWORK_IP).String(), genv.Get(consts.LOCAL_SERVER_LOCAL_IP).String()} {
 		if ip != `` && gstr.Pos(fileUrl, ip) != -1 {
 			return GetFileBytesByLocal(ctx, fileUrl)
 		}

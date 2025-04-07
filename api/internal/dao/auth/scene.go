@@ -403,7 +403,7 @@ func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id string) (info gdb.
 	}
 	value.Scan(&info) */
 	// 数据修改无需立即同步缓存的表：服务启动时，缓存在本机内存中，数据库修改，只能重启服务 或 等待定时器执行 才能同步缓存
-	info, _ = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
+	info = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
 	if info.IsEmpty() {
 		info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
 	}

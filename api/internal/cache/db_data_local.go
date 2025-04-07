@@ -8,7 +8,6 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/genv"
 	"github.com/gogf/gf/v2/text/gstr"
 )
@@ -26,25 +25,17 @@ func (cacheThis *dbDataLocal) Set(ctx context.Context, daoModel *dao.DaoModel, k
 	return
 }
 
-func (cacheThis *dbDataLocal) Get(ctx context.Context, daoModel *dao.DaoModel, key any) (value *gvar.Var, err error) {
-	value, err = g.Cfg().GetWithEnv(ctx, cacheThis.key(daoModel, key))
+func (cacheThis *dbDataLocal) Get(ctx context.Context, daoModel *dao.DaoModel, key any) (value *gvar.Var) {
+	value = genv.Get(cacheThis.key(daoModel, key))
 	return
 }
 
-func (cacheThis *dbDataLocal) GetInfo(ctx context.Context, daoModel *dao.DaoModel, key any) (info gdb.Record, err error) {
-	value, err := cacheThis.Get(ctx, daoModel, key)
-	if err != nil {
-		return
-	}
-	value.Scan(&info)
+func (cacheThis *dbDataLocal) GetInfo(ctx context.Context, daoModel *dao.DaoModel, key any) (info gdb.Record) {
+	cacheThis.Get(ctx, daoModel, key).Scan(&info)
 	return
 }
 
-func (cacheThis *dbDataLocal) GetList(ctx context.Context, daoModel *dao.DaoModel, key any) (list gdb.Result, err error) {
-	value, err := cacheThis.Get(ctx, daoModel, key)
-	if err != nil {
-		return
-	}
-	value.Scan(&list)
+func (cacheThis *dbDataLocal) GetList(ctx context.Context, daoModel *dao.DaoModel, key any) (list gdb.Result) {
+	cacheThis.Get(ctx, daoModel, key).Scan(&list)
 	return
 }

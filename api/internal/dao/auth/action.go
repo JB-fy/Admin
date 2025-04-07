@@ -447,7 +447,7 @@ func (daoThis *actionDao) CacheSet(ctx context.Context) {
 }
 
 func (daoThis *actionDao) CacheGetList(ctx context.Context, sceneId string) (list gdb.Result, err error) {
-	list, _ = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId)
+	list = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId)
 	if len(list) == 0 {
 		list, err = daoThis.CtxDaoModel(ctx).Fields(append(daoThis.ColumnArr(), `id`, `label`)...).Filter(ActionRelToScene.Columns().SceneId, sceneId).All()
 	}
