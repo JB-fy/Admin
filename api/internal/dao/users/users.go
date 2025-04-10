@@ -191,34 +191,33 @@ func (daoThis *usersDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 // 解析insert
 func (daoThis *usersDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
 			case daoThis.Columns().Phone:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				insertData[k] = v
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().Email:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				insertData[k] = v
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().Account:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				insertData[k] = v
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().WxOpenid:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				insertData[k] = v
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().WxUnionid:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				insertData[k] = v
+				daoModel.SaveData[k] = v
 			case Privacy.Columns().Password, Privacy.Columns().Salt, Privacy.Columns().IdCardNo, Privacy.Columns().IdCardName, Privacy.Columns().IdCardGender, Privacy.Columns().IdCardBirthday, Privacy.Columns().IdCardAddress:
 				if slices.Contains([]string{``, `0`, `[]`, `{}`}, gconv.String(v)) { //gvar.New(v).IsEmpty()无法验证指针的值是空的数据
 					continue
@@ -227,15 +226,15 @@ func (daoThis *usersDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 				if !ok {
 					insertData = map[string]any{}
 				}
-				insertData[k] = v
+				daoModel.SaveData[k] = v
 				daoModel.AfterInsert[`privacy`] = insertData
 			default:
 				if daoThis.Contains(k) {
-					insertData[k] = v
+					daoModel.SaveData[k] = v
 				}
 			}
 		}
-		m = m.Data(insertData)
+		m = m.Data(daoModel.SaveData)
 		if len(daoModel.AfterInsert) > 0 {
 			m = m.Hook(daoThis.HookInsert(daoModel))
 		}
@@ -269,54 +268,49 @@ func (daoThis *usersDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 // 解析update
 func (daoThis *usersDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
 			case daoThis.Columns().Phone:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				updateData[k] = v
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().Email:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				updateData[k] = v
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().Account:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				updateData[k] = v
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().WxOpenid:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				updateData[k] = v
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().WxUnionid:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				updateData[k] = v
+				daoModel.SaveData[k] = v
 			case Privacy.Columns().Password, Privacy.Columns().Salt, Privacy.Columns().IdCardNo, Privacy.Columns().IdCardName, Privacy.Columns().IdCardGender, Privacy.Columns().IdCardBirthday, Privacy.Columns().IdCardAddress:
 				updateData, ok := daoModel.AfterUpdate[`privacy`].(map[string]any)
 				if !ok {
 					updateData = map[string]any{}
 				}
-				updateData[k] = v
+				daoModel.SaveData[k] = v
 				daoModel.AfterUpdate[`privacy`] = updateData
 			default:
 				if daoThis.Contains(k) {
-					updateData[k] = v
+					daoModel.SaveData[k] = v
 				}
 			}
 		}
-		m = m.Data(updateData)
-		if len(daoModel.AfterUpdate) == 0 {
-			return m
-		}
-		m = m.Hook(daoThis.HookUpdate(daoModel))
-		if len(updateData) == 0 {
-			daoModel.IsOnlyAfterUpdate = true
+		m = m.Data(daoModel.SaveData)
+		if len(daoModel.AfterUpdate) > 0 {
+			m = m.Hook(daoThis.HookUpdate(daoModel))
 		}
 		return m
 	}
@@ -326,7 +320,7 @@ func (daoThis *usersDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 func (daoThis *usersDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
-			if daoModel.IsOnlyAfterUpdate {
+			if len(daoModel.SaveData) == 0 {
 				result = driver.RowsAffected(0)
 			} else {
 				result, err = in.Next(ctx)

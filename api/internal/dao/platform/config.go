@@ -175,19 +175,18 @@ func (daoThis *configDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandle
 // 解析insert
 func (daoThis *configDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
 			case `id`, daoThis.Columns().ConfigKey:
-				insertData[daoThis.Columns().ConfigKey] = v
+				daoModel.SaveData[daoThis.Columns().ConfigKey] = v
 				daoModel.IdArr = []*gvar.Var{gvar.New(v)}
 			default:
 				if daoThis.Contains(k) {
-					insertData[k] = v
+					daoModel.SaveData[k] = v
 				}
 			}
 		}
-		m = m.Data(insertData)
+		m = m.Data(daoModel.SaveData)
 		if len(daoModel.AfterInsert) > 0 {
 			m = m.Hook(daoThis.HookInsert(daoModel))
 		}
@@ -219,24 +218,19 @@ func (daoThis *configDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 // 解析update
 func (daoThis *configDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
 			case `id`:
-				updateData[daoThis.Columns().ConfigKey] = v
+				daoModel.SaveData[daoThis.Columns().ConfigKey] = v
 			default:
 				if daoThis.Contains(k) {
-					updateData[k] = v
+					daoModel.SaveData[k] = v
 				}
 			}
 		}
-		m = m.Data(updateData)
-		if len(daoModel.AfterUpdate) == 0 {
-			return m
-		}
-		m = m.Hook(daoThis.HookUpdate(daoModel))
-		if len(updateData) == 0 {
-			daoModel.IsOnlyAfterUpdate = true
+		m = m.Data(daoModel.SaveData)
+		if len(daoModel.AfterUpdate) > 0 {
+			m = m.Hook(daoThis.HookUpdate(daoModel))
 		}
 		return m
 	}
@@ -246,7 +240,7 @@ func (daoThis *configDao) ParseUpdate(update map[string]any, daoModel *daoIndex.
 func (daoThis *configDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
-			if daoModel.IsOnlyAfterUpdate {
+			if len(daoModel.SaveData) == 0 {
 				result = driver.RowsAffected(0)
 			} else {
 				result, err = in.Next(ctx)

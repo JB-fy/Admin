@@ -1,3 +1,5 @@
+./main myGen -dbGroup=default -dbTable=pay_order -removePrefixCommon= -removePrefixAlone=pay_ -isApi=0 -isView=0
+    关联表:pay_order_rel:order_id:true
 ./main myGen -dbGroup=default -dbTable=platform_server -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
 ./main myGen -dbGroup=default -dbTable=platform_config -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
     关联表:org_config:config_key:false

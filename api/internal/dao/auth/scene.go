@@ -175,24 +175,23 @@ func (daoThis *sceneDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler
 // 解析insert
 func (daoThis *sceneDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		insertData := map[string]any{}
 		for k, v := range insert {
 			switch k {
 			case `id`, daoThis.Columns().SceneId:
-				insertData[daoThis.Columns().SceneId] = v
+				daoModel.SaveData[daoThis.Columns().SceneId] = v
 				daoModel.IdArr = []*gvar.Var{gvar.New(v)}
 			case daoThis.Columns().SceneConfig:
 				if gconv.String(v) == `` {
 					v = nil
 				}
-				insertData[k] = v
+				daoModel.SaveData[k] = v
 			default:
 				if daoThis.Contains(k) {
-					insertData[k] = v
+					daoModel.SaveData[k] = v
 				}
 			}
 		}
-		m = m.Data(insertData)
+		m = m.Data(daoModel.SaveData)
 		if len(daoModel.AfterInsert) > 0 {
 			m = m.Hook(daoThis.HookInsert(daoModel))
 		}
@@ -224,30 +223,25 @@ func (daoThis *sceneDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 // 解析update
 func (daoThis *sceneDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
-		updateData := map[string]any{}
 		for k, v := range update {
 			switch k {
 			case `id`:
-				updateData[daoThis.Columns().SceneId] = v
+				daoModel.SaveData[daoThis.Columns().SceneId] = v
 			case daoThis.Columns().SceneConfig:
 				if gconv.String(v) == `` {
-					updateData[k] = nil
+					daoModel.SaveData[k] = nil
 					continue
 				}
-				updateData[k] = v
+				daoModel.SaveData[k] = v
 			default:
 				if daoThis.Contains(k) {
-					updateData[k] = v
+					daoModel.SaveData[k] = v
 				}
 			}
 		}
-		m = m.Data(updateData)
-		if len(daoModel.AfterUpdate) == 0 {
-			return m
-		}
-		m = m.Hook(daoThis.HookUpdate(daoModel))
-		if len(updateData) == 0 {
-			daoModel.IsOnlyAfterUpdate = true
+		m = m.Data(daoModel.SaveData)
+		if len(daoModel.AfterUpdate) > 0 {
+			m = m.Hook(daoThis.HookUpdate(daoModel))
 		}
 		return m
 	}
@@ -257,7 +251,7 @@ func (daoThis *sceneDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 func (daoThis *sceneDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
-			if daoModel.IsOnlyAfterUpdate {
+			if len(daoModel.SaveData) == 0 {
 				result = driver.RowsAffected(0)
 			} else {
 				result, err = in.Next(ctx)
@@ -396,7 +390,7 @@ func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id string) (info gdb.
 	// 		修改用：Scene.CtxDaoModel(ctx).SetIdArr(filter).HookUpdate(data).Update()
 	// 		删除用：Scene.CtxDaoModel(ctx).SetIdArr(filter).HookDelete().Delete()
 	// 	2：后置操作 HookUpdate 和 HookDelete 方法的判断受影响行后面添加删除缓存代码：cache.DbData.Del(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
-	// 		注意：要触发 HookUpdate 方法，还需注释 ParseUpdate 方法中的 if len(daoModel.AfterUpdate) == 0 这段代码
+	// 		注意：要触发 HookUpdate 方法，还需注释 ParseUpdate 方法中的 if len(daoModel.AfterUpdate) > 0 { 这条件
 	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, consts.CACHE_TIME_DEFAULT)
 	if err != nil {
 		return
