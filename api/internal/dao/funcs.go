@@ -56,7 +56,7 @@ func SaveArrRelManyWithSort(ctx context.Context, relDao DaoInterface, idField st
 func SaveListRelMany(ctx context.Context, relDao DaoInterface, idField string, idSuffixFieldArr []string, id any, valList []map[string]any) {
 	valListLen := len(valList)
 	if valListLen == 0 {
-		relDao.CtxDaoModel(ctx).GetModel().Where(idField, id).Delete()
+		relDao.CtxDaoModel(ctx).Where(idField, id).Delete()
 		return
 	}
 	idFieldArr := append([]string{idField}, idSuffixFieldArr...)
@@ -73,7 +73,7 @@ func SaveListRelMany(ctx context.Context, relDao DaoInterface, idField string, i
 		}
 		inStrArr[i] = `('` + gstr.Join(idArr, `', '`) + `')`
 	}
-	relDao.CtxDaoModel(ctx).GetModel().Where(`(` + gstr.Join(idFieldArr, `, `) + `) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`).Delete()
+	relDao.CtxDaoModel(ctx).Where(`(` + gstr.Join(idFieldArr, `, `) + `) NOT IN (` + gstr.Join(inStrArr, `, `) + `)`).Delete()
 }
 
 // 保存关联表（一对多），有顺序要求时使用。关联表除主表关联id外，至少还剩2个有用字段

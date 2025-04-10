@@ -170,7 +170,7 @@ func (daoThis *appDao) HandleAfterField(ctx context.Context, record gdb.Record, 
 			}
 		case `is_force`: //参数：当前版本号
 			isForce := 0
-			if sum, _ := daoModel.CloneNew().GetModel().Where(daoThis.Columns().AppType, record[daoThis.Columns().AppType]).
+			if sum, _ := daoModel.CloneNew().Where(daoThis.Columns().AppType, record[daoThis.Columns().AppType]).
 				WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().VerNo, record[daoThis.Columns().VerNo]).
 				WhereGT(daoModel.DbTable+`.`+daoThis.Columns().VerNo, v).
 				Sum(daoThis.Columns().IsForcePrev); sum > 0 {

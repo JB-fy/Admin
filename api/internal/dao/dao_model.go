@@ -2,7 +2,6 @@ package dao
 
 import (
 	"context"
-	"database/sql"
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
@@ -35,10 +34,10 @@ type DaoInterface interface {
 }
 
 type DaoModel struct {
-	Ctx          context.Context
-	dao          DaoInterface
-	db           gdb.DB
-	model        *gdb.Model
+	Ctx context.Context
+	dao DaoInterface
+	db  gdb.DB
+	*gdb.Model
 	DbGroup      string // 分库情况下，解析后所确定的库
 	DbTable      string // 分表情况下，解析后所确定的表
 	JoinTableMap map[string]struct{}
@@ -58,7 +57,7 @@ func (daoModelThis *DaoModel) PutPool() {
 	daoModelThis.Ctx = nil
 	daoModelThis.dao = nil
 	daoModelThis.db = nil
-	daoModelThis.model = nil
+	daoModelThis.Model = nil
 	daoModelThis.DbGroup = ``
 	daoModelThis.DbTable = ``
 	daoModelThis.JoinTableMap = nil
@@ -91,8 +90,8 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...any) *DaoModel 
 		daoModelObj.DbTable = daoModelObj.dao.ParseDbTable(ctx)
 		daoModelObj.DbGroup = daoModelObj.dao.ParseDbGroup(ctx)
 	}
-	daoModelObj.db = daoModelObj.NewDB()
-	daoModelObj.model = daoModelObj.NewModel()
+	daoModelObj.db = g.DB(daoModelObj.DbGroup)
+	daoModelObj.Model = daoModelObj.newModel()
 	return daoModelObj
 }
 
@@ -116,6 +115,16 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...any) *DaoModel 
 //		return daoModelThis
 //	}
 
+// 生成模型
+func (daoModelThis *DaoModel) newModel() *gdb.Model {
+	return daoModelThis.db.Model(daoModelThis.DbTable). /* Safe(). */ Ctx(daoModelThis.Ctx)
+}
+
+// 返回当前模型的副本（当外部还需要做特殊处理时使用）
+func (daoModelThis *DaoModel) cloneModel() *gdb.Model {
+	return daoModelThis.Model.Clone()
+}
+
 /*--------业务可能用到的方法 开始--------*/
 // 复制新的daoModel（所有属性重置）。作用：对同一个表做多次操作时，不用再解析分库分表
 func (daoModelThis *DaoModel) CloneNew() *DaoModel {
@@ -131,7 +140,7 @@ func (daoModelThis *DaoModel) CloneNew() *DaoModel {
 		AfterUpdate:  map[string]any{},
 		SaveData:     map[string]any{},
 	}
-	daoModelObj.model = daoModelObj.NewModel()
+	daoModelObj.Model = daoModelObj.newModel()
 	return &daoModelObj
 }
 
@@ -143,33 +152,8 @@ func (daoModelThis *DaoModel) ResetNew() *DaoModel {
 	daoModelThis.AfterUpdate = map[string]any{}
 	daoModelThis.SaveData = map[string]any{}
 	daoModelThis.IdArr = nil
-	daoModelThis.model = daoModelThis.NewModel()
+	daoModelThis.Model = daoModelThis.newModel()
 	return daoModelThis
-}
-
-// 生成数据库
-func (daoModelThis *DaoModel) NewDB() gdb.DB {
-	return g.DB(daoModelThis.DbGroup)
-}
-
-// 返回当前数据库
-func (daoModelThis *DaoModel) GetDB() gdb.DB {
-	return daoModelThis.db
-}
-
-// 生成模型
-func (daoModelThis *DaoModel) NewModel() *gdb.Model {
-	return daoModelThis.GetDB().Model(daoModelThis.DbTable). /* Safe(). */ Ctx(daoModelThis.Ctx)
-}
-
-// 返回当前模型的副本（当外部还需要做特殊处理时使用）
-func (daoModelThis *DaoModel) CloneModel() *gdb.Model {
-	return daoModelThis.GetModel().Clone()
-}
-
-// 返回当前模型（当外部还需要做特殊处理时使用）
-func (daoModelThis *DaoModel) GetModel() *gdb.Model {
-	return daoModelThis.model
 }
 
 // 新增需要后置处理且主键非自增时 或 更新|删除需要后置处理时 使用。注意：一般在新增|更新|删除方法执行前调用（即在各种sql条件设置完后）
@@ -177,14 +161,14 @@ func (daoModelThis *DaoModel) GetModel() *gdb.Model {
 // 该方法只在 更新|删除需要后置处理 时，才使用
 func (daoModelThis *DaoModel) SetIdArr(idOrFilterOpt ...any) *DaoModel {
 	if len(idOrFilterOpt) == 0 {
-		daoModelThis.IdArr, _ = daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
+		daoModelThis.IdArr, _ = daoModelThis.cloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
 		return daoModelThis
 	}
 	daoModelThis.IdArr = nil
 	if filter, ok := idOrFilterOpt[0].(g.Map); ok {
 		daoModelThis.Filters(filter)
 		if len(filter) != 1 {
-			daoModelThis.IdArr, _ = daoModelThis.CloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
+			daoModelThis.IdArr, _ = daoModelThis.cloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
 			return daoModelThis
 		}
 		if id, ok := filter[`id`]; ok {
@@ -243,7 +227,7 @@ func (daoModelThis *DaoModel) ListPri() (gdb.Result, error) {
 // 总数（联表时，主键去重）
 func (daoModelThis *DaoModel) CountPri() (int, error) {
 	if daoModelThis.IsJoin() {
-		return daoModelThis.CloneModel().Distinct().CountColumn(daoModelThis.dao.ParseId(daoModelThis))
+		return daoModelThis.cloneModel().Distinct().CountColumn(daoModelThis.dao.ParseId(daoModelThis))
 	}
 	return daoModelThis.Count()
 }
@@ -283,19 +267,6 @@ func (daoModelThis *DaoModel) FieldsWithParam(fieldWithParam map[string]any) *Da
 	daoModelThis.Handler(daoModelThis.dao.ParseField(nil, fieldWithParam, daoModelThis))
 	return daoModelThis
 }
-
-func (daoModelThis *DaoModel) HandleAfterField(result ...gdb.Record) {
-	for _, record := range result {
-		daoModelThis.dao.HandleAfterField(daoModelThis.Ctx, record, daoModelThis)
-	}
-}
-
-/* func (daoModelThis *DaoModel) HookSelect() *DaoModel {
-	if len(daoModelThis.AfterField) > 0 {
-		daoModelThis.Hook(daoModelThis.dao.HookSelect(daoModelThis))
-	}
-	return daoModelThis
-} */
 
 func (daoModelThis *DaoModel) HookInsertOne(key string, val any) *DaoModel {
 	return daoModelThis.HookInsert(map[string]any{key: val})
@@ -357,182 +328,182 @@ func (daoModelThis *DaoModel) GetCache() *gcache.Cache {
 
 /*--------简化对model方法的调用，并封装部分常用方法 开始--------*/
 func (daoModelThis *DaoModel) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
-	return daoModelThis.model.Transaction(daoModelThis.Ctx, f)
+	return daoModelThis.Model.Transaction(daoModelThis.Ctx, f)
 }
 
 func (daoModelThis *DaoModel) TX(tx gdb.TX) *DaoModel {
-	daoModelThis.model = daoModelThis.model.TX(tx)
+	daoModelThis.Model = daoModelThis.Model.TX(tx)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) LockShared() *DaoModel {
-	daoModelThis.model = daoModelThis.model.LockShared()
+	daoModelThis.Model = daoModelThis.Model.LockShared()
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) LockUpdate() *DaoModel {
-	daoModelThis.model = daoModelThis.model.LockUpdate()
+	daoModelThis.Model = daoModelThis.Model.LockUpdate()
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Master() *DaoModel {
-	daoModelThis.model = daoModelThis.model.Master()
+	daoModelThis.Model = daoModelThis.Model.Master()
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Slave() *DaoModel {
-	daoModelThis.model = daoModelThis.model.Slave()
+	daoModelThis.Model = daoModelThis.Model.Slave()
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Schema(schema string) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Schema(schema)
+	daoModelThis.Model = daoModelThis.Model.Schema(schema)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Cache(option gdb.CacheOption) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Cache(option)
+	daoModelThis.Model = daoModelThis.Model.Cache(option)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Unscoped() *DaoModel {
-	daoModelThis.model = daoModelThis.model.Unscoped()
+	daoModelThis.Model = daoModelThis.Model.Unscoped()
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Handler(handlers ...gdb.ModelHandler) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Handler(handlers...)
+	daoModelThis.Model = daoModelThis.Model.Handler(handlers...)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Hook(hook gdb.HookHandler) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Hook(hook)
+	daoModelThis.Model = daoModelThis.Model.Hook(hook)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Data(data ...any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Data(data...)
+	daoModelThis.Model = daoModelThis.Model.Data(data...)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) OnConflict(onConflict ...any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.OnConflict(onConflict...)
+	daoModelThis.Model = daoModelThis.Model.OnConflict(onConflict...)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Batch(batch int) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Batch(batch)
+	daoModelThis.Model = daoModelThis.Model.Batch(batch)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Distinct() *DaoModel {
-	daoModelThis.model = daoModelThis.model.Distinct()
+	daoModelThis.Model = daoModelThis.Model.Distinct()
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Partition(partitions ...string) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Partition(partitions...)
+	daoModelThis.Model = daoModelThis.Model.Partition(partitions...)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Union(unions ...*gdb.Model) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Union(unions...)
+	daoModelThis.Model = daoModelThis.Model.Union(unions...)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) UnionAll(unions ...*gdb.Model) *DaoModel {
-	daoModelThis.model = daoModelThis.model.UnionAll(unions...)
+	daoModelThis.Model = daoModelThis.Model.UnionAll(unions...)
 	return daoModelThis
 }
 
 // 以下Where开头的方法通常情况下不建议使用，更建议使用filter方法代替。只在极个别情况下可临时使用
 func (daoModelThis *DaoModel) Where(where any, args ...any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Where(where, args...)
+	daoModelThis.Model = daoModelThis.Model.Where(where, args...)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereGT(column string, value any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereGT(column, value)
+	daoModelThis.Model = daoModelThis.Model.WhereGT(column, value)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereGTE(column string, value any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereGTE(column, value)
+	daoModelThis.Model = daoModelThis.Model.WhereGTE(column, value)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereLT(column string, value any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereLT(column, value)
+	daoModelThis.Model = daoModelThis.Model.WhereLT(column, value)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereLTE(column string, value any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereLTE(column, value)
+	daoModelThis.Model = daoModelThis.Model.WhereLTE(column, value)
 	return daoModelThis
 }
 
-/* func (daoModelThis *DaoModel) WhereBetween(column string, min any, max any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereBetween(column, min, max)
+func (daoModelThis *DaoModel) WhereBetween(column string, min any, max any) *DaoModel {
+	daoModelThis.Model = daoModelThis.Model.WhereBetween(column, min, max)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereIn(column string, in any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereIn(column, in)
+	daoModelThis.Model = daoModelThis.Model.WhereIn(column, in)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereLike(column string, like string) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereLike(column, like)
+	daoModelThis.Model = daoModelThis.Model.WhereLike(column, like)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereNull(columns ...string) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereNull(columns...)
+	daoModelThis.Model = daoModelThis.Model.WhereNull(columns...)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereNot(column string, value any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereNot(column, value)
+	daoModelThis.Model = daoModelThis.Model.WhereNot(column, value)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereNotBetween(column string, min any, max any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereNotBetween(column, min, max)
+	daoModelThis.Model = daoModelThis.Model.WhereNotBetween(column, min, max)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereNotIn(column string, in any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereNotIn(column, in)
+	daoModelThis.Model = daoModelThis.Model.WhereNotIn(column, in)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereNotLike(column string, like string) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereNotLike(column, like)
+	daoModelThis.Model = daoModelThis.Model.WhereNotLike(column, like)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereNotNull(columns ...string) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereNotNull(columns...)
+	daoModelThis.Model = daoModelThis.Model.WhereNotNull(columns...)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) WhereOr(where any, args ...any) *DaoModel {
-	daoModelThis.model = daoModelThis.model.WhereOr(where, args...)
+	daoModelThis.Model = daoModelThis.Model.WhereOr(where, args...)
 	return daoModelThis
-} */
+}
 
 func (daoModelThis *DaoModel) OrderAsc(column string) *DaoModel {
-	daoModelThis.model = daoModelThis.model.OrderAsc(column)
+	daoModelThis.Model = daoModelThis.Model.OrderAsc(column)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) OrderDesc(column string) *DaoModel {
-	daoModelThis.model = daoModelThis.model.OrderDesc(column)
+	daoModelThis.Model = daoModelThis.Model.OrderDesc(column)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) OrderRandom() *DaoModel {
-	daoModelThis.model = daoModelThis.model.OrderRandom()
+	daoModelThis.Model = daoModelThis.Model.OrderRandom()
 	return daoModelThis
 }
 
@@ -540,88 +511,44 @@ func (daoModelThis *DaoModel) Page(page, limit int) *DaoModel {
 	if limit == 0 {
 		return daoModelThis
 	}
-	daoModelThis.model = daoModelThis.model.Page(page, limit)
+	daoModelThis.Model = daoModelThis.Model.Page(page, limit)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Offset(offset int) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Offset(offset)
+	daoModelThis.Model = daoModelThis.Model.Offset(offset)
 	return daoModelThis
 }
 
 func (daoModelThis *DaoModel) Limit(limit ...int) *DaoModel {
-	daoModelThis.model = daoModelThis.model.Limit(limit...)
+	daoModelThis.Model = daoModelThis.Model.Limit(limit...)
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) Save(data ...any) (result sql.Result, err error) {
-	return daoModelThis.model.Save(data...)
-}
-
-func (daoModelThis *DaoModel) Replace(data ...any) (result sql.Result, err error) {
-	return daoModelThis.model.Replace(data...)
-}
-
-func (daoModelThis *DaoModel) Insert(data ...any) (result sql.Result, err error) {
-	return daoModelThis.model.Insert(data...)
-}
-
-func (daoModelThis *DaoModel) InsertAndGetId(data ...any) (lastInsertId int64, err error) {
-	return daoModelThis.model.InsertAndGetId(data...)
-}
-
-func (daoModelThis *DaoModel) InsertIgnore(data ...any) (result sql.Result, err error) {
-	return daoModelThis.model.InsertIgnore(data...)
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) InsertAndGetAffected(data ...any) (affected int64, err error) {
-	result, err := daoModelThis.model.Insert(data...)
+	result, err := daoModelThis.Insert(data...)
 	if err != nil {
 		return 0, err
 	}
 	return result.RowsAffected()
 }
 
-func (daoModelThis *DaoModel) Update(dataAndWhere ...any) (result sql.Result, err error) {
-	return daoModelThis.model.Update(dataAndWhere...)
-}
-
-func (daoModelThis *DaoModel) UpdateAndGetAffected(dataAndWhere ...any) (affected int64, err error) {
-	return daoModelThis.model.UpdateAndGetAffected(dataAndWhere...)
-}
-
-func (daoModelThis *DaoModel) Increment(column string, amount any) (sql.Result, error) {
-	return daoModelThis.model.Increment(column, amount)
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) IncrementAndGetAffected(column string, amount any) (int64, error) {
-	result, err := daoModelThis.model.Increment(column, amount)
+	result, err := daoModelThis.Increment(column, amount)
 	if err != nil {
 		return 0, err
 	}
 	return result.RowsAffected()
 }
 
-func (daoModelThis *DaoModel) Decrement(column string, amount any) (sql.Result, error) {
-	return daoModelThis.model.Decrement(column, amount)
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) DecrementAndGetAffected(column string, amount any) (int64, error) {
-	result, err := daoModelThis.model.Decrement(column, amount)
+	result, err := daoModelThis.Decrement(column, amount)
 	if err != nil {
 		return 0, err
 	}
 	return result.RowsAffected()
 }
 
-func (daoModelThis *DaoModel) Delete(where ...any) (result sql.Result, err error) {
-	return daoModelThis.model.Delete(where...)
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) DeleteAndGetAffected(where ...any) (affected int64, err error) {
 	result, err := daoModelThis.Delete(where...)
 	if err != nil {
@@ -630,39 +557,6 @@ func (daoModelThis *DaoModel) DeleteAndGetAffected(where ...any) (affected int64
 	return result.RowsAffected()
 }
 
-func (daoModelThis *DaoModel) Chunk(size int, handler gdb.ChunkHandler) {
-	daoModelThis.model.Chunk(size, handler)
-}
-
-func (daoModelThis *DaoModel) Scan(pointer any, where ...any) error {
-	return daoModelThis.model.Scan(pointer, where...)
-}
-
-func (daoModelThis *DaoModel) ScanAndCount(pointer any, totalCount *int, useFieldForCount bool) (err error) {
-	return daoModelThis.model.ScanAndCount(pointer, totalCount, useFieldForCount)
-}
-
-func (daoModelThis *DaoModel) ScanList(structSlicePointer any, bindToAttrName string, relationAttrNameAndFields ...string) (err error) {
-	return daoModelThis.model.ScanList(structSlicePointer, bindToAttrName, relationAttrNameAndFields...)
-}
-
-func (daoModelThis *DaoModel) All() (gdb.Result, error) {
-	return daoModelThis.model.All()
-}
-
-func (daoModelThis *DaoModel) AllAndCount(useFieldForCount bool) (result gdb.Result, totalCount int, err error) {
-	return daoModelThis.model.AllAndCount(useFieldForCount)
-}
-
-func (daoModelThis *DaoModel) One(where ...any) (gdb.Record, error) {
-	return daoModelThis.model.One(where...)
-}
-
-func (daoModelThis *DaoModel) Array(fieldsAndWhere ...any) ([]gdb.Value, error) {
-	return daoModelThis.model.Array(fieldsAndWhere...)
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) ArrayStr(fieldsAndWhere ...any) ([]string, error) {
 	result, err := daoModelThis.Array(fieldsAndWhere...)
 	if err != nil {
@@ -671,7 +565,6 @@ func (daoModelThis *DaoModel) ArrayStr(fieldsAndWhere ...any) ([]string, error) 
 	return gconv.Strings(result), nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...any) ([]int, error) {
 	result, err := daoModelThis.Array(fieldsAndWhere...)
 	if err != nil {
@@ -680,7 +573,6 @@ func (daoModelThis *DaoModel) ArrayInt(fieldsAndWhere ...any) ([]int, error) {
 	return gconv.Ints(result), nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...any) ([]uint, error) {
 	result, err := daoModelThis.Array(fieldsAndWhere...)
 	if err != nil {
@@ -689,9 +581,8 @@ func (daoModelThis *DaoModel) ArrayUint(fieldsAndWhere ...any) ([]uint, error) {
 	return gconv.Uints(result), nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) Set(fieldsAndWhere ...any) (map[gdb.Value]struct{}, error) {
-	arr, err := daoModelThis.model.Distinct().Array(fieldsAndWhere...)
+	arr, err := daoModelThis.Distinct().Array(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
 	}
@@ -706,9 +597,8 @@ func (daoModelThis *DaoModel) Set(fieldsAndWhere ...any) (map[gdb.Value]struct{}
 	return result, nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) SetStr(fieldsAndWhere ...any) (map[string]struct{}, error) {
-	arr, err := daoModelThis.model.Distinct().Array(fieldsAndWhere...)
+	arr, err := daoModelThis.Distinct().Array(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
 	}
@@ -723,9 +613,8 @@ func (daoModelThis *DaoModel) SetStr(fieldsAndWhere ...any) (map[string]struct{}
 	return result, nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) SetInt(fieldsAndWhere ...any) (map[int]struct{}, error) {
-	arr, err := daoModelThis.model.Distinct().Array(fieldsAndWhere...)
+	arr, err := daoModelThis.Distinct().Array(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
 	}
@@ -740,9 +629,8 @@ func (daoModelThis *DaoModel) SetInt(fieldsAndWhere ...any) (map[int]struct{}, e
 	return result, nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) SetUint(fieldsAndWhere ...any) (map[uint]struct{}, error) {
-	arr, err := daoModelThis.model.Distinct().Array(fieldsAndWhere...)
+	arr, err := daoModelThis.Distinct().Array(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
 	}
@@ -757,7 +645,6 @@ func (daoModelThis *DaoModel) SetUint(fieldsAndWhere ...any) (map[uint]struct{},
 	return result, nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) Pluck(key string, field string) (map[gdb.Value]gdb.Value, error) {
 	list, err := daoModelThis.Fields(key, field).All()
 	if err != nil {
@@ -773,7 +660,6 @@ func (daoModelThis *DaoModel) Pluck(key string, field string) (map[gdb.Value]gdb
 	return result, nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) PluckStr(key string, field string) (map[string]gdb.Value, error) {
 	list, err := daoModelThis.Fields(key, field).All()
 	if err != nil {
@@ -789,7 +675,6 @@ func (daoModelThis *DaoModel) PluckStr(key string, field string) (map[string]gdb
 	return result, nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) PluckInt(key string, field string) (map[int]gdb.Value, error) {
 	list, err := daoModelThis.Fields(key, field).All()
 	if err != nil {
@@ -805,7 +690,6 @@ func (daoModelThis *DaoModel) PluckInt(key string, field string) (map[int]gdb.Va
 	return result, nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) PluckUint(key string, field string) (map[uint]gdb.Value, error) {
 	list, err := daoModelThis.Fields(key, field).All()
 	if err != nil {
@@ -821,11 +705,6 @@ func (daoModelThis *DaoModel) PluckUint(key string, field string) (map[uint]gdb.
 	return result, nil
 }
 
-func (daoModelThis *DaoModel) Value(fieldsAndWhere ...any) (gdb.Value, error) {
-	return daoModelThis.model.Value(fieldsAndWhere...)
-}
-
-// 封装常用方法
 func (daoModelThis *DaoModel) ValueStr(fieldsAndWhere ...any) (string, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
@@ -834,7 +713,6 @@ func (daoModelThis *DaoModel) ValueStr(fieldsAndWhere ...any) (string, error) {
 	return result.String(), nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) ValueInt(fieldsAndWhere ...any) (int, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
@@ -843,7 +721,6 @@ func (daoModelThis *DaoModel) ValueInt(fieldsAndWhere ...any) (int, error) {
 	return result.Int(), nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) ValueUint(fieldsAndWhere ...any) (uint, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
@@ -852,7 +729,6 @@ func (daoModelThis *DaoModel) ValueUint(fieldsAndWhere ...any) (uint, error) {
 	return result.Uint(), nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) ValueInt64(fieldsAndWhere ...any) (int64, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
@@ -861,41 +737,12 @@ func (daoModelThis *DaoModel) ValueInt64(fieldsAndWhere ...any) (int64, error) {
 	return result.Int64(), nil
 }
 
-// 封装常用方法
 func (daoModelThis *DaoModel) ValueMap(fieldsAndWhere ...any) (g.Map, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
 		return nil, err
 	}
 	return result.Map(), nil
-}
-
-func (daoModelThis *DaoModel) HasField(field string) (bool, error) {
-	return daoModelThis.model.HasField(field)
-}
-
-func (daoModelThis *DaoModel) Count(where ...any) (int, error) {
-	return daoModelThis.model.Count(where...)
-}
-
-func (daoModelThis *DaoModel) CountColumn(column string) (int, error) {
-	return daoModelThis.model.CountColumn(column)
-}
-
-func (daoModelThis *DaoModel) Sum(column string) (float64, error) {
-	return daoModelThis.model.Sum(column)
-}
-
-func (daoModelThis *DaoModel) Avg(column string) (float64, error) {
-	return daoModelThis.model.Avg(column)
-}
-
-func (daoModelThis *DaoModel) Min(column string) (float64, error) {
-	return daoModelThis.model.Min(column)
-}
-
-func (daoModelThis *DaoModel) Max(column string) (float64, error) {
-	return daoModelThis.model.Max(column)
 }
 
 /*--------简化对gdb.Model方法的调用，并封装部分常用方法 结束--------*/
