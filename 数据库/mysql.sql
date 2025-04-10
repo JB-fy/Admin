@@ -1,17 +1,17 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : 本地-Mysql8
+ Source Server         : Mysql-8.0.33
  Source Server Type    : MySQL
  Source Server Version : 80033 (8.0.33)
- Source Host           : 192.168.1.200:3306
+ Source Host           : 192.168.0.200:3306
  Source Schema         : admin
 
  Target Server Type    : MySQL
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 30/03/2025 14:34:44
+ Date: 10/04/2025 22:17:13
 */
 
 SET NAMES utf8mb4;
@@ -556,11 +556,7 @@ CREATE TABLE `pay_order_rel`  (
   `rel_order_no` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '关联订单号',
   `rel_order_user_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联订单用户ID',
   `rel_order_amount` decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '关联订单实付金额',
-  PRIMARY KEY (`order_id`, `rel_order_type`, `rel_order_id`) USING BTREE,
-  INDEX `order_id`(`order_id` ASC) USING BTREE,
-  INDEX `rel_order_id`(`rel_order_id` ASC) USING BTREE,
-  INDEX `rel_order_no`(`rel_order_no` ASC) USING BTREE,
-  INDEX `rel_order_user_id`(`rel_order_user_id` ASC) USING BTREE
+  INDEX `order_id`(`order_id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '支付订单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------

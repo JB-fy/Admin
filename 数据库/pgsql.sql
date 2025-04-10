@@ -1,10 +1,10 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : 本地-PostgreSQL
+ Source Server         : Postgresql-1.6.2
  Source Server Type    : PostgreSQL
  Source Server Version : 160002 (160002)
- Source Host           : 192.168.1.200:5432
+ Source Host           : 192.168.0.200:5432
  Source Catalog        : admin
  Source Schema         : public
 
@@ -12,7 +12,7 @@
  Target Server Version : 160002 (160002)
  File Encoding         : 65001
 
- Date: 30/03/2025 14:34:30
+ Date: 10/04/2025 22:17:26
 */
 
 
@@ -1371,20 +1371,6 @@ ALTER TABLE "public"."pay_order" ADD CONSTRAINT "pay_order_pkey" PRIMARY KEY ("o
 CREATE INDEX "pay_order_rel_order_id_idx" ON "public"."pay_order_rel" USING btree (
   "order_id" "pg_catalog"."int4_ops" ASC NULLS LAST
 );
-CREATE INDEX "pay_order_rel_rel_order_id_idx" ON "public"."pay_order_rel" USING btree (
-  "rel_order_id" "pg_catalog"."int4_ops" ASC NULLS LAST
-);
-CREATE INDEX "pay_order_rel_rel_order_no_idx" ON "public"."pay_order_rel" USING btree (
-  "rel_order_no" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
-);
-CREATE INDEX "pay_order_rel_rel_order_user_id_idx" ON "public"."pay_order_rel" USING btree (
-  "rel_order_user_id" "pg_catalog"."int4_ops" ASC NULLS LAST
-);
-
--- ----------------------------
--- Primary Key structure for table pay_order_rel
--- ----------------------------
-ALTER TABLE "public"."pay_order_rel" ADD CONSTRAINT "pay_order_rel_pkey" PRIMARY KEY ("order_id", "rel_order_type", "rel_order_id");
 
 -- ----------------------------
 -- Primary Key structure for table pay_scene
