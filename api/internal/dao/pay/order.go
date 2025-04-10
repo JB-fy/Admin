@@ -311,7 +311,6 @@ func (daoThis *orderDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 
-			// 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
 			OrderRel.CtxDaoModel(ctx).Filter(OrderRel.Columns().OrderId, daoModel.IdArr).Delete()
 			return
 		},
