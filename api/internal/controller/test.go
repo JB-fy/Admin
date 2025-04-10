@@ -31,7 +31,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// m = m.Where(m.Builder().Where(`xxxx`).WhereOr(`xxxx`)) // 复杂条件
 	/* // 数据库事务
 	xxxxTxxxDaoModel := daoXxxx.Txxx.CtxDaoModel(ctx)
-	err = xxxxTxxxDaoModel.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
+	err = xxxxTxxxDaoModel.Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
 		list, err := daoXxxx.Txxx.CtxDaoModel(ctx).TX(tx).Filter(`filterKey`, `xxxx`).Field(`xxxx`).LockUpdate().All()                   //查询
 		id, err := xxxxTxxxDaoModel.CloneNew().TX(tx).HookInsert(g.Map{`dataKey`: `xxxx`}).InsertAndGetId()                              //新增
 		row, err := xxxxTxxxDaoModel.CloneNew().TX(tx).SetIdArr(g.Map{`id`: id}).HookUpdateOne(`dataKey`, `xxxx`).UpdateAndGetAffected() //修改

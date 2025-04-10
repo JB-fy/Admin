@@ -364,7 +364,7 @@ func (daoThis *configDao) Get(ctx context.Context, configKeyArr ...string) (conf
 func (daoThis *configDao) Save(ctx context.Context, config map[string]any) (err error) {
 	idArr := make([]any, 0, len(config))
 	daoModelThis := daoThis.CtxDaoModel(ctx)
-	err = daoModelThis.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
+	err = daoModelThis.Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
 		for k, v := range config {
 			_, err = tx.Model(daoModelThis.DbTable).Data(g.Map{
 				daoThis.Columns().ConfigKey:   k,

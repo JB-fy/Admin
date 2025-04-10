@@ -180,7 +180,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 
 	// 订单回调处理
 	payOrderDaoModel := daoPay.Order.CtxDaoModel(ctx)
-	err = payOrderDaoModel.Transaction(func(ctx context.Context, tx gdb.TX) (err error) {
+	err = payOrderDaoModel.Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
 		row, _ := payOrderDaoModel.CloneNew().TX(tx).Filters(g.Map{
 			daoPay.Order.Columns().OrderId:   orderInfo[daoPay.Order.Columns().OrderId],
 			daoPay.Order.Columns().PayStatus: 0, //防并发

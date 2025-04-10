@@ -7,7 +7,6 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gcache"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -34,7 +33,7 @@ type DaoInterface interface {
 }
 
 type DaoModel struct {
-	Ctx context.Context
+	ctx context.Context
 	dao DaoInterface
 	db  gdb.DB
 	*gdb.Model
@@ -54,7 +53,7 @@ var poolDaoModel = sync.Pool{
 }
 
 func (daoModelThis *DaoModel) PutPool() {
-	daoModelThis.Ctx = nil
+	daoModelThis.ctx = nil
 	daoModelThis.dao = nil
 	daoModelThis.db = nil
 	daoModelThis.Model = nil
@@ -72,7 +71,7 @@ func (daoModelThis *DaoModel) PutPool() {
 // 注意：dbOpt存在时，dbOpt[0]解析DbTable，dbOpt[1]索引参数解析DbGroup
 func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...any) *DaoModel {
 	daoModelObj := &DaoModel{} // poolDaoModel.Get().(*DaoModel)
-	daoModelObj.Ctx = ctx
+	daoModelObj.ctx = ctx
 	daoModelObj.dao = dao
 	daoModelObj.JoinTableMap = map[string]struct{}{}
 	daoModelObj.AfterField = map[string]any{}
@@ -102,22 +101,22 @@ func NewDaoModel(ctx context.Context, dao DaoInterface, dbOpt ...any) *DaoModel 
 //			Name:     "#`" + daoModelThis.DbTable + "`#All",
 //			Force:    true,
 //		})
-//		/* // daoModelThis.GetCore().ClearCache(daoModelThis.Ctx, daoModelThis.DbTable)
-//		cache := daoModelThis.GetDB().GetCache()
-//		keyArr := cache.MustKeyStrings(daoModelThis.Ctx)
+//		/* // daoModelThis.db.GetCore().ClearCache(daoModelThis.ctx, daoModelThis.DbTable)
+//		cache := daoModelThis.db.GetCache()
+//		keyArr := cache.MustKeyStrings(daoModelThis.ctx)
 //		keyArrOfRemove := []any{}
 //		for _, key := range keyArr {
 //			if gstr.Pos(key, "SelectCache:#`"+daoModelThis.DbTable+"`#") == 0 {
 //				keyArrOfRemove = append(keyArrOfRemove, key)
 //			}
 //		}
-//		cache.Removes(daoModelThis.Ctx, keyArrOfRemove) */
+//		cache.Removes(daoModelThis.ctx, keyArrOfRemove) */
 //		return daoModelThis
 //	}
 
 // 生成模型
 func (daoModelThis *DaoModel) newModel() *gdb.Model {
-	return daoModelThis.db.Model(daoModelThis.DbTable). /* Safe(). */ Ctx(daoModelThis.Ctx)
+	return daoModelThis.db.Model(daoModelThis.DbTable). /* Safe(). */ Ctx(daoModelThis.ctx)
 }
 
 // 返回当前模型的副本（当外部还需要做特殊处理时使用）
@@ -129,7 +128,7 @@ func (daoModelThis *DaoModel) cloneModel() *gdb.Model {
 // 复制新的daoModel（所有属性重置）。作用：对同一个表做多次操作时，不用再解析分库分表
 func (daoModelThis *DaoModel) CloneNew() *DaoModel {
 	daoModelObj := DaoModel{
-		Ctx:          daoModelThis.Ctx,
+		ctx:          daoModelThis.ctx,
 		dao:          daoModelThis.dao,
 		db:           daoModelThis.db,
 		DbGroup:      daoModelThis.DbGroup,
@@ -311,26 +310,7 @@ func (daoModelThis *DaoModel) Join(joinTable string) *DaoModel {
 
 /*--------简化对dao方法的调用 结束--------*/
 
-/*--------简化对db部分常用方法的调用 开始--------*/
-func (daoModelThis *DaoModel) Begin(ctx context.Context) (gdb.TX, error) {
-	return daoModelThis.db.Begin(ctx)
-}
-
-func (daoModelThis *DaoModel) GetCore() *gdb.Core {
-	return daoModelThis.db.GetCore()
-}
-
-func (daoModelThis *DaoModel) GetCache() *gcache.Cache {
-	return daoModelThis.db.GetCache()
-}
-
-/*--------简化对db部分常用方法的调用 结束--------*/
-
 /*--------简化对model方法的调用，并封装部分常用方法 开始--------*/
-func (daoModelThis *DaoModel) Transaction(f func(ctx context.Context, tx gdb.TX) error) (err error) {
-	return daoModelThis.Model.Transaction(daoModelThis.Ctx, f)
-}
-
 func (daoModelThis *DaoModel) TX(tx gdb.TX) *DaoModel {
 	daoModelThis.Model = daoModelThis.Model.TX(tx)
 	return daoModelThis
