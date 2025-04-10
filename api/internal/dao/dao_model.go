@@ -396,7 +396,6 @@ func (daoModelThis *DaoModel) UnionAll(unions ...*gdb.Model) *DaoModel {
 	return daoModelThis
 }
 
-// 以下Where开头的方法通常情况下不建议使用，更建议使用filter方法代替。只在极个别情况下可临时使用
 func (daoModelThis *DaoModel) Where(where any, args ...any) *DaoModel {
 	daoModelThis.Model = daoModelThis.Model.Where(where, args...)
 	return daoModelThis
