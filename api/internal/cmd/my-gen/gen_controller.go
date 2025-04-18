@@ -26,6 +26,7 @@ func (controllerThis *myGenController) Merge(controllerOther myGenController) {
 	controllerThis.tree = append(controllerThis.tree, controllerOther.tree...)
 	controllerThis.noAuth = append(controllerThis.noAuth, controllerOther.noAuth...)
 	controllerThis.diff = append(controllerThis.diff, controllerOther.diff...)
+	controllerThis.update = append(controllerThis.update, controllerOther.update...)
 }
 
 func (controllerThis *myGenController) Unique() {
