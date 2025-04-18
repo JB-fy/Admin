@@ -16,6 +16,7 @@ type myGenController struct {
 	tree      []string
 	noAuth    []string
 	diff      []string // 可以不要。数据返回时，会根据API文件中的结构体做过滤
+	update    []string // 参数结构体数组[]struct(用*[]struct会导致校验规则失效)时，此时传空数组无法删除扩展表，需增加判断参数是nil还是[]
 }
 
 func (controllerThis *myGenController) Merge(controllerOther myGenController) {
@@ -279,7 +280,8 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{` + "`filter`" + `}})
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{` + "`data`" + `}})
-	if len(data) == 0 {
+	` + gstr.Join(append(controller.update, ``), `
+	`) + `if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ` + "``" + `)
 		return
 	}
@@ -506,6 +508,10 @@ func getControllerExtendMiddleMany(tplEM handleExtendMiddle) (controller myGenCo
 			controller.list = append(controller.list, "`"+tplEM.FieldVar+"`")
 			controller.tree = append(controller.tree, "`"+tplEM.FieldVar+"`")
 		}
+	} else {
+		controller.update = append(controller.update, `if len(req.`+gstr.CaseCamel(tplEM.FieldVar)+`) == 0 && req.`+gstr.CaseCamel(tplEM.FieldVar)+` != nil {
+		data[`+"`"+tplEM.FieldVar+"`"+`] = g.List{}
+	}`)
 	}
 	return
 }
