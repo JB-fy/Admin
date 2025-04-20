@@ -8,7 +8,7 @@
 [Desktop Entry]
 Name=Visual Studio Code
 Comment=Multi-platform code editor for Linux
-Exec=/server/tool/VSCode/code  --no-sandbox
+Exec=/server/tool/VSCode/code --no-sandbox
 Icon=/server/tool/VSCode/resources/app/resources/linux/code.png
 Type=Application
 StartupNotify=true
