@@ -13,7 +13,7 @@ VMware设置
 安装Docker引擎
     dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 非root用户需添加到docker用户组
-    sudo usermod -aG docker $USER
+    usermod -aG docker $USER
 更改国内镜像仓库
     vi /etc/docker/daemon.json
 {
