@@ -18,11 +18,11 @@ VMware设置
     vi /etc/docker/daemon.json
 {
   "registry-mirrors": [
-    "https://<你的加速器地址(阿里云)>.mirror.aliyuncs.com",
-    "https://docker.mirrors.ustc.edu.cn",
-    "https://hub-mirror.c.163.com"
+    "https://docker.m.daocloud.io"
   ]
 }
+
+
 
 
 /**----------------常用命令 开始----------------**/
