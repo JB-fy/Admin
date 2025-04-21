@@ -47,7 +47,7 @@ docker logs 名称或容器ID
 /**----------------常用软件 开始----------------**/
 # nginx
 docker run -p 80:80 -v 配置:/etc/nginx/nginx.conf -v 静态文件:/usr/share/nginx/html -v 日志:/var/log/nginx -d nginx:latest
-    # 示例：docker run -p 80:80 -v /home/jb/dev/tool/nginx/latest/nginx.conf:/etc/nginx/nginx.conf -d nginx:latest
+    # 示例：docker run -p 80:80 -v /home/jb/dev/tool/nginx/1.27.5/nginx.conf:/etc/nginx/nginx.conf -v /home/jb/dev/tool/nginx/1.27.5/web:/etc/nginx/web -v /home/jb/dev:/home/jb/dev -d nginx:1.27.5
 # mysql
 docker run -p 3306:3306 -v 配置:/etc/mysql/my.cnf -v 数据:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 -d mysql:latest --defaults-file=/etc/mysql/my.cnf
     # 示例：docker run -p 3306:3306 -v /home/jb/dev/tool/mysql/9.3.0/my.cnf:/etc/mysql/my.cnf -v /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:9.3.0
@@ -59,11 +59,11 @@ docker run -p 6379:6379 -v 配置:/usr/local/etc/redis/redis.conf -v 数据:/dat
     # 示例：docker run -p 6379:6379 -v /home/jb/dev/tool/redis/7.4.2/redis.conf:/usr/local/etc/redis/redis.conf -v /home/jb/dev/tool/redis/7.4.2/data:/data -d redis:7.4.2
 # mongodb
 docker run -p 27017:27017 -v 配置:/etc/mongod.conf -v 数据:/data/db -e MONGO_INITDB_ROOT_USERNAME=用户 -e MONGO_INITDB_ROOT_PASSWORD=密码 -d mongo:latest --config /etc/mongod.conf
-    # 示例：docker run -p 27017:27017 -v /home/jb/dev/tool/mongodb/latest/data:/data/db -d mongo:latest
+    # 示例：docker run -p 27017:27017 -v /home/jb/dev/tool/mongodb/8.0.8/mongod.conf:/etc/mongod.conf -v /home/jb/dev/tool/mongodb/8.0.8/data:/data/db -d mongo:8.0.8
 # cassandra 
 docker run -p 9042:9042 -v 配置:/etc/cassandra/cassandra.yaml -v 数据:/var/lib/cassandra -d cassandra:latest
-    # 示例：docker run -p 9042:9042 -v /home/jb/dev/tool/cassandra/latest/data:/var/lib/cassandra -d cassandra:latest
+    # 示例：docker run -p 9042:9042 -v /home/jb/dev/tool/cassandra/5.0.4/data:/var/lib/cassandra -d cassandra:5.0.4
 # kafka
 docker run -p 9092:9092 -p 9093:9093 -v 配置:/opt/bitnami/kafka/config/server.properties -v 数据:/bitnami/kafka/metadata -v 日志:/bitnami/kafka/logs -e KAFKA_ENABLE_KRAFT=yes -e KAFKA_CFG_NODE_ID=1 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@192.168.0.200:9093,2@192.168.0.200:9095 -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092 -e KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -d bitnami/kafka:latest
-    # 示例：docker run -p 9092:9092 -p 9093:9093 -v /home/jb/dev/tool/kafka/latest/data:/bitnami/kafka/metadata -e KAFKA_ENABLE_KRAFT=yes -e KAFKA_CFG_NODE_ID=1 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@192.168.0.200:9093 -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092 -e KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -d bitnami/kafka:latest
+    # 示例：docker run -p 9092:9092 -p 9093:9093 -v /home/jb/dev/tool/kafka/4.0.0/data:/bitnami/kafka/metadata -e KAFKA_ENABLE_KRAFT=yes -e KAFKA_CFG_NODE_ID=1 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@192.168.0.200:9093 -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092 -e KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -d bitnami/kafka:4.0.0
 /**----------------常用软件 结束----------------**/

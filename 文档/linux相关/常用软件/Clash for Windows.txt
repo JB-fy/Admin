@@ -7,7 +7,7 @@
 写入
 [Desktop Entry]
 Name=Clash for Windows
-Exec=/server/tool/Clash/cfw  --no-sandbox
+Exec=/server/tool/Clash/cfw --no-sandbox
 Type=Application
 StartupNotify=true
 Categories=TextEditor;Development;Utility;

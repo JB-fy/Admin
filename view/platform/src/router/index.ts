@@ -227,7 +227,7 @@ router.beforeEach(async (to: any) => {
         return redirectOfApi
     }
 
-   /**--------当前是登录页面且已登录时，则跳转首页或redirect 开始--------**/
+    /**--------当前是登录页面且已登录时，则跳转首页或redirect 开始--------**/
     if (to.path === '/login' && getAccessToken()) {
         return to.query.redirect ? to.query.redirect : '/'
     }
