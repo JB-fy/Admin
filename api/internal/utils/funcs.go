@@ -70,7 +70,7 @@ func GetServerLocalIp() string {
 	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I`)
 	output, _ := cmd.CombinedOutput()
 	if ip := gstr.Trim(string(output)); ip != `` {
-		return ip
+		return strings.Split(ip, ` `)[0] //多IP时，只取第一个
 	}
 	panic(`获取内网IP失败`)
 }
