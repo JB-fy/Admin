@@ -47,7 +47,7 @@ docker logs 名称或容器ID
 /**----------------常用软件 开始----------------**/
 # golang
 docker run --name golang -v /home/jb/dev/app:/app -w 工作目录 --rm -it golang:1.22.12 bash
-    # 示例：docker run --name golang -v /home/jb/dev/app:/app -w /app/pg/tbGo/cmd/tbinner_server -it golang:1.22.12 bash
+    # 示例：docker run --name golang -p 30043:30003 -p 30044:30004 -v /home/jb/dev/app:/app -w /app/pg/tbGo/cmd/tbinner_server -it golang:1.22.12 bash
 
 # nginx
 docker run -p 80:80 -v 配置:/etc/nginx/nginx.conf -v 静态文件:/usr/share/nginx/html -v 日志:/var/log/nginx -d nginx:latest
