@@ -963,7 +963,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				if !ok {
 					insertData = map[string]any{}
 				}
-				daoModel.SaveData[k] = v
+				insertData[k] = v
 				daoModel.AfterInsert[`+"`"+tplEM.FieldVar+"`"+`] = insertData`)
 	insertHookStr := `insertData[` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `] = id
 					` + tplEM.daoPath + `.CtxDaoModel(ctx).HookInsert(insertData).Insert()`
@@ -993,7 +993,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 				if !ok {
 					updateData = map[string]any{}
 				}
-				daoModel.SaveData[k] = v
+				updateData[k] = v
 				daoModel.AfterUpdate[`+"`"+tplEM.FieldVar+"`"+`] = updateData`)
 	updateHookBeforeStr := `for _, id := range daoModel.IdArr {
 						updateData[` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `] = id
