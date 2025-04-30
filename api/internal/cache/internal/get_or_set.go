@@ -79,6 +79,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, redis *gredis.Redis, ke
 		}
 		// 等待读取数据
 		for range numRead {
+			time.Sleep(oneTime)
 			value, err = redis.Get(ctx, key)
 			if err != nil {
 				return
@@ -86,7 +87,6 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, redis *gredis.Redis, ke
 			if !value.IsNil() { //缓存存在时返回
 				return
 			}
-			time.Sleep(oneTime)
 		}
 	}
 	/*
