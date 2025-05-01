@@ -58,6 +58,8 @@ EOF
     主节点
         启动
             kubeadm init --apiserver-advertise-address=节点IP --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --kubernetes-version=v1.33.0 --image-repository=registry.aliyuncs.com/google_containers --control-plane-endpoint=指向多个主节点apiserver服务的域名 --upload-certs --ignore-preflight-errors=all --cri-socket=/var/run/cri-dockerd.sock
+        启动指定配置文件
+            kubeadm init --config=配置文件
         根据启动成功信息操作
             mkdir -p $HOME/.kube
             sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -89,8 +91,46 @@ rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 
 
 /**----------------常用命令 开始----------------**/
-# 获取集群节点
-kubectl get node -o wide
-# 获取所有pod
-kubectl get pod -A
+# 查看所有命名空间中的所有资源
+kubectl get all --all-namespaces
+# 查看当前使用的配置文件内容
+kubectl config view
+# 查看集群基本信息
+kubectl cluster-info
+# 获取资源（-A查看全部；-o wide更多详细信息）
+kubectl get 资源类型（如node,pod等） 名称
+# 查看资源详细信息
+kubectl describe 资源类型（如node,pod等） 名称
+
+# 列出所有命名空间
+kubectl get ns
+# 创建命名空间
+kubectl create ns 名称
+# 修改当前操作的命名空间
+kubectl config set-context --current --namespace=名称
+
+# 进入Pod执行命令（如用/bin/sh启动交互式shell）
+kubectl exec -it 名称 -- 命令	
+# 删除Pod
+kubectl delete pod 名称
+# 查看容器日志（-f实时跟踪）
+kubectl logs 名称 -c 容器
+# 端口转发
+kubectl port-forward 名称 8080:80
+
+# 列出所有Deployment
+kubectl get deploy
+# 扩容/缩容Pod副本数
+kubectl scale deploy 名称 --replicas=3
+# 查看Deployment发布状态
+kubectl rollout status deploy 名称
+# 回滚到上一版本
+kubectl rollout undo deploy 名称
+# 直接编辑Deployment配置
+kubectl edit deploy 名称
+
+# 创建资源
+kubectl apply -f 文件名
+# 删除资源
+kubectl delete -f 文件名
 /**----------------常用命令 结束----------------**/
