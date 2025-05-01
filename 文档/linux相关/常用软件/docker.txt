@@ -12,16 +12,21 @@ VMware设置
     dnf config-manager --add-repo https://download.docker.com/linux/不同系统/docker-ce.repo
 安装Docker引擎
     dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-非root用户需添加到docker用户组
-    usermod -aG docker $USER
-更改国内镜像仓库
+修改配置(registry-mirrors设置国内镜像仓库；exec-opts配置与kubernetes使用相同cgroup驱动)
     vi /etc/docker/daemon.json
 {
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m",
+    "max-file": "5"
+  },
   "registry-mirrors": [
     "https://docker.m.daocloud.io"
   ]
 }
-
+非root用户需添加到docker用户组
+    usermod -aG docker $USER
 
 
 /**----------------常用命令 开始----------------**/

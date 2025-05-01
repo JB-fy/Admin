@@ -1,0 +1,96 @@
+设置主机名并修改hosts
+    hostnamectl set-hostname k8s-master
+    vi /etc/hosts
+192.168.137.160 k8s-master
+192.168.137.161 k8s-node1
+192.168.137.162 k8s-node2
+
+# 开启路由转发
+    vi /etc/sysctl.conf 
+net.ipv4.ip_forward = 1
+# 允许桥接流量经过iptables（防止CNI插件问题）
+net.bridge.bridge-nf-call-iptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+
+关闭防火墙
+    systemctl disable firewalld
+
+统一时区
+    timedatectl set-timezone Asia/Shanghai
+
+禁用交换分区Swap
+    sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+修改/etc/selinux/config将SELINUX的值改为disabled(影响自启动)
+    sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+与docker配合需要安装cri-dockerd。参考：https://mirantis.github.io/cri-dockerd/usage/install-manually/
+    wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.4.0/cri-dockerd-0.4.0.amd64.tgz
+    tar -xvf cri-dockerd-0.4.0.amd64.tgz
+    mv cri-dockerd/cri-dockerd /usr/bin/
+    chmod 755 /usr/bin/cri-dockerd
+    wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.service
+    修改cri-docker.service的ExecStart启动命令兼容kubernetes
+        vi cri-docker.service
+        ExecStart=/usr/bin/cri-dockerd --network-plugin=cni --pod-infra-container-image=registry.aliyuncs.com/google_containers/pause:3.10
+    wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.socket
+    mv cri-docker.service cri-docker.socket /etc/systemd/system/
+    chmod 755 /etc/systemd/system/cri-docker.service /etc/systemd/system/cri-docker.socket
+    systemctl daemon-reload
+    systemctl enable --now cri-docker.socket
+
+添加Kubernetes的yum源
+    cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.33/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.33/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+EOF
+
+安装Kubernetes引擎
+    dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+    systemctl enable --now kubelet
+
+初始化集群
+    主节点
+        启动
+            kubeadm init --apiserver-advertise-address=节点IP --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --kubernetes-version=v1.33.0 --image-repository=registry.aliyuncs.com/google_containers --control-plane-endpoint=指向多个主节点apiserver服务的域名 --upload-certs --ignore-preflight-errors=all --cri-socket=/var/run/cri-dockerd.sock
+        根据启动成功信息操作
+            mkdir -p $HOME/.kube
+            sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+            sudo chown $(id -u):$(id -g) $HOME/.kube/config
+        获取join命令
+            kubeadm token create --print-join-command
+        上传证书到集群中，同时显示新的密钥
+            kubeadm init phase upload-certs --upload-certs
+    从节点
+        根据主节点启动成功信息取得加入节点命令执行，并追加当前主机的--cri-socket路径。如果想让节点也设置成主节点需再追加--control-plane --certificate-key=密钥 --control-plane-endpoint=指向多个主节点apiserver服务的域名
+            kubeadm join 192.168.137.160:6443 --token 1zpol9.4stlml94kr4shcwf --discovery-token-ca-cert-hash sha256:b7e1ddb44eb756bdcfcc96c1bd7420ef70f3d90d388f9274a44fb23cc5dfe097 --control-plane --certificate-key=d675e685804ff685808ce91a8b2f3633261a92c7e3dc5f7f88ac688eea31abbf --cri-socket=/var/run/cri-dockerd.sock
+
+安装CNI网络插件cilium(还有calico等其他插件)。参考：https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/
+    安装Cilium CLI
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+CLI_ARCH=amd64
+if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+    安装Cilium
+        cilium install --version 1.17.3
+    验证安装
+        cilium status
+    验证集群网络
+        cilium connectivity test
+
+
+
+/**----------------常用命令 开始----------------**/
+# 获取集群节点
+kubectl get node -o wide
+# 获取所有pod
+kubectl get pod -A
+/**----------------常用命令 结束----------------**/
