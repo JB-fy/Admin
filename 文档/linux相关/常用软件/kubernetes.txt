@@ -91,46 +91,37 @@ rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 
 
 /**----------------常用命令 开始----------------**/
-# 查看所有命名空间中的所有资源
-kubectl get all --all-namespaces
-# 查看当前使用的配置文件内容
-kubectl config view
 # 查看集群基本信息
 kubectl cluster-info
-# 获取资源（-A查看全部；-o wide更多详细信息）
-kubectl get 资源类型（如node,pod等） 名称
+# 查看当前使用的配置文件内容
+kubectl config view
+# 查看所有资源类型
+kubectl api-resources
+# 获取资源（-A查看全部；-o wide更多详细信息；-o yaml当前配置）
+kubectl get 资源类型(all全部) 名称
 # 查看资源详细信息
-kubectl describe 资源类型（如node,pod等） 名称
-
-# 列出所有命名空间
-kubectl get ns
-# 创建命名空间
-kubectl create ns 名称
-# 修改当前操作的命名空间
-kubectl config set-context --current --namespace=名称
-
-# 进入Pod执行命令（如用/bin/sh启动交互式shell）
-kubectl exec -it 名称 -- 命令	
-# 删除Pod
-kubectl delete pod 名称
+kubectl describe 资源类型 名称
+# 查看资源描述
+kubectl explain 资源类型.字段名
+# 创建/修改资源
+kubectl apply -f 文件名
+kubectl replace -f 文件名
+# 创建资源（可追加--dry-run -o yaml获取配置示例）
+kubectl create 资源类型 名称
+# 修改资源
+kubectl edit 资源类型 名称
+# 删除资源
+kubectl delete 资源类型 名称
+# 扩容/缩容
+kubectl scale 资源类型 名称 --replicas=数量
+# 查看滚动状态
+kubectl rollout status 资源类型 名称
+# 暂停滚动
+kubectl rollout pause 资源类型 名称
+# 回滚
+kubectl rollout undo 资源类型 名称 --to-revision=版本
+# 进入Pod执行命令（如用/bin/bash启动交互式shell）
+kubectl exec -it 名称 -c 容器 -- 命令
 # 查看容器日志（-f实时跟踪）
 kubectl logs 名称 -c 容器
-# 端口转发
-kubectl port-forward 名称 8080:80
-
-# 列出所有Deployment
-kubectl get deploy
-# 扩容/缩容Pod副本数
-kubectl scale deploy 名称 --replicas=3
-# 查看Deployment发布状态
-kubectl rollout status deploy 名称
-# 回滚到上一版本
-kubectl rollout undo deploy 名称
-# 直接编辑Deployment配置
-kubectl edit deploy 名称
-
-# 创建资源
-kubectl apply -f 文件名
-# 删除资源
-kubectl delete -f 文件名
 /**----------------常用命令 结束----------------**/
