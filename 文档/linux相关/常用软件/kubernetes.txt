@@ -91,6 +91,11 @@ rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 
 
 /**----------------常用命令 开始----------------**/
+# 设置kubectl命令补全插件
+    dnf install bash-completion
+    在.bashrc内写入以下内容后重启
+    vi .bashrc
+source <(kubectl completion bash)
 # 查看集群基本信息
 kubectl cluster-info
 # 查看当前使用的配置文件内容
