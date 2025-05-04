@@ -5,12 +5,20 @@
 192.168.137.161 k8s-node1
 192.168.137.162 k8s-node2
 
-# 开启路由转发
+集群默认使用iptables模式代理，故需安装bridge-utils
+    dnf install iptables-services
+    dnf install epel-release
+    dnf install bridge-utils
+
+需要使用IPVS模式代理时，需安装ipvsadm
+    dnf install ipvsadm
+
+开启路由转发
     vi /etc/sysctl.conf 
-net.ipv4.ip_forward = 1
-# 允许桥接流量经过iptables（防止CNI插件问题）
-net.bridge.bridge-nf-call-iptables = 1
-net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward=1
+# 允许桥接流量经过iptables（防止CNI插件出问题）
+net.bridge.bridge-nf-call-iptables=1
+net.bridge.bridge-nf-call-ip6tables=1
 
 关闭防火墙
     systemctl disable firewalld
@@ -109,8 +117,8 @@ kubectl describe 资源类型 名称
 # 查看资源描述
 kubectl explain 资源类型.字段名
 # 创建/修改资源
-kubectl apply -f 文件名
-kubectl replace -f 文件名
+kubectl apply -f 配置文件
+kubectl replace -f 配置文件
 # 创建资源（可追加--dry-run -o yaml获取配置示例）
 kubectl create 资源类型 名称
 # 修改资源
@@ -124,9 +132,45 @@ kubectl rollout status 资源类型 名称
 # 暂停滚动
 kubectl rollout pause 资源类型 名称
 # 回滚
-kubectl rollout undo 资源类型 名称 --to-revision=版本
+kubectl rollout undo 资源类型 名称 --to-revision=版本号
 # 进入Pod执行命令（如用/bin/bash启动交互式shell）
 kubectl exec -it 名称 -c 容器 -- 命令
 # 查看容器日志（-f实时跟踪）
 kubectl logs 名称 -c 容器
 /**----------------常用命令 结束----------------**/
+
+
+
+/**----------------Helm工具 开始----------------**/
+安装Helm
+    tar -zxvf helm-v3.17.3-linux-amd64.tar.gz
+    mv linux-amd64/helm /usr/local/bin/helm
+    chmod 755 /usr/local/bin/helm
+添加仓库
+    helm repo add bitnami https://charts.bitnami.com/bitnami
+查看仓库
+    helm search repo 搜索词
+更新仓库
+    helm repo update
+常用命令
+# 查看chart的所有信息
+    helm show all 包名
+# 查看chart的基本信息
+    helm show chart 包名
+# 查看chart的可更改的配置项
+    helm show values 包名
+# 已安装列表
+    helm list --all
+# chart安装(--generate-name自动名称生成)
+    helm install -f 配置文件 --set x=xx,y.z=xx 包名 --generate-name
+# chart卸载(--keep-history保留版本历史)
+    helm uninstall 已安装名称 --keep-history
+# 查看已安装配置
+    helm get values 已安装名称
+# 查看已安装信息
+    helm status 已安装名称
+# 升级已安装
+    helm upgrade -f 配置文件 已安装名称 包名
+# 回滚已安装
+    helm rollback 已安装名称 版本号
+/**----------------Helm工具 结束----------------**/

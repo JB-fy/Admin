@@ -33,8 +33,8 @@ VMware设置
 # 映射规则（主机:容器）
 # 拉取
 docker pull 镜像名:版本
-# 运行
-docker run --name 名称 --net=container:其他容器名称 --ipc=container:其他容器名称 --pid=container:其他容器名称 -p 端口:端口 -v 目录:目录 -e 环境变量 -d 镜像名:版本
+# 运行（--net=host指定使用当前主机网络）
+docker run --name 名称 -p 端口:端口 -v 目录:目录 -e 环境变量 --net=container:其他容器名称 --ipc=container:其他容器名称 --pid=container:其他容器名称 -d 镜像名:版本
 # 进入容器执行命令（如用/bin/bash启动交互式shell）
 docker exec -it 名称或容器ID 命令
 # 查看
