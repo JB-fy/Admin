@@ -207,8 +207,8 @@ func GetValueFromStruct(Obj any, name string) (val any) {
 }
 
 // 获取图片后缀
-func GetImageExt(imageBytes []byte, defExt string) (imageExt string) {
-	imageExt = imageMimeTypeExtMap[http.DetectContentType(imageBytes[:min(512, len(imageBytes))])]
+func GetImageExt(imgBytes []byte, defExt string) (imageExt string) {
+	imageExt = imageMimeTypeExtMap[http.DetectContentType(imgBytes[:min(512, len(imgBytes))])]
 	if imageExt == `` {
 		imageExt = defExt
 	}
@@ -216,10 +216,10 @@ func GetImageExt(imageBytes []byte, defExt string) (imageExt string) {
 } */
 
 /* // 转成jpeg图片。目前只支持webp转换
-func JpegEncode(imageBytes []byte, quality int, imageTypeArr ...string) ([]byte, error) {
+func JpegEncode(imgBytes []byte, quality int, imgTypeArr ...string) ([]byte, error) {
 	var err error
-	imageType := http.DetectContentType(imageBytes[:min(512, len(imageBytes))])
-	for _, v := range imageTypeArr {
+	imageType := http.DetectContentType(imgBytes[:min(512, len(imgBytes))])
+	for _, v := range imgTypeArr {
 		if imageType != v {
 			continue
 		}
@@ -227,7 +227,7 @@ func JpegEncode(imageBytes []byte, quality int, imageTypeArr ...string) ([]byte,
 		var img image.Image
 		switch v {
 		case `image/webp`:
-			img, err = webp.Decode(bytes.NewReader(imageBytes))
+			img, err = webp.Decode(bytes.NewReader(imgBytes))
 		}
 		if err != nil {
 			return nil, err
@@ -238,7 +238,7 @@ func JpegEncode(imageBytes []byte, quality int, imageTypeArr ...string) ([]byte,
 		if err != nil {
 			return nil, err
 		}
-		imageBytes = jpegData.Bytes()
+		imgBytes = jpegData.Bytes()
 	}
-	return imageBytes, err
+	return imgBytes, err
 } */
