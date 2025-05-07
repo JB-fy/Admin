@@ -43,12 +43,12 @@ func initCron(ctx context.Context) {
 
 type myCron struct{}
 
+func (myCron) Test(ctx context.Context) {
+	fmt.Println(gtime.Now().Format(`Y-m-d H:i:s`))
+}
+
 func (myCron) PayCacheSet(ctx context.Context) {
 	daoPay.Scene.CacheSet(ctx)
 	daoPay.Channel.CacheSet(ctx)
 	daoPay.Pay.CacheSet(ctx)
-}
-
-func (myCron) Test(ctx context.Context) {
-	fmt.Println(gtime.Now().Format(`Y-m-d H:i:s`))
 }
