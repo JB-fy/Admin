@@ -82,7 +82,7 @@ docker run -p 27017:27017 -v 配置:/etc/mongod.conf -v 数据:/data/db -e MONGO
     # 示例：docker run --name mongo-alone --network host -v /home/jb/dev/tool/mongodb/8.0.8/data:/data/db -d mongo:8.0.8
 
 # scylladb（-e SCYLLADB_USER=用户 -e SCYLLADB_PASSWORD=密码。实际无法设置账号密码，还是默认cassandra:cassandra。可用-e ALLOW_EMPTY_PASSWORD=yes设为无需账号密码登录）
-docker run -p 9042:9042 -v 配置:/opt/bitnami/scylladb/conf/scylla.yaml -v 数据:/bitnami/scylladb -e SCYLLADB_CLUSTER_NAME=集群名称 -e SCYLLADB_DC="数据中心标识（同集群设置一样即可）" -e SCYLLADB_RACK="物理机标识" -e SCYLLADB_SEEDS="种子节点IP,种子节点IP" -e SCYLLADB_BROADCAST_ADDRESS="当前节点IP"  --ulimit memlock=-1 --ulimit nofile=100000:100000 -d bitnami/scylladb:latest
+docker run -p 9042:9042 -v 配置:/opt/bitnami/scylladb/conf/scylla.yaml -v 数据:/bitnami/scylladb -e SCYLLADB_CLUSTER_NAME=集群名称 -e SCYLLADB_DATACENTER=数据中心标识 -e SCYLLADB_RACK=物理机标识 -e SCYLLADB_SEEDS=种子节点IP,种子节点IP -e SCYLLADB_BROADCAST_ADDRESS=当前节点IP  --ulimit memlock=-1 --ulimit nofile=100000:100000 -d bitnami/scylladb:latest
 # 示例：docker run --name scylladb-alone --network host -v /home/jb/dev/tool/scylladb/6.2.3:/bitnami/scylladb -e ALLOW_EMPTY_PASSWORD=yes -d bitnami/scylladb:6.2.3
 
 # cassandra
