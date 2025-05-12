@@ -39,7 +39,7 @@ docker pull 镜像名:版本
 # 删除
 docker rmi 镜像名:版本
 # 运行（-p 主机:容器。可用--network host直接指定使用当前主机网络）
-docker run --name 名称 -p 端口:端口 -v 目录:目录 -e 环境变量 --network container:其它容器名称 --ipc=container:其它容器名称 --pid=container:其它容器名称 -d 镜像名:版本
+docker run --name 名称 -p 端口:端口 -v 目录:目录 -e 环境变量 --network container:其它容器名称 --ipc=container:其它容器名称 --pid=container:其它容器名称 -w 工作目录 -d 镜像名:版本
 # 进入容器执行命令（如用/bin/bash启动交互式shell）
 docker exec -it 名称或容器ID 命令
 # 查看
@@ -91,5 +91,5 @@ docker run -p 9042:9042 -v 配置:/etc/cassandra/cassandra.yaml -v 数据:/var/l
 
 # kafka
 docker run -p 9092:9092 -p 9093:9093 -v 配置:/opt/bitnami/kafka/config/server.properties -v 数据:/bitnami/kafka/metadata -v 日志:/bitnami/kafka/logs -e KAFKA_CFG_NODE_ID=1 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@192.168.0.200:9093,2@192.168.0.200:9095 -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.0.200:9092 -d bitnami/kafka:latest
-    # 示例：docker run --name kafka-alone --network host -v /home/jb/dev/tool/kafka/4.0.0/data:/bitnami/kafka/metadata -e KAFKA_CFG_NODE_ID=1 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@192.168.0.200:9093 -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.0.200:9092 -d bitnami/kafka:4.0.0
+    # 示例：docker run --name kafka-alone --network host -v /home/jb/dev/tool/kafka/4.0.0/data:/bitnami/kafka/metadata -e KAFKA_CFG_NODE_ID=1 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@192.168.1.200:9093 -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.1.200:9092 -d bitnami/kafka:4.0.0
 /**----------------常用软件 结束----------------**/
