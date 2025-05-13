@@ -28,16 +28,16 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, id any) string {
 }
 
 // ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
-func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, isExist bool, err error) {
+func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, notExist bool, err error) {
 	key := cacheThis.key(daoModel, id)
-	valueTmp, isExist, err := internal.GetOrSet.GetOrSet(ctx, key, func() (value any, isExist bool, err error) {
+	valueTmp, notExist, err := internal.GetOrSet.GetOrSet(ctx, key, func() (value any, notExist bool, err error) {
 		value, err = cacheThis.cache().Get(ctx, key)
 		if err != nil {
 			return
 		}
-		isExist = !value.(*gvar.Var).IsNil()
+		notExist = value.(*gvar.Var).IsNil()
 		return
-	}, func() (value any, isExist bool, err error) {
+	}, func() (value any, notExist bool, err error) {
 		fieldArr := field
 		ttlField, ok := ttlOrField.(string)
 		isTTLField := ok && ttlField != ``
@@ -45,7 +45,11 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 			fieldArr = append(fieldArr, ttlField)
 		}
 		info, err := daoModel.FilterPri(id).Fields(fieldArr...).One()
-		if info.IsEmpty() || err != nil {
+		if err != nil {
+			return
+		}
+		if info.IsEmpty() {
+			notExist = true
 			return
 		}
 		var ttl int64
@@ -67,7 +71,6 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 		}
 		err = cacheThis.cache().SetEX(ctx, key, value, ttl)
 		value = gvar.New(value)
-		isExist = true
 		return
 	}, 0, 0, 0)
 	value, _ = valueTmp.(*gvar.Var)
@@ -81,13 +84,13 @@ func (cacheThis *dbData) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 
 func (cacheThis *dbData) GetOrSetMany(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
 	var value *gvar.Var
-	var isExist bool
+	var notExist bool
 	for _, id := range idArr {
-		value, isExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
+		value, notExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
 		if err != nil {
 			return
 		}
-		if !isExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
+		if notExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
 		list = append(list, gdb.Record{})
@@ -98,14 +101,14 @@ func (cacheThis *dbData) GetOrSetMany(ctx context.Context, daoModel *dao.DaoMode
 
 func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (record gdb.Record, err error) {
 	var value *gvar.Var
-	var isExist bool
+	var notExist bool
 	record = gdb.Record{}
 	for _, id := range idArr {
-		value, isExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
+		value, notExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
 		if err != nil {
 			return
 		}
-		if !isExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
+		if notExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
 		record[gconv.String(id)] = value

@@ -33,9 +33,9 @@ func (cacheThis *getOrSet) key(key string) string {
 // numLock	获取锁的重试次数。作用：当获取锁的服务器因报错，无法做缓存写入时，允许其它服务器重新获取锁，以保证缓存写入成功
 // numRead	读取缓存的重试次数。作用：当未获取锁的服务器获取缓存时数据为空时，可以重试多次
 // oneTime	读取缓存重试间隔时间，单位：毫秒
-func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, getFunc func() (value any, isExist bool, err error), setFunc func() (value any, isExist bool, err error), numLock int, numRead int, oneTime time.Duration) (value any, isExist bool, err error) {
-	value, isExist, err = getFunc()
-	if isExist || err != nil {
+func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, getFunc func() (value any, notExist bool, err error), setFunc func() (value any, notExist bool, err error), numLock int, numRead int, oneTime time.Duration) (value any, notExist bool, err error) {
+	value, notExist, err = getFunc()
+	if !notExist || err != nil {
 		return
 	}
 
@@ -65,8 +65,8 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, getFunc fun
 			return
 		}
 		if isSetVal.Bool() {
-			value, isExist, err = setFunc()
-			if !isExist || err != nil {
+			value, notExist, err = setFunc()
+			if notExist || err != nil {
 				cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 				return
 			}
@@ -76,8 +76,8 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, getFunc fun
 		// 等待读取数据
 		for range numRead {
 			time.Sleep(oneTime)
-			value, isExist, err = getFunc()
-			if isExist || err != nil {
+			value, notExist, err = getFunc()
+			if !notExist || err != nil {
 				return
 			}
 		}
