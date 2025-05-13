@@ -28,25 +28,28 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, id any) string {
 }
 
 // ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
-func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, noSetCache bool, err error) {
-	redis := cacheThis.cache()
+func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, isExist bool, err error) {
 	key := cacheThis.key(daoModel, id)
-	valueFunc := func() (value any, ttl int64, noSetCache bool, err error) {
-		fieldArr := field
-		if len(fieldArr) > 0 {
-			if ttlField, ok := ttlOrField.(string); ok && ttlField != `` {
-				fieldArr = append(fieldArr, ttlField)
-			}
-		}
-		info, err := daoModel.FilterPri(id).Fields(fieldArr...).One()
+	valueTmp, isExist, err := internal.GetOrSet.GetOrSet(ctx, key, func() (value any, isExist bool, err error) {
+		value, err = cacheThis.cache().Get(ctx, key)
 		if err != nil {
 			return
 		}
-		if info.IsEmpty() {
-			noSetCache = true
+		isExist = !value.(*gvar.Var).IsNil()
+		return
+	}, func() (value any, isExist bool, err error) {
+		fieldArr := field
+		ttlField, ok := ttlOrField.(string)
+		isTTLField := ok && ttlField != ``
+		if len(fieldArr) > 0 && isTTLField {
+			fieldArr = append(fieldArr, ttlField)
+		}
+		info, err := daoModel.FilterPri(id).Fields(fieldArr...).One()
+		if info.IsEmpty() || err != nil {
 			return
 		}
-		if ttlField, ok := ttlOrField.(string); ok && ttlField != `` {
+		var ttl int64
+		if isTTLField {
 			ttl = info[ttlField].GTime().Unix()
 			if nowTime := gtime.Now().Unix(); ttl > nowTime {
 				ttl = ttl - nowTime
@@ -62,9 +65,13 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 		} else {
 			value = info.Json()
 		}
+		err = cacheThis.cache().SetEX(ctx, key, value, ttl)
+		value = gvar.New(value)
+		isExist = true
 		return
-	}
-	return internal.GetOrSet.GetOrSet(ctx, redis, key, valueFunc, 0, 0, 0)
+	}, 0, 0, 0)
+	value, _ = valueTmp.(*gvar.Var)
+	return
 }
 
 func (cacheThis *dbData) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, err error) {
@@ -73,31 +80,32 @@ func (cacheThis *dbData) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 }
 
 func (cacheThis *dbData) GetOrSetMany(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
+	var value *gvar.Var
+	var isExist bool
 	for _, id := range idArr {
-		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
-		if errTmp != nil {
-			err = errTmp
+		value, isExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
+		if err != nil {
 			return
 		}
-		if noSetCache { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
+		if !isExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
-		var info gdb.Record
-		value.Scan(&info)
-		list = append(list, info)
+		list = append(list, gdb.Record{})
+		value.Scan(&list[len(list)-1])
 	}
 	return
 }
 
 func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (record gdb.Record, err error) {
+	var value *gvar.Var
+	var isExist bool
 	record = gdb.Record{}
 	for _, id := range idArr {
-		value, noSetCache, errTmp := cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
-		if errTmp != nil {
-			err = errTmp
+		value, isExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
+		if err != nil {
 			return
 		}
-		if noSetCache { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
+		if !isExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
 		record[gconv.String(id)] = value
@@ -110,6 +118,10 @@ func (cacheThis *dbData) Del(ctx context.Context, daoModel *dao.DaoModel, idArr 
 	for index, id := range idArr {
 		keyArr[index] = cacheThis.key(daoModel, id)
 	}
-	row, err = internal.GetOrSet.Del(ctx, cacheThis.cache(), keyArr...)
+	row, err = cacheThis.cache().Del(ctx, keyArr...)
+	if err != nil {
+		return
+	}
+	internal.GetOrSet.Del(ctx, keyArr...)
 	return
 }

@@ -6,6 +6,8 @@ const (
 
 	CACHE_TIME_DEFAULT int64 = 7 * 24 * 60 * 60 //默认缓存时间
 
+	CACHE_IS_SET = `%s_isSet` //redis锁缓存Key。参数：缓存标识（一般为其它缓存key）
+
 	CACHE_DB_DATA         = `dbData:%s:%s:%v`     //数据库数据缓存key。参数：db分组，db表名，ID
 	CACHE_SALT            = `salt:%s:%s`          //密码盐缓存key。参数：场景ID，手机/邮箱/账号/邮箱
 	CACHE_CODE            = `code:%s:%s_%d`       //验证码缓存key。参数：场景ID，手机/邮箱，场景
