@@ -30,7 +30,7 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, id any) string {
 // ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
 func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, notExist bool, err error) {
 	key := cacheThis.key(daoModel, id)
-	value, notExist, err = internal.GetOrSet.GetOrSetToRedis(ctx, key, func() (value any, notExist bool, err error) {
+	value, notExist, err = internal.GetOrSet.GetOrSetOfRedis(ctx, key, func() (value any, notExist bool, err error) {
 		fieldArr := field
 		ttlField, ok := ttlOrField.(string)
 		isTtlField := ok && ttlField != ``

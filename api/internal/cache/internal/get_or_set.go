@@ -91,7 +91,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	return
 }
 
-func (cacheThis *getOrSet) GetOrSetToRedis(ctx context.Context, key string, setFunc func() (value any, notExist bool, err error), numLock int, numRead int, oneTime time.Duration) (value *gvar.Var, notExist bool, err error) {
+func (cacheThis *getOrSet) GetOrSetOfRedis(ctx context.Context, key string, setFunc func() (value any, notExist bool, err error), numLock int, numRead int, oneTime time.Duration) (value *gvar.Var, notExist bool, err error) {
 	valueTmp, notExist, err := cacheThis.GetOrSet(ctx, key, func() (value any, notExist bool, err error) {
 		value, notExist, err = setFunc()
 		if notExist || err != nil {
