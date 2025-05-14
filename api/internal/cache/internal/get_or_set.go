@@ -33,7 +33,7 @@ func (cacheThis *getOrSet) key(key string) string {
 // numLock	获取锁的重试次数。作用：当获取锁的服务器因报错，无法做缓存写入时，允许其它服务器重新获取锁，以保证缓存写入成功
 // numRead	读取缓存的重试次数。作用：当未获取锁的服务器获取缓存时数据为空时，可以重试多次
 // oneTime	读取缓存重试间隔时间，单位：毫秒
-func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, getFunc func() (value any, notExist bool, err error), setFunc func() (value any, notExist bool, err error), numLock int, numRead int, oneTime time.Duration) (value any, notExist bool, err error) {
+func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc func() (value any, notExist bool, err error), getFunc func() (value any, notExist bool, err error), numLock int, numRead int, oneTime time.Duration) (value any, notExist bool, err error) {
 	value, notExist, err = getFunc()
 	if !notExist || err != nil {
 		return
@@ -57,8 +57,8 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, getFunc fun
 	}
 	var isSetVal *gvar.Var
 	isSetKey := cacheThis.key(key)
-	isSetTTL := gconv.Int64(time.Duration(numLock*numRead) * oneTime / time.Second) //redis锁缓存Key时间
-	isSetOption := gredis.SetOption{TTLOption: gredis.TTLOption{EX: &isSetTTL}, NX: true}
+	isSetTtl := gconv.Int64(time.Duration(numLock*numRead) * oneTime / time.Second) //redis锁缓存Key时间
+	isSetOption := gredis.SetOption{TTLOption: gredis.TTLOption{EX: &isSetTtl}, NX: true}
 	for range numLock {
 		isSetVal, err = cacheThis.cache().Set(ctx, isSetKey, ``, isSetOption)
 		if err != nil {
@@ -70,7 +70,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, getFunc fun
 				cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 				return
 			}
-			cacheThis.cache().Expire(ctx, isSetKey, isSetTTL)
+			cacheThis.cache().Expire(ctx, isSetKey, isSetTtl)
 			return
 		}
 		// 等待读取数据
@@ -88,6 +88,26 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, getFunc fun
 			2：redis服务负载过高，需要及时做优化了。解决方案：扩容或分库
 	*/
 	err = errors.New(`尝试多次查询缓存失败：` + key)
+	return
+}
+
+func (cacheThis *getOrSet) GetOrSetToRedis(ctx context.Context, key string, setFunc func() (value any, notExist bool, err error), numLock int, numRead int, oneTime time.Duration) (value *gvar.Var, notExist bool, err error) {
+	valueTmp, notExist, err := cacheThis.GetOrSet(ctx, key, func() (value any, notExist bool, err error) {
+		value, notExist, err = setFunc()
+		if notExist || err != nil {
+			return
+		}
+		value = gvar.New(value)
+		return
+	}, func() (value any, notExist bool, err error) {
+		value, err = cacheThis.cache().Get(ctx, key)
+		if err != nil {
+			return
+		}
+		notExist = value.(*gvar.Var).IsNil()
+		return
+	}, numLock, numRead, oneTime)
+	value, _ = valueTmp.(*gvar.Var)
 	return
 }
 

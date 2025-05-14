@@ -30,18 +30,11 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, id any) string {
 // ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
 func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, notExist bool, err error) {
 	key := cacheThis.key(daoModel, id)
-	valueTmp, notExist, err := internal.GetOrSet.GetOrSet(ctx, key, func() (value any, notExist bool, err error) {
-		value, err = cacheThis.cache().Get(ctx, key)
-		if err != nil {
-			return
-		}
-		notExist = value.(*gvar.Var).IsNil()
-		return
-	}, func() (value any, notExist bool, err error) {
+	value, notExist, err = internal.GetOrSet.GetOrSetToRedis(ctx, key, func() (value any, notExist bool, err error) {
 		fieldArr := field
 		ttlField, ok := ttlOrField.(string)
-		isTTLField := ok && ttlField != ``
-		if len(fieldArr) > 0 && isTTLField {
+		isTtlField := ok && ttlField != ``
+		if len(fieldArr) > 0 && isTtlField {
 			fieldArr = append(fieldArr, ttlField)
 		}
 		info, err := daoModel.FilterPri(id).Fields(fieldArr...).One()
@@ -53,7 +46,7 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 			return
 		}
 		var ttl int64
-		if isTTLField {
+		if isTtlField {
 			ttl = info[ttlField].GTime().Unix()
 			if nowTime := gtime.Now().Unix(); ttl > nowTime {
 				ttl = ttl - nowTime
@@ -70,10 +63,8 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 			value = info.Json()
 		}
 		err = cacheThis.cache().SetEX(ctx, key, value, ttl)
-		value = gvar.New(value)
 		return
 	}, 0, 0, 0)
-	value, _ = valueTmp.(*gvar.Var)
 	return
 }
 
