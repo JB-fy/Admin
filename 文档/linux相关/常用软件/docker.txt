@@ -38,6 +38,12 @@ docker info
 docker images
 # 打包镜像
 docker build -t 镜像名:版本 Dockerfile文件所在目录
+# 保存镜像
+docker save -o 文件名.tar 镜像名:版本
+# 加载镜像
+docker load -i 文件名.tar
+# 打包镜像
+docker build -t 镜像名:版本 Dockerfile文件所在目录
 # 拉取
 docker pull 镜像名:版本
 # 删除

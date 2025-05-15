@@ -55,6 +55,10 @@ func StringsBuilderPoolPut(builder *strings.Builder) {
 
 // 获取服务器外网ip
 func GetServerNetworkIp() string {
+	ip := os.Getenv(`NETWORK_IP`) //docker容器环境用。在容器启动时设置环境变量：-e NETWORK_IP=$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)
+	if ip != `` {
+		return ip
+	}
 	for _, v := range []string{`ifconfig.me`, `https://ipinfo.io/ip`, `https://checkip.amazonaws.com`, `https://icanhazip.com`, `https://api.ipify.org`} {
 		cmd := exec.Command(`/bin/bash`, `-c`, `curl -s --max-time 3 `+v)
 		output, _ := cmd.CombinedOutput()
@@ -67,10 +71,14 @@ func GetServerNetworkIp() string {
 
 // 获取服务器内网ip
 func GetServerLocalIp() string {
-	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I`)
+	ip := os.Getenv(`LOCAL_IP`) //docker容器环境用。在容器启动时设置环境变量：-e LOCAL_IP=$(hostname -I | awk '{print $1}')
+	if ip != `` {
+		return ip
+	}
+	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I | awk '{print $1}'`)
 	output, _ := cmd.CombinedOutput()
-	if ip := gstr.Trim(string(output)); ip != `` {
-		return strings.Split(ip, ` `)[0] //多IP时，只取第一个
+	if ip := string(output); ip != `` {
+		return ip
 	}
 	panic(`获取内网IP失败`)
 }
