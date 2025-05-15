@@ -34,6 +34,10 @@ VMware设置
 docker login --username=账号 --password=密码 仓库地址
 # 详细信息
 docker info
+# 查看当前镜像
+docker images
+# 打包镜像
+docker build -t 镜像名:版本 Dockerfile文件所在目录
 # 拉取
 docker pull 镜像名:版本
 # 删除
@@ -46,6 +50,8 @@ docker start 名称或容器ID
 docker stop 名称或容器ID
 # 删除
 docker rm 名称或容器ID
+# 删除悬空镜像（docker images命令显示<none>的悬空镜像）
+docker image prune
 # 进入容器执行命令（如用/bin/bash启动交互式shell）
 docker exec -it 名称或容器ID 命令
 # 查看
