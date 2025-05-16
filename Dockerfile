@@ -16,8 +16,7 @@ FROM alpine:3.21.3
 ###############################################################################
 
 ENV WORKDIR=/app
-RUN mkdir -p $WORKDIR/api $WORKDIR/public
-RUN chmod +x $WORKDIR/public
+# ADD public/admin  $WORKDIR/public/admin
 ADD api/main_new  $WORKDIR/api/main
 RUN chmod +x $WORKDIR/api/main
 
