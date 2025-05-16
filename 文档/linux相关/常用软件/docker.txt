@@ -49,7 +49,7 @@ docker pull 镜像名:版本
 # 删除
 docker rmi 镜像名:版本
 # 创建（-p 主机:容器。可用--network host直接指定使用当前主机网络）
-docker run --name 名称 -p 端口:端口 -v 目录:目录 -e 环境变量 --network container:其它容器名称 --ipc=container:其它容器名称 --pid=container:其它容器名称 -w 工作目录 -d --restart unless-stopped 镜像名:版本
+docker run --name 名称 -p 端口:端口 -v 目录:目录 -e 环境变量 --network container:其它容器名称 --ipc=container:其它容器名称 --pid=container:其它容器名称 -w 工作目录 --restart unless-stopped -d 镜像名:版本
 # 启动
 docker start 名称或容器ID
 # 停止
