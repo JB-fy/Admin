@@ -10,7 +10,7 @@ FROM alpine:3.21.3
     # 赋予写入权限：chmod -R 755 /app/项目名/public/upload
 
 # 镜像启动
-    # 执行命令：docker run -d --restart unless-stopped --name 名称 --network host -v /app/项目名/public:/app/项目名/public -v /app/项目名/api/manifest:/app/项目名/api/manifest -e SERVER_NETWORK_IP=$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org) -e SERVER_LOCAL_IP=$(hostname -I | awk '{print $1}') 镜像名:版本
+    # 执行命令：docker run -d --restart unless-stopped --name 名称 --network host -v /etc/localtime:/etc/localtime:ro -v /app/项目名/public:/app/项目名/public -v /app/项目名/api/manifest:/app/项目名/api/manifest -e SERVER_NETWORK_IP=$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org) -e SERVER_LOCAL_IP=$(hostname -I | awk '{print $1}') 镜像名:版本
 ###############################################################################
 
 ###############################################################################

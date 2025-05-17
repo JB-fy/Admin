@@ -50,7 +50,7 @@ docker build -t 镜像名:版本 Dockerfile文件所在目录
 docker pull 镜像名:版本
 # 删除
 docker rmi 镜像名:版本
-# 创建（-p 主机:容器。可用--network host直接指定使用当前主机网络）
+# 创建（-p 主机:容器。--network host使用当前主机网络；-v /etc/localtime:/etc/localtime:ro使用当前主机时间时区）
 docker run -d --restart unless-stopped --name 名称 --network container:其它容器名称 --ipc=container:其它容器名称 --pid=container:其它容器名称 -p 端口:端口 -v 目录:目录 -e 环境变量 -w 工作目录 镜像名:版本
 # 启动
 docker start 名称或容器ID
@@ -67,7 +67,7 @@ docker ps -a
 # 资源监控
 docker stats 名称或容器ID                
 # 日志
-docker logs 名称或容器ID
+docker logs --tail 1000 -f 名称或容器ID
 # 创建网络（多容器共用网络可直接指定--network 名称）
 docker network create 名称 --driver bridge
 /**----------------常用命令 结束----------------**/
@@ -100,8 +100,17 @@ docker run -d -p 27017:27017 -v 配置:/etc/mongod.conf -v 数据:/data/db -e MO
     # 示例：docker run -d --name mongo-alone --network host -v /home/jb/dev/tool/mongodb/8.0.8/data:/data/db mongo:8.0.8
 
 # scylladb（ALLOW_EMPTY_PASSWORD=yes设为无需账号密码登录）
-docker run -d --ulimit memlock=-1 --ulimit nofile=100000:100000 -p 9042:9042 -v 配置:/opt/bitnami/scylladb/conf/scylla.yaml -v 数据:/bitnami/scylladb -e SCYLLADB_CLUSTER_NAME=集群名称 -e SCYLLADB_DATACENTER=数据中心标识 -e SCYLLADB_RACK=物理机标识 -e SCYLLADB_HOST=当前节点内网IP -e SCYLLADB_SEEDS=种子节点IP,种子节点IP（集群第一个节点初始化时不允许设置多个，否则会因竞争导致初始化卡住而失败） -e SCYLLADB_BROADCAST_ADDRESS=当前节点外网IP（需外网访问设置） bitnami/scylladb:latest
-    # 示例：docker run -d --name scylladb-alone --network host -v /home/jb/dev/tool/scylladb/6.2.3:/bitnami/scylladb -e ALLOW_EMPTY_PASSWORD=yes bitnami/scylladb:6.2.3
+docker run -d --ulimit memlock=-1 --ulimit nofile=100000:100000 -p 9042:9042 -v 配置:/conf -v 数据:/bitnami/scylladb/data -e SCYLLADB_CLUSTER_NAME=集群名称 -e SCYLLADB_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e SCYLLADB_HOST=当前节点内网IP -e SCYLLADB_SEEDS=种子节点IP,种子节点IP（集群第一个节点初始化时不允许设置多个，否则会因竞争导致初始化卡住而失败） -e SCYLLADB_BROADCAST_ADDRESS=当前节点外网IP（需外网访问设置） bitnami/scylladb:latest
+    # 示例：docker run -d --name scylladb-alone --network host -v /home/jb/dev/tool/scylladb/6.2.3/data:/bitnami/scylladb/data -e SCYLLADB_HOST=192.168.0.200 -e ALLOW_EMPTY_PASSWORD=yes bitnami/scylladb:6.2.3
+    # 注意事项
+        # 宿主机需先创建数据目录，并赋予写入权限
+            mkdir -p /home/jb/dev/tool/scylladb/6.2.3/data
+            chmod -R 777 /home/jb/dev/tool/scylladb/6.2.3/data
+        # SCYLLADB_DATACENTER=数据中心标识 和 SCYLLADB_RACK=物理机标识 实测无效，只能通过挂载配置文件cassandra-rackdc.properties到/conf目录实现
+            mkdir -p /home/jb/dev/tool/scylladb/6.2.3/conf
+            vi /home/jb/dev/tool/scylladb/6.2.3/conf/cassandra-rackdc.properties
+dc=数据中心标识
+rack=物理机标识
 
 # cassandra
 docker run -d -p 9042:9042 -v 配置:/etc/cassandra/cassandra.yaml -v 数据:/var/lib/cassandra cassandra:latest
