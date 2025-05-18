@@ -65,6 +65,8 @@ WantedBy=multi-user.target
 		验证节点：/server/tool/redis-7.0.11/bin/redis-cli --cluster check 0.0.0.0:6380
 		清除节点数据：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 FLUSHALL
 		重置节点：/server/tool/redis-7.0.11/bin/redis-cli -h 0.0.0.0 -p 6380 CLUSTER RESET
+		集群信息：/server/tool/redis-7.0.11/bin/redis-cli cluster info
+		节点列表：/server/tool/redis-7.0.11/bin/redis-cli cluster nodes
 	4、启动集群
 		启动各个节点
 			/server/tool/redis-7.0.11/bin/redis-server /server/tool/redis-7.0.11/etc/redis_6380.conf [--daemonize no]

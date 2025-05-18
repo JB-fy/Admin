@@ -94,6 +94,11 @@ docker run -d -p 5432:5432 -v 配置:/etc/postgresql -v 数据:/var/lib/postgres
 # redis
 docker run -d -p 6379:6379 -v 配置:/usr/local/etc/redis/redis.conf -v 数据:/data -e REDIS_PASSWORD=密码 redis:latest redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
     # 示例：docker run -d --name redis-alone --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1
+    # 集群示例：
+        # 使用以下命令启动多个节点
+            docker run -d --name redis-node --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1 redis-server --port 6379 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-node-timeout 5000 --appendonly yes
+        # 任意容器执行以下命令
+            docker exec -it redis-node1 redis-cli --cluster create 节点IP:6379 节点IP:6379 节点IP:6379 --cluster-replicas 0
 
 # mongodb
 docker run -d -p 27017:27017 -v 配置:/etc/mongod.conf -v 数据:/data/db -e MONGO_INITDB_ROOT_USERNAME=用户 -e MONGO_INITDB_ROOT_PASSWORD=密码 mongo:latest --config /etc/mongod.conf
