@@ -45,6 +45,12 @@ http {
     keepalive_timeout 30s; #设置会话保持时间。默认75秒
     keepalive_requests 500;    #单个keepalive连接的最大请求数。默认100
 
+    ssl_protocols TLSv1.3 TLSv1.2;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    ssl_prefer_server_ciphers on;
+
     gzip on;    #开启gzip压缩
     gzip_proxied any;   #对代理响应启用压缩
     gzip_vary on;   #支持缓存不同版本内容
