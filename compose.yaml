@@ -9,6 +9,8 @@
 #         docker load -i /server/app/admin/admin.tar
 #         mkdir -p /server/app/admin/public/upload
 #         chmod -R 755 /server/app/admin/public/upload
+#         # #内网IP和外网IP环境变量.env文件
+#         echo -e "SERVER_LOCAL_IP=$(hostname -I | awk '{print $1}')\nSERVER_NETWORK_IP=$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)" > /server/app/admin/.env
 #         # nginx需要
 #         mkdir -p /server/tool/nginx/1.27.5/config/web
 #         mv /server/app/admin/nginx.conf /server/tool/nginx/1.27.5/config/nginx.conf
@@ -21,9 +23,7 @@ services:
     container_name: admin
     restart: unless-stopped
     network_mode: host
-    environment:
-      SERVER_LOCAL_IP: $(hostname -I | awk '{print $1}')
-      SERVER_NETWORK_IP: $(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)
+    env_file: /server/app/admin/.env
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /server/app/admin/public:/server/app/admin/public
