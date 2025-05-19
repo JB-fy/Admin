@@ -1,0 +1,70 @@
+# # 安装教程：
+#     # 上传文件
+#         配置文件：api/manifest
+#         前端代码：public/admin
+#         镜像文件：admin.tar
+#         docker部署文件：compose.yaml
+#         nginx配置文件：nginx.conf和admin.conf。注意IP，域名和ssl文件名需修改
+#     # 服务器执行以下命令
+#         docker load -i /server/app/admin/admin.tar
+#         mkdir -p /server/app/admin/public/upload
+#         chmod -R 755 /server/app/admin/public/upload
+#         # nginx需要
+#         mkdir -p /server/tool/nginx/1.27.5/config/web
+#         mv /server/app/admin/nginx.conf /server/tool/nginx/1.27.5/config/nginx.conf
+#         mv /server/app/admin/admin.conf /server/tool/nginx/1.27.5/config/web/admin.conf
+#         # 部署
+#         docker compose -f /server/app/admin/admin-compose.yaml up -d
+services:
+  admin:
+    image: admin:0.0.1
+    container_name: admin
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      SERVER_LOCAL_IP: $(hostname -I | awk '{print $1}')
+      SERVER_NETWORK_IP: $(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /server/app/admin/public:/server/app/admin/public
+      - /server/app/admin/api/manifest:/server/app/admin/api/manifest
+    depends_on:
+      - redis-alone
+      - mysql-alone
+
+  nginx-alone:
+    image: nginx:1.27.5
+    container_name: nginx-alone
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /server/tool/nginx/1.27.5/config/nginx.conf:/etc/nginx/nginx.conf
+      - /server/tool/nginx/1.27.5/config/web:/etc/nginx/web
+      - /server/app:/server/app
+    depends_on:
+      - admin
+
+  redis-alone:
+    image: redis:8.0.1
+    container_name: redis-alone
+    restart: unless-stopped
+    network_mode: host
+    command: ["redis-server", "--requirepass", "hJ2xH7gQ2xH4uN5aN4aM"]
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /server/tool/redis/8.0.1/data:/data
+
+  mysql-alone:
+    image: mysql:9.3.0
+    container_name: mysql-alone
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /server/tool/mysql/9.3.0/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: fyca17IAl6oLBCa7Emd7
+      MYSQL_DATABASE: admin
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: r3iJcWBzEJSaheUdDQUf
