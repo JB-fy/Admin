@@ -14,7 +14,7 @@
 #         mv /server/app/admin/nginx.conf /server/tool/nginx/1.27.5/config/nginx.conf
 #         mv /server/app/admin/admin.conf /server/tool/nginx/1.27.5/config/web/admin.conf
 #         # 部署
-#         docker compose -f /server/app/admin/admin-compose.yaml up -d
+#         docker compose -f /server/app/admin/compose.yaml up -d
 services:
   admin:
     image: admin:0.0.1
