@@ -17,7 +17,7 @@ FROM alpine:3.21.3
 #                                INSTALLATION
 ###############################################################################
 
-ENV WORKDIR=/app/项目名
+ENV WORKDIR=/server/app/项目名
 # ADD public  $WORKDIR/public
 ADD api/main_new  $WORKDIR/api/项目名
 RUN chmod +x $WORKDIR/api/项目名
