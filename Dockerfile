@@ -6,7 +6,7 @@ FROM alpine:3.21.3
     # 上传镜像解压：docker load -i 文件名.tar
 
 # 宿主机需执行以下命令
-    # 创建项目目录：mkdir -p /server/app/项目名/public/upload /server/app/项目名/api/manifest
+    # 创建项目目录：mkdir -p /server/app/项目名/public/upload
     # 赋予写入权限：chmod -R 755 /server/app/项目名/public/upload
 
 # 镜像启动
