@@ -50,7 +50,7 @@ services:
     container_name: redis-alone
     restart: unless-stopped
     network_mode: host
-    command: ["redis-server", "--requirepass", "hJ2xH7gQ2xH4uN5aN4aM"]
+    command: ["redis-server", "--requirepass", "密码"]
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /server/tool/redis/8.0.1/data:/data
@@ -64,7 +64,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /server/tool/mysql/9.3.0/data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: fyca17IAl6oLBCa7Emd7
-      MYSQL_DATABASE: admin
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: r3iJcWBzEJSaheUdDQUf
+      MYSQL_ROOT_PASSWORD: 密码
+      MYSQL_DATABASE: 库名
+      MYSQL_USER: 账号
+      MYSQL_PASSWORD: 密码
