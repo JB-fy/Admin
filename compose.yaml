@@ -28,6 +28,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /server/app/admin/public:/server/app/admin/public
       - /server/app/admin/api/manifest:/server/app/admin/api/manifest
+      - /server/app/admin/api/log:/server/app/admin/api/log
     depends_on:
       - redis-alone
       - mysql-alone
