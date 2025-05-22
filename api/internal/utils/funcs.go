@@ -36,6 +36,22 @@ func BytesBufferPoolPut(buf *bytes.Buffer) {
 	bytesBufferPool.Put(buf)
 }
 
+var bytesReaderPool = sync.Pool{
+	New: func() any {
+		return bytes.NewReader(nil)
+	},
+}
+
+func BytesReaderPoolGet(b []byte) *bytes.Reader {
+	reader := bytesReaderPool.Get().(*bytes.Reader)
+	reader.Reset(b)
+	return reader
+}
+
+func BytesReaderPoolPut(reader *bytes.Reader) {
+	bytesReaderPool.Put(reader)
+}
+
 var stringsBuilderPool = sync.Pool{
 	New: func() any {
 		return new(strings.Builder)
@@ -196,49 +212,3 @@ func GetValueFromStruct(Obj any, name string) (val any) {
 	val = field.Interface()
 	return
 }
-
-/* var imageMimeTypeExtMap = g.MapStrStr{
-	`image/x-icon`: `icon`,
-	`image/jpeg`:   `jpeg`,
-	`image/bmp`:    `bmp`,
-	`image/gif`:    `gif`,
-	`image/webp`:   `webp`,
-	`image/png`:    `png`,
-}
-
-// 获取图片后缀
-func GetImageExt(imgBytes []byte, defExt string) (imageExt string) {
-	imageExt = imageMimeTypeExtMap[http.DetectContentType(imgBytes[:min(512, len(imgBytes))])]
-	if imageExt == `` {
-		imageExt = defExt
-	}
-	return
-} */
-
-/* // 转成jpeg图片。目前只支持webp转换
-func JpegEncode(imgBytes []byte, quality int, imgTypeArr ...string) ([]byte, error) {
-	var err error
-	imageType := http.DetectContentType(imgBytes[:min(512, len(imgBytes))])
-	for _, v := range imgTypeArr {
-		if imageType != v {
-			continue
-		}
-
-		var img image.Image
-		switch v {
-		case `image/webp`:
-			img, err = webp.Decode(bytes.NewReader(imgBytes))
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		var jpegData bytes.Buffer
-		err = jpeg.Encode(&jpegData, img, &jpeg.Options{Quality: quality})
-		if err != nil {
-			return nil, err
-		}
-		imgBytes = jpegData.Bytes()
-	}
-	return imgBytes, err
-} */
