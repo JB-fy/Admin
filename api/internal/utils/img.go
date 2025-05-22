@@ -1,7 +1,3 @@
-/* common.go与funcs.go的区别：
-common.go：基于当前框架封装的常用函数（与框架耦合）
-funcs.go：基于golang封装的常用函数（不与框架耦合） */
-
 package utils
 
 /* import (
@@ -13,9 +9,9 @@ package utils
 	_ "golang.org/x/image/tiff"
 	_ "golang.org/x/image/webp"
 
-	"bytes"
 	"image"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/disintegration/imaging"
@@ -30,30 +26,32 @@ func ImgDecode(imgBytes []byte, opts ...imaging.DecodeOption) (img image.Image, 
 	return
 }
 
-func ImgEncode(imgBytes []byte, imgFormat imaging.Format, opts ...imaging.EncodeOption) ([]byte, error) {
-	reader := BytesReaderPoolGet(imgBytes)
-	defer BytesReaderPoolPut(reader)
+func ImgEncode(img image.Image, format imaging.Format, opts ...imaging.EncodeOption) ([]byte, error) {
+	buf := BytesBufferPoolGet()
+	defer BytesBufferPoolPut(buf)
+	err := imaging.Encode(buf, img, format, opts...)
+	return buf.Bytes(), err
+}
+
+func ImgEncodeBytes(imgBytes []byte, format imaging.Format, opts ...imaging.EncodeOption) ([]byte, error) {
 	img, err := ImgDecode(imgBytes)
 	if err != nil {
 		return nil, err
 	}
-	buf := BytesBufferPoolGet()
-	defer BytesBufferPoolPut(buf)
-	err = imaging.Encode(buf, img, imgFormat, opts...)
-	return buf.Bytes(), err
+	return ImgEncode(img, format, opts...)
 }
 
-func ImgResize(imgBytes []byte) ([]byte, error) {
-	imgFormat, err := imaging.FormatFromExtension(strings.Replace(http.DetectContentType(imgBytes[:min(512, len(imgBytes))]), `image/`, ``, 1))
+func ImgFill(imgBytes []byte, width int, height int, anchor imaging.Anchor, filter imaging.ResampleFilter) ([]byte, error) {
+	img, err := ImgDecode(imgBytes)
 	if err != nil {
 		return nil, err
 	}
-	img, _, err := image.Decode(bytes.NewReader(imgBytes))
-	if err != nil {
-		return nil, err
+	format := imaging.JPEG //imaging不支持的格式如（webp格式），默认转jpeg格式
+	if imgType := http.DetectContentType(imgBytes[:min(512, len(imgBytes))]); !slices.Contains([]string{`image/webp`}, imgType) {
+		format, err = imaging.FormatFromExtension(strings.Replace(imgType, `image/`, ``, 1))
+		if err != nil {
+			return nil, err
+		}
 	}
-	buf := BytesBufferPoolGet()
-	defer BytesBufferPoolPut(buf)
-	err = imaging.Encode(buf, imaging.Resize(img, 800, 800, imaging.Lanczos), imgFormat)
-	return buf.Bytes(), err
+	return ImgEncode(img, format)
 } */
