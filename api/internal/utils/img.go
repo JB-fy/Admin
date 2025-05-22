@@ -46,6 +46,9 @@ func ImgFill(imgBytes []byte, width int, height int, anchor imaging.Anchor, filt
 	if err != nil {
 		return nil, err
 	}
+	if img.Bounds().Dx() == width && img.Bounds().Dy() == height {
+		return imgBytes, nil
+	}
 	format := imaging.JPEG //imaging不支持的格式如（webp格式），默认转jpeg格式
 	if imgType := http.DetectContentType(imgBytes[:min(512, len(imgBytes))]); !slices.Contains([]string{`image/webp`}, imgType) {
 		format, err = imaging.FormatFromExtension(strings.Replace(imgType, `image/`, ``, 1))
@@ -53,5 +56,5 @@ func ImgFill(imgBytes []byte, width int, height int, anchor imaging.Anchor, filt
 			return nil, err
 		}
 	}
-	return ImgEncode(img, format)
+	return ImgEncode(imaging.Fill(img, width, height, anchor, filter), format)
 } */
