@@ -43,5 +43,4 @@ func NewToken(ctx context.Context, tokenType uint, config map[string]any) (token
 	token = tokenFuncMap[tokenType](ctx, config)
 	tokenMap[tokenKey] = token
 	return
-
 }
