@@ -85,15 +85,9 @@ const saveForm = reactive({
             { required: computed((): boolean => (saveForm.data.sign_config.sign_type == 0 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'sign_config_0.key_name': [
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
-        ],
-        'sign_config_0.key_sep': [
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
-        ],
-        'sign_config_0.val_sep': [
-            { type: 'string', trigger: 'blur', message: t('validation.input') },
-        ],
+        'sign_config_0.key_name': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'sign_config_0.key_sep': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
+        'sign_config_0.val_sep': [{ type: 'string', trigger: 'blur', message: t('validation.input') }],
         scene_config: [
             {
                 type: 'object',
