@@ -32,22 +32,23 @@ type Token struct {
 	SignMethod jwt.SigningMethod
 }
 
+var signMethodMap = map[string]jwt.SigningMethod{
+	`HS256`: jwt.SigningMethodHS256,
+	`HS384`: jwt.SigningMethodHS384,
+	`HS512`: jwt.SigningMethodHS512,
+	`RS256`: jwt.SigningMethodRS256,
+	`RS384`: jwt.SigningMethodRS384,
+	`RS512`: jwt.SigningMethodRS512,
+	`ES256`: jwt.SigningMethodES256,
+	`ES384`: jwt.SigningMethodES384,
+	`ES512`: jwt.SigningMethodES512,
+}
+
 func NewToken(ctx context.Context, config map[string]any) model.Token {
 	obj := &Token{}
 	gconv.Struct(config, obj)
 	if obj.ExpireTime == 0 || obj.SignType == `` || obj.PrivateKey == `` || (obj.PublicKey == `` && !slices.Contains([]string{`HS256`, `HS384`, `HS512`}, obj.SignType)) {
 		panic(`缺少配置：token-Jwt`)
-	}
-	signMethodMap := map[string]jwt.SigningMethod{
-		`HS256`: jwt.SigningMethodHS256,
-		`HS384`: jwt.SigningMethodHS384,
-		`HS512`: jwt.SigningMethodHS512,
-		`RS256`: jwt.SigningMethodRS256,
-		`RS384`: jwt.SigningMethodRS384,
-		`RS512`: jwt.SigningMethodRS512,
-		`ES256`: jwt.SigningMethodES256,
-		`ES384`: jwt.SigningMethodES384,
-		`ES512`: jwt.SigningMethodES512,
 	}
 	ok := false
 	obj.SignMethod, ok = signMethodMap[obj.SignType]
@@ -77,15 +78,17 @@ func (tokenThis *Token) Create(ctx context.Context, tokenInfo model.TokenInfo) (
 	return
 }
 
+func (tokenThis *Token) parseFunc(jwtToken *jwt.Token) (any, error) {
+	switch jwtToken.Method {
+	case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:
+		return []byte(tokenThis.PrivateKey), nil
+	default:
+		return utils.ParsePublicKey(tokenThis.PublicKey)
+	}
+}
+
 func (tokenThis *Token) Parse(ctx context.Context, token string) (tokenInfo model.TokenInfo, err error) {
-	jwtToken, err := jwt.ParseWithClaims(token, &tokenClaims{}, func(jwtToken *jwt.Token) (any, error) {
-		switch jwtToken.Method {
-		case jwt.SigningMethodHS256, jwt.SigningMethodHS384, jwt.SigningMethodHS512:
-			return []byte(tokenThis.PrivateKey), nil
-		default:
-			return utils.ParsePublicKey(tokenThis.PublicKey)
-		}
-	})
+	jwtToken, err := jwt.ParseWithClaims(token, &tokenClaims{}, tokenThis.parseFunc)
 	if err != nil {
 		return
 	}

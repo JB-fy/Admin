@@ -19,16 +19,18 @@ import (
 )
 
 type Sign struct {
-	SignMethod string `json:"sign_method"`
-	SignKey    string `json:"sign_key"`
-	SignName   string `json:"sign_name"` //不为空时，在签名字符串后追加&sign_name=sign_key
+	Method  string `json:"method"`
+	Key     string `json:"key"`
+	KeyName string `json:"key_name"` //不为空时，会在签名的字符串后面追加密钥名称和密钥
+	KeySep  string `json:"key_sep"`  //多个字段之间的拼接符
+	ValSep  string `json:"val_sep"`  //单个字段名与值的拼接符
 }
 
 func NewSign(ctx context.Context, config map[string]any) model.Sign {
 	obj := &Sign{}
 	gconv.Struct(config, obj)
-	if !slices.Contains([]string{`md5`, `hmac-md5`, `hmac-sha1`, `hmac-sha256`}, obj.SignMethod) || obj.SignKey == `` {
-		panic(`sign-通用`)
+	if !slices.Contains([]string{`md5`, `hmac-md5`, `hmac-sha1`, `hmac-sha256`, `hmac-sha512`}, obj.Method) || obj.Key == `` {
+		panic(`缺少配置：sign-通用`)
 	}
 	return obj
 }
@@ -43,47 +45,47 @@ func (signThis *Sign) Create(ctx context.Context, data map[string]any) (sign str
 	buf := utils.BytesBufferPoolGet()
 	defer utils.BytesBufferPoolPut(buf)
 	keyArrLen := len(keyArr)
-	for _, key := range keyArr[:keyArrLen-1] {
-		buf.WriteString(key)
-		buf.WriteString(`=`)
-		/* if tmp := gvar.New(data[key]); tmp.IsMap() || tmp.IsSlice() {
-			buf.Write(gjson.MustEncode(data[key]))
+	for index := range keyArr[:keyArrLen-1] {
+		buf.WriteString(keyArr[index])
+		buf.WriteString(signThis.ValSep)
+		buf.WriteString(gconv.String(data[keyArr[index]]))
+		/* if tmp := gvar.New(data[keyArr[index]]); tmp.IsMap() || tmp.IsSlice() {
+			buf.Write(gjson.MustEncode(data[keyArr[index]]))
 		} else {
-			buf.WriteString(gconv.String(data[key]))
+			buf.WriteString(gconv.String(data[keyArr[index]]))
 		} */
-		buf.WriteString(gconv.String(data[key]))
-		buf.WriteString(`&`)
+		buf.WriteString(signThis.KeySep)
 	}
 	buf.WriteString(keyArr[keyArrLen-1])
-	buf.WriteString(`=`)
+	buf.WriteString(signThis.ValSep)
+	buf.WriteString(gconv.String(data[keyArr[keyArrLen-1]]))
 	/* if tmp := gvar.New(data[keyArr[keyArrLen-1]]); tmp.IsMap() || tmp.IsSlice() {
 		buf.Write(gjson.MustEncode(data[keyArr[keyArrLen-1]]))
 	} else {
 		buf.WriteString(gconv.String(data[keyArr[keyArrLen-1]]))
 	} */
-	buf.WriteString(gconv.String(data[keyArr[keyArrLen-1]]))
-	if signThis.SignName != `` {
-		buf.WriteString(`&`)
-		buf.WriteString(signThis.SignName)
-		buf.WriteString(`=`)
-		buf.WriteString(signThis.SignKey)
+	if signThis.KeyName != `` {
+		buf.WriteString(signThis.KeySep)
+		buf.WriteString(signThis.KeyName)
+		buf.WriteString(signThis.ValSep)
+		buf.WriteString(signThis.Key)
 	}
 
 	var h hash.Hash
-	switch signThis.SignMethod {
+	switch signThis.Method {
 	case `md5`:
-		if signThis.SignName == `` {
-			buf.WriteString(signThis.SignKey)
+		if signThis.KeyName == `` {
+			buf.WriteString(signThis.Key)
 		}
 		h = md5.New()
 	case `hmac-md5`:
-		h = hmac.New(md5.New, []byte(signThis.SignKey))
+		h = hmac.New(md5.New, []byte(signThis.Key))
 	case `hmac-sha1`:
-		h = hmac.New(sha1.New, []byte(signThis.SignKey))
+		h = hmac.New(sha1.New, []byte(signThis.Key))
 	case `hmac-sha256`:
-		h = hmac.New(sha256.New, []byte(signThis.SignKey))
+		h = hmac.New(sha256.New, []byte(signThis.Key))
 	case `hmac-sha512`:
-		h = hmac.New(sha512.New, []byte(signThis.SignKey))
+		h = hmac.New(sha512.New, []byte(signThis.Key))
 	}
 	h.Write(buf.Bytes())
 	sign = hex.EncodeToString(h.Sum(nil)) //fmt.Sprintf("%x", h.Sum(nil))

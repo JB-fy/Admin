@@ -7,6 +7,8 @@ const listCommon = inject('listCommon') as { ref: any }
 let sceneConfig = saveCommon.data.scene_config ? JSON.parse(saveCommon.data.scene_config) : {}
 let tokenConfig = sceneConfig?.token_config ?? {}
 delete sceneConfig.token_config
+let signConfig = sceneConfig?.sign_config ?? {}
+delete sceneConfig.sign_config
 const saveForm = reactive({
     ref: null as any,
     loading: false,
@@ -23,6 +25,16 @@ const saveForm = reactive({
             sign_type: tokenConfig.token_type === 0 ? tokenConfig.sign_type : 'HS256',
             private_key: tokenConfig.token_type === 0 ? tokenConfig.private_key : undefined,
             public_key: tokenConfig.token_type === 0 ? tokenConfig.public_key : undefined,
+        },
+        sign_config: {
+            sign_type: signConfig.sign_type ?? -1,
+        },
+        sign_config_0: {
+            method: signConfig.sign_type === 0 ? signConfig.method : 'md5',
+            key: signConfig.sign_type === 0 ? signConfig.key : undefined,
+            key_name: signConfig.sign_type === 0 ? signConfig.key_name : undefined,
+            key_sep: signConfig.sign_type === 0 ? signConfig.key_sep : undefined,
+            val_sep: signConfig.sign_type === 0 ? signConfig.val_sep : undefined,
         },
         scene_config: Object.keys(sceneConfig).length > 0 ? JSON.stringify(sceneConfig) : undefined,
     } as { [propName: string]: any },
@@ -61,6 +73,27 @@ const saveForm = reactive({
             },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
+        'sign_config.sign_type': [
+            { required: true, message: t('validation.required') },
+            { type: 'enum', trigger: 'change', enum: (tm('auth.scene.status.sign_config.sign_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
+        ],
+        'sign_config_0.method': [
+            { required: computed((): boolean => (saveForm.data.sign_config.sign_type == 0 ? true : false)), message: t('validation.required') },
+            { type: 'enum', trigger: 'change', enum: (tm('auth.scene.status.sign_config_0.method') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
+        ],
+        'sign_config_0.key': [
+            { required: computed((): boolean => (saveForm.data.sign_config.sign_type == 0 ? true : false)), message: t('validation.required') },
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'sign_config_0.key_name': [
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'sign_config_0.key_sep': [
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
+        'sign_config_0.val_sep': [
+            { type: 'string', trigger: 'blur', message: t('validation.input') },
+        ],
         scene_config: [
             {
                 type: 'object',
@@ -86,6 +119,9 @@ const saveForm = reactive({
                 if (sceneConfig.token_config.token_type == 0 && ['HS256', 'HS384', 'HS512'].includes(sceneConfig.token_config.sign_type)) {
                     delete sceneConfig.token_config.public_key
                 }
+            }
+            if (param.sign_config.sign_type > -1) {
+                sceneConfig.sign_config = { ...param.sign_config, ...param['sign_config_' + param.sign_config.sign_type] }
             }
             param.scene_config = Object.keys(sceneConfig).length > 0 ? JSON.stringify(sceneConfig) : ''
             try {
@@ -183,6 +219,33 @@ const saveDrawer = reactive({
                     </el-form-item>
                     <el-form-item v-if="!['HS256', 'HS384', 'HS512'].includes(saveForm.data.token_config_0.sign_type)" :label="t('auth.scene.name.token_config_0.public_key')" prop="token_config_0.public_key">
                         <el-input v-model="saveForm.data.token_config_0.public_key" type="textarea" :autosize="{ minRows: 3 }" />
+                    </el-form-item>
+                </template>
+                <el-form-item :label="t('auth.scene.name.sign_config.sign_type')" prop="sign_config.sign_type">
+                    <el-radio-group v-model="saveForm.data.sign_config.sign_type">
+                        <el-radio v-for="(item, index) in (tm('auth.scene.status.sign_config.sign_type') as any)" :key="index" :value="item.value">
+                            {{ item.label }}
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <template v-if="saveForm.data.sign_config.sign_type == 0">
+                    <el-form-item :label="t('auth.scene.name.sign_config_0.method')" prop="sign_config_0.method">
+                        <el-select-v2 v-model="saveForm.data.sign_config_0.method" :options="tm('auth.scene.status.sign_config_0.method')" :placeholder="t('auth.scene.name.sign_config_0.method')" :clearable="true" style="width: 160px" />
+                    </el-form-item>
+                    <el-form-item :label="t('auth.scene.name.sign_config_0.key')" prop="sign_config_0.key">
+                        <el-input v-model="saveForm.data.sign_config_0.key" :placeholder="t('auth.scene.name.sign_config_0.key')" :clearable="true" />
+                    </el-form-item>
+                    <el-form-item :label="t('auth.scene.name.sign_config_0.key_name')" prop="sign_config_0.key_name">
+                        <el-input v-model="saveForm.data.sign_config_0.key_name" :placeholder="t('auth.scene.name.sign_config_0.key_name')" :clearable="true" style="max-width: 250px" />
+                        <el-alert :title="t('auth.scene.tip.sign_config_0.key_name')" type="info" :show-icon="true" :closable="false" />
+                    </el-form-item>
+                    <el-form-item :label="t('auth.scene.name.sign_config_0.key_sep')" prop="sign_config_0.key_sep">
+                        <el-input v-model="saveForm.data.sign_config_0.key_sep" :placeholder="t('auth.scene.name.sign_config_0.key_sep')" :clearable="true" style="max-width: 250px" />
+                        <el-alert :title="t('auth.scene.tip.sign_config_0.key_sep')" type="info" :show-icon="true" :closable="false" />
+                    </el-form-item>
+                    <el-form-item :label="t('auth.scene.name.sign_config_0.val_sep')" prop="sign_config_0.val_sep">
+                        <el-input v-model="saveForm.data.sign_config_0.val_sep" :placeholder="t('auth.scene.name.sign_config_0.val_sep')" :clearable="true" style="max-width: 250px" />
+                        <el-alert :title="t('auth.scene.tip.sign_config_0.val_sep')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
                 </template>
                 <el-form-item :label="t('auth.scene.name.scene_config')" prop="scene_config">
