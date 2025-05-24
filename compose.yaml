@@ -20,7 +20,7 @@
 #         docker compose -f /server/app/admin/compose.yaml up -d
 
 #     # 上传新版本后重启服务命令
-#         docker compose -f /server/app/admin/compose.yaml down admin && docker rmi admin:0.0.1 && docker load -i /server/app/admin/admin.tar && docker compose -f /server/app/admin/compose.yaml restart admin
+#         docker compose -f /server/app/admin/compose.yaml down admin && docker rmi admin:0.0.1 && docker load -i /server/app/admin/admin.tar && docker compose -f /server/app/admin/compose.yaml up -d admin
 
 services:
   admin:
