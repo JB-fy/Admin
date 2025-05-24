@@ -230,7 +230,7 @@ const saveDrawer = reactive({
                 </el-form-item>
                 <template v-if="saveForm.data.sign_config.sign_type == 0">
                     <el-form-item :label="t('auth.scene.name.sign_config_0.method')" prop="sign_config_0.method">
-                        <el-select-v2 v-model="saveForm.data.sign_config_0.method" :options="tm('auth.scene.status.sign_config_0.method')" :placeholder="t('auth.scene.name.sign_config_0.method')" :clearable="true" style="width: 160px" />
+                        <el-select-v2 v-model="saveForm.data.sign_config_0.method" :options="tm('auth.scene.status.sign_config_0.method')" :placeholder="t('auth.scene.name.sign_config_0.method')" :clearable="true" style="width: 180px" />
                     </el-form-item>
                     <el-form-item :label="t('auth.scene.name.sign_config_0.key')" prop="sign_config_0.key">
                         <el-input v-model="saveForm.data.sign_config_0.key" :placeholder="t('auth.scene.name.sign_config_0.key')" :clearable="true" />
