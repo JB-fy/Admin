@@ -5,6 +5,7 @@
 #         镜像文件：admin.tar
 #         docker部署文件：compose.yaml
 #         nginx配置文件：nginx.conf和admin.conf。注意IP，域名和ssl文件名需修改
+
 #     # 服务器执行以下命令
 #         docker load -i /server/app/admin/admin.tar
 #         mkdir -p /server/app/admin/public/upload
@@ -17,6 +18,10 @@
 #         mv /server/app/admin/admin.conf /server/tool/nginx/1.27.5/config/web/admin.conf
 #         # 部署
 #         docker compose -f /server/app/admin/compose.yaml up -d
+
+#     # 上传新版本后重启服务命令
+#         docker rmi admin:0.0.1 && docker load -i /server/app/admin/admin.tar && docker compose -f /server/app/admin/compose.yaml restart admin
+
 services:
   admin:
     image: admin:0.0.1
