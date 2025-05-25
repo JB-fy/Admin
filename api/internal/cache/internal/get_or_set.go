@@ -97,9 +97,8 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 			if err != nil {
 				return
 			}
-			// 放for前面执行。坏处：首次读取缓存有延迟；好处：减少redis缓存压力
-			// 放for后面执行。坏处：首次读取缓存没有延迟；好处：增加redis缓存压力
-			// redis缓存压力已通过 当前服务器上锁（getOrSetMu） 和 当前服务器缓存（goCache） 解决
+			// 放for前面执行。坏处：首次读取缓存有延迟；好处：减少缓存压力
+			// 放for后面执行。好处：首次读取缓存没有延迟；坏处：增加缓存压力（通过当前服务器 上锁【getOrSetMu】 和 缓存【goCache】 可保证不会对缓存造成压力，除非服务器数量庞大）
 			time.Sleep(oneTime)
 		}
 	}
