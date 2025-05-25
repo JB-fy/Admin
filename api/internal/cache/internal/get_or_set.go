@@ -12,14 +12,18 @@ import (
 	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/patrickmn/go-cache"
 )
 
 var (
-	GetOrSet      = getOrSet{redis: g.Redis()}
+	GetOrSet      = getOrSet{redis: g.Redis(), goCache: cache.New(0, 0)}
 	getOrSetMuMap sync.Map //存放所有缓存KEY的锁（当前服务器用）
 )
 
-type getOrSet struct{ redis *gredis.Redis }
+type getOrSet struct {
+	redis   *gredis.Redis
+	goCache *cache.Cache
+}
 
 func (cacheThis *getOrSet) cache() *gredis.Redis {
 	return cacheThis.redis
@@ -44,6 +48,13 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	getOrSetMu := getOrSetMuTmp.(*sync.Mutex)
 	getOrSetMu.Lock()
 	defer getOrSetMu.Unlock()
+	isSetKey := cacheThis.key(key)
+	if _, isSetOfLocal := cacheThis.goCache.Get(isSetKey); isSetOfLocal { //当有协程（一般是第一个上锁成功的协程）执行setFunc设置缓存后，后续协程即可直接执行getFunc获取缓存
+		value, notExist, err = getFunc()
+		if !notExist || err != nil {
+			return
+		}
+	}
 
 	// 防止不同服务器并发
 	if numLock <= 0 {
@@ -55,10 +66,10 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	if oneTime <= 0 {
 		oneTime = 200 * time.Millisecond
 	}
-	var isSetVal *gvar.Var
-	isSetKey := cacheThis.key(key)
-	isSetTtl := gconv.Int64(time.Duration(numLock*numRead) * oneTime / time.Second) //redis锁缓存Key时间
+	isSetTtlOfLocal := time.Duration(numLock*numRead) * oneTime
+	isSetTtl := gconv.Int64(isSetTtlOfLocal / time.Second) //redis锁缓存Key时间
 	isSetOption := gredis.SetOption{TTLOption: gredis.TTLOption{EX: &isSetTtl}, NX: true}
+	var isSetVal *gvar.Var
 	for range numLock {
 		isSetVal, err = cacheThis.cache().Set(ctx, isSetKey, ``, isSetOption)
 		if err != nil {
@@ -70,6 +81,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 				cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 				return
 			}
+			cacheThis.goCache.Set(isSetKey, struct{}{}, isSetTtlOfLocal)
 			cacheThis.cache().Expire(ctx, isSetKey, isSetTtl)
 			return
 		}
@@ -114,8 +126,9 @@ func (cacheThis *getOrSet) GetOrSetOfRedis(ctx context.Context, key string, setF
 // 删除时需同时删除redis竞争锁。建议：调用GetOrSet方法的缓存删除时也使用该方法。在缓存-删除-重设缓存三个步骤连续执行时，在第三步重设缓存会因redis竞争锁未删除报错：尝试多次查询缓存失败
 func (cacheThis *getOrSet) Del(ctx context.Context, keyArr ...string) {
 	isSetKeyArr := make([]string, len(keyArr))
-	for index, key := range keyArr {
-		isSetKeyArr[index] = cacheThis.key(key)
+	for index := range keyArr {
+		isSetKeyArr[index] = cacheThis.key(keyArr[index])
+		cacheThis.goCache.Delete(isSetKeyArr[index])
 	}
 	cacheThis.cache().Del(ctx, isSetKeyArr...)
 }
