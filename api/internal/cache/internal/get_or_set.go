@@ -11,6 +11,7 @@ import (
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/patrickmn/go-cache"
 )
@@ -49,7 +50,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	getOrSetMu.Lock()
 	defer getOrSetMu.Unlock()
 	isSetKey := cacheThis.key(key)
-	if _, isSetOfLocal := cacheThis.goCache.Get(isSetKey); isSetOfLocal { //当有协程（一般是第一个上锁成功的协程）执行setFunc设置缓存后，后续协程即可直接执行getFunc获取缓存
+	if _, isSetOfLocal := cacheThis.goCache.Get(isSetKey); isSetOfLocal { //当有协程（一般是第一个上锁成功的协程）执行setFunc设置缓存 或 发现缓存已存在 后，后续协程即可直接执行getFunc获取缓存
 		value, notExist, err = getFunc()
 		if !notExist || err != nil {
 			return
@@ -87,11 +88,19 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 		}
 		// 等待读取数据
 		for range numRead {
-			time.Sleep(oneTime)
 			value, notExist, err = getFunc()
-			if !notExist || err != nil {
+			if !notExist /* || err != nil */ {
+				pttl, _ := cacheThis.cache().PTTL(ctx, isSetKey)
+				cacheThis.goCache.Set(isSetKey, struct{}{}, time.Until(gtime.Now().Add(time.Duration(pttl)*time.Millisecond).Time))
 				return
 			}
+			if err != nil {
+				return
+			}
+			// 放for前面执行。坏处：首次读取缓存有延迟；好处：减少redis缓存压力
+			// 放for后面执行。坏处：首次读取缓存没有延迟；好处：增加redis缓存压力
+			// redis缓存压力已通过 当前服务器上锁（getOrSetMu） 和 当前服务器缓存（goCache） 解决
+			time.Sleep(oneTime)
 		}
 	}
 	/*
