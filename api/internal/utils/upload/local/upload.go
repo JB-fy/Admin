@@ -94,7 +94,7 @@ func (uploadThis *Upload) Upload(ctx context.Context, r *ghttp.Request) (notifyI
 		// isRand = false
 		file.Filename = gstr.Replace(key, dir, ``)
 	} else {
-		file.Filename = dir + gconv.String(time.Now().UnixMilli()) + `_` + gconv.String(grand.N(10000000, 99999999)) + gfile.Ext(file.Filename)
+		file.Filename = dir + gconv.String(time.Now().UnixMilli()) + `_` + grand.Digits(8) + gfile.Ext(file.Filename)
 	}
 	filename, err := file.Save(uploadThis.FileSaveDir + dir /* , isRand */)
 	if err != nil {
