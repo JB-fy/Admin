@@ -88,8 +88,8 @@ docker run -d -p 3306:3306 -v 配置:/etc/mysql/my.cnf -v 数据:/var/lib/mysql 
     # 示例：docker run -d --name mysql-alone --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql:9.3.0
     # 集群示例（使用bitnami/mysql镜像比较简单方便，不用手动写配置文件）：
         docker run -d --name mysql-node --network host -v 配置和数据:/bitnami/mysql -e MYSQL_PORT_NUMBER=3306 -e MYSQL_ROOT_USER=用户 -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 -e MYSQL_REPLICATION_MODE=master或slave -e MYSQL_REPLICATION_USER=复制用户 -e MYSQL_REPLICATION_PASSWORD=复制密码 -e MYSQL_MASTER_HOST=主库IP（从库设置） -e MYSQL_MASTER_PORT_NUMBER=主库端口（从库设置） -e MYSQL_MASTER_ROOT_USER=主库账号（从库设置） -e MYSQL_MASTER_ROOT_PASSWORD=主库密码（从库设置） bitnami/mysql:9.3.0
-        # 宿主机需先创建数据目录，并赋予写入权限
-            mkdir -p /home/jb/dev/tool/mysql/9.3.0 && chmod -R 777 /home/jb/dev/tool/mysql/9.3.0
+        # 宿主机需先创建目录，并赋予写入权限
+            mkdir -p /home/jb/dev/tool/mysql/9.3.0 && chmod -R 755 /home/jb/dev/tool/mysql/9.3.0
         # 主库执行
             docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/9.3.0:/bitnami/mysql -e MYSQL_ROOT_PASSWORD=123456 -e MYSQL_REPLICATION_MODE=master -e MYSQL_REPLICATION_USER=repl_user -e MYSQL_REPLICATION_PASSWORD=123456 bitnami/mysql:9.3.0
         # 从库执行
@@ -100,8 +100,8 @@ docker run -d -p 5432:5432 -v 配置:/etc/postgresql -v 数据:/var/lib/postgres
     # 示例：docker run -d --name postgresql-alone --network host -v /home/jb/dev/tool/postgresql/17.4/data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=123456 postgres:17.4
     # 集群示例（使用bitnami/postgresql镜像比较简单方便，不用手动写配置文件）：
         docker run -d --name postgresql-node --network host -v 配置和数据:/bitnami/postgresql -e POSTGRESQL_PORT_NUMBER=5432 -e POSTGRESQL_USERNAME=用户 -e POSTGRESQL_PASSWORD=密码 -e POSTGRESQL_DATABASE=库名 -e POSTGRESQL_REPLICATION_MODE=master或slave -e POSTGRESQL_REPLICATION_USER=复制用户 -e POSTGRESQL_REPLICATION_PASSWORD=复制密码 -e POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=0（同步复制副本数量，需从库确认主库才提交事务） -e POSTGRESQL_SYNCHRONOUS_COMMIT_MODE=on或remote_write或remote_apply（越后面越安全） -e POSTGRESQL_MASTER_HOST=主库IP（从库设置） -e POSTGRESQL_MASTER_PORT=主库端口（从库设置） bitnami/postgresql:17.5.0
-        # 宿主机需先创建数据目录，并赋予写入权限
-            mkdir -p /home/jb/dev/tool/postgresql/17.5.0 && chmod -R 777 /home/jb/dev/tool/postgresql/17.5.0
+        # 宿主机需先创建目录，并赋予写入权限
+            mkdir -p /home/jb/dev/tool/postgresql/17.5.0 && chmod -R 755 /home/jb/dev/tool/postgresql/17.5.0
         # 主库执行
             docker run -d --name postgresql-node --network host -v /home/jb/dev/tool/postgresql/17.5.0:/bitnami/postgresql -e POSTGRESQL_PASSWORD=123456 -e POSTGRESQL_REPLICATION_MODE=master -e POSTGRESQL_REPLICATION_USER=repl_user -e POSTGRESQL_REPLICATION_PASSWORD=123456 bitnami/postgresql:17.5.0
         # 从库执行
@@ -126,8 +126,7 @@ docker run -d --ulimit memlock=-1 --ulimit nofile=100000:100000 -p 9042:9042 -v 
     # 示例：docker run -d --name scylladb-alone --network host -v /home/jb/dev/tool/scylladb/6.2.3/data:/bitnami/scylladb/data -e SCYLLADB_HOST=192.168.0.200 -e ALLOW_EMPTY_PASSWORD=yes bitnami/scylladb:6.2.3
     # 注意事项
         # 宿主机需先创建数据目录，并赋予写入权限
-            mkdir -p /home/jb/dev/tool/scylladb/6.2.3/data
-            chmod -R 777 /home/jb/dev/tool/scylladb/6.2.3/data
+            mkdir -p /home/jb/dev/tool/scylladb/6.2.3/data && chmod -R 755 /home/jb/dev/tool/scylladb/6.2.3/data
         # SCYLLADB_DATACENTER=数据中心标识 和 SCYLLADB_RACK=物理机标识 实测无效，只能通过挂载配置文件cassandra-rackdc.properties到/conf目录实现
             mkdir -p /home/jb/dev/tool/scylladb/6.2.3/conf
             vi /home/jb/dev/tool/scylladb/6.2.3/conf/cassandra-rackdc.properties
@@ -169,7 +168,7 @@ services:
     container_name: admin
     restart: unless-stopped
     network_mode: host
-    env_file: /home/jb/dev/app/admin/.env #服务器执行命令创建.env文件：echo -e "SERVER_LOCAL_IP=$(hostname -I | awk '{print $1}')\nSERVER_NETWORK_IP=$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)" > /home/jb/dev/app/admin/.env
+    env_file: /home/jb/dev/app/admin/.env # 服务器执行命令创建.env文件：echo -e "SERVER_LOCAL_IP=$(hostname -I | awk '{print $1}')\nSERVER_NETWORK_IP=$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)" > /home/jb/dev/app/admin/.env
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /home/jb/dev/app/admin/public:/home/jb/dev/app/admin/public
@@ -181,7 +180,7 @@ services:
   nginx-alone:
     image: nginx:1.27.5
     container_name: nginx-alone
-    # restart: unless-stopped
+    restart: unless-stopped
     network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -194,24 +193,81 @@ services:
   redis-alone:
     image: redis:8.0.1
     container_name: redis-alone
-    # restart: unless-stopped
+    restart: unless-stopped
     network_mode: host
     command: ["redis-server", "--requirepass", "密码"]
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /home/jb/dev/tool/redis/8.0.1/data:/data
 
-  mysql-alone:
-    image: mysql:9.3.0
-    container_name: mysql-alone
-    # restart: unless-stopped
+#   mysql-alone:
+#     image: mysql:9.3.0
+#     container_name: mysql-alone
+#     restart: unless-stopped
+#     network_mode: host
+#     volumes:
+#       - /etc/localtime:/etc/localtime:ro
+#       - /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql
+#     environment:
+#       MYSQL_ROOT_PASSWORD: 密码
+#       MYSQL_DATABASE: 库名
+#       MYSQL_USER: 账号
+#       MYSQL_PASSWORD: 密码
+
+  mysql-node:
+    image: bitnami/mysql:9.3.0
+    container_name: mysql-node
+    restart: unless-stopped
     network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql
+      - /home/jb/dev/tool/mysql/9.3.0:/bitnami/mysql # mkdir -p /home/jb/dev/tool/mysql/9.3.0 && chmod -R 755 /home/jb/dev/tool/mysql/9.3.0
     environment:
+      MYSQL_PORT_NUMBER: 3306
+      MYSQL_ROOT_USER: 账号
       MYSQL_ROOT_PASSWORD: 密码
       MYSQL_DATABASE: 库名
       MYSQL_USER: 账号
       MYSQL_PASSWORD: 密码
+      MYSQL_REPLICATION_MODE: master或slave
+      MYSQL_REPLICATION_USER: 复制用户
+      MYSQL_REPLICATION_PASSWORD: 复制密码
+      MYSQL_MASTER_HOST: 主库IP（从库设置）
+      MYSQL_MASTER_PORT_NUMBER: 主库端口（从库设置）
+      MYSQL_MASTER_ROOT_USER: 主库账号（从库设置）
+      MYSQL_MASTER_ROOT_PASSWORD: 主库密码（从库设置）
+
+#   postgresql-alone:
+#     image: postgres:17.4
+#     container_name: postgresql-alone
+#     restart: unless-stopped
+#     network_mode: host
+#     volumes:
+#       - /etc/localtime:/etc/localtime:ro
+#       - /home/jb/dev/tool/postgresql/17.4/data:/var/lib/postgresql/data
+#     environment:
+#       POSTGRES_USER: 账号
+#       POSTGRES_PASSWORD: 密码
+#       MYSQL_DATABASE: 库名
+
+  postgresql-node:
+    image: bitnami/postgresql:17.5.0
+    container_name: postgresql-node
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /home/jb/dev/tool/postgresql/17.5.0:/bitnami/postgresql # mkdir -p /home/jb/dev/tool/postgresql/17.5.0 && chmod -R 755 /home/jb/dev/tool/postgresql/17.5.0
+    environment:
+      POSTGRESQL_PORT_NUMBER: 5432
+      POSTGRESQL_USERNAME: 账号
+      POSTGRESQL_PASSWORD: 密码
+      POSTGRESQL_DATABASE: 库名
+      POSTGRESQL_REPLICATION_MODE: master或slave
+      POSTGRESQL_REPLICATION_USER: 复制用户
+      POSTGRESQL_REPLICATION_PASSWORD: 复制密码
+      POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS: 0（同步复制副本数量，需从库确认主库才提交事务）
+      POSTGRESQL_SYNCHRONOUS_COMMIT_MODE: on或remote_write或remote_apply（越后面越安全） 
+      POSTGRESQL_MASTER_HOST: 主库IP（从库设置）
+      POSTGRESQL_MASTER_PORT: 主库端口（从库设置）
 /**----------------compose.yaml示例 结束----------------**/
