@@ -86,19 +86,26 @@ docker run -d -p 80:80 -v 配置:/etc/nginx/nginx.conf -v 静态文件:/usr/shar
 # mysql
 docker run -d -p 3306:3306 -v 配置:/etc/mysql/my.cnf -v 数据:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 mysql:latest --defaults-file=/etc/mysql/my.cnf
     # 示例：docker run -d --name mysql-alone --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql:9.3.0
+    # 集群示例（使用bitnami/mysql镜像比较简单方便，不用手动写配置文件）：
+        docker run -d --name mysql-node --network host -v 配置和数据:/bitnami/mysql -e MYSQL_PORT_NUMBER=3306 -e MYSQL_ROOT_USER=用户 -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 -e MYSQL_REPLICATION_MODE=master或slave -e MYSQL_REPLICATION_USER=复制用户 -e MYSQL_REPLICATION_PASSWORD=复制密码 -e MYSQL_MASTER_HOST=主库IP（从库设置） -e MYSQL_MASTER_PORT_NUMBER=主库端口（从库设置） -e MYSQL_MASTER_ROOT_USER=主库账号（从库设置） -e MYSQL_MASTER_ROOT_PASSWORD=主库密码（从库设置） bitnami/mysql:9.3.0
+        # 宿主机需先创建数据目录，并赋予写入权限
+            mkdir -p /home/jb/dev/tool/mysql/9.3.0 && chmod -R 777 /home/jb/dev/tool/mysql/9.3.0
+        # 主库执行
+            docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/9.3.0:/bitnami/mysql -e MYSQL_ROOT_PASSWORD=123456 -e MYSQL_REPLICATION_MODE=master -e MYSQL_REPLICATION_USER=repl_user -e MYSQL_REPLICATION_PASSWORD=123456 bitnami/mysql:9.3.0
+        # 从库执行
+            docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/9.3.0:/bitnami/mysql -e MYSQL_REPLICATION_MODE=slave -e MYSQL_REPLICATION_USER=repl_user -e MYSQL_REPLICATION_PASSWORD=123456 -e MYSQL_MASTER_HOST=192.168.0.200 -e MYSQL_MASTER_ROOT_PASSWORD=123456 bitnami/mysql:9.3.0
 
 # postgresql
 docker run -d -p 5432:5432 -v 配置:/etc/postgresql -v 数据:/var/lib/postgresql/data -e POSTGRES_USER=用户 -e POSTGRES_PASSWORD=密码 -e POSTGRES_DB=库名 postgres:latest -c config_file=/etc/postgresql
     # 示例：docker run -d --name postgresql-alone --network host -v /home/jb/dev/tool/postgresql/17.4/data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=123456 postgres:17.4
     # 集群示例（使用bitnami/postgresql镜像比较简单方便，不用手动写配置文件）：
-        docker run -d --name postgresql-node --network host -v 配置和数据:/bitnami/postgresql -e POSTGRESQL_USERNAME=用户 -e POSTGRESQL_PASSWORD=密码 -e POSTGRESQL_DATABASE=库名 -e POSTGRESQL_REPLICATION_MODE=master或slave -e POSTGRESQL_REPLICATION_USER=复制用户 -e POSTGRESQL_REPLICATION_PASSWORD=复制密码 -e POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=0（同步复制副本数量，需从库确认主库才提交事务） -e POSTGRESQL_SYNCHRONOUS_COMMIT_MODE=on或remote_write或remote_apply（越后面越安全） bitnami/postgresql:17.5.0
+        docker run -d --name postgresql-node --network host -v 配置和数据:/bitnami/postgresql -e POSTGRESQL_PORT_NUMBER=5432 -e POSTGRESQL_USERNAME=用户 -e POSTGRESQL_PASSWORD=密码 -e POSTGRESQL_DATABASE=库名 -e POSTGRESQL_REPLICATION_MODE=master或slave -e POSTGRESQL_REPLICATION_USER=复制用户 -e POSTGRESQL_REPLICATION_PASSWORD=复制密码 -e POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=0（同步复制副本数量，需从库确认主库才提交事务） -e POSTGRESQL_SYNCHRONOUS_COMMIT_MODE=on或remote_write或remote_apply（越后面越安全） -e POSTGRESQL_MASTER_HOST=主库IP（从库设置） -e POSTGRESQL_MASTER_PORT=主库端口（从库设置） bitnami/postgresql:17.5.0
         # 宿主机需先创建数据目录，并赋予写入权限
-            mkdir -p /home/jb/dev/tool/postgresql/17.5.0
-            chmod -R 777 /home/jb/dev/tool/postgresql/17.5.0
+            mkdir -p /home/jb/dev/tool/postgresql/17.5.0 && chmod -R 777 /home/jb/dev/tool/postgresql/17.5.0
         # 主库执行
             docker run -d --name postgresql-node --network host -v /home/jb/dev/tool/postgresql/17.5.0:/bitnami/postgresql -e POSTGRESQL_PASSWORD=123456 -e POSTGRESQL_REPLICATION_MODE=master -e POSTGRESQL_REPLICATION_USER=repl_user -e POSTGRESQL_REPLICATION_PASSWORD=123456 bitnami/postgresql:17.5.0
         # 从库执行
-            docker run -d --name postgresql-node --network host -v /home/jb/dev/tool/postgresql/17.5.0:/bitnami/postgresql -e POSTGRESQL_PASSWORD=123456 -e POSTGRESQL_REPLICATION_MODE=slave -e POSTGRESQL_REPLICATION_USER=repl_user -e POSTGRESQL_REPLICATION_PASSWORD=123456 -e POSTGRESQL_MASTER_HOST=192.168.0.221 -e POSTGRESQL_MASTER_PORT=5432 bitnami/postgresql:17.5.0
+            docker run -d --name postgresql-node --network host -v /home/jb/dev/tool/postgresql/17.5.0:/bitnami/postgresql -e POSTGRESQL_PASSWORD=123456 -e POSTGRESQL_REPLICATION_MODE=slave -e POSTGRESQL_REPLICATION_USER=repl_user -e POSTGRESQL_REPLICATION_PASSWORD=123456 -e POSTGRESQL_MASTER_HOST=192.168.0.200 bitnami/postgresql:17.5.0
 
 
 # redis
