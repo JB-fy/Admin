@@ -5,6 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/pem"
 	"errors"
 
@@ -125,5 +126,33 @@ func AesDecrypt(cipherByte []byte, keyByte []byte, cipherType string, iv ...byte
 		blockMode := cipher.NewCBCDecrypter(block, iv)
 		blockMode.CryptBlocks(rawByte, cipherByte)
 	}
+	return
+}
+
+// AES加密（ECB模式，PKCS5补码，BASE64编码）
+func AesEncryptOfECB(rawStr string, keyByte []byte) (encrypt string, err error) {
+	cipherByte, err := AesEncrypt(PKCS5Pad([]byte(rawStr), len(keyByte)), keyByte, `ECB`)
+	if err != nil {
+		return
+	}
+	encrypt = base64.StdEncoding.EncodeToString(cipherByte)
+	return
+}
+
+// AES解密（ECB模式，PKCS5补码，BASE64编码）
+func AesDecryptOfECB(encrypt string, keyByte []byte) (rawStr string, err error) {
+	encryptByte, err := base64.StdEncoding.DecodeString(encrypt)
+	if err != nil {
+		return
+	}
+	rawByte, err := AesDecrypt(encryptByte, keyByte, `ECB`)
+	if err != nil {
+		return
+	}
+	rawByte, err = PKCS5UnPad(rawByte, aes.BlockSize)
+	if err != nil {
+		return
+	}
+	rawStr = string(rawByte)
 	return
 }
