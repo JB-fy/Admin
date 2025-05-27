@@ -76,28 +76,13 @@ func (wxGzhThis *Wx) GetEncryptReqBody(r *ghttp.Request) (encryptReqBody *Encryp
 
 // aes加密
 func (wxGzhThis *Wx) AesEncrypt(msgByte []byte) (encrypt string, err error) {
-	cipherByte, err := utils.AesEncrypt(utils.PKCS5Pad(msgByte, len(wxGzhThis.AESKey)), wxGzhThis.AESKey, `CBC`, wxGzhThis.AESKey[:aes.BlockSize]...)
-	if err != nil {
-		return
-	}
-	encrypt = base64.StdEncoding.EncodeToString(cipherByte)
+	encrypt, err = utils.AesEncryptOfBase64(msgByte, wxGzhThis.AESKey, utils.AesPadTypeOfPKCS7, len(wxGzhThis.AESKey), utils.AesCipherTypeOfCBC, wxGzhThis.AESKey[:aes.BlockSize]...)
 	return
 }
 
 // aes解密
 func (wxGzhThis *Wx) AesDecrypt(encrypt string) (msgByte []byte, err error) {
-	cipherData, err := base64.StdEncoding.DecodeString(encrypt)
-	if err != nil {
-		return
-	}
-	rawByte, err := utils.AesDecrypt(cipherData, wxGzhThis.AESKey, `CBC`, wxGzhThis.AESKey[:aes.BlockSize]...)
-	if err != nil {
-		return
-	}
-	msgByte, err = utils.PKCS5UnPad(rawByte, len(wxGzhThis.AESKey))
-	if err != nil {
-		return
-	}
+	msgByte, err = utils.AesDecryptOfBase64(encrypt, wxGzhThis.AESKey, utils.AesPadTypeOfPKCS7, len(wxGzhThis.AESKey), utils.AesCipherTypeOfCBC, wxGzhThis.AESKey[:aes.BlockSize]...)
 	return
 }
 

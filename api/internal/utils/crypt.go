@@ -52,16 +52,16 @@ func ParsePublicKey(publicKeyStr string) (publicKey any /* *rsa.PublicKey	*ecdsa
 	return
 }
 
-// PKCS补码（PKCS5，PKCS7通用）
-func PKCS5Pad(rawByte []byte, padLen int) []byte {
+// PKCS补码（PKCS7，PKCS5通用）
+func PKCSPad(rawByte []byte, padLen int) []byte {
 	rawByteLen := len(rawByte)
 	fillLen := padLen - (rawByteLen % padLen)
 	fillByte := bytes.Repeat([]byte{byte(fillLen)}, fillLen)
 	return append(rawByte, fillByte...)
 }
 
-// PKCS补码移除（PKCS5，PKCS7通用）
-func PKCS5UnPad(rawByte []byte, padLen int) ([]byte, error) {
+// PKCS补码移除（PKCS7，PKCS5通用）
+func PKCSUnPad(rawByte []byte, padLen int) ([]byte, error) {
 	rawByteLen := len(rawByte)
 	fillByte := rawByte[rawByteLen-1]
 	fillLen := int(fillByte)
@@ -77,26 +77,53 @@ func PKCS5UnPad(rawByte []byte, padLen int) ([]byte, error) {
 	return rawByte[:fillPosition], nil
 }
 
+type (
+	aesPadType    string
+	aesCipherType string
+)
+
+const (
+	AesPadTypeOfPKCS7 aesPadType = `PKCS7`
+	AesPadTypeOfPKCS5 aesPadType = `PKCS5`
+
+	AesCipherTypeOfCBC aesCipherType = `CBC`
+	AesCipherTypeOfECB aesCipherType = `ECB`
+)
+
 // AES加密
-func AesEncrypt(rawByte []byte, keyByte []byte, cipherType string, iv ...byte) (cipherByte []byte, err error) {
+func AesEncrypt(rawByte []byte, keyByte []byte, padType aesPadType, padLen int, cipherType aesCipherType, iv ...byte) (cipherByte []byte, err error) {
 	block, err := aes.NewCipher(keyByte)
 	if err != nil {
 		return
 	}
 	blockSize := block.BlockSize()
+
+	if padLen == 0 {
+		padLen = blockSize
+	}
+	switch padType {
+	// case AesPadTypeOfPKCS7, AesPadTypeOfPKCS5:
+	default:
+		rawByte = PKCSPad(rawByte, padLen)
+	}
+
 	rawByteLen := len(rawByte)
 	if rawByteLen%blockSize != 0 {
 		err = errors.New(`加密串必须是块大小的整数倍`)
 		return
 	}
+
 	cipherByte = make([]byte, rawByteLen)
 	switch cipherType {
-	case `ECB`:
+	case AesCipherTypeOfECB:
 		for i := 0; i < rawByteLen; i += blockSize {
 			block.Encrypt(cipherByte[i:i+blockSize], rawByte[i:i+blockSize])
 		}
-	// case `CBC`:
+	// case AesCipherTypeOfCBC:
 	default:
+		if len(iv) == 0 { //默认偏移量
+			iv = make([]byte, blockSize)
+		}
 		blockMode := cipher.NewCBCEncrypter(block, iv)
 		blockMode.CryptBlocks(cipherByte, rawByte)
 	}
@@ -104,37 +131,49 @@ func AesEncrypt(rawByte []byte, keyByte []byte, cipherType string, iv ...byte) (
 }
 
 // AES解密
-func AesDecrypt(cipherByte []byte, keyByte []byte, cipherType string, iv ...byte) (rawByte []byte, err error) {
+func AesDecrypt(cipherByte []byte, keyByte []byte, padType aesPadType, padLen int, cipherType aesCipherType, iv ...byte) (rawByte []byte, err error) {
 	block, err := aes.NewCipher(keyByte)
 	if err != nil {
 		return
 	}
 	blockSize := block.BlockSize()
+
 	cipherByteLen := len(cipherByte)
 	if cipherByteLen%blockSize != 0 {
 		err = errors.New(`解密串必须是块大小的整数倍`)
 		return
 	}
+
 	rawByte = make([]byte, cipherByteLen)
 	switch cipherType {
-	case `ECB`:
+	case AesCipherTypeOfECB:
 		for i := 0; i < cipherByteLen; i += blockSize {
 			block.Decrypt(rawByte[i:i+blockSize], cipherByte[i:i+blockSize])
 		}
-	// case `CBC`:
+	// case AesCipherTypeOfCBC:
 	default:
+		if len(iv) == 0 { //默认偏移量
+			iv = make([]byte, blockSize)
+		}
 		blockMode := cipher.NewCBCDecrypter(block, iv)
 		blockMode.CryptBlocks(rawByte, cipherByte)
 	}
+
+	// 补码处理
+	if padLen == 0 {
+		padLen = blockSize
+	}
+	switch padType {
+	// case AesPadTypeOfPKCS7, AesPadTypeOfPKCS5:
+	default:
+		rawByte, err = PKCSUnPad(rawByte, padLen)
+	}
 	return
 }
 
-// AES加密（16位密钥，CBC模式，PKCS5补码，BASE64编码）
-func AesEncryptOfCBC(rawStr string, keyByte []byte, iv ...byte) (encrypt string, err error) {
-	if len(iv) == 0 {
-		iv = make([]byte, aes.BlockSize)
-	}
-	cipherByte, err := AesEncrypt(PKCS5Pad([]byte(rawStr), len(keyByte)), keyByte, `CBC`, iv...)
+// AES加密（BASE64编码）
+func AesEncryptOfBase64(rawByte []byte, keyByte []byte, padType aesPadType, padLen int, cipherType aesCipherType, iv ...byte) (encrypt string, err error) {
+	cipherByte, err := AesEncrypt(rawByte, keyByte, padType, padLen, cipherType, iv...)
 	if err != nil {
 		return
 	}
@@ -142,51 +181,12 @@ func AesEncryptOfCBC(rawStr string, keyByte []byte, iv ...byte) (encrypt string,
 	return
 }
 
-// AES解密（16位密钥，CBC模式，PKCS5补码，BASE64编码）
-func AesDecryptOfCBC(encrypt string, keyByte []byte, iv ...byte) (rawStr string, err error) {
+// AES解密（BASE64编码）
+func AesDecryptOfBase64(encrypt string, keyByte []byte, padType aesPadType, padLen int, cipherType aesCipherType, iv ...byte) (rawByte []byte, err error) {
 	encryptByte, err := base64.StdEncoding.DecodeString(encrypt)
 	if err != nil {
 		return
 	}
-	if len(iv) == 0 {
-		iv = make([]byte, aes.BlockSize)
-	}
-	rawByte, err := AesDecrypt(encryptByte, keyByte, `CBC`, iv...)
-	if err != nil {
-		return
-	}
-	rawByte, err = PKCS5UnPad(rawByte, aes.BlockSize)
-	if err != nil {
-		return
-	}
-	rawStr = string(rawByte)
-	return
-}
-
-// AES加密（16位密钥，ECB模式，PKCS5补码，BASE64编码）
-func AesEncryptOfECB(rawStr string, keyByte []byte) (encrypt string, err error) {
-	cipherByte, err := AesEncrypt(PKCS5Pad([]byte(rawStr), len(keyByte)), keyByte, `ECB`)
-	if err != nil {
-		return
-	}
-	encrypt = base64.StdEncoding.EncodeToString(cipherByte)
-	return
-}
-
-// AES解密（16位密钥，ECB模式，PKCS5补码，BASE64编码）
-func AesDecryptOfECB(encrypt string, keyByte []byte) (rawStr string, err error) {
-	encryptByte, err := base64.StdEncoding.DecodeString(encrypt)
-	if err != nil {
-		return
-	}
-	rawByte, err := AesDecrypt(encryptByte, keyByte, `ECB`)
-	if err != nil {
-		return
-	}
-	rawByte, err = PKCS5UnPad(rawByte, aes.BlockSize)
-	if err != nil {
-		return
-	}
-	rawStr = string(rawByte)
+	rawByte, err = AesDecrypt(encryptByte, keyByte, padType, padLen, cipherType, iv...)
 	return
 }
