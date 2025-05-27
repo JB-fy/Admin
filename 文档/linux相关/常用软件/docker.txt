@@ -139,6 +139,16 @@ docker run -d -p 9042:9042 -v 配置:/etc/cassandra/cassandra.yaml -v 数据:/va
 # kafka（可用uuidgen生成集群UUID。当只作为broker节点时，只需修改以下设置：-e KAFKA_CFG_PROCESS_ROLES=broker -e KAFKA_CFG_LISTENERS=PLAINTEXT://:9092）
 docker run -d -p 9092:9092 -p 9093:9093 -v 配置:/opt/bitnami/kafka/config/server.properties -v 数据:/bitnami/kafka -v 日志:/bitnami/kafka/logs -e KAFKA_CLUSTER_ID=集群UUID -e KAFKA_CFG_NODE_ID=节点标识 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=节点标识@节点IP:9093,节点标识@节点IP:9093（集群所有节点设置都必须一样，控制器节点需依次顺序启动） -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:SASL_PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -e KAFKA_CFG_INTER_BROKER_LISTENER_NAME=SASL_PLAINTEXT -e KAFKA_CLIENT_LISTENER_NAME=SASL_PLAINTEXT -e KAFKA_CFG_LISTENERS=CONTROLLER://:9093,SASL_PLAINTEXT://:9092 -e KAFKA_CFG_ADVERTISED_LISTENERS=SASL_PLAINTEXT://节点IP:9092 -e KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN -e KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN -e KAFKA_INTER_BROKER_USER=账号 -e KAFKA_INTER_BROKER_PASSWORD=密码 -e KAFKA_CONTROLLER_USER=账号 -e KAFKA_CONTROLLER_PASSWORD=密码 -e KAFKA_CLIENT_USERS=账号 -e KAFKA_CLIENT_PASSWORDS=密码 bitnami/kafka:latest
     # 示例：docker run -d --name kafka-alone --network host -v /home/jb/dev/tool/kafka/4.0.0/data:/bitnami/kafka -e KAFKA_CFG_NODE_ID=1 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@192.168.0.200:9093 -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:SASL_PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -e KAFKA_CFG_INTER_BROKER_LISTENER_NAME=SASL_PLAINTEXT -e KAFKA_CLIENT_LISTENER_NAME=SASL_PLAINTEXT -e KAFKA_CFG_LISTENERS=CONTROLLER://:9093,SASL_PLAINTEXT://:9092 -e KAFKA_CFG_ADVERTISED_LISTENERS=SASL_PLAINTEXT://192.168.0.200:9092 bitnami/kafka:4.0.0
+
+# gitlab
+    # gitlab-ce
+        docker run -d --name gitlab-ce --network host -v /home/jb/dev/tool/gitlab/ce/17.11.3-ce.0/config:/etc/gitlab -v /home/jb/dev/tool/gitlab/ce/17.11.3-ce.0/logs:/var/log/gitlab -v /home/jb/dev/tool/gitlab/ce/17.11.3-ce.0/data:/var/opt/gitlab gitlab/gitlab-ce:17.11.3-ce.0
+        # root密码查看（只保留24小时）
+            docker exec -it gitlab-ce cat /etc/gitlab/initial_root_password
+    # gitlab-runner
+        docker run -d --name gitlab-runner --network host -v /home/jb/dev/tool/gitlab/runner/v18.0.2/config:/etc/gitlab-runner -v /var/run/docker.sock:/var/run/docker.sock gitlab/gitlab-runner:v18.0.2
+        # 进入gitlab-runner注册Runner
+            docker exec -it gitlab-runner gitlab-runner register --non-interactive --url "gitlab站点域名" --registration-token "注册令牌(gitlab后台获取)" --executor "docker" --docker-image alpine:latest --description "docker-runner"
 /**----------------常用软件 结束----------------**/
 
 
