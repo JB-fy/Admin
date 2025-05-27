@@ -129,7 +129,41 @@ func AesDecrypt(cipherByte []byte, keyByte []byte, cipherType string, iv ...byte
 	return
 }
 
-// AES加密（ECB模式，PKCS5补码，BASE64编码）
+// AES加密（16位密钥，CBC模式，PKCS5补码，BASE64编码）
+func AesEncryptOfCBC(rawStr string, keyByte []byte, iv ...byte) (encrypt string, err error) {
+	if len(iv) != aes.BlockSize {
+		iv = make([]byte, aes.BlockSize)
+	}
+	cipherByte, err := AesEncrypt(PKCS5Pad([]byte(rawStr), len(keyByte)), keyByte, `CBC`, iv...)
+	if err != nil {
+		return
+	}
+	encrypt = base64.StdEncoding.EncodeToString(cipherByte)
+	return
+}
+
+// AES解密（16位密钥，CBC模式，PKCS5补码，BASE64编码）
+func AesDecryptOfCBC(encrypt string, keyByte []byte, iv ...byte) (rawStr string, err error) {
+	encryptByte, err := base64.StdEncoding.DecodeString(encrypt)
+	if err != nil {
+		return
+	}
+	if len(iv) != aes.BlockSize {
+		iv = make([]byte, aes.BlockSize)
+	}
+	rawByte, err := AesDecrypt(encryptByte, keyByte, `CBC`, iv...)
+	if err != nil {
+		return
+	}
+	rawByte, err = PKCS5UnPad(rawByte, aes.BlockSize)
+	if err != nil {
+		return
+	}
+	rawStr = string(rawByte)
+	return
+}
+
+// AES加密（16位密钥，ECB模式，PKCS5补码，BASE64编码）
 func AesEncryptOfECB(rawStr string, keyByte []byte) (encrypt string, err error) {
 	cipherByte, err := AesEncrypt(PKCS5Pad([]byte(rawStr), len(keyByte)), keyByte, `ECB`)
 	if err != nil {
@@ -139,7 +173,7 @@ func AesEncryptOfECB(rawStr string, keyByte []byte) (encrypt string, err error) 
 	return
 }
 
-// AES解密（ECB模式，PKCS5补码，BASE64编码）
+// AES解密（16位密钥，ECB模式，PKCS5补码，BASE64编码）
 func AesDecryptOfECB(encrypt string, keyByte []byte) (rawStr string, err error) {
 	encryptByte, err := base64.StdEncoding.DecodeString(encrypt)
 	if err != nil {
