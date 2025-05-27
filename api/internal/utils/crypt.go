@@ -131,7 +131,7 @@ func AesDecrypt(cipherByte []byte, keyByte []byte, cipherType string, iv ...byte
 
 // AES加密（16位密钥，CBC模式，PKCS5补码，BASE64编码）
 func AesEncryptOfCBC(rawStr string, keyByte []byte, iv ...byte) (encrypt string, err error) {
-	if len(iv) != aes.BlockSize {
+	if len(iv) == 0 {
 		iv = make([]byte, aes.BlockSize)
 	}
 	cipherByte, err := AesEncrypt(PKCS5Pad([]byte(rawStr), len(keyByte)), keyByte, `CBC`, iv...)
@@ -148,7 +148,7 @@ func AesDecryptOfCBC(encrypt string, keyByte []byte, iv ...byte) (rawStr string,
 	if err != nil {
 		return
 	}
-	if len(iv) != aes.BlockSize {
+	if len(iv) == 0 {
 		iv = make([]byte, aes.BlockSize)
 	}
 	rawByte, err := AesDecrypt(encryptByte, keyByte, `CBC`, iv...)
