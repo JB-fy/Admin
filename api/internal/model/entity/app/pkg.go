@@ -17,7 +17,7 @@ type Pkg struct {
 	AppId       string      `json:"appId"       orm:"app_id"        ` // APPID
 	PkgType     uint        `json:"pkgType"     orm:"pkg_type"      ` // 类型：0安卓 1苹果 2PC
 	PkgName     string      `json:"pkgName"     orm:"pkg_name"      ` // 包名
-	PkgUrl      string      `json:"pkgUrl"      orm:"pkg_url"       ` // 包地址
+	PkgFile     string      `json:"pkgFile"     orm:"pkg_file"      ` // 安装包
 	VerNo       uint        `json:"verNo"       orm:"ver_no"        ` // 版本号
 	VerName     string      `json:"verName"     orm:"ver_name"      ` // 版本名称
 	VerIntro    string      `json:"verIntro"    orm:"ver_intro"     ` // 版本介绍

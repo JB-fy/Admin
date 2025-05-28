@@ -83,7 +83,7 @@ func GetServerNetworkIp() string {
 
 // 获取服务器内网ip
 func GetServerLocalIp() string {
-	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I | awk '{print $1}'`)
+	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I | awk '{printf "%s", $1}'`)
 	output, _ := cmd.CombinedOutput()
 	if ip := string(output); ip != `` {
 		return ip

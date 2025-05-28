@@ -19,7 +19,7 @@ type Pkg struct {
 	AppId       interface{} // APPID
 	PkgType     interface{} // 类型：0安卓 1苹果 2PC
 	PkgName     interface{} // 包名
-	PkgUrl      interface{} // 包地址
+	PkgFile     interface{} // 安装包
 	VerNo       interface{} // 版本号
 	VerName     interface{} // 版本名称
 	VerIntro    interface{} // 版本介绍

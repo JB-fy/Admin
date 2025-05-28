@@ -95,16 +95,16 @@ const table = reactive({
             },
         },
         {
-            dataKey: 'pkg_url',
-            title: t('app.pkg.name.pkg_url'),
-            key: 'pkg_url',
+            dataKey: 'pkg_file',
+            title: t('app.pkg.name.pkg_file'),
+            key: 'pkg_file',
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
-                if (!props.rowData.pkg_url) {
+                if (!props.rowData.pkg_file) {
                     return
                 }
-                const fileList = [props.rowData.pkg_url]
+                const fileList = [props.rowData.pkg_file]
                 return [
                     <el-scrollbar wrap-style="display: flex; align-items: center;" view-style="margin: auto;">
                         <el-space direction="vertical" style="margin: 5px 10px;">

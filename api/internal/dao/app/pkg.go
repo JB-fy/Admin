@@ -124,7 +124,7 @@ func (daoThis *pkgDao) ParseField(field []string, fieldWithParam map[string]any,
 				m = m.Handler(daoThis.ParseJoin(tableApp, daoModel))
 			case `download_url_to_app`, `download_url_to_h5`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().PkgType)
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().PkgUrl)
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().PkgFile)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraConfig)
 				daoModel.AfterField[v] = struct{}{}
 			default:
@@ -160,17 +160,17 @@ func (daoThis *pkgDao) HandleAfterField(ctx context.Context, record gdb.Record, 
 			switch record[daoThis.Columns().PkgType].Uint() {
 			case 1: //苹果
 				extraConfig := record[daoThis.Columns().ExtraConfig].Map()
-				if _, ok := extraConfig[`marketUrl`]; ok {
-					record[`download_url_to_app`] = gvar.New(extraConfig[`marketUrl`]) //itms-apps://itunes.apple.com/app/id6450760452
-					record[`download_url_to_h5`] = gvar.New(extraConfig[`marketUrl`])
+				if _, ok := extraConfig[`market_url`]; ok {
+					record[`download_url_to_app`] = gvar.New(extraConfig[`market_url`]) //itms-apps://itunes.apple.com/app/id6450760452
+					record[`download_url_to_h5`] = gvar.New(extraConfig[`market_url`])
 				} else {
 					record[`download_url_to_app`] = gvar.New(utils.GetRequestUrl(ctx, 0) + `/自定义的H5下载页`) //苹果企业签不能在APP内做更新，需要跳转网页下载更新
-					record[`download_url_to_h5`] = gvar.New(`itms-services://?action=download-manifest&url=` + gconv.String(extraConfig[`plistFile`]))
+					record[`download_url_to_h5`] = gvar.New(`itms-services://?action=download-manifest&url=` + gconv.String(extraConfig[`plist_file`]))
 				}
 			// case 0, 2: //安卓	//PC
 			default:
-				record[`download_url_to_app`] = record[daoThis.Columns().PkgUrl]
-				record[`download_url_to_h5`] = record[daoThis.Columns().PkgUrl]
+				record[`download_url_to_app`] = record[daoThis.Columns().PkgFile]
+				record[`download_url_to_h5`] = record[daoThis.Columns().PkgFile]
 			}
 		case `is_force`: //参数：当前版本号
 			isForce := 0

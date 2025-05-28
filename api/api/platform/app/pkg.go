@@ -13,7 +13,7 @@ type PkgInfo struct {
 	AppId       *string     `json:"app_id,omitempty" dc:"APPID"`
 	PkgType     *uint       `json:"pkg_type,omitempty" dc:"类型：0安卓 1苹果 2PC"`
 	PkgName     *string     `json:"pkg_name,omitempty" dc:"包名"`
-	PkgUrl      *string     `json:"pkg_url,omitempty" dc:"包地址"`
+	PkgFile     *string     `json:"pkg_file,omitempty" dc:"安装包"`
 	VerNo       *uint       `json:"ver_no,omitempty" dc:"版本号"`
 	VerName     *string     `json:"ver_name,omitempty" dc:"版本名称"`
 	VerIntro    *string     `json:"ver_intro,omitempty" dc:"版本介绍"`
@@ -78,7 +78,7 @@ type PkgCreateReq struct {
 	AppId       *string `json:"app_id,omitempty" v:"required|max-length:15" dc:"APPID"`
 	PkgType     *uint   `json:"pkg_type,omitempty" v:"required|in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
 	PkgName     *string `json:"pkg_name,omitempty" v:"required|max-length:60" dc:"包名"`
-	PkgUrl      *string `json:"pkg_url,omitempty" v:"required|max-length:200|url" dc:"包地址"`
+	PkgFile     *string `json:"pkg_file,omitempty" v:"required|max-length:200|url" dc:"安装包"`
 	VerNo       *uint   `json:"ver_no,omitempty" v:"required|between:0,4294967295" dc:"版本号"`
 	VerName     *string `json:"ver_name,omitempty" v:"max-length:30" dc:"版本名称"`
 	VerIntro    *string `json:"ver_intro,omitempty" v:"max-length:255" dc:"版本介绍"`
@@ -98,7 +98,7 @@ type PkgUpdateReq struct {
 	AppId       *string `json:"app_id,omitempty" filter:"-" data:"app_id,omitempty" v:"max-length:15" dc:"APPID"`
 	PkgType     *uint   `json:"pkg_type,omitempty" filter:"-" data:"pkg_type,omitempty" v:"in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
 	PkgName     *string `json:"pkg_name,omitempty" filter:"-" data:"pkg_name,omitempty" v:"max-length:60" dc:"包名"`
-	PkgUrl      *string `json:"pkg_url,omitempty" filter:"-" data:"pkg_url,omitempty" v:"max-length:200|url" dc:"包地址"`
+	PkgFile     *string `json:"pkg_file,omitempty" filter:"-" data:"pkg_file,omitempty" v:"max-length:200|url" dc:"安装包"`
 	VerNo       *uint   `json:"ver_no,omitempty" filter:"-" data:"ver_no,omitempty" v:"between:0,4294967295" dc:"版本号"`
 	VerName     *string `json:"ver_name,omitempty" filter:"-" data:"ver_name,omitempty" v:"max-length:30" dc:"版本名称"`
 	VerIntro    *string `json:"ver_intro,omitempty" filter:"-" data:"ver_intro,omitempty" v:"max-length:255" dc:"版本介绍"`

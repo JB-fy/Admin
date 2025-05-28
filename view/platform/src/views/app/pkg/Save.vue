@@ -26,10 +26,10 @@ const saveForm = reactive({
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 60, message: t('validation.max.string', { max: 60 }) },
         ],
-        pkg_url: [
+        pkg_file: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
-            { type: 'url', trigger: 'blur', message: t('validation.url') },
+            { type: 'url', trigger: 'change', message: t('validation.url') },
         ],
         ver_no: [
             { required: true, message: t('validation.required') },
@@ -46,11 +46,11 @@ const saveForm = reactive({
                 transform: (value: any) => (value ? jsonDecode(value) : undefined),
             },
         ], */
-        'extra_config.marketUrl': [
+        'extra_config.market_url': [
             // { required: computed((): boolean => (saveForm.data.pkg_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'extra_config.plistFile': [
+        'extra_config.plist_file': [
             // { required: computed((): boolean => (saveForm.data.pkg_type == 1 ? true : false)), message: t('validation.required') },
             { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
@@ -68,9 +68,9 @@ const saveForm = reactive({
             param.app_id === undefined && (param.app_id = 0)
             try {
                 if (param?.id) {
-                    await request(t('config.VITE_HTTP_API_PREFIX') + '/app/app/update', param, true)
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/app/pkg/update', param, true)
                 } else {
-                    await request(t('config.VITE_HTTP_API_PREFIX') + '/app/app/create', param, true)
+                    await request(t('config.VITE_HTTP_API_PREFIX') + '/app/pkg/create', param, true)
                 }
                 listCommon.ref.getList(true)
                 saveCommon.visible = false
@@ -117,9 +117,10 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('app.pkg.name.pkg_name')" prop="pkg_name">
                     <el-input v-model="saveForm.data.pkg_name" :placeholder="t('app.pkg.name.pkg_name')" maxlength="60" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('app.pkg.name.pkg_url')" prop="pkg_url">
-                    <!-- <el-input v-model="saveForm.data.pkg_url" :placeholder="t('app.pkg.name.pkg_url')" maxlength="200" :show-word-limit="true" :clearable="true" /> -->
-                    <my-upload v-model="saveForm.data.pkg_url" accept="application/*" />
+                <el-form-item :label="t('app.pkg.name.pkg_file')" prop="pkg_file">
+                    <el-checkbox v-model="saveForm.data.is_input_pkg_file" :label="t('app.pkg.name.is_input_pkg_file')" style="width: 100%;" />
+                    <el-input v-if="saveForm.data.is_input_pkg_file" v-model="saveForm.data.pkg_file" :placeholder="t('app.pkg.name.pkg_file')" maxlength="200" :show-word-limit="true" :clearable="true" />
+                    <my-upload v-else v-model="saveForm.data.pkg_file" accept="application/*" />
                 </el-form-item>
                 <el-form-item :label="t('app.pkg.name.ver_no')" prop="ver_no">
                     <el-input-number v-model="saveForm.data.ver_no" :placeholder="t('app.pkg.name.ver_no')" :min="0" :max="4294967295" :precision="0" :value-on-clear="0" />
@@ -134,14 +135,19 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.extra_config" type="textarea" :autosize="{ minRows: 3 }" />
                 </el-form-item> -->
                 <template v-if="saveForm.data.pkg_type == 1">
-                    <el-form-item :label="t('app.pkg.name.extra_config_obj.marketUrl')" prop="extra_config.marketUrl">
-                        <el-input v-model="saveForm.data.extra_config.marketUrl" :placeholder="t('app.pkg.name.extra_config_obj.marketUrl')" :clearable="true" style="max-width: 400px" />
-                        <el-alert :title="t('app.pkg.tip.extra_config_obj.marketUrl')" type="info" :show-icon="true" :closable="false" />
+                    <el-form-item :label="t('app.pkg.name.extra_config_obj.market_url')" prop="extra_config.market_url">
+                        <el-input v-model="saveForm.data.extra_config.market_url" :placeholder="t('app.pkg.name.extra_config_obj.market_url')" :clearable="true" style="max-width: 400px" />
+                        <el-alert :title="t('app.pkg.tip.extra_config_obj.market_url')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
-                    <el-form-item :label="t('app.pkg.name.extra_config_obj.plistFile')" prop="extra_config.plistFile">
-                        <my-upload v-model="saveForm.data.extra_config.plistFile">
+                    <el-form-item :label="t('app.pkg.name.extra_config_obj.plist_file')" prop="extra_config.plist_file">
+                        <el-checkbox v-model="saveForm.data.is_plist_file" :label="t('app.pkg.name.extra_config_obj.is_plist_file')" style="width: 100%;" />
+                        <template v-if="saveForm.data.is_plist_file" >
+                            <el-input v-model="saveForm.data.pkg_file" :placeholder="t('app.pkg.tip.extra_config_obj.plist_file')" :clearable="true" />
+                            <el-alert :title="t('app.pkg.tip.extra_config_obj.plist_file')" type="info" :show-icon="true" :closable="false" />
+                        </template>
+                        <my-upload v-else v-model="saveForm.data.extra_config.plist_file">
                             <template #tip>
-                                <el-alert :title="t('app.pkg.tip.extra_config_obj.plistFile')" type="info" :show-icon="true" :closable="false" />
+                                <el-alert :title="t('app.pkg.tip.extra_config_obj.plist_file')" type="info" :show-icon="true" :closable="false" />
                             </template>
                         </my-upload>
                     </el-form-item>

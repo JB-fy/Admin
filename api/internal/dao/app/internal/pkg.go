@@ -31,7 +31,7 @@ type PkgColumns struct {
 	AppId       string // APPID
 	PkgType     string // 类型：0安卓 1苹果 2PC
 	PkgName     string // 包名
-	PkgUrl      string // 包地址
+	PkgFile     string // 安装包
 	VerNo       string // 版本号
 	VerName     string // 版本名称
 	VerIntro    string // 版本介绍
@@ -49,7 +49,7 @@ var pkgColumns = PkgColumns{
 	AppId:       "app_id",
 	PkgType:     "pkg_type",
 	PkgName:     "pkg_name",
-	PkgUrl:      "pkg_url",
+	PkgFile:     "pkg_file",
 	VerNo:       "ver_no",
 	VerName:     "ver_name",
 	VerIntro:    "ver_intro",

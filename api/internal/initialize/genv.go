@@ -17,7 +17,7 @@ func initGenv(ctx context.Context) {
 		serverNetworkIp := utils.GetServerNetworkIp()
 		genv.Set(consts.LOCAL_SERVER_NETWORK_IP, serverNetworkIp) //设置服务器外网ip
 	}
-	serverLocalIp := os.Getenv(consts.LOCAL_SERVER_LOCAL_IP) //docker容器设置环境变量启动时有值：-e SERVER_LOCAL_IP=$(hostname -I | awk '{print $1}')
+	serverLocalIp := os.Getenv(consts.LOCAL_SERVER_LOCAL_IP) //docker容器设置环境变量启动时有值：-e SERVER_LOCAL_IP=$(hostname -I | awk '{printf "%s", $1}')
 	if serverLocalIp == `` {
 		serverLocalIp := utils.GetServerLocalIp()
 		genv.Set(consts.LOCAL_SERVER_LOCAL_IP, serverLocalIp) //设置服务器内网ip
