@@ -15,10 +15,14 @@ const saveForm = reactive({
         extra_config_1: (() => {
             const extraConfig1: { [propName: string]: any } = {}
             if (saveCommon.data.pkg_type == 1) {
+                extraConfig1.pkg_source = extraConfig.pkg_source ?? 0
                 extraConfig1.market_url = extraConfig.market_url
-                extraConfig1.plist_file = extraConfig.plist_file
+                extraConfig1.qyq_h5_url = extraConfig.qyq_h5_url
+                extraConfig1.qyq_plist_file = extraConfig.qyq_plist_file
+                delete extraConfig.pkg_source
                 delete extraConfig.market_url
-                delete extraConfig.plist_file
+                delete extraConfig.qyq_h5_url
+                delete extraConfig.qyq_plist_file
             }
             return extraConfig1
         })(),
@@ -40,7 +44,7 @@ const saveForm = reactive({
         pkg_file: [
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
-            { type: 'url', trigger: 'change', message: t('validation.url') },
+            { type: 'url', trigger: computed((): string => (saveForm.data.is_input_pkg_file ? 'blur' : 'change')), message: computed((): string => (saveForm.data.is_input_pkg_file ? t('validation.url') : t('validation.upload'))) },
         ],
         ver_no: [
             { required: true, message: t('validation.required') },
@@ -48,12 +52,20 @@ const saveForm = reactive({
         ],
         ver_name: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
         ver_intro: [{ type: 'string', trigger: 'blur', max: 255, message: t('validation.max.string', { max: 255 }) }],
+        'extra_config_1.pkg_source': [
+            { required: true, message: t('validation.required') },
+            { type: 'enum', trigger: 'change', enum: (tm('app.pkg.status.extra_config_1.pkg_source') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
+        ],
         'extra_config_1.market_url': [
-            // { required: computed((): boolean => (saveForm.data.pkg_type == 1 ? true : false)), message: t('validation.required') },
+            { required: computed((): boolean => (saveForm.data.pkg_type == 1 && saveForm.data.extra_config_1.pkg_source == 0 ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'extra_config_1.plist_file': [
-            // { required: computed((): boolean => (saveForm.data.pkg_type == 1 ? true : false)), message: t('validation.required') },
+        'extra_config_1.qyq_h5_url': [
+            { required: computed((): boolean => (saveForm.data.pkg_type == 1 && saveForm.data.extra_config_1.pkg_source == 1 ? true : false)), message: t('validation.required') },
+            { type: 'url', trigger: 'blur', message: t('validation.url') },
+        ],
+        'extra_config_1.qyq_plist_file': [
+            { required: computed((): boolean => (saveForm.data.pkg_type == 1 && saveForm.data.extra_config_1.pkg_source == 1 ? true : false)), message: t('validation.required') },
             { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
         extra_config: [
@@ -148,24 +160,37 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.ver_intro" type="textarea" :autosize="{ minRows: 3 }" maxlength="255" :show-word-limit="true" />
                 </el-form-item>
                 <template v-if="saveForm.data.pkg_type == 1">
-                    <el-form-item :label="t('app.pkg.name.extra_config_1.market_url')" prop="extra_config_1.market_url">
+                    <el-form-item :label="t('app.pkg.name.extra_config_1.pkg_source')" prop="extra_config_1.pkg_source">
+                        <el-radio-group v-model="saveForm.data.extra_config_1.pkg_source">
+                            <el-radio v-for="(item, index) in (tm('app.pkg.status.extra_config_1.pkg_source') as any)" :key="index" :value="item.value">
+                                {{ item.label }}
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item v-if="saveForm.data.extra_config_1.pkg_source == 0" :label="t('app.pkg.name.extra_config_1.market_url')" prop="extra_config_1.market_url">
                         <el-input v-model="saveForm.data.extra_config_1.market_url" :placeholder="t('app.pkg.name.extra_config_1.market_url')" :clearable="true" style="max-width: 400px" />
                         <el-alert :title="t('app.pkg.tip.extra_config_1.market_url')" type="info" :show-icon="true" :closable="false" />
                     </el-form-item>
-                    <el-form-item :label="t('app.pkg.name.extra_config_1.plist_file')" prop="extra_config_1.plist_file">
-                        <div style="width: 100%">
-                            <el-checkbox v-model="saveForm.data.is_plist_file" :label="t('app.pkg.name.extra_config_1.is_plist_file')" />
-                        </div>
-                        <template v-if="saveForm.data.is_plist_file">
-                            <el-input v-model="saveForm.data.extra_config_1.plist_file" :placeholder="t('app.pkg.name.extra_config_1.plist_file')" :clearable="true" style="max-width: 600px" />
-                            <el-alert :title="t('app.pkg.tip.extra_config_1.plist_file')" type="info" :show-icon="true" :closable="false" />
-                        </template>
-                        <my-upload v-else v-model="saveForm.data.extra_config_1.plist_file">
-                            <template #tip>
-                                <el-alert :title="t('app.pkg.tip.extra_config_1.plist_file')" type="info" :show-icon="true" :closable="false" />
+                    <template v-else-if="saveForm.data.extra_config_1.pkg_source == 1">
+                        <el-form-item :label="t('app.pkg.name.extra_config_1.qyq_h5_url')" prop="extra_config_1.qyq_h5_url">
+                            <el-input v-model="saveForm.data.extra_config_1.qyq_h5_url" :placeholder="t('app.pkg.name.extra_config_1.qyq_h5_url')" :clearable="true" style="max-width: 400px" />
+                            <el-alert :title="t('app.pkg.tip.extra_config_1.qyq_h5_url')" type="info" :show-icon="true" :closable="false" />
+                        </el-form-item>
+                        <el-form-item :label="t('app.pkg.name.extra_config_1.qyq_plist_file')" prop="extra_config_1.qyq_plist_file">
+                            <div style="width: 100%">
+                                <el-checkbox v-model="saveForm.data.is_qyq_plist_file" :label="t('app.pkg.name.extra_config_1.is_qyq_plist_file')" />
+                            </div>
+                            <template v-if="saveForm.data.is_qyq_plist_file">
+                                <el-input v-model="saveForm.data.extra_config_1.qyq_plist_file" :placeholder="t('app.pkg.name.extra_config_1.qyq_plist_file')" :clearable="true" style="max-width: 600px" />
+                                <el-alert :title="t('app.pkg.tip.extra_config_1.qyq_plist_file')" type="info" :show-icon="true" :closable="false" />
                             </template>
-                        </my-upload>
-                    </el-form-item>
+                            <my-upload v-else v-model="saveForm.data.extra_config_1.qyq_plist_file">
+                                <template #tip>
+                                    <el-alert :title="t('app.pkg.tip.extra_config_1.qyq_plist_file')" type="info" :show-icon="true" :closable="false" />
+                                </template>
+                            </my-upload>
+                        </el-form-item>
+                    </template>
                 </template>
                 <el-form-item :label="t('app.pkg.name.extra_config')" prop="extra_config">
                     <el-alert :title="t('app.pkg.tip.extra_config')" type="info" :show-icon="true" :closable="false" style="width: 100%" />

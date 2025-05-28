@@ -7,7 +7,6 @@ package app
 import (
 	daoIndex "api/internal/dao"
 	"api/internal/dao/app/internal"
-	"api/internal/utils"
 	"context"
 	"database/sql"
 	"database/sql/driver"
@@ -90,7 +89,7 @@ func (daoThis *pkgDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Dao
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
-			case `current_ver_no`:
+			case `ver_no_of_current`:
 				m = m.WhereGT(daoModel.DbTable+`.`+daoThis.Columns().VerNo, v)
 			default:
 				if daoThis.Contains(k) {
@@ -160,12 +159,12 @@ func (daoThis *pkgDao) HandleAfterField(ctx context.Context, record gdb.Record, 
 			switch record[daoThis.Columns().PkgType].Uint() {
 			case 1: //苹果
 				extraConfig := record[daoThis.Columns().ExtraConfig].Map()
-				if _, ok := extraConfig[`market_url`]; ok {
-					record[`download_url_to_app`] = gvar.New(extraConfig[`market_url`]) //itms-apps://itunes.apple.com/app/id6450760452
+				if gconv.Uint8(extraConfig[`pkg_source`]) == 0 { //应用市场
+					record[`download_url_to_app`] = gvar.New(extraConfig[`market_url`])
 					record[`download_url_to_h5`] = gvar.New(extraConfig[`market_url`])
-				} else {
-					record[`download_url_to_app`] = gvar.New(utils.GetRequestUrl(ctx, 0) + `/自定义的H5下载页`) //苹果企业签不能在APP内做更新，需要跳转网页下载更新
-					record[`download_url_to_h5`] = gvar.New(`itms-services://?action=download-manifest&url=` + gconv.String(extraConfig[`plist_file`]))
+				} else { //企业签
+					record[`download_url_to_app`] = gvar.New(extraConfig[`qyq_h5_url`])
+					record[`download_url_to_h5`] = gvar.New(`itms-services://?action=download-manifest&url=` + gconv.String(extraConfig[`qyq_plist_file`]))
 				}
 			// case 0, 2: //安卓	//PC
 			default:

@@ -43,7 +43,7 @@ func InitRouterCommon(ctx context.Context, s *ghttp.Server) {
 	})
 	//APP更新检测
 	s.Group(`/app`, func(group *ghttp.RouterGroup) {
-		group.Bind(controller.NewApp())
+		group.Bind(controller.NewAppPkg())
 	})
 	//微信
 	s.Group(`/wx`, func(group *ghttp.RouterGroup) {
