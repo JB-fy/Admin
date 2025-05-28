@@ -23,7 +23,7 @@ type Pkg struct {
 	VerNo       interface{} // 版本号
 	VerName     interface{} // 版本名称
 	VerIntro    interface{} // 版本介绍
-	ExtraConfig interface{} // 额外配置
+	ExtraConfig interface{} // 额外配置。JSON格式，需要时设置
 	Remark      interface{} // 备注
 	IsForcePrev interface{} // 强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关
 }

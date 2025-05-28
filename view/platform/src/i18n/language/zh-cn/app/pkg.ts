@@ -9,7 +9,7 @@ export default {
         ver_name: '版本名称',
         ver_intro: '版本介绍',
         extra_config: '额外配置',
-        extra_config_obj: {
+        extra_config_1: {
             market_url: '苹果-应用市场地址',
             is_plist_file: '手动填写plist文件地址',
             plist_file: '苹果-plist文件',
@@ -26,7 +26,8 @@ export default {
         ],
     },
     tip: {
-        extra_config_obj: {
+        extra_config: 'JSON格式，需要时设置',
+        extra_config_1: {
             market_url: '示例：itms-apps://itunes.apple.com/app/idxxxxxxxxxx',
             plist_file: '企业签必须',
         },

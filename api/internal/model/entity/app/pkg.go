@@ -21,7 +21,7 @@ type Pkg struct {
 	VerNo       uint        `json:"verNo"       orm:"ver_no"        ` // 版本号
 	VerName     string      `json:"verName"     orm:"ver_name"      ` // 版本名称
 	VerIntro    string      `json:"verIntro"    orm:"ver_intro"     ` // 版本介绍
-	ExtraConfig string      `json:"extraConfig" orm:"extra_config"  ` // 额外配置
+	ExtraConfig string      `json:"extraConfig" orm:"extra_config"  ` // 额外配置。JSON格式，需要时设置
 	Remark      string      `json:"remark"      orm:"remark"        ` // 备注
 	IsForcePrev uint        `json:"isForcePrev" orm:"is_force_prev" ` // 强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关
 }

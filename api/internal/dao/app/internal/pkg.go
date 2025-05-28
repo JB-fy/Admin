@@ -35,7 +35,7 @@ type PkgColumns struct {
 	VerNo       string // 版本号
 	VerName     string // 版本名称
 	VerIntro    string // 版本介绍
-	ExtraConfig string // 额外配置
+	ExtraConfig string // 额外配置。JSON格式，需要时设置
 	Remark      string // 备注
 	IsForcePrev string // 强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关
 }

@@ -17,7 +17,7 @@ type PkgInfo struct {
 	VerNo       *uint       `json:"ver_no,omitempty" dc:"版本号"`
 	VerName     *string     `json:"ver_name,omitempty" dc:"版本名称"`
 	VerIntro    *string     `json:"ver_intro,omitempty" dc:"版本介绍"`
-	ExtraConfig *string     `json:"extra_config,omitempty" dc:"额外配置"`
+	ExtraConfig *string     `json:"extra_config,omitempty" dc:"额外配置。JSON格式，需要时设置"`
 	Remark      *string     `json:"remark,omitempty" dc:"备注"`
 	IsForcePrev *uint       `json:"is_force_prev,omitempty" dc:"强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关"`
 	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
@@ -82,7 +82,7 @@ type PkgCreateReq struct {
 	VerNo       *uint   `json:"ver_no,omitempty" v:"required|between:0,4294967295" dc:"版本号"`
 	VerName     *string `json:"ver_name,omitempty" v:"max-length:30" dc:"版本名称"`
 	VerIntro    *string `json:"ver_intro,omitempty" v:"max-length:255" dc:"版本介绍"`
-	ExtraConfig *string `json:"extra_config,omitempty" v:"json" dc:"额外配置"`
+	ExtraConfig *string `json:"extra_config,omitempty" v:"json" dc:"额外配置。JSON格式，需要时设置"`
 	Remark      *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsForcePrev *uint   `json:"is_force_prev,omitempty" v:"in:0,1" dc:"强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关"`
 	IsStop      *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -102,7 +102,7 @@ type PkgUpdateReq struct {
 	VerNo       *uint   `json:"ver_no,omitempty" filter:"-" data:"ver_no,omitempty" v:"between:0,4294967295" dc:"版本号"`
 	VerName     *string `json:"ver_name,omitempty" filter:"-" data:"ver_name,omitempty" v:"max-length:30" dc:"版本名称"`
 	VerIntro    *string `json:"ver_intro,omitempty" filter:"-" data:"ver_intro,omitempty" v:"max-length:255" dc:"版本介绍"`
-	ExtraConfig *string `json:"extra_config,omitempty" filter:"-" data:"extra_config,omitempty" v:"json" dc:"额外配置"`
+	ExtraConfig *string `json:"extra_config,omitempty" filter:"-" data:"extra_config,omitempty" v:"json" dc:"额外配置。JSON格式，需要时设置"`
 	Remark      *string `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsForcePrev *uint   `json:"is_force_prev,omitempty" filter:"-" data:"is_force_prev,omitempty" v:"in:0,1" dc:"强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关"`
 	IsStop      *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
