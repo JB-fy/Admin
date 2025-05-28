@@ -1,17 +1,17 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : Mysql-8.0.33
+ Source Server         : 本地-Mysql
  Source Server Type    : MySQL
- Source Server Version : 80033 (8.0.33)
- Source Host           : 192.168.0.200:3306
+ Source Server Version : 90300 (9.3.0)
+ Source Host           : 192.168.1.200:3306
  Source Schema         : admin
 
  Target Server Type    : MySQL
- Target Server Version : 80033 (8.0.33)
+ Target Server Version : 90300 (9.3.0)
  File Encoding         : 65001
 
- Date: 10/04/2025 22:17:13
+ Date: 28/05/2025 18:33:28
 */
 
 SET NAMES utf8mb4;
@@ -25,23 +25,42 @@ CREATE TABLE `app`  (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
-  `app_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'APPID',
-  `name_type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '名称：0APP。有两种以上APP时自行扩展',
-  `app_type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '类型：0安卓 1苹果 2PC',
-  `package_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '包名',
-  `package_file` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '安装包',
-  `ver_no` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '版本号',
-  `ver_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '版本名称',
-  `ver_intro` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '版本介绍',
-  `extra_config` json NULL COMMENT '额外配置',
+  `app_id` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'APPID',
+  `app_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
+  `app_config` json NULL COMMENT '配置。\r\nJSON格式，需要时设置',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '备注',
-  `is_force_prev` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关',
-  PRIMARY KEY (`app_id`) USING BTREE,
-  UNIQUE INDEX `name_type`(`name_type` ASC, `app_type` ASC, `ver_no` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'APP表' ROW_FORMAT = DYNAMIC;
+  PRIMARY KEY (`app_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'APP表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for app_pkg
+-- ----------------------------
+DROP TABLE IF EXISTS `app_pkg`;
+CREATE TABLE `app_pkg`  (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
+  `pkg_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '包ID',
+  `app_id` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '0' COMMENT 'APPID',
+  `pkg_type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '类型：0安卓 1苹果 2PC',
+  `pkg_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '包名',
+  `pkg_file` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '安装包',
+  `ver_no` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '版本号',
+  `ver_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '版本名称',
+  `ver_intro` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '版本介绍',
+  `extra_config` json NULL COMMENT '额外配置。JSON格式，需要时设置',
+  `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '备注',
+  `is_force_prev` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关',
+  PRIMARY KEY (`pkg_id`) USING BTREE,
+  INDEX `app_id`(`app_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'APP安装包表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of app_pkg
 -- ----------------------------
 
 -- ----------------------------
@@ -63,6 +82,10 @@ CREATE TABLE `auth_action`  (
 -- ----------------------------
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appCreate', '系统管理-APP-新增', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appDelete', '系统管理-APP-删除', '');
+INSERT INTO `auth_action` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 0, 'appPkgCreate', '系统管理-APP管理-安装包-新增', '');
+INSERT INTO `auth_action` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 0, 'appPkgDelete', '系统管理-APP管理-安装包-删除', '');
+INSERT INTO `auth_action` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 0, 'appPkgRead', '系统管理-APP管理-安装包-查看', '');
+INSERT INTO `auth_action` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 0, 'appPkgUpdate', '系统管理-APP管理-安装包-编辑', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appRead', '系统管理-APP-查看', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appUpdate', '系统管理-APP-编辑', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'authActionCreate', '权限管理-操作-新增', '');
@@ -153,6 +176,10 @@ CREATE TABLE `auth_action_rel_to_scene`  (
 -- ----------------------------
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appCreate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appDelete', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 'appPkgCreate', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 'appPkgDelete', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 'appPkgRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 'appPkgUpdate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appRead', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appUpdate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authActionCreate', 'platform');
@@ -255,7 +282,7 @@ CREATE TABLE `auth_menu`  (
   PRIMARY KEY (`menu_id`) USING BTREE,
   INDEX `pid`(`pid` ASC) USING BTREE,
   INDEX `scene_id`(`scene_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_menu
@@ -276,7 +303,7 @@ INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0,
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 14, '支付通道', 'platform', 11, 1, 4, '0-8-9-11-14', '-系统管理-配置中心-支付管理-支付通道', 'autoicon-ep-connection', '/pay/channel', '{\"i18n\": {\"title\": {\"en\": \"Channel\", \"zh-cn\": \"支付通道\"}}}', 150);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 15, '插件配置', 'platform', 9, 1, 3, '0-8-9-15', '-系统管理-配置中心-插件配置', 'autoicon-ep-ticket', '/platform/config/plugin', '{\"i18n\": {\"title\": {\"en\": \"Plugin Config\", \"zh-cn\": \"插件配置\"}}}', 150);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '应用配置', 'platform', 9, 1, 3, '0-8-9-16', '-系统管理-配置中心-应用配置', 'autoicon-ep-set-up', '/platform/config/app', '{\"i18n\": {\"title\": {\"en\": \"APP Config\", \"zh-cn\": \"应用配置\"}}}', 200);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, 'APP', 'platform', 8, 1, 2, '0-8-17', '-系统管理-APP', 'vant-apps-o', '/app/app', '{\"i18n\": {\"title\": {\"en\": \"App\", \"zh-cn\": \"APP\"}}}', 100);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2025-05-28 01:15:44', 0, 17, 'APP', 'platform', 29, 1, 3, '0-8-29-17', '-系统管理-APP管理-APP', 'vant-apps-o', '/app/app', '{\"i18n\": {\"title\": {\"en\": \"App\", \"zh-cn\": \"APP\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, '用户管理', 'platform', 0, 0, 1, '0-18', '-用户管理', 'vant-friends', '', '{\"i18n\": {\"title\": {\"en\": \"User Manage\", \"zh-cn\": \"用户管理\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '用户', 'platform', 18, 1, 2, '0-18-19', '-用户管理-用户', 'vant-user-o', '/users/users', '{\"i18n\": {\"title\": {\"en\": \"Users\", \"zh-cn\": \"用户\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 20, '机构管理', 'platform', 0, 0, 1, '0-20', '-机构管理', 'autoicon-ep-office-building', '', '{\"i18n\": {\"title\": {\"en\": \"Org Manage\", \"zh-cn\": \"机构管理\"}}}', 100);
@@ -288,6 +315,8 @@ INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0,
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 26, '管理员', 'org', 24, 1, 2, '0-24-26', '-权限管理-管理员', 'vant-manager-o', '/org/admin', '{\"i18n\": {\"title\": {\"en\": \"Admin\", \"zh-cn\": \"管理员\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 27, '配置中心', 'org', 0, 0, 1, '0-27', '-配置中心', 'autoicon-ep-setting', '', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 20);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 28, '应用配置', 'org', 27, 1, 2, '0-27-28', '-配置中心-应用配置', 'autoicon-ep-set-up', '/org/config/app', '{\"i18n\": {\"title\": {\"en\": \"APP Config\", \"zh-cn\": \"应用配置\"}}}', 200);
+INSERT INTO `auth_menu` VALUES ('2025-05-28 01:15:44', '2025-05-28 01:15:44', 0, 29, 'APP管理', 'platform', 8, 0, 2, '0-8-29', '-系统管理-APP管理', 'autoicon-ep-menu', '', '{\"i18n\": {\"title\": {\"en\": \"\", \"zh-cn\": \"APP管理\"}}}', 100);
+INSERT INTO `auth_menu` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 0, 30, '安装包', 'platform', 29, 1, 3, '0-8-29-30', '-系统管理-APP管理-安装包', 'autoicon-ep-link', '/app/pkg', '{\"i18n\": {\"title\": {\"en\": \"Pkg\", \"zh-cn\": \"安装包\"}}}', 100);
 
 -- ----------------------------
 -- Table structure for auth_role
