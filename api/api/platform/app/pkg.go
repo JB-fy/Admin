@@ -9,7 +9,7 @@ import (
 type PkgInfo struct {
 	Id          *uint       `json:"id,omitempty" dc:"ID"`
 	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	PkgId       *uint       `json:"pkg_id,omitempty" dc:"包ID"`
+	PkgId       *uint       `json:"pkg_id,omitempty" dc:"安装包ID"`
 	AppId       *string     `json:"app_id,omitempty" dc:"APPID"`
 	PkgType     *uint       `json:"pkg_type,omitempty" dc:"类型：0安卓 1苹果 2PC"`
 	PkgName     *string     `json:"pkg_name,omitempty" dc:"包名"`
@@ -34,7 +34,7 @@ type PkgFilter struct {
 	Label          string      `json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`
 	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
-	PkgId          *uint       `json:"pkg_id,omitempty" v:"between:1,4294967295" dc:"包ID"`
+	PkgId          *uint       `json:"pkg_id,omitempty" v:"between:1,4294967295" dc:"安装包ID"`
 	AppId          string      `json:"app_id,omitempty" v:"max-length:15" dc:"APPID"`
 	PkgType        *uint       `json:"pkg_type,omitempty" v:"in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
 	VerName        string      `json:"ver_name,omitempty" v:"max-length:30" dc:"版本名称"`

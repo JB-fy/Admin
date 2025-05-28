@@ -13,7 +13,7 @@ type Pkg struct {
 	CreatedAt   *gtime.Time `json:"createdAt"   orm:"created_at"    ` // 创建时间
 	UpdatedAt   *gtime.Time `json:"updatedAt"   orm:"updated_at"    ` // 更新时间
 	IsStop      uint        `json:"isStop"      orm:"is_stop"       ` // 停用：0否 1是
-	PkgId       uint        `json:"pkgId"       orm:"pkg_id"        ` // 包ID
+	PkgId       uint        `json:"pkgId"       orm:"pkg_id"        ` // 安装包ID
 	AppId       string      `json:"appId"       orm:"app_id"        ` // APPID
 	PkgType     uint        `json:"pkgType"     orm:"pkg_type"      ` // 类型：0安卓 1苹果 2PC
 	PkgName     string      `json:"pkgName"     orm:"pkg_name"      ` // 包名

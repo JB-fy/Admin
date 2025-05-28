@@ -27,7 +27,7 @@ type PkgColumns struct {
 	CreatedAt   string // 创建时间
 	UpdatedAt   string // 更新时间
 	IsStop      string // 停用：0否 1是
-	PkgId       string // 包ID
+	PkgId       string // 安装包ID
 	AppId       string // APPID
 	PkgType     string // 类型：0安卓 1苹果 2PC
 	PkgName     string // 包名
