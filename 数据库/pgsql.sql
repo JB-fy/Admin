@@ -1,26 +1,26 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : Postgresql-1.6.2
+ Source Server         : Postgresql
  Source Server Type    : PostgreSQL
- Source Server Version : 160002 (160002)
+ Source Server Version : 170005 (170005)
  Source Host           : 192.168.0.200:5432
  Source Catalog        : admin
  Source Schema         : public
 
  Target Server Type    : PostgreSQL
- Target Server Version : 160002 (160002)
+ Target Server Version : 170005 (170005)
  File Encoding         : 65001
 
- Date: 10/04/2025 22:17:26
+ Date: 29/05/2025 01:20:11
 */
 
 
 -- ----------------------------
--- Sequence structure for app_app_id_seq
+-- Sequence structure for app_pkg_pkg_id_seq
 -- ----------------------------
-DROP SEQUENCE IF EXISTS "public"."app_app_id_seq";
-CREATE SEQUENCE "public"."app_app_id_seq" 
+DROP SEQUENCE IF EXISTS "public"."app_pkg_pkg_id_seq";
+CREATE SEQUENCE "public"."app_pkg_pkg_id_seq" 
 INCREMENT 1
 MINVALUE  1
 MAXVALUE 2147483647
@@ -178,37 +178,62 @@ CREATE TABLE "public"."app" (
   "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "is_stop" int2 NOT NULL DEFAULT 0,
-  "app_id" int4 NOT NULL DEFAULT nextval('app_app_id_seq'::regclass),
-  "name_type" int2 NOT NULL DEFAULT 0,
-  "app_type" int2 NOT NULL DEFAULT 0,
-  "package_name" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "package_file" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "ver_no" int4 NOT NULL DEFAULT 0,
-  "ver_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "ver_intro" varchar(255) COLLATE "pg_catalog"."default" NOT NULL,
-  "extra_config" json,
-  "remark" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "is_force_prev" int2 NOT NULL DEFAULT 0
+  "app_id" varchar(15) COLLATE "pg_catalog"."default" NOT NULL,
+  "app_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "app_config" json,
+  "remark" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying
 )
 ;
 COMMENT ON COLUMN "public"."app"."created_at" IS '创建时间';
 COMMENT ON COLUMN "public"."app"."updated_at" IS '更新时间';
 COMMENT ON COLUMN "public"."app"."is_stop" IS '停用：0否 1是';
 COMMENT ON COLUMN "public"."app"."app_id" IS 'APPID';
-COMMENT ON COLUMN "public"."app"."name_type" IS '名称：0APP。有两种以上APP时自行扩展';
-COMMENT ON COLUMN "public"."app"."app_type" IS '类型：0安卓 1苹果 2PC';
-COMMENT ON COLUMN "public"."app"."package_name" IS '包名';
-COMMENT ON COLUMN "public"."app"."package_file" IS '安装包';
-COMMENT ON COLUMN "public"."app"."ver_no" IS '版本号';
-COMMENT ON COLUMN "public"."app"."ver_name" IS '版本名称';
-COMMENT ON COLUMN "public"."app"."ver_intro" IS '版本介绍';
-COMMENT ON COLUMN "public"."app"."extra_config" IS '额外配置';
+COMMENT ON COLUMN "public"."app"."app_name" IS '名称';
+COMMENT ON COLUMN "public"."app"."app_config" IS '配置。JSON格式，需要时设置';
 COMMENT ON COLUMN "public"."app"."remark" IS '备注';
-COMMENT ON COLUMN "public"."app"."is_force_prev" IS '强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关';
-COMMENT ON TABLE "public"."app" IS 'APP表';
 
 -- ----------------------------
 -- Records of app
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for app_pkg
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."app_pkg";
+CREATE TABLE "public"."app_pkg" (
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "is_stop" int2 NOT NULL DEFAULT 0,
+  "pkg_id" int4 NOT NULL DEFAULT nextval('app_pkg_pkg_id_seq'::regclass),
+  "app_id" varchar(15) COLLATE "pg_catalog"."default" NOT NULL,
+  "pkg_type" int2 NOT NULL DEFAULT 0,
+  "pkg_name" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "pkg_file" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "ver_no" int4 NOT NULL DEFAULT 0,
+  "ver_name" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "ver_intro" varchar(255) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "extra_config" json,
+  "remark" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "is_force_prev" int2 NOT NULL DEFAULT 0
+)
+;
+COMMENT ON COLUMN "public"."app_pkg"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."app_pkg"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."app_pkg"."is_stop" IS '停用：0否 1是';
+COMMENT ON COLUMN "public"."app_pkg"."pkg_id" IS '安装包ID';
+COMMENT ON COLUMN "public"."app_pkg"."app_id" IS 'APPID';
+COMMENT ON COLUMN "public"."app_pkg"."pkg_type" IS '类型：0安卓 1苹果 2PC';
+COMMENT ON COLUMN "public"."app_pkg"."pkg_name" IS '包名';
+COMMENT ON COLUMN "public"."app_pkg"."pkg_file" IS '安装包';
+COMMENT ON COLUMN "public"."app_pkg"."ver_no" IS '版本号';
+COMMENT ON COLUMN "public"."app_pkg"."ver_name" IS '版本名称';
+COMMENT ON COLUMN "public"."app_pkg"."ver_intro" IS '版本介绍';
+COMMENT ON COLUMN "public"."app_pkg"."extra_config" IS '额外配置。JSON格式，需要时设置';
+COMMENT ON COLUMN "public"."app_pkg"."remark" IS '备注';
+COMMENT ON COLUMN "public"."app_pkg"."is_force_prev" IS '强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关';
+
+-- ----------------------------
+-- Records of app_pkg
 -- ----------------------------
 
 -- ----------------------------
@@ -237,6 +262,10 @@ COMMENT ON TABLE "public"."auth_action" IS '权限操作表';
 -- ----------------------------
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appCreate', '系统管理-APP-新增', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appDelete', '系统管理-APP-删除', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appPkgCreate', '系统管理-APP管理-安装包-新增', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appPkgDelete', '系统管理-APP管理-安装包-删除', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appPkgRead', '系统管理-APP管理-安装包-查看', '');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appPkgUpdate', '系统管理-APP管理-安装包-编辑', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appRead', '系统管理-APP-查看', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appUpdate', '系统管理-APP-编辑', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'authActionCreate', '权限管理-操作-新增', '');
@@ -330,6 +359,10 @@ COMMENT ON TABLE "public"."auth_action_rel_to_scene" IS '权限操作，权限�
 -- ----------------------------
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appCreate', 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appDelete', 'platform');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appPkgCreate', 'platform');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appPkgDelete', 'platform');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appPkgRead', 'platform');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appPkgUpdate', 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appRead', 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appUpdate', 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authActionCreate', 'platform');
@@ -451,17 +484,14 @@ COMMENT ON TABLE "public"."auth_menu" IS '权限菜单表';
 -- ----------------------------
 -- Records of auth_menu
 -- ----------------------------
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '应用配置', 'platform', 9, 1, 3, '0-8-9-16', '-系统管理-配置中心-应用配置', 'autoicon-ep-set-up', '/platform/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 22, '机构管理员', 'platform', 2, 1, 2, '0-2-22', '-权限管理-机构管理员', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "机构管理员"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 28, '应用配置', 'org', 27, 1, 2, '0-27-28', '-配置中心-应用配置', 'autoicon-ep-set-up', '/org/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 5, '菜单', 'platform', 2, 1, 2, '0-2-5', '-权限管理-菜单', 'autoicon-ep-menu', '/auth/menu', '{"i18n": {"title": {"en": "Menu", "zh-cn": "菜单"}}}', 30);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 6, '角色', 'platform', 2, 1, 2, '0-2-6', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 7, '平台管理员', 'platform', 2, 1, 2, '0-2-7', '-权限管理-平台管理员', 'vant-manager-o', '/platform/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "平台管理员"}}}', 50);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 8, '系统管理', 'platform', 0, 0, 1, '0-8', '-系统管理', 'autoicon-ep-platform', '', '{"i18n": {"title": {"en": "System Manage", "zh-cn": "系统管理"}}}', 20);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '主页', 'platform', 0, 1, 1, '0-1', '-主页', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, '权限管理', 'platform', 0, 0, 1, '0-2', '-权限管理', 'autoicon-ep-lock', '', '{"i18n": {"title": {"en": "Auth Manage", "zh-cn": "权限管理"}}}', 10);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, '场景', 'platform', 2, 1, 2, '0-2-3', '-权限管理-场景', 'autoicon-ep-flag', '/auth/scene', '{"i18n": {"title": {"en": "Scene", "zh-cn": "场景"}}}', 0);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 4, '操作', 'platform', 2, 1, 2, '0-2-4', '-权限管理-操作', 'autoicon-ep-coordinate', '/auth/action', '{"i18n": {"title": {"en": "Action", "zh-cn": "操作"}}}', 10);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 5, '菜单', 'platform', 2, 1, 2, '0-2-5', '-权限管理-菜单', 'autoicon-ep-menu', '/auth/menu', '{"i18n": {"title": {"en": "Menu", "zh-cn": "菜单"}}}', 30);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 6, '角色', 'platform', 2, 1, 2, '0-2-6', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 7, '平台管理员', 'platform', 2, 1, 2, '0-2-7', '-权限管理-平台管理员', 'autoicon-ep-avatar', '/platform/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "平台管理员"}}}', 50);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 8, '系统管理', 'platform', 0, 0, 1, '0-8', '-系统管理', 'autoicon-ep-platform', '', '{"i18n": {"title": {"en": "System Manage", "zh-cn": "系统管理"}}}', 20);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 9, '配置中心', 'platform', 8, 0, 2, '0-8-9', '-系统管理-配置中心', 'autoicon-ep-setting', '', '{"i18n": {"title": {"en": "Config Center", "zh-cn": "配置中心"}}}', 0);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 10, '上传配置', 'platform', 9, 1, 3, '0-8-9-10', '-系统管理-配置中心-上传配置', 'autoicon-ep-upload', '/upload/upload', '{"i18n": {"title": {"en": "Upload", "zh-cn": "上传配置"}}}', 100);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 11, '支付管理', 'platform', 9, 0, 3, '0-8-9-11', '-系统管理-配置中心-支付管理', 'autoicon-ep-coin', '', '{"i18n": {"title": {"en": "Pay Manage", "zh-cn": "支付管理"}}}', 100);
@@ -469,16 +499,21 @@ INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:0
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 13, '支付场景', 'platform', 11, 1, 4, '0-8-9-11-13', '-系统管理-配置中心-支付管理-支付场景', 'autoicon-ep-guide', '/pay/scene', '{"i18n": {"title": {"en": "Scene", "zh-cn": "支付场景"}}}', 100);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 14, '支付通道', 'platform', 11, 1, 4, '0-8-9-11-14', '-系统管理-配置中心-支付管理-支付通道', 'autoicon-ep-connection', '/pay/channel', '{"i18n": {"title": {"en": "Channel", "zh-cn": "支付通道"}}}', 150);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 15, '插件配置', 'platform', 9, 1, 3, '0-8-9-15', '-系统管理-配置中心-插件配置', 'autoicon-ep-ticket', '/platform/config/plugin', '{"i18n": {"title": {"en": "Plugin Config", "zh-cn": "插件配置"}}}', 150);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, 'APP', 'platform', 8, 1, 2, '0-8-17', '-系统管理-APP', 'vant-apps-o', '/app/app', '{"i18n": {"title": {"en": "App", "zh-cn": "APP"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, '用户管理', 'platform', 0, 0, 1, '0-18', '-用户管理', 'vant-friends', '', '{"i18n": {"title": {"en": "User Manage", "zh-cn": "用户管理"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '用户', 'platform', 18, 1, 2, '0-18-19', '-用户管理-用户', 'vant-user-o', '/users/users', '{"i18n": {"title": {"en": "Users", "zh-cn": "用户"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 20, '机构管理', 'platform', 0, 0, 1, '0-20', '-机构管理', 'autoicon-ep-office-building', '', '{"i18n": {"title": {"en": "Org Manage", "zh-cn": "机构管理"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 21, '机构', 'platform', 20, 1, 2, '0-20-21', '-机构管理-机构', 'autoicon-ep-school', '/org/org', '{"i18n": {"title": {"en": "Org", "zh-cn": "机构"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 23, '主页', 'org', 0, 1, 1, '0-23', '-主页', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 24, '权限管理', 'org', 0, 0, 1, '0-24', '-权限管理', 'autoicon-ep-menu', '', '{"i18n": {"title": {"en": "Auth Manage", "zh-cn": "权限管理"}}}', 10);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 25, '角色', 'org', 24, 1, 2, '0-24-25', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 26, '管理员', 'org', 24, 1, 2, '0-24-26', '-权限管理-管理员', 'vant-manager-o', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "管理员"}}}', 100);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 27, '配置中心', 'org', 0, 0, 1, '0-27', '-配置中心', 'autoicon-ep-setting', '', '{"i18n": {"title": {"en": "Config Center", "zh-cn": "配置中心"}}}', 20);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '应用配置', 'platform', 9, 1, 3, '0-8-9-16', '-系统管理-配置中心-应用配置', 'autoicon-ep-set-up', '/platform/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, 'APP管理', 'platform', 8, 0, 2, '0-8-17', '-系统管理-APP管理', 'autoicon-ep-suitcase-line', '', '{"i18n": {"title": {"en": "APP Manage", "zh-cn": "APP管理"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, 'APP', 'platform', 17, 1, 3, '0-8-17-18', '-系统管理-APP管理-APP', 'autoicon-ep-apple', '/app/app', '{"i18n": {"title": {"en": "App", "zh-cn": "APP"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '安装包', 'platform', 17, 1, 3, '0-8-17-19', '-系统管理-APP管理-安装包', 'autoicon-ep-box', '/app/pkg', '{"i18n": {"title": {"en": "Pkg", "zh-cn": "安装包"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 20, '用户管理', 'platform', 0, 0, 1, '0-20', '-用户管理', 'autoicon-ep-user-filled', '', '{"i18n": {"title": {"en": "User Manage", "zh-cn": "用户管理"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 21, '用户', 'platform', 20, 1, 2, '0-20-21', '-用户管理-用户', 'autoicon-ep-user', '/users/users', '{"i18n": {"title": {"en": "Users", "zh-cn": "用户"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 22, '机构管理', 'platform', 0, 0, 1, '0-22', '-机构管理', 'autoicon-ep-office-building', '', '{"i18n": {"title": {"en": "Org Manage", "zh-cn": "机构管理"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 23, '机构', 'platform', 22, 1, 2, '0-22-23', '-机构管理-机构', 'autoicon-ep-school', '/org/org', '{"i18n": {"title": {"en": "Org", "zh-cn": "机构"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 24, '机构管理员', 'platform', 2, 1, 2, '0-2-24', '-权限管理-机构管理员', 'autoicon-ep-avatar', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "机构管理员"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 25, '主页', 'org', 0, 1, 1, '0-25', '-主页', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 26, '权限管理', 'org', 0, 0, 1, '0-26', '-权限管理', 'autoicon-ep-menu', '', '{"i18n": {"title": {"en": "Auth Manage", "zh-cn": "权限管理"}}}', 10);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 27, '角色', 'org', 26, 1, 2, '0-26-27', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 28, '管理员', 'org', 26, 1, 2, '0-26-28', '-权限管理-管理员', 'autoicon-ep-avatar', '/org/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "管理员"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 29, '配置中心', 'org', 0, 0, 1, '0-29', '-配置中心', 'autoicon-ep-setting', '', '{"i18n": {"title": {"en": "Config Center", "zh-cn": "配置中心"}}}', 20);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 30, '应用配置', 'org', 29, 1, 2, '0-29-30', '-配置中心-应用配置', 'autoicon-ep-set-up', '/org/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -976,7 +1011,7 @@ COMMENT ON COLUMN "public"."upload"."created_at" IS '创建时间';
 COMMENT ON COLUMN "public"."upload"."updated_at" IS '更新时间';
 COMMENT ON COLUMN "public"."upload"."upload_id" IS '上传ID';
 COMMENT ON COLUMN "public"."upload"."upload_type" IS '类型：0本地 1阿里云OSS';
-COMMENT ON COLUMN "public"."upload"."upload_config" IS '配置。根据upload_type类型设置';
+COMMENT ON COLUMN "public"."upload"."upload_config" IS '配置。JSON格式，根据类型设置';
 COMMENT ON COLUMN "public"."upload"."is_default" IS '默认：0否 1是';
 COMMENT ON COLUMN "public"."upload"."remark" IS '备注';
 COMMENT ON TABLE "public"."upload" IS '上传表';
@@ -984,7 +1019,7 @@ COMMENT ON TABLE "public"."upload" IS '上传表';
 -- ----------------------------
 -- Records of upload
 -- ----------------------------
-INSERT INTO "public"."upload" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, 0, '{"url": "", "signKey": "secretKey", "isCluster": 1, "fileSaveDir": "", "isSameServer": 0}', 1, '此项目自带文件上传下载功能，可直接部署成文件服务器使用');
+INSERT INTO "public"."upload" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, 0, '{"sign_key": "secretKey", "is_cluster": 1, "server_list": [], "is_same_server": 0}', 1, '此项目自带文件上传下载功能，可直接部署成文件服务器使用');
 
 -- ----------------------------
 -- Table structure for users
@@ -1063,9 +1098,9 @@ COMMENT ON TABLE "public"."users_privacy" IS '用户隐私表';
 -- ----------------------------
 -- Alter sequences owned by
 -- ----------------------------
-ALTER SEQUENCE "public"."app_app_id_seq"
-OWNED BY "public"."app"."app_id";
-SELECT setval('"public"."app_app_id_seq"', 1, false);
+ALTER SEQUENCE "public"."app_pkg_pkg_id_seq"
+OWNED BY "public"."app_pkg"."pkg_id";
+SELECT setval('"public"."app_pkg_pkg_id_seq"', 1, false);
 
 -- ----------------------------
 -- Alter sequences owned by
@@ -1159,18 +1194,21 @@ OWNED BY "public"."users"."user_id";
 SELECT setval('"public"."users_user_id_seq"', 1, false);
 
 -- ----------------------------
--- Indexes structure for table app
--- ----------------------------
-CREATE UNIQUE INDEX "app_name_type_app_type_ver_no_idx" ON "public"."app" USING btree (
-  "name_type" "pg_catalog"."int2_ops" ASC NULLS LAST,
-  "app_type" "pg_catalog"."int2_ops" ASC NULLS LAST,
-  "ver_no" "pg_catalog"."int4_ops" ASC NULLS LAST
-);
-
--- ----------------------------
 -- Primary Key structure for table app
 -- ----------------------------
 ALTER TABLE "public"."app" ADD CONSTRAINT "app_pkey" PRIMARY KEY ("app_id");
+
+-- ----------------------------
+-- Indexes structure for table app_pkg
+-- ----------------------------
+CREATE INDEX "app_pkg_app_id_idx" ON "public"."app_pkg" USING btree (
+  "app_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);
+
+-- ----------------------------
+-- Primary Key structure for table app_pkg
+-- ----------------------------
+ALTER TABLE "public"."app_pkg" ADD CONSTRAINT "app_pkg_pkey" PRIMARY KEY ("pkg_id");
 
 -- ----------------------------
 -- Primary Key structure for table auth_action
