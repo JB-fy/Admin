@@ -4,7 +4,7 @@ const { t, tm } = useI18n()
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
 
-let extraConfig = saveCommon.data.extra_config ? JSON.parse(saveCommon.data.extra_config) : {}
+const extraConfig = saveCommon.data.extra_config ? JSON.parse(saveCommon.data.extra_config) : {}
 const saveForm = reactive({
     ref: null as any,
     loading: false,
@@ -16,12 +16,12 @@ const saveForm = reactive({
             const extraConfig1: { [propName: string]: any } = {}
             if (saveCommon.data.pkg_type == 1) {
                 extraConfig1.pkg_source = extraConfig.pkg_source ?? 0
-                extraConfig1.market_url = extraConfig.market_url
-                extraConfig1.qyq_h5_url = extraConfig.qyq_h5_url
-                extraConfig1.qyq_plist_file = extraConfig.qyq_plist_file
                 delete extraConfig.pkg_source
+                extraConfig1.market_url = extraConfig.market_url
                 delete extraConfig.market_url
+                extraConfig1.qyq_h5_url = extraConfig.qyq_h5_url
                 delete extraConfig.qyq_h5_url
+                extraConfig1.qyq_plist_file = extraConfig.qyq_plist_file
                 delete extraConfig.qyq_plist_file
             }
             return extraConfig1

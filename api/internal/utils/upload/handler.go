@@ -26,7 +26,7 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) model.Handler 
 	}
 	uploadInfo, _ := daoUpload.Upload.CacheGetInfo(handlerObj.Ctx, handlerObj.UploadId)
 	config := uploadInfo[daoUpload.Upload.Columns().UploadConfig].Map()
-	config[`uploadId`] = uploadInfo[daoUpload.Upload.Columns().UploadId]
+	config[`upload_id`] = uploadInfo[daoUpload.Upload.Columns().UploadId]
 	uploadType := uploadInfo[daoUpload.Upload.Columns().UploadType].Uint()
 	if _, ok := uploadFuncMap[uploadType]; !ok {
 		uploadType = uploadTypeDef
@@ -34,8 +34,8 @@ func NewHandler(ctx context.Context, scene string, uploadId uint) model.Handler 
 	switch uploadType {
 	case 0:
 	case 1:
-		if gconv.Bool(config[`isNotify`]) {
-			config[`callbackUrl`] = utils.GetRequestUrl(handlerObj.Ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
+		if gconv.Bool(config[`is_notify`]) {
+			config[`callback_url`] = utils.GetRequestUrl(handlerObj.Ctx, 0) + `/upload/notify/` + uploadInfo[daoUpload.Upload.Columns().UploadId].String()
 		}
 	}
 	handlerObj.upload = NewUpload(ctx, uploadType, config)

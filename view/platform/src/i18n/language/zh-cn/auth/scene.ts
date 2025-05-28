@@ -2,7 +2,6 @@ export default {
     name: {
         scene_id: '场景ID',
         scene_name: '名称',
-        scene_config: '配置',
         token_config: {
             token_type: 'Token方式',
             expire_time: '过期时间',
@@ -26,6 +25,7 @@ export default {
             key_sep: '通用-多字段拼接符',
             val_sep: '通用-单字段拼接符',
         },
+        scene_config: '配置',
         remark: '备注',
         is_stop: '停用',
     },

@@ -28,16 +28,16 @@ import (
 )
 
 type Upload struct {
-	UploadId    uint   `json:"uploadId"`
-	SignKey     string `json:"signKey"`
+	UploadId    uint   `json:"upload_id"`
+	SignKey     string `json:"sign_key"`
 	Url         string `json:"url"`
-	FileSaveDir string `json:"fileSaveDir"`
+	FileSaveDir string `json:"file_save_dir"`
 	ServerList  []struct {
 		Ip   string `json:"ip"`
 		Host string `json:"host"`
-	} `json:"serverList"`
-	IsCluster    uint8 `json:"isCluster"`
-	IsSameServer uint8 `json:"isSameServer"`
+	} `json:"server_list"`
+	IsCluster    uint8 `json:"is_cluster"`
+	IsSameServer uint8 `json:"is_same_server"`
 }
 
 func NewUpload(ctx context.Context, config map[string]any) model.Upload {

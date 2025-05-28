@@ -8,7 +8,6 @@ export default {
         ver_no: '版本号',
         ver_name: '版本名称',
         ver_intro: '版本介绍',
-        extra_config: '额外配置',
         extra_config_1: {
             pkg_source: '苹果-安装包来源',
             market_url: '苹果-应用市场地址',
@@ -16,6 +15,7 @@ export default {
             is_qyq_plist_file: '手动填写plist文件地址',
             qyq_plist_file: '苹果-plist文件',
         },
+        extra_config: '额外配置',
         remark: '备注',
         is_force_prev: '强制更新',
         is_stop: '停用',

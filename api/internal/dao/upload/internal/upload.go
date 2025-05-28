@@ -28,7 +28,7 @@ type UploadColumns struct {
 	UpdatedAt    string // 更新时间
 	UploadId     string // 上传ID
 	UploadType   string // 类型：0本地 1阿里云OSS
-	UploadConfig string // 配置。根据upload_type类型设置
+	UploadConfig string // 配置。JSON格式，根据类型设置
 	IsDefault    string // 默认：0否 1是
 	Remark       string // 备注
 }

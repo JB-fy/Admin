@@ -4,10 +4,10 @@ const { t, tm } = useI18n()
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
 
-let sceneConfig = saveCommon.data.scene_config ? JSON.parse(saveCommon.data.scene_config) : {}
-let tokenConfig = sceneConfig?.token_config ?? {}
+const sceneConfig = saveCommon.data.scene_config ? JSON.parse(saveCommon.data.scene_config) : {}
+const tokenConfig = sceneConfig?.token_config ?? {}
 delete sceneConfig.token_config
-let signConfig = sceneConfig?.sign_config ?? {}
+const signConfig = sceneConfig?.sign_config ?? {}
 delete sceneConfig.sign_config
 const saveForm = reactive({
     ref: null as any,

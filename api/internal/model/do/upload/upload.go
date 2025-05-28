@@ -16,7 +16,7 @@ type Upload struct {
 	UpdatedAt    *gtime.Time // 更新时间
 	UploadId     interface{} // 上传ID
 	UploadType   interface{} // 类型：0本地 1阿里云OSS
-	UploadConfig interface{} // 配置。根据upload_type类型设置
+	UploadConfig interface{} // 配置。JSON格式，根据类型设置
 	IsDefault    interface{} // 默认：0否 1是
 	Remark       interface{} // 备注
 }

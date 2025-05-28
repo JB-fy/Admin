@@ -30,11 +30,11 @@ import (
 type Upload struct {
 	Host            string `json:"host"`
 	Bucket          string `json:"bucket"`
-	AccessKeyId     string `json:"accessKeyId"`
-	AccessKeySecret string `json:"accessKeySecret"`
+	AccessKeyId     string `json:"access_key_id"`
+	AccessKeySecret string `json:"access_key_secret"`
 	Endpoint        string `json:"endpoint"`
-	RoleArn         string `json:"roleArn"`
-	CallbackUrl     string `json:"callbackUrl"`
+	RoleArn         string `json:"role_arn"`
+	CallbackUrl     string `json:"callback_url"`
 	client          *sts20150401.Client
 }
 
