@@ -25,13 +25,25 @@ const queryForm = reactive({
 <template>
     <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
         <el-form-item prop="id">
-            <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :maxlength="15" :clearable="true" />
+            <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :precision="0" :controls="false" />
         </el-form-item>
-        <el-form-item prop="app_name">
-            <el-input v-model="queryCommon.data.app_name" :placeholder="t('app.app.name.app_name')" maxlength="30" :clearable="true" />
+        <el-form-item prop="app_id">
+            <my-select v-model="queryCommon.data.app_id" :placeholder="t('app.pkg.name.app_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/app/app/list' }" />
+        </el-form-item>
+        <el-form-item prop="pkg_type">
+            <el-select-v2 v-model="queryCommon.data.pkg_type" :options="tm('app.pkg.status.pkg_type')" :placeholder="t('app.pkg.name.pkg_type')" :clearable="true" style="width: 86px" />
+        </el-form-item>
+        <el-form-item prop="ver_no">
+            <el-input-number v-model="queryCommon.data.ver_no" :placeholder="t('app.pkg.name.ver_no')" :min="0" :max="4294967295" :precision="0" :controls="false" />
+        </el-form-item>
+        <el-form-item prop="ver_name">
+            <el-input v-model="queryCommon.data.ver_name" :placeholder="t('app.pkg.name.ver_name')" maxlength="30" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="is_force_prev">
+            <el-select-v2 v-model="queryCommon.data.is_force_prev" :options="tm('common.status.whether')" :placeholder="t('app.pkg.name.is_force_prev')" :clearable="true" style="width: 114px" />
         </el-form-item>
         <el-form-item prop="is_stop">
-            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('app.app.name.is_stop')" :clearable="true" style="width: 86px" />
+            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('app.pkg.name.is_stop')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="time_range">
             <el-date-picker

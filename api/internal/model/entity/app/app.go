@@ -10,18 +10,11 @@ import (
 
 // App is the golang structure for table app.
 type App struct {
-	CreatedAt   *gtime.Time `json:"createdAt"   orm:"created_at"    ` // 创建时间
-	UpdatedAt   *gtime.Time `json:"updatedAt"   orm:"updated_at"    ` // 更新时间
-	IsStop      uint        `json:"isStop"      orm:"is_stop"       ` // 停用：0否 1是
-	AppId       uint        `json:"appId"       orm:"app_id"        ` // APPID
-	NameType    uint        `json:"nameType"    orm:"name_type"     ` // 名称：0APP。有两种以上APP时自行扩展
-	AppType     uint        `json:"appType"     orm:"app_type"      ` // 类型：0安卓 1苹果 2PC
-	PackageName string      `json:"packageName" orm:"package_name"  ` // 包名
-	PackageFile string      `json:"packageFile" orm:"package_file"  ` // 安装包
-	VerNo       uint        `json:"verNo"       orm:"ver_no"        ` // 版本号
-	VerName     string      `json:"verName"     orm:"ver_name"      ` // 版本名称
-	VerIntro    string      `json:"verIntro"    orm:"ver_intro"     ` // 版本介绍
-	ExtraConfig string      `json:"extraConfig" orm:"extra_config"  ` // 额外配置
-	Remark      string      `json:"remark"      orm:"remark"        ` // 备注
-	IsForcePrev uint        `json:"isForcePrev" orm:"is_force_prev" ` // 强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关
+	CreatedAt *gtime.Time `json:"createdAt" orm:"created_at" ` // 创建时间
+	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updated_at" ` // 更新时间
+	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
+	AppId     string      `json:"appId"     orm:"app_id"     ` // APPID
+	AppName   string      `json:"appName"   orm:"app_name"   ` // 名称
+	AppConfig string      `json:"appConfig" orm:"app_config" ` // 配置。  JSON格式，需要时设置
+	Remark    string      `json:"remark"    orm:"remark"     ` // 备注
 }

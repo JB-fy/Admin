@@ -5,6 +5,8 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
+
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 type sApp struct{}
@@ -21,7 +23,8 @@ func init() {
 func (logicThis *sApp) Create(ctx context.Context, data map[string]any) (id any, err error) {
 	daoModelThis := daoApp.App.CtxDaoModel(ctx)
 
-	id, err = daoModelThis.HookInsert(data).InsertAndGetId()
+	id = data[daoApp.App.Columns().AppId]
+	_, err = daoModelThis.HookInsert(data).Insert()
 	return
 }
 
@@ -46,6 +49,11 @@ func (logicThis *sApp) Delete(ctx context.Context, filter map[string]any) (row i
 	daoModelThis.SetIdArr(filter)
 	if len(daoModelThis.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 29999998, ``)
+		return
+	}
+
+	if count, _ := daoApp.Pkg.CtxDaoModel(ctx).Filter(daoApp.Pkg.Columns().AppId, daoModelThis.IdArr).Count(); count > 0 {
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.app.app`), count, g.I18n().T(ctx, `name.app.pkg`)}})
 		return
 	}
 

@@ -159,6 +159,15 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/app/app' },
             },
             {
+                path: '/app/pkg',
+                component: async () => {
+                    const component = await import('@/views/app/pkg/Index.vue')
+                    component.default.name = '/app/pkg'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/app/pkg' },
+            },
+            {
                 path: '/users/users',
                 component: async () => {
                     const component = await import('@/views/users/users/Index.vue')

@@ -75,6 +75,7 @@ func InitRouterPlatform(ctx context.Context, s *ghttp.Server) {
 			})
 
 			group.Group(`/app`, func(group *ghttp.RouterGroup) {
+				group.Bind(app.NewPkg())
 				group.Bind(app.NewApp())
 			})
 

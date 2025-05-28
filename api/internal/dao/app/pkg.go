@@ -7,6 +7,7 @@ package app
 import (
 	daoIndex "api/internal/dao"
 	"api/internal/dao/app/internal"
+	"api/internal/utils"
 	"context"
 	"database/sql"
 	"database/sql/driver"
@@ -18,24 +19,24 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-// appDao is the data access object for the table app.
+// pkgDao is the data access object for the table app_pkg.
 // You can define custom methods on it to extend its functionality as needed.
-type appDao struct {
-	*internal.AppDao
+type pkgDao struct {
+	*internal.PkgDao
 }
 
 var (
-	// App is a globally accessible object for table app operations.
-	App = appDao{internal.NewAppDao()}
+	// Pkg is a globally accessible object for table app_pkg operations.
+	Pkg = pkgDao{internal.NewPkgDao()}
 )
 
 // 获取daoModel
-func (daoThis *appDao) CtxDaoModel(ctx context.Context, dbOpt ...any) *daoIndex.DaoModel {
+func (daoThis *pkgDao) CtxDaoModel(ctx context.Context, dbOpt ...any) *daoIndex.DaoModel {
 	return daoIndex.NewDaoModel(ctx, daoThis, dbOpt...)
 }
 
 // 解析分库
-func (daoThis *appDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...any) string {
+func (daoThis *pkgDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...any) string {
 	group := daoThis.Group()
 	// 分库逻辑
 	/* if len(dbGroupOpt) > 0 {
@@ -44,7 +45,7 @@ func (daoThis *appDao) ParseDbGroup(ctx context.Context, dbGroupOpt ...any) stri
 }
 
 // 解析分表
-func (daoThis *appDao) ParseDbTable(ctx context.Context, dbTableOpt ...any) string {
+func (daoThis *pkgDao) ParseDbTable(ctx context.Context, dbTableOpt ...any) string {
 	table := daoThis.Table()
 	// 分表逻辑
 	/* if len(dbTableOpt) > 0 {
@@ -53,17 +54,17 @@ func (daoThis *appDao) ParseDbTable(ctx context.Context, dbTableOpt ...any) stri
 }
 
 // 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
-func (daoThis *appDao) ParseId(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + daoThis.Columns().AppId
+func (daoThis *pkgDao) ParseId(daoModel *daoIndex.DaoModel) string {
+	return daoModel.DbTable + `.` + daoThis.Columns().PkgId
 }
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
-func (daoThis *appDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + daoThis.Columns().AppName
+func (daoThis *pkgDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
+	return daoModel.DbTable + `.` + daoThis.Columns().PkgName
 }
 
 // 解析filter
-func (daoThis *appDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *pkgDao) ParseFilter(filter map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range filter {
 			switch k {
@@ -72,21 +73,25 @@ func (daoThis *appDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Dao
 			m = m.Where(tableXxxx+`.`+k, v)
 			m = m.Handler(daoThis.ParseJoin(tableXxxx, daoModel)) */
 			case `id`, `id_arr`:
-				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().AppId, v)
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().PkgId, v)
 			case `exc_id`, `exc_id_arr`:
 				if gvar.New(v).IsSlice() {
-					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.Columns().AppId, v)
+					m = m.WhereNotIn(daoModel.DbTable+`.`+daoThis.Columns().PkgId, v)
 				} else {
-					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().AppId, v)
+					m = m.WhereNot(daoModel.DbTable+`.`+daoThis.Columns().PkgId, v)
 				}
 			case `label`:
-				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().AppName, `%`+gconv.String(v)+`%`)
-			case daoThis.Columns().AppName:
+				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().PkgName, `%`+gconv.String(v)+`%`)
+			case daoThis.Columns().PkgName:
+				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
+			case daoThis.Columns().VerName:
 				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
+			case `current_ver_no`:
+				m = m.WhereGT(daoModel.DbTable+`.`+daoThis.Columns().VerNo, v)
 			default:
 				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -100,7 +105,7 @@ func (daoThis *appDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Dao
 }
 
 // 解析field
-func (daoThis *appDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *pkgDao) ParseField(field []string, fieldWithParam map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range field {
 			switch v {
@@ -113,6 +118,15 @@ func (daoThis *appDao) ParseField(field []string, fieldWithParam map[string]any,
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
+			case App.Columns().AppName:
+				tableApp := App.ParseDbTable(m.GetCtx())
+				m = m.Fields(tableApp + `.` + v)
+				m = m.Handler(daoThis.ParseJoin(tableApp, daoModel))
+			case `download_url_to_app`, `download_url_to_h5`:
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().PkgType)
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().PkgUrl)
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraConfig)
+				daoModel.AfterField[v] = struct{}{}
 			default:
 				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -135,9 +149,38 @@ func (daoThis *appDao) ParseField(field []string, fieldWithParam map[string]any,
 }
 
 // 处理afterField
-func (daoThis *appDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
+func (daoThis *pkgDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
 	for k, v := range daoModel.AfterField {
 		switch k {
+		case `download_url_to_app`, `download_url_to_h5`:
+			if _, ok := record[k]; ok {
+				continue
+			}
+			// m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraConfig)
+			switch record[daoThis.Columns().PkgType].Uint() {
+			case 1: //苹果
+				extraConfig := record[daoThis.Columns().ExtraConfig].Map()
+				if _, ok := extraConfig[`marketUrl`]; ok {
+					record[`download_url_to_app`] = gvar.New(extraConfig[`marketUrl`]) //itms-apps://itunes.apple.com/app/id6450760452
+					record[`download_url_to_h5`] = gvar.New(extraConfig[`marketUrl`])
+				} else {
+					record[`download_url_to_app`] = gvar.New(utils.GetRequestUrl(ctx, 0) + `/自定义的H5下载页`) //苹果企业签不能在APP内做更新，需要跳转网页下载更新
+					record[`download_url_to_h5`] = gvar.New(`itms-services://?action=download-manifest&url=` + gconv.String(extraConfig[`plistFile`]))
+				}
+			// case 0, 2: //安卓	//PC
+			default:
+				record[`download_url_to_app`] = record[daoThis.Columns().PkgUrl]
+				record[`download_url_to_h5`] = record[daoThis.Columns().PkgUrl]
+			}
+		case `is_force`: //参数：当前版本号
+			isForce := 0
+			if sum, _ := daoModel.CloneNew().Where(daoThis.Columns().PkgType, record[daoThis.Columns().PkgType]).
+				WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().VerNo, record[daoThis.Columns().VerNo]).
+				WhereGT(daoModel.DbTable+`.`+daoThis.Columns().VerNo, v).
+				Sum(daoThis.Columns().IsForcePrev); sum > 0 {
+				isForce = 1
+			}
+			record[k] = gvar.New(isForce)
 		default:
 			if v == struct{}{} {
 				record[k] = gvar.New(nil)
@@ -149,7 +192,7 @@ func (daoThis *appDao) HandleAfterField(ctx context.Context, record gdb.Record, 
 }
 
 // hook select
-func (daoThis *appDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *pkgDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Select: func(ctx context.Context, in *gdb.HookSelectInput) (result gdb.Result, err error) {
 			result, err = in.Next(ctx)
@@ -172,14 +215,11 @@ func (daoThis *appDao) HookSelect(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 }
 
 // 解析insert
-func (daoThis *appDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *pkgDao) ParseInsert(insert map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range insert {
 			switch k {
-			case `id`, daoThis.Columns().AppId:
-				daoModel.SaveData[daoThis.Columns().AppId] = v
-				daoModel.IdArr = []*gvar.Var{gvar.New(v)}
-			case daoThis.Columns().AppConfig:
+			case daoThis.Columns().ExtraConfig:
 				if gconv.String(v) == `` {
 					v = nil
 				}
@@ -199,7 +239,7 @@ func (daoThis *appDao) ParseInsert(insert map[string]any, daoModel *daoIndex.Dao
 }
 
 // hook insert
-func (daoThis *appDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *pkgDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Insert: func(ctx context.Context, in *gdb.HookInsertInput) (result sql.Result, err error) {
 			result, err = in.Next(ctx)
@@ -220,13 +260,11 @@ func (daoThis *appDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 }
 
 // 解析update
-func (daoThis *appDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *pkgDao) ParseUpdate(update map[string]any, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range update {
 			switch k {
-			case `id`:
-				daoModel.SaveData[daoThis.Columns().AppId] = v
-			case daoThis.Columns().AppConfig:
+			case daoThis.Columns().ExtraConfig:
 				if gconv.String(v) == `` {
 					daoModel.SaveData[k] = nil
 					continue
@@ -247,7 +285,7 @@ func (daoThis *appDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Dao
 }
 
 // hook update
-func (daoThis *appDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *pkgDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Update: func(ctx context.Context, in *gdb.HookUpdateInput) (result sql.Result, err error) {
 			if len(daoModel.SaveData) == 0 {
@@ -278,7 +316,7 @@ func (daoThis *appDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 }
 
 // hook delete
-func (daoThis *appDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
+func (daoThis *pkgDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 	return gdb.HookHandler{
 		Delete: func(ctx context.Context, in *gdb.HookDeleteInput) (result sql.Result, err error) { //有软删除字段时需改成Update事件
 			result, err = in.Next(ctx)
@@ -291,20 +329,18 @@ func (daoThis *appDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 				return
 			} */
 
-			/* // 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
-			Pkg.CtxDaoModel(ctx).Filter(Pkg.Columns().AppId, daoModel.IdArr).Delete() */
 			return
 		},
 	}
 }
 
 // 解析group
-func (daoThis *appDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *pkgDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range group {
 			switch v {
 			case `id`:
-				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().AppId)
+				m = m.Group(daoModel.DbTable + `.` + daoThis.Columns().PkgId)
 			default:
 				if daoThis.Contains(v) {
 					m = m.Group(daoModel.DbTable + `.` + v)
@@ -318,7 +354,7 @@ func (daoThis *appDao) ParseGroup(group []string, daoModel *daoIndex.DaoModel) g
 }
 
 // 解析order
-func (daoThis *appDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *pkgDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		for _, v := range order {
 			v = gstr.Trim(v)
@@ -326,7 +362,11 @@ func (daoThis *appDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) g
 			k := gstr.Split(kArr[0], ` `)[0]
 			switch k {
 			case `id`:
-				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().AppId, 1))
+				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().PkgId, 1))
+			case daoThis.Columns().VerNo:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().PkgId)
 			default:
 				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
@@ -340,7 +380,7 @@ func (daoThis *appDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) g
 }
 
 // 解析join
-func (daoThis *appDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
+func (daoThis *pkgDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) gdb.ModelHandler {
 	return func(m *gdb.Model) *gdb.Model {
 		if _, ok := daoModel.JoinTableMap[joinTable]; ok {
 			return m
@@ -350,8 +390,10 @@ func (daoThis *appDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) 
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
+		case App.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable, joinTable+`.`+App.Columns().AppId+` = `+daoModel.DbTable+`.`+daoThis.Columns().AppId)
 		default:
-			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().AppId+` = `+daoModel.DbTable+`.`+daoThis.Columns().AppId)
+			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().PkgId+` = `+daoModel.DbTable+`.`+daoThis.Columns().PkgId)
 		}
 		return m
 	}

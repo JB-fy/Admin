@@ -18,10 +18,19 @@ type (
 		// 删除
 		Delete(ctx context.Context, filter map[string]any) (row int64, err error)
 	}
+	IAppPkg interface {
+		// 新增
+		Create(ctx context.Context, data map[string]any) (id any, err error)
+		// 修改
+		Update(ctx context.Context, filter map[string]any, data map[string]any) (row int64, err error)
+		// 删除
+		Delete(ctx context.Context, filter map[string]any) (row int64, err error)
+	}
 )
 
 var (
-	localApp IApp
+	localApp    IApp
+	localAppPkg IAppPkg
 )
 
 func App() IApp {
@@ -33,4 +42,15 @@ func App() IApp {
 
 func RegisterApp(i IApp) {
 	localApp = i
+}
+
+func AppPkg() IAppPkg {
+	if localAppPkg == nil {
+		panic("implement not found for interface IAppPkg, forgot register?")
+	}
+	return localAppPkg
+}
+
+func RegisterAppPkg(i IAppPkg) {
+	localAppPkg = i
 }
