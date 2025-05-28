@@ -232,7 +232,7 @@ const saveDrawer = reactive({
                                 :inline-prompt="true"
                                 style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                             />
-                            <el-alert :title="t('upload.upload.tip.upload_config_0.is_same_server')" type="info" :show-icon="true" :closable="false" />
+                            <el-alert :title="t('upload.upload.tip.upload_config_0.is_same_server')" type="info" :show-icon="true" :closable="false" style="margin-left: 10px" />
                         </el-form-item>
                     </template>
                 </template>
