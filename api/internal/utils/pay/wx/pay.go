@@ -24,18 +24,18 @@ import (
 
 type Pay struct {
 	Ctx        context.Context
-	AppId      string `json:"appId"`
-	Mchid      string `json:"mchid"`
-	SerialNo   string `json:"serialNo"`
-	APIv3Key   string `json:"apiV3Key"`
-	PrivateKey string `json:"privateKey"`
-	NotifyUrl  string `json:"notifyUrl"`
+	AppId      string `json:"app_id"`
+	MchId      string `json:"mch_id"`
+	SerialNo   string `json:"serial_no"`
+	APIv3Key   string `json:"api_v3_key"`
+	PrivateKey string `json:"private_key"`
+	NotifyUrl  string `json:"notify_url"`
 }
 
 func NewPay(ctx context.Context, config map[string]any) model.Pay {
 	obj := &Pay{}
 	gconv.Struct(config, obj)
-	if obj.AppId == `` || obj.Mchid == `` || obj.SerialNo == `` || obj.APIv3Key == `` || obj.PrivateKey == `` || obj.NotifyUrl == `` {
+	if obj.AppId == `` || obj.MchId == `` || obj.SerialNo == `` || obj.APIv3Key == `` || obj.PrivateKey == `` || obj.NotifyUrl == `` {
 		panic(`缺少配置：支付-微信`)
 	}
 	return obj
@@ -47,7 +47,7 @@ func (payThis *Pay) App(ctx context.Context, payReq model.PayReq) (payRes model.
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
+	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.MchId, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
@@ -57,7 +57,7 @@ func (payThis *Pay) App(ctx context.Context, payReq model.PayReq) (payRes model.
 	resp, result, err := svc.Prepay(ctx,
 		app.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
-			Mchid:       core.String(payThis.Mchid),
+			Mchid:       core.String(payThis.MchId),
 			Description: core.String(payReq.Desc),
 			OutTradeNo:  core.String(payReq.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
@@ -84,7 +84,7 @@ func (payThis *Pay) H5(ctx context.Context, payReq model.PayReq) (payRes model.P
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
+	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.MchId, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
@@ -100,7 +100,7 @@ func (payThis *Pay) H5(ctx context.Context, payReq model.PayReq) (payRes model.P
 	resp, result, err := svc.Prepay(ctx,
 		h5.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
-			Mchid:       core.String(payThis.Mchid),
+			Mchid:       core.String(payThis.MchId),
 			Description: core.String(payReq.Desc),
 			OutTradeNo:  core.String(payReq.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
@@ -137,7 +137,7 @@ func (payThis *Pay) QRCode(ctx context.Context, payReq model.PayReq) (payRes mod
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
+	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.MchId, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
@@ -147,7 +147,7 @@ func (payThis *Pay) QRCode(ctx context.Context, payReq model.PayReq) (payRes mod
 	resp, result, err := svc.Prepay(ctx,
 		native.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
-			Mchid:       core.String(payThis.Mchid),
+			Mchid:       core.String(payThis.MchId),
 			Description: core.String(payReq.Desc),
 			OutTradeNo:  core.String(payReq.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
@@ -174,7 +174,7 @@ func (payThis *Pay) Jsapi(ctx context.Context, payReq model.PayReq) (payRes mode
 		return
 	}
 	// 使用商户私钥等初始化 client，并使它具有自动定时获取微信支付平台证书的能力
-	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.Mchid, payThis.SerialNo, privateKey, payThis.APIv3Key))
+	client, err := core.NewClient(ctx, option.WithWechatPayAutoAuthCipher(payThis.MchId, payThis.SerialNo, privateKey, payThis.APIv3Key))
 	if err != nil {
 		return
 	}
@@ -184,7 +184,7 @@ func (payThis *Pay) Jsapi(ctx context.Context, payReq model.PayReq) (payRes mode
 	resp, result, err := svc.Prepay(ctx,
 		jsapi.PrepayRequest{
 			Appid:       core.String(payThis.AppId),
-			Mchid:       core.String(payThis.Mchid),
+			Mchid:       core.String(payThis.MchId),
 			Description: core.String(payReq.Desc),
 			OutTradeNo:  core.String(payReq.OrderNo),
 			NotifyUrl:   core.String(payThis.NotifyUrl),
@@ -215,12 +215,12 @@ func (payThis *Pay) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo mo
 	}
 
 	// 1. 使用 `RegisterDownloaderWithPrivateKey` 注册下载器
-	err = downloader.MgrInstance().RegisterDownloaderWithPrivateKey(ctx, privateKey, payThis.SerialNo, payThis.Mchid, payThis.APIv3Key)
+	err = downloader.MgrInstance().RegisterDownloaderWithPrivateKey(ctx, privateKey, payThis.SerialNo, payThis.MchId, payThis.APIv3Key)
 	if err != nil {
 		return
 	}
 	// 2. 获取商户号对应的微信支付平台证书访问器
-	certificateVisitor := downloader.MgrInstance().GetCertificateVisitor(payThis.Mchid)
+	certificateVisitor := downloader.MgrInstance().GetCertificateVisitor(payThis.MchId)
 	// 3. 使用证书访问器初始化 `notify.Handler`
 	handler := notify.NewNotifyHandler(payThis.APIv3Key, verifiers.NewSHA256WithRSAVerifier(certificateVisitor))
 

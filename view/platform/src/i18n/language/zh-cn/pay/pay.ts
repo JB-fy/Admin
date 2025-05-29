@@ -5,16 +5,16 @@ export default {
         pay_config: '配置',
         pay_config_0: {
             app_id: '支付宝-AppID',
-            privateKey: '支付宝-私钥',
-            publicKey: '支付宝-公钥',
-            opAppId: '支付宝-小程序AppID',
+            private_key: '支付宝-私钥',
+            public_key: '支付宝-公钥',
+            op_app_id: '支付宝-小程序AppID',
         },
         pay_config_1: {
             app_id: '微信-AppID',
-            mchid: '微信-商户ID',
-            serialNo: '微信-证书序列号',
-            apiV3Key: '微信-APIV3密钥',
-            privateKey: '微信-私钥',
+            mch_id: '微信-商户ID',
+            serial_no: '微信-证书序列号',
+            api_v3_key: '微信-APIV3密钥',
+            private_key: '微信-私钥',
         },
         pay_rate: '费率',
         total_amount: '总额',
@@ -28,9 +28,9 @@ export default {
         ],
     },
     tip: {
-        pay_config: '根据pay_type类型设置',
+        pay_config: 'JSON格式，根据类型设置',
         pay_config_0: {
-            opAppId: 'JSAPI支付需设置',
+            op_app_id: 'JSAPI支付需设置',
         },
     },
 }

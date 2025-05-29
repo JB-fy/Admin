@@ -763,7 +763,7 @@ COMMENT ON COLUMN "public"."pay"."updated_at" IS '更新时间';
 COMMENT ON COLUMN "public"."pay"."pay_id" IS '支付ID';
 COMMENT ON COLUMN "public"."pay"."pay_name" IS '名称';
 COMMENT ON COLUMN "public"."pay"."pay_type" IS '类型：0支付宝 1微信';
-COMMENT ON COLUMN "public"."pay"."pay_config" IS '配置。根据pay_type类型设置';
+COMMENT ON COLUMN "public"."pay"."pay_config" IS '配置。JSON格式，根据类型设置';
 COMMENT ON COLUMN "public"."pay"."pay_rate" IS '费率';
 COMMENT ON COLUMN "public"."pay"."total_amount" IS '总额';
 COMMENT ON COLUMN "public"."pay"."balance" IS '余额';

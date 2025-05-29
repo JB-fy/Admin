@@ -506,7 +506,7 @@ CREATE TABLE `pay`  (
   `pay_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '支付ID',
   `pay_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '名称',
   `pay_type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '类型：0支付宝 1微信',
-  `pay_config` json NOT NULL COMMENT '配置。根据pay_type类型设置',
+  `pay_config` json NOT NULL COMMENT '配置。JSON格式，根据类型设置',
   `pay_rate` decimal(4, 4) UNSIGNED NOT NULL DEFAULT 0.0000 COMMENT '费率',
   `total_amount` decimal(14, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '总额',
   `balance` decimal(18, 6) UNSIGNED NOT NULL DEFAULT 0.000000 COMMENT '余额',

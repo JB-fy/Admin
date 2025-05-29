@@ -29,7 +29,7 @@ type PayColumns struct {
 	PayId       string // 支付ID
 	PayName     string // 名称
 	PayType     string // 类型：0支付宝 1微信
-	PayConfig   string // 配置。根据pay_type类型设置
+	PayConfig   string // 配置。JSON格式，根据类型设置
 	PayRate     string // 费率
 	TotalAmount string // 总额
 	Balance     string // 余额

@@ -5,16 +5,6 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-type PayConfig struct {
-	AppId      *string `json:"appId,omitempty" v:"" dc:"支付宝-AppID 或 微信-AppID"`
-	PrivateKey *string `json:"privateKey,omitempty" v:"" dc:"支付宝-私钥 或 微信-私钥"`
-	PublicKey  *string `json:"publicKey,omitempty" v:"" dc:"支付宝-公钥"`
-	OpAppId    *string `json:"opAppId,omitempty" v:"" dc:"支付宝-小程序AppID。JSAPI支付需设置"`
-	Mchid      *string `json:"mchid,omitempty" v:"" dc:"微信-商户ID"`
-	SerialNo   *string `json:"serialNo,omitempty" v:"" dc:"微信-证书序列号"`
-	ApiV3Key   *string `json:"apiV3Key,omitempty" v:"" dc:"微信-APIV3密钥"`
-}
-
 // 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
 type PayInfo struct {
 	Id          *uint       `json:"id,omitempty" dc:"ID"`
@@ -22,7 +12,7 @@ type PayInfo struct {
 	PayId       *uint       `json:"pay_id,omitempty" dc:"支付ID"`
 	PayName     *string     `json:"pay_name,omitempty" dc:"名称"`
 	PayType     *uint       `json:"pay_type,omitempty" dc:"类型：0支付宝 1微信"`
-	PayConfig   *string     `json:"pay_config,omitempty" dc:"配置。根据pay_type类型设置"`
+	PayConfig   *string     `json:"pay_config,omitempty" dc:"配置。JSON格式，根据类型设置"`
 	PayRate     *float64    `json:"pay_rate,omitempty" dc:"费率"`
 	TotalAmount *float64    `json:"total_amount,omitempty" dc:"总额"`
 	Balance     *float64    `json:"balance,omitempty" dc:"余额"`
@@ -77,10 +67,10 @@ type PayInfoRes struct {
 /*--------新增 开始--------*/
 type PayCreateReq struct {
 	g.Meta    `path:"/pay/create" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付配置" sm:"新增"`
-	PayName   *string    `json:"pay_name,omitempty" v:"required|max-length:30" dc:"名称"`
-	PayType   *uint      `json:"pay_type,omitempty" v:"required|in:0,1" dc:"类型：0支付宝 1微信"`
-	PayConfig *PayConfig `json:"pay_config,omitempty" v:"required|json" dc:"配置。根据pay_type类型设置"`
-	PayRate   *float64   `json:"pay_rate,omitempty" v:"between:0,0.9999" dc:"费率"`
+	PayName   *string  `json:"pay_name,omitempty" v:"required|max-length:30" dc:"名称"`
+	PayType   *uint    `json:"pay_type,omitempty" v:"required|in:0,1" dc:"类型：0支付宝 1微信"`
+	PayConfig *string  `json:"pay_config,omitempty" v:"required|json" dc:"配置。JSON格式，根据类型设置"`
+	PayRate   *float64 `json:"pay_rate,omitempty" v:"between:0,0.9999" dc:"费率"`
 	// TotalAmount *float64 `json:"total_amount,omitempty" v:"between:0,999999999999.99" dc:"总额"`
 	// Balance     *float64 `json:"balance,omitempty" v:"between:0,999999999999.999999" dc:"余额"`
 	Remark *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
@@ -91,12 +81,12 @@ type PayCreateReq struct {
 /*--------修改 开始--------*/
 type PayUpdateReq struct {
 	g.Meta    `path:"/pay/update" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付配置" sm:"修改"`
-	Id        uint       `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr     []uint     `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	PayName   *string    `json:"pay_name,omitempty" filter:"-" data:"pay_name,omitempty" v:"max-length:30" dc:"名称"`
-	PayType   *uint      `json:"pay_type,omitempty" filter:"-" data:"pay_type,omitempty" v:"in:0,1" dc:"类型：0支付宝 1微信"`
-	PayConfig *PayConfig `json:"pay_config,omitempty" filter:"-" data:"pay_config,omitempty" v:"json" dc:"配置。根据pay_type类型设置"`
-	PayRate   *float64   `json:"pay_rate,omitempty" filter:"-" data:"pay_rate,omitempty" v:"between:0,0.9999" dc:"费率"`
+	Id        uint     `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr     []uint   `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	PayName   *string  `json:"pay_name,omitempty" filter:"-" data:"pay_name,omitempty" v:"max-length:30" dc:"名称"`
+	PayType   *uint    `json:"pay_type,omitempty" filter:"-" data:"pay_type,omitempty" v:"in:0,1" dc:"类型：0支付宝 1微信"`
+	PayConfig *string  `json:"pay_config,omitempty" filter:"-" data:"pay_config,omitempty" v:"json" dc:"配置。JSON格式，根据类型设置"`
+	PayRate   *float64 `json:"pay_rate,omitempty" filter:"-" data:"pay_rate,omitempty" v:"between:0,0.9999" dc:"费率"`
 	// TotalAmount *float64 `json:"total_amount,omitempty" filter:"-" data:"total_amount,omitempty" v:"between:0,999999999999.99" dc:"总额"`
 	// Balance     *float64 `json:"balance,omitempty" filter:"-" data:"balance,omitempty" v:"between:0,999999999999.999999" dc:"余额"`
 	Remark *string `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`

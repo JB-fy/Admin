@@ -17,7 +17,7 @@ type Pay struct {
 	PayId       interface{} // 支付ID
 	PayName     interface{} // 名称
 	PayType     interface{} // 类型：0支付宝 1微信
-	PayConfig   interface{} // 配置。根据pay_type类型设置
+	PayConfig   interface{} // 配置。JSON格式，根据类型设置
 	PayRate     interface{} // 费率
 	TotalAmount interface{} // 总额
 	Balance     interface{} // 余额

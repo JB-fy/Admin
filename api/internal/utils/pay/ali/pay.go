@@ -11,11 +11,11 @@ import (
 )
 
 type Pay struct {
-	AppId      string `json:"appId"`
-	PrivateKey string `json:"privateKey"`
-	PublicKey  string `json:"publicKey"`
-	OpAppId    string `json:"opAppId"`
-	NotifyUrl  string `json:"notifyUrl"`
+	AppId      string `json:"app_id"`
+	PrivateKey string `json:"private_key"`
+	PublicKey  string `json:"public_key"`
+	OpAppId    string `json:"op_app_id"`
+	NotifyUrl  string `json:"notify_url"`
 }
 
 func NewPay(ctx context.Context, config map[string]any) model.Pay {

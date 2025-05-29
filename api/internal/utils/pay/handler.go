@@ -18,7 +18,7 @@ type Handler struct {
 func NewHandler(ctx context.Context, payInfo gdb.Record) model.Handler {
 	handlerObj := &Handler{Ctx: ctx}
 	config := payInfo[daoPay.Pay.Columns().PayConfig].Map()
-	config[`notifyUrl`] = utils.GetRequestUrl(ctx, 0) + `/pay/notify/` + payInfo[daoPay.Pay.Columns().PayId].String()
+	config[`notify_url`] = utils.GetRequestUrl(ctx, 0) + `/pay/notify/` + payInfo[daoPay.Pay.Columns().PayId].String()
 	handlerObj.pay = NewPay(ctx, payInfo[daoPay.Pay.Columns().PayType].Uint(), config)
 	return handlerObj
 }
