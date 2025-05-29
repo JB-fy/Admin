@@ -32,15 +32,15 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 				actionIdSet.Add(`platformConfigSmsRead`)
 			case `email_code`, `email_type`, `email_of_common`:
 				actionIdSet.Add(`platformConfigEmailRead`)
-			case `idCardType`, `idCardOfAliyun`:
+			case `id_card_type`, `id_card_of_aliyun`:
 				actionIdSet.Add(`platformConfigIdCardRead`)
-			case `oneClickOfWx`, `oneClickOfYidun`:
+			case `one_click_of_wx`, `one_click_of_yidun`:
 				actionIdSet.Add(`platformConfigOneClickRead`)
-			case `pushType`, `pushOfTx`:
+			case `push_type`, `push_of_tx`:
 				actionIdSet.Add(`platformConfigPushRead`)
-			case `vodType`, `vodOfAliyun`:
+			case `vod_type`, `vod_of_aliyun`:
 				actionIdSet.Add(`platformConfigVodRead`)
-			case `wxGzh`:
+			case `wx_gzh`:
 				actionIdSet.Add(`platformConfigWxRead`)
 			}
 		}
@@ -83,15 +83,15 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 				actionIdSet.Add(`platformConfigSmsSave`)
 			case `email_code`, `email_type`, `email_of_common`:
 				actionIdSet.Add(`platformConfigEmailSave`)
-			case `idCardType`, `idCardOfAliyun`:
+			case `id_card_type`, `id_card_of_aliyun`:
 				actionIdSet.Add(`platformConfigIdCardSave`)
-			case `oneClickOfWx`, `oneClickOfYidun`:
+			case `one_click_of_wx`, `one_click_of_yidun`:
 				actionIdSet.Add(`platformConfigOneClickSave`)
-			case `pushType`, `pushOfTx`:
+			case `push_type`, `push_of_tx`:
 				actionIdSet.Add(`platformConfigPushSave`)
-			case `vodType`, `vodOfAliyun`:
+			case `vod_type`, `vod_of_aliyun`:
 				actionIdSet.Add(`platformConfigVodSave`)
-			case `wxGzh`:
+			case `wx_gzh`:
 				actionIdSet.Add(`platformConfigWxSave`)
 			}
 		}

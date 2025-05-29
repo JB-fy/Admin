@@ -12,9 +12,9 @@ import (
 var (
 	pushMap     = map[string]model.Push{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	pushMu      sync.Mutex
-	pushTypeDef = `pushOfTx`
+	pushTypeDef = `push_of_tx`
 	pushFuncMap = map[string]model.PushFunc{
-		`pushOfTx`: tx.NewPush,
+		`push_of_tx`: tx.NewPush,
 	}
 )
 

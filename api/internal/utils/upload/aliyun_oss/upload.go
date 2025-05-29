@@ -82,12 +82,12 @@ func (uploadThis *Upload) Sign(ctx context.Context, param model.UploadParam) (si
 	}
 	//是否回调
 	if uploadThis.CallbackUrl != `` {
-		callback := UploadCallback{
-			Url:      uploadThis.CallbackUrl,
-			Body:     `filename=${object}&size=${size}&mime_type=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
-			BodyType: `application/x-www-form-urlencoded`,
-		}
-		uploadData[`callback`] = uploadThis.createCallbackStr(callback)
+		callbackStr, _ := json.Marshal(map[string]any{
+			`callbackUrl`:      uploadThis.CallbackUrl,
+			`callbackBody`:     `filename=${object}&size=${size}&mime_type=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}`,
+			`callbackBodyType`: `application/x-www-form-urlencoded`,
+		})
+		uploadData[`callback`] = base64.StdEncoding.EncodeToString(callbackStr)
 		signInfo.IsRes = 1
 	}
 
@@ -232,18 +232,6 @@ func (uploadThis *Upload) createPolicyBase64(param model.UploadParam) (policyBas
 	policyBase64 = base64.StdEncoding.EncodeToString(policyStr)
 	// policy = string(policy)
 	return
-}
-
-// 生成回调字符串（web前端直传用）
-func (uploadThis *Upload) createCallbackStr(callback UploadCallback) string {
-	callbackParam := map[string]any{
-		`callbackUrl`:      callback.Url,
-		`callbackBody`:     callback.Body,
-		`callbackBodyType`: callback.BodyType,
-	}
-	callbackStr, _ := json.Marshal(callbackParam)
-	callbackBase64 := base64.StdEncoding.EncodeToString(callbackStr)
-	return string(callbackBase64)
 }
 
 // 获取bucketHost

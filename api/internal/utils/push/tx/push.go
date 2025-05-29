@@ -21,8 +21,8 @@ import (
 
 type Push struct {
 	Host      string `json:"host"`
-	AccessID  string `json:"accessID"`
-	SecretKey string `json:"secretKey"`
+	AccessID  string `json:"access_id"`
+	SecretKey string `json:"secret_key"`
 	client    *gclient.Client
 }
 

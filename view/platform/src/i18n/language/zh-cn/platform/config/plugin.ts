@@ -2,16 +2,16 @@ export default {
     label: {
         sms: '短信',
         email: '邮箱',
-        idCard: '实名认证',
-        oneClick: '一键登录',
+        id_card: '实名认证',
+        one_click: '一键登录',
         push: '推送',
         vod: '视频点播',
         wx: '微信',
 
-        oneClickOfWx: '微信',
-        oneClickOfYidun: '易盾',
+        one_click_of_wx: '微信',
+        one_click_of_yidun: '易盾',
 
-        wxGzh: '公众号',
+        wx_gzh: '公众号',
     },
     name: {
         sms_type: '短信方式',
@@ -35,56 +35,56 @@ export default {
             password: '通用-密码',
         },
 
-        idCardType: '实名认证方式',
-        idCardOfAliyun: {
+        id_card_type: '实名认证方式',
+        id_card_of_aliyun: {
             url: '阿里云-请求地址',
             appcode: '阿里云-Appcode',
         },
 
-        oneClickOfWx: {
+        one_click_of_wx: {
             host: '微信-域名',
-            appId: '微信-AppId',
+            app_id: '微信-AppId',
             secret: '微信-密钥',
         },
-        oneClickOfYidun: {
-            secretId: '易盾-SecretId',
-            secretKey: '易盾-SecretKey',
-            businessId: '易盾-BusinessId',
+        one_click_of_yidun: {
+            secret_id: '易盾-SecretId',
+            secret_key: '易盾-SecretKey',
+            business_id: '易盾-BusinessId',
         },
 
-        pushType: '推送方式',
-        pushOfTx: {
+        push_type: '推送方式',
+        push_of_tx: {
             host: '腾讯移动推送-域名',
-            accessIDOfAndroid: '腾讯移动推送-AccessID(安卓)',
-            secretKeyOfAndroid: '腾讯移动推送-SecretKey(安卓)',
-            accessIDOfIos: '腾讯移动推送-AccessID(苹果)',
-            secretKeyOfIos: '腾讯移动推送-SecretKey(苹果)',
-            accessIDOfMacOS: '腾讯移动推送-AccessID(苹果电脑)',
-            secretKeyOfMacOS: '腾讯移动推送-SecretKey(苹果电脑)',
+            access_id_of_android: '腾讯移动推送-AccessID(安卓)',
+            secret_key_of_android: '腾讯移动推送-SecretKey(安卓)',
+            access_id_of_ios: '腾讯移动推送-AccessID(苹果)',
+            secret_key_of_ios: '腾讯移动推送-SecretKey(苹果)',
+            access_id_of_mac_os: '腾讯移动推送-AccessID(苹果电脑)',
+            secret_key_of_mac_os: '腾讯移动推送-SecretKey(苹果电脑)',
         },
 
-        vodType: '视频点播方式',
-        vodOfAliyun: {
+        vod_type: '视频点播方式',
+        vod_of_aliyun: {
             access_key_id: '阿里云-AccessKeyId',
             access_key_secret: '阿里云-AccessKeySecret',
             endpoint: '阿里云-Endpoint',
-            roleArn: '阿里云-RoleArn',
+            role_arn: '阿里云-RoleArn',
         },
 
-        wxGzh: {
+        wx_gzh: {
             host: '公众号-域名',
-            appId: '公众号-AppId',
+            app_id: '公众号-AppId',
             secret: '公众号-密钥',
             token: '公众号-Token',
-            encodingAESKey: '公众号-EncodingAESKey',
+            encoding_aes_key: '公众号-EncodingAESKey',
         },
     },
     status: {
         sms_type: [{ value: `sms_of_aliyun`, label: '阿里云' }],
         email_type: [{ value: `email_of_common`, label: '通用' }],
-        idCardType: [{ value: `idCardOfAliyun`, label: '阿里云' }],
-        pushType: [{ value: `pushOfTx`, label: '腾讯移动推送' }],
-        vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
+        id_card_type: [{ value: `id_card_of_aliyun`, label: '阿里云' }],
+        push_type: [{ value: `push_of_tx`, label: '腾讯移动推送' }],
+        vod_type: [{ value: `vod_of_aliyun`, label: '阿里云' }],
     },
     tip: {
         email_code: {
@@ -94,7 +94,7 @@ export default {
             password: '注意：如果使用QQ邮箱，此处应填写QQ邮箱的授权码，而不是密码',
         },
 
-        idCardOfAliyun: {
+        id_card_of_aliyun: {
             url: '购买地址：<a target="_blank" href="https://market.aliyun.com/products/57000002/cmapi014760.html">https://market.aliyun.com/products/57000002/cmapi014760.html</a>（也可购买阿里云市场其它接口，但需修改id_card_of_aliyun.go文件）',
         },
 
@@ -102,13 +102,13 @@ export default {
             host: '参考：<a target="_blank" href="https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html">https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Interface_field_description.html</a>',
         },
 
-        pushOfTx: {
+        push_of_tx: {
             host: '参考：<a target="_blank" href="https://cloud.tencent.com/document/product/548/49157">https://cloud.tencent.com/document/product/548/49157</a>',
         },
 
-        vodOfAliyun: {
+        vod_of_aliyun: {
             endpoint: '用于生成STS凭证。参考：<a target="_blank" href="https://api.aliyun.com/product/Sts">https://api.aliyun.com/product/Sts</a>',
-            roleArn: '用于生成STS凭证',
+            role_arn: '用于生成STS凭证',
         },
     },
 }

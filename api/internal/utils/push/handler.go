@@ -11,6 +11,8 @@ type Handler struct {
 	push model.Push
 }
 
+var deviceTypeMap = map[uint]string{0: `android`, 1: `ios`, 2: `mac_os`}
+
 // 设备类型：0安卓 1苹果 2苹果电脑
 func NewHandler(ctx context.Context, deviceType uint, pushTypeOpt ...string) model.Handler {
 	handlerObj := &Handler{Ctx: ctx}
@@ -18,20 +20,20 @@ func NewHandler(ctx context.Context, deviceType uint, pushTypeOpt ...string) mod
 	if len(pushTypeOpt) > 0 {
 		pushType = pushTypeOpt[0]
 	} else {
-		pushType = daoPlatform.Config.GetOne(ctx, `pushType`).String()
+		pushType = daoPlatform.Config.GetOne(ctx, `push_type`).String()
 	}
 	if _, ok := pushFuncMap[pushType]; !ok {
 		pushType = pushTypeDef
 	}
 	config := daoPlatform.Config.GetOne(ctx, pushType).Map()
 	switch pushType {
-	case `pushOfTx`:
-		deviceTypeStr, ok := map[uint]string{0: `Android`, 1: `Ios`, 2: `MacOS`}[deviceType]
+	case `push_of_tx`:
+		deviceTypeStr, ok := deviceTypeMap[deviceType]
 		if !ok {
-			deviceTypeStr = `Android`
+			deviceTypeStr = `android`
 		}
-		config[`accessID`] = config[`accessIDOf`+deviceTypeStr]
-		config[`secretKey`] = config[`secretKeyOf`+deviceTypeStr]
+		config[`access_id`] = config[`access_id_of_`+deviceTypeStr]
+		config[`secret_key`] = config[`secret_key_of_`+deviceTypeStr]
 	}
 	handlerObj.push = NewPush(ctx, pushType, config)
 	return handlerObj
@@ -40,6 +42,7 @@ func NewHandler(ctx context.Context, deviceType uint, pushTypeOpt ...string) mod
 func (handlerThis *Handler) Push(param model.PushParam) (err error) {
 	return handlerThis.push.Push(handlerThis.Ctx, param)
 }
+
 func (handlerThis *Handler) Tag(param model.TagParam) (err error) {
 	return handlerThis.push.Tag(handlerThis.Ctx, param)
 }

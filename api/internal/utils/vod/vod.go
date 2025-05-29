@@ -12,9 +12,9 @@ import (
 var (
 	vodMap     = map[string]model.Vod{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	vodMu      sync.Mutex
-	vodTypeDef = `vodOfAliyun`
+	vodTypeDef = `vod_of_aliyun`
 	vodFuncMap = map[string]model.VodFunc{
-		`vodOfAliyun`: aliyun.NewVod,
+		`vod_of_aliyun`: aliyun.NewVod,
 	}
 )
 

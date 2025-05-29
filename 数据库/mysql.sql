@@ -656,8 +656,8 @@ CREATE TABLE `platform_config`  (
 INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'email_code', '{\"subject\":\"您的验证码\",\"template\":\"验证码：{code}\\n说明：\\n1. 验证码在发送后的5分钟内有效。如果验证码过期，请重新请求一个新的验证码。\\n2. 出于安全考虑，请不要将此验证码分享给任何人。\"}');
 INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'email_of_common', '{\"from_email\":\"xxxxxxxx@qq.com\",\"password\":\"xxxxxxxx\",\"smtp_host\":\"smtp.qq.com\",\"smtp_port\":\"465\"}');
 INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'email_type', 'email_of_common');
-INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardOfAliyun', '{\"appcode\":\"appcode\",\"url\":\"http://idcard.market.alicloudapi.com/lianzhuo/idcard\"}');
-INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardType', 'idCardOfAliyun');
+INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'id_card_of_aliyun', '{\"appcode\":\"appcode\",\"url\":\"http://idcard.market.alicloudapi.com/lianzhuo/idcard\"}');
+INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'id_card_type', 'id_card_of_aliyun');
 
 -- ----------------------------
 -- Table structure for platform_server
@@ -696,7 +696,7 @@ CREATE TABLE `upload`  (
 -- ----------------------------
 -- Records of upload
 -- ----------------------------
-INSERT INTO `upload` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, 0, '{\"sign_key\": \"secretKey\", \"is_cluster\": 1, \"server_list\": [], \"is_same_server\": 0}', 1, '此项目自带文件上传下载功能，可直接部署成文件服务器使用');
+INSERT INTO `upload` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, 0, '{\"sign_key\": \"signKey\", \"is_cluster\": 1, \"server_list\": [], \"is_same_server\": 0}', 1, '此项目自带文件上传下载功能，可直接部署成文件服务器使用');
 
 -- ----------------------------
 -- Table structure for users

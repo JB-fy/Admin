@@ -40,49 +40,49 @@ type Config struct {
 		Password  *string `json:"password,omitempty" dc:"通用-密码"`
 	} `json:"email_of_common,omitempty" dc:"邮箱配置-通用"`
 
-	IdCardType     *string `json:"idCardType,omitempty" dc:"实名认证方式"`
+	IdCardType     *string `json:"id_card_type,omitempty" dc:"实名认证方式"`
 	IdCardOfAliyun *struct {
 		Url     *string `json:"url,omitempty" dc:"阿里云-请求地址"`
 		Appcode *string `json:"appcode,omitempty" dc:"阿里云-Appcode"`
-	} `json:"idCardOfAliyun,omitempty" dc:"实名认证配置-阿里云"`
+	} `json:"id_card_of_aliyun,omitempty" dc:"实名认证配置-阿里云"`
 
 	OneClickOfWx *struct {
 		Host   *string `json:"host,omitempty" dc:"微信-域名"`
-		AppId  *string `json:"appId,omitempty" dc:"微信-AppId"`
+		AppId  *string `json:"app_id,omitempty" dc:"微信-AppId"`
 		Secret *string `json:"secret,omitempty" dc:"微信-密钥"`
-	} `json:"oneClickOfWx,omitempty" dc:"一键登录配置-微信"`
+	} `json:"one_click_of_wx,omitempty" dc:"一键登录配置-微信"`
 	OneClickOfYidun *struct {
-		SecretId   *string `json:"secretId,omitempty" dc:"易盾-SecretId"`
-		SecretKey  *string `json:"secretKey,omitempty" dc:"易盾-SecretKey"`
-		BusinessId *string `json:"businessId,omitempty" dc:"易盾-BusinessId"`
-	} `json:"oneClickOfYidun,omitempty" dc:"一键登录配置-易盾"`
+		SecretId   *string `json:"secret_id,omitempty" dc:"易盾-SecretId"`
+		SecretKey  *string `json:"secret_key,omitempty" dc:"易盾-SecretKey"`
+		BusinessId *string `json:"business_id,omitempty" dc:"易盾-BusinessId"`
+	} `json:"one_click_of_yidun,omitempty" dc:"一键登录配置-易盾"`
 
-	PushType *string `json:"pushType,omitempty" dc:"推送方式"`
+	PushType *string `json:"push_type,omitempty" dc:"推送方式"`
 	PushOfTx *struct {
 		Host               *string `json:"host,omitempty" dc:"腾讯移动推送-域名"`
-		AccessIDOfAndroid  *string `json:"accessIDOfAndroid,omitempty" dc:"腾讯移动推送-AccessID(安卓)"`
-		SecretKeyOfAndroid *string `json:"secretKeyOfAndroid,omitempty" dc:"腾讯移动推送-SecretKey(安卓)"`
-		AccessIDOfIos      *string `json:"accessIDOfIos,omitempty" dc:"腾讯移动推送-AccessID(苹果)"`
-		SecretKeyOfIos     *string `json:"secretKeyOfIos,omitempty" dc:"腾讯移动推送-SecretKey(苹果)"`
-		AccessIDOfMacOS    *string `json:"accessIDOfMacOS,omitempty" dc:"腾讯移动推送-AccessID(苹果电脑)"`
-		SecretKeyOfMacOS   *string `json:"secretKeyOfMacOS,omitempty" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
-	} `json:"pushOfTx,omitempty" dc:"推送配置-腾讯移动推送"`
+		AccessIDOfAndroid  *string `json:"access_id_of_android,omitempty" dc:"腾讯移动推送-AccessID(安卓)"`
+		SecretKeyOfAndroid *string `json:"secret_key_of_android,omitempty" dc:"腾讯移动推送-SecretKey(安卓)"`
+		AccessIDOfIos      *string `json:"access_id_of_ios,omitempty" dc:"腾讯移动推送-AccessID(苹果)"`
+		SecretKeyOfIos     *string `json:"secret_key_of_ios,omitempty" dc:"腾讯移动推送-SecretKey(苹果)"`
+		AccessIDOfMacOS    *string `json:"access_id_of_mac_os,omitempty" dc:"腾讯移动推送-AccessID(苹果电脑)"`
+		SecretKeyOfMacOS   *string `json:"secret_key_of_mac_os,omitempty" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
+	} `json:"push_of_tx,omitempty" dc:"推送配置-腾讯移动推送"`
 
-	VodType     *string `json:"vodType,omitempty" dc:"视频点播方式"`
+	VodType     *string `json:"vod_type,omitempty" dc:"视频点播方式"`
 	VodOfAliyun *struct {
 		AccessKeyId     *string `json:"access_key_id,omitempty" dc:"阿里云-AccessKeyId"`
 		AccessKeySecret *string `json:"access_key_secret,omitempty" dc:"阿里云-AccessKeySecret"`
 		Endpoint        *string `json:"endpoint,omitempty" dc:"阿里云-Endpoint"`
-		RoleArn         *string `json:"roleArn,omitempty" dc:"阿里云-RoleArn"`
-	} `json:"vodOfAliyun,omitempty" dc:"视频点播配置-阿里云"`
+		RoleArn         *string `json:"role_arn,omitempty" dc:"阿里云-RoleArn"`
+	} `json:"vod_of_aliyun,omitempty" dc:"视频点播配置-阿里云"`
 
 	WxGzh *struct {
 		Host           *string `json:"host,omitempty" dc:"公众号-域名"`
-		AppId          *string `json:"appId,omitempty" dc:"公众号-AppId"`
+		AppId          *string `json:"app_id,omitempty" dc:"公众号-AppId"`
 		Secret         *string `json:"secret,omitempty" dc:"公众号-密钥"`
 		Token          *string `json:"token,omitempty" dc:"公众号-Token"`
-		EncodingAESKey *string `json:"encodingAESKey,omitempty" dc:"公众号-EncodingAESKey"`
-	} `json:"wxGzh,omitempty" dc:"微信配置-公众号"`
+		EncodingAESKey *string `json:"encoding_aes_key,omitempty" dc:"公众号-EncodingAESKey"`
+	} `json:"wx_gzh,omitempty" dc:"微信配置-公众号"`
 }
 
 /*--------获取 结束--------*/
@@ -116,49 +116,49 @@ type ConfigSaveReq struct {
 		Password  *string `json:"password,omitempty" v:"" dc:"通用-密码"`
 	} `json:"email_of_common,omitempty" v:"required-if:EmailType,email_of_common" dc:"邮箱配置-通用"`
 
-	IdCardType     *string `json:"idCardType,omitempty" v:"in:idCardOfAliyun" dc:"实名认证方式"`
+	IdCardType     *string `json:"id_card_type,omitempty" v:"in:id_card_of_aliyun" dc:"实名认证方式"`
 	IdCardOfAliyun *struct {
 		Url     *string `json:"url,omitempty" v:"url" dc:"阿里云-请求地址"`
 		Appcode *string `json:"appcode,omitempty" v:"" dc:"阿里云-Appcode"`
-	} `json:"idCardOfAliyun,omitempty" v:"required-if:IdCardType,idCardOfAliyun" dc:"实名认证配置-阿里云"`
+	} `json:"id_card_of_aliyun,omitempty" v:"required-if:IdCardType,id_card_of_aliyun" dc:"实名认证配置-阿里云"`
 
 	OneClickOfWx *struct {
 		Host   *string `json:"host,omitempty" v:"url" dc:"微信-域名"`
-		AppId  *string `json:"appId,omitempty" v:"" dc:"微信-AppId"`
+		AppId  *string `json:"app_id,omitempty" v:"" dc:"微信-AppId"`
 		Secret *string `json:"secret,omitempty" v:"" dc:"微信-密钥"`
-	} `json:"oneClickOfWx,omitempty" v:"" dc:"一键登录配置-微信"`
+	} `json:"one_click_of_wx,omitempty" v:"" dc:"一键登录配置-微信"`
 	OneClickOfYidun *struct {
-		SecretId   *string `json:"secretId,omitempty" v:"" dc:"易盾-SecretId"`
-		SecretKey  *string `json:"secretKey,omitempty" v:"" dc:"易盾-SecretKey"`
-		BusinessId *string `json:"businessId,omitempty" v:"" dc:"易盾-BusinessId"`
-	} `json:"oneClickOfYidun,omitempty" v:"" dc:"一键登录配置-易盾"`
+		SecretId   *string `json:"secret_id,omitempty" v:"" dc:"易盾-SecretId"`
+		SecretKey  *string `json:"secret_key,omitempty" v:"" dc:"易盾-SecretKey"`
+		BusinessId *string `json:"business_id,omitempty" v:"" dc:"易盾-BusinessId"`
+	} `json:"one_click_of_yidun,omitempty" v:"" dc:"一键登录配置-易盾"`
 
-	PushType *string `json:"pushType,omitempty" v:"in:pushOfTx" dc:"推送方式"`
+	PushType *string `json:"push_type,omitempty" v:"in:push_of_tx" dc:"推送方式"`
 	PushOfTx *struct {
 		Host               *string `json:"host,omitempty" v:"url" dc:"腾讯移动推送-域名"`
-		AccessIDOfAndroid  *string `json:"accessIDOfAndroid,omitempty" v:"" dc:"腾讯移动推送-AccessID(安卓)"`
-		SecretKeyOfAndroid *string `json:"secretKeyOfAndroid,omitempty" v:"" dc:"腾讯移动推送-SecretKey(安卓)"`
-		AccessIDOfIos      *string `json:"accessIDOfIos,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果)"`
-		SecretKeyOfIos     *string `json:"secretKeyOfIos,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果)"`
-		AccessIDOfMacOS    *string `json:"accessIDOfMacOS,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果电脑)"`
-		SecretKeyOfMacOS   *string `json:"secretKeyOfMacOS,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
-	} `json:"pushOfTx,omitempty" v:"required-if:PushType,pushOfTx" dc:"推送配置-腾讯移动推送"`
+		AccessIDOfAndroid  *string `json:"access_id_of_android,omitempty" v:"" dc:"腾讯移动推送-AccessID(安卓)"`
+		SecretKeyOfAndroid *string `json:"secret_key_of_android,omitempty" v:"" dc:"腾讯移动推送-SecretKey(安卓)"`
+		AccessIDOfIos      *string `json:"access_id_of_ios,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果)"`
+		SecretKeyOfIos     *string `json:"secret_key_of_ios,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果)"`
+		AccessIDOfMacOS    *string `json:"access_id_of_mac_os,omitempty" v:"" dc:"腾讯移动推送-AccessID(苹果电脑)"`
+		SecretKeyOfMacOS   *string `json:"secret_key_of_mac_os,omitempty" v:"" dc:"腾讯移动推送-SecretKey(苹果电脑)"`
+	} `json:"push_of_tx,omitempty" v:"required-if:PushType,push_of_tx" dc:"推送配置-腾讯移动推送"`
 
-	VodType     *string `json:"vodType,omitempty" v:"in:vodOfAliyun" dc:"视频点播方式"`
+	VodType     *string `json:"vod_type,omitempty" v:"in:vod_of_aliyun" dc:"视频点播方式"`
 	VodOfAliyun *struct {
 		AccessKeyId     *string `json:"access_key_id,omitempty" v:"" dc:"阿里云-AccessKeyId"`
 		AccessKeySecret *string `json:"access_key_secret,omitempty" v:"" dc:"阿里云-AccessKeySecret"`
 		Endpoint        *string `json:"endpoint,omitempty" v:"" dc:"阿里云-Endpoint"`
-		RoleArn         *string `json:"roleArn,omitempty" v:"" dc:"阿里云-RoleArn"`
-	} `json:"vodOfAliyun,omitempty" v:"required-if:VodType,vodOfAliyun" dc:"视频点播配置-阿里云"`
+		RoleArn         *string `json:"role_arn,omitempty" v:"" dc:"阿里云-RoleArn"`
+	} `json:"vod_of_aliyun,omitempty" v:"required-if:VodType,vod_of_aliyun" dc:"视频点播配置-阿里云"`
 
 	WxGzh *struct {
 		Host           *string `json:"host,omitempty" v:"url" dc:"公众号-域名"`
-		AppId          *string `json:"appId,omitempty" v:"" dc:"公众号-AppId"`
+		AppId          *string `json:"app_id,omitempty" v:"" dc:"公众号-AppId"`
 		Secret         *string `json:"secret,omitempty" v:"" dc:"公众号-密钥"`
 		Token          *string `json:"token,omitempty" v:"" dc:"公众号-Token"`
-		EncodingAESKey *string `json:"encodingAESKey,omitempty" v:"size:43" dc:"公众号-EncodingAESKey"`
-	} `json:"wxGzh,omitempty" v:"" dc:"微信配置-公众号"`
+		EncodingAESKey *string `json:"encoding_aes_key,omitempty" v:"size:43" dc:"公众号-EncodingAESKey"`
+	} `json:"wx_gzh,omitempty" v:"" dc:"微信配置-公众号"`
 }
 
 /*--------保存 结束--------*/

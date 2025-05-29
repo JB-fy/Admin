@@ -9,7 +9,6 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// appId 微信公众号AppId
 var WxGzhAccessToken = wxGzhAccessToken{redis: g.Redis()}
 
 type wxGzhAccessToken struct{ redis *gredis.Redis }

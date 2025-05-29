@@ -15,7 +15,7 @@ var (
 )
 
 func NewWxGzh(ctx context.Context) (wxGzh *gzh.Wx) {
-	config := daoPlatform.Config.GetOne(ctx, `wxGzh`).Map()
+	config := daoPlatform.Config.GetOne(ctx, `wx_gzh`).Map()
 	wxGzhKey := gmd5.MustEncrypt(config)
 	ok := false
 	if wxGzh, ok = wxGzhMap[wxGzhKey]; ok { //先读一次（不加锁）

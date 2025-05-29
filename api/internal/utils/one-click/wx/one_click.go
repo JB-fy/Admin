@@ -13,7 +13,7 @@ import (
 
 type OneClick struct {
 	Host   string `json:"host"`
-	AppId  string `json:"appId"`
+	AppId  string `json:"app_id"`
 	Secret string `json:"secret"`
 	client *gclient.Client
 }

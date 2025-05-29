@@ -14,7 +14,7 @@ const saveForm = reactive({
     rules: {
         sms_type: [
             { required: true, message: t('validation.required') },
-            { type: 'enum', trigger: 'change', enum: [`sms_of_aliyun`], message: t('validation.select') },
+            { type: 'enum', trigger: 'change', enum: (tm('platform.config.plugin.status.sms_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
         ],
         'sms_of_aliyun.access_key_id': [
             { required: computed((): boolean => (saveForm.data.sms_type == `sms_of_aliyun` ? true : false)), message: t('validation.required') },

@@ -234,9 +234,9 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 func (controllerThis *Login) OneClickPreInfo(ctx context.Context, req *apiCurrent.LoginOneClickPreInfoReq) (res *apiCurrent.LoginOneClickPreInfoRes, err error) {
 	res = &apiCurrent.LoginOneClickPreInfoRes{}
 	switch req.OneClickType {
-	case `oneClickOfWx`: //微信
+	case `one_click_of_wx`: //微信
 		res.CodeUrlOfWx, err = one_click.NewOneClickOfWx(ctx).CodeUrl(req.RedirectUriOfWx, req.ScopeOfWx, req.ForcePopupOfWx, req.StateOfWx)
-	case `oneClickOfYidun`: //易盾
+	case `one_click_of_yidun`: //易盾
 	}
 	return
 }
@@ -246,7 +246,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 	filter := g.Map{}
 	saveData := g.Map{}
 	switch req.OneClickType {
-	case `oneClickOfWx`: //微信
+	case `one_click_of_wx`: //微信
 		accessToken, errTmp := one_click.NewOneClickOfWx(ctx).AccessToken(ctx, req.CodeOfWx)
 		if errTmp != nil {
 			err = errTmp
@@ -268,7 +268,7 @@ func (controllerThis *Login) OneClick(ctx context.Context, req *apiCurrent.Login
 			saveData[daoUsers.Users.Columns().Gender] = userInfo.Gender
 			saveData[daoUsers.Users.Columns().Avatar] = userInfo.Avatar
 		}
-	case `oneClickOfYidun`: //易盾
+	case `one_click_of_yidun`: //易盾
 		phone, errTmp := one_click.NewOneClickOfYidun(ctx).Check(ctx, req.TokenOfYidun, req.AccessTokenOfYidun)
 		if errTmp != nil {
 			err = errTmp

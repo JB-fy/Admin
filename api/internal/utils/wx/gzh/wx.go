@@ -24,10 +24,10 @@ import (
 
 type Wx struct {
 	Host           string `json:"host"`
-	AppId          string `json:"appId"`
+	AppId          string `json:"app_id"`
 	Secret         string `json:"secret"`
 	Token          string `json:"token"`
-	EncodingAESKey string `json:"encodingAESKey"`
+	EncodingAESKey string `json:"encoding_aes_key"`
 	AESKey         []byte
 	client         *gclient.Client
 }

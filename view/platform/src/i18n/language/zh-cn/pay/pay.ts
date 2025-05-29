@@ -4,13 +4,13 @@ export default {
         pay_type: '类型',
         pay_config: '配置',
         pay_config_0: {
-            appId: '支付宝-AppID',
+            app_id: '支付宝-AppID',
             privateKey: '支付宝-私钥',
             publicKey: '支付宝-公钥',
             opAppId: '支付宝-小程序AppID',
         },
         pay_config_1: {
-            appId: '微信-AppID',
+            app_id: '微信-AppID',
             mchid: '微信-商户ID',
             serialNo: '微信-证书序列号',
             apiV3Key: '微信-APIV3密钥',

@@ -15,7 +15,7 @@ type Vod struct {
 	AccessKeyId     string `json:"access_key_id"`
 	AccessKeySecret string `json:"access_key_secret"`
 	Endpoint        string `json:"endpoint"`
-	RoleArn         string `json:"roleArn"`
+	RoleArn         string `json:"role_arn"`
 	client          *sts20150401.Client
 }
 

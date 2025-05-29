@@ -1,6 +1,5 @@
 package sign
 
-// 根据自身需要修改
 /* import (
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
@@ -18,7 +17,7 @@ package sign
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-type Handler struct {
+type HandlerOfTemplate struct {
 	Ctx    context.Context
 	sign   model.Sign
 	client *gclient.Client
@@ -26,8 +25,8 @@ type Handler struct {
 
 var client = g.Client().SetTimeout(30 * time.Second)
 
-func NewHandler(ctx context.Context, sceneIdOpt ...string) *Handler {
-	handlerObj := &Handler{Ctx: ctx, client: client}
+func NewHandlerOfTemplate(ctx context.Context, sceneIdOpt ...string) *HandlerOfTemplate {
+	handlerObj := &HandlerOfTemplate{Ctx: ctx, client: client}
 	var sceneInfo gdb.Record
 	if len(sceneIdOpt) == 0 {
 		sceneInfo = utils.GetCtxSceneInfo(ctx)
@@ -40,12 +39,12 @@ func NewHandler(ctx context.Context, sceneIdOpt ...string) *Handler {
 	return handlerObj
 }
 
-func (handlerThis *Handler) Create(data map[string]any) (sign string) {
+func (handlerThis *HandlerOfTemplate) Create(data map[string]any) (sign string) {
 	sign = handlerThis.sign.Create(handlerThis.Ctx, data)
 	return
 }
 
-func (handlerThis *Handler) Verify(r *ghttp.Request) (err error) {
+func (handlerThis *HandlerOfTemplate) Verify(r *ghttp.Request) (err error) {
 	if diffSec := gtime.Now().Sub(r.Get(`ts`).GTime()).Seconds(); diffSec < -5 || diffSec > 30 { //误差超过多少秒会报错
 		err = errors.New(`时间戳失效`)
 		return
@@ -56,7 +55,7 @@ func (handlerThis *Handler) Verify(r *ghttp.Request) (err error) {
 	return
 }
 
-func (handlerThis *Handler) getReqData(param g.Map) (reqData g.Map) {
+func (handlerThis *HandlerOfTemplate) getReqData(param g.Map) (reqData g.Map) {
 	reqData = param
 	if reqData == nil {
 		reqData = g.Map{}
@@ -66,7 +65,7 @@ func (handlerThis *Handler) getReqData(param g.Map) (reqData g.Map) {
 	return
 }
 
-func (handlerThis *Handler) getResData(res *gclient.Response) (resData *gjson.Json, err error) {
+func (handlerThis *HandlerOfTemplate) getResData(res *gclient.Response) (resData *gjson.Json, err error) {
 	resStr := res.ReadAllString()
 	resData = gjson.New(resStr)
 	if !resData.Contains(`code`) {
@@ -80,7 +79,7 @@ func (handlerThis *Handler) getResData(res *gclient.Response) (resData *gjson.Js
 	return
 }
 
-func (handlerThis *Handler) Info(proxyUrl string, id string) (info g.Map, err error) {
+func (handlerThis *HandlerOfTemplate) Info(proxyUrl string, id string) (info g.Map, err error) {
 	res, err := handlerThis.client.Post(handlerThis.Ctx, proxyUrl, handlerThis.getReqData(g.Map{
 		`id`: id,
 	}))

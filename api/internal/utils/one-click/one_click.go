@@ -16,7 +16,7 @@ var (
 )
 
 func NewOneClickOfWx(ctx context.Context) (oneClickOfWx *wx.OneClick) {
-	config := daoPlatform.Config.GetOne(ctx, `oneClickOfWx`).Map()
+	config := daoPlatform.Config.GetOne(ctx, `one_click_of_wx`).Map()
 	oneClickOfWxKey := gmd5.MustEncrypt(config)
 	ok := false
 	if oneClickOfWx, ok = oneClickOfWxMap[oneClickOfWxKey]; ok { //先读一次（不加锁）
@@ -38,7 +38,7 @@ var (
 )
 
 func NewOneClickOfYidun(ctx context.Context) (oneClickOfYidun *yidun.OneClick) {
-	config := daoPlatform.Config.GetOne(ctx, `oneClickOfYidun`).Map()
+	config := daoPlatform.Config.GetOne(ctx, `one_click_of_yidun`).Map()
 	oneClickOfYidunKey := gmd5.MustEncrypt(config)
 	ok := false
 	if oneClickOfYidun, ok = oneClickOfYidunMap[oneClickOfYidunKey]; ok { //先读一次（不加锁）

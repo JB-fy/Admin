@@ -17,7 +17,7 @@ func NewHandler(ctx context.Context, idCardTypeOpt ...string) model.Handler {
 	if len(idCardTypeOpt) > 0 {
 		idCardType = idCardTypeOpt[0]
 	} else {
-		idCardType = daoPlatform.Config.GetOne(ctx, `idCardType`).String()
+		idCardType = daoPlatform.Config.GetOne(ctx, `id_card_type`).String()
 	}
 	if _, ok := idCardFuncMap[idCardType]; !ok {
 		idCardType = idCardTypeDef

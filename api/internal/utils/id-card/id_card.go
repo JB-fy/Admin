@@ -12,9 +12,9 @@ import (
 var (
 	idCardMap     = map[string]model.IdCard{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	idCardMu      sync.Mutex
-	idCardTypeDef = `idCardOfAliyun`
+	idCardTypeDef = `id_card_of_aliyun`
 	idCardFuncMap = map[string]model.IdCardFunc{
-		`idCardOfAliyun`: aliyun.NewIdCard,
+		`id_card_of_aliyun`: aliyun.NewIdCard,
 	}
 )
 

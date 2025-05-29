@@ -9,9 +9,9 @@ import (
 )
 
 type OneClick struct {
-	SecretId   string `json:"secretId"`
-	SecretKey  string `json:"secretKey"`
-	BusinessId string `json:"businessId"`
+	SecretId   string `json:"secret_id"`
+	SecretKey  string `json:"secret_key"`
+	BusinessId string `json:"business_id"`
 }
 
 func NewOneClick(ctx context.Context, config map[string]any) *OneClick {
