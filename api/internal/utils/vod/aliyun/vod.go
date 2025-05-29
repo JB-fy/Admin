@@ -12,8 +12,8 @@ import (
 )
 
 type Vod struct {
-	AccessKeyId     string `json:"accessKeyId"`
-	AccessKeySecret string `json:"accessKeySecret"`
+	AccessKeyId     string `json:"access_key_id"`
+	AccessKeySecret string `json:"access_key_secret"`
 	Endpoint        string `json:"endpoint"`
 	RoleArn         string `json:"roleArn"`
 	client          *sts20150401.Client

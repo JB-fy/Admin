@@ -16,11 +16,11 @@ const saveForm = reactive({
             { required: true, message: t('validation.required') },
             { type: 'enum', trigger: 'change', enum: [`vodOfAliyun`], message: t('validation.select') },
         ],
-        'vodOfAliyun.accessKeyId': [
+        'vodOfAliyun.access_key_id': [
             { required: computed((): boolean => (saveForm.data.vodType == `vodOfAliyun` ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
-        'vodOfAliyun.accessKeySecret': [
+        'vodOfAliyun.access_key_secret': [
             { required: computed((): boolean => (saveForm.data.vodType == `vodOfAliyun` ? true : false)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', message: t('validation.input') },
         ],
@@ -75,11 +75,11 @@ saveForm.initData()
         </el-form-item>
 
         <template v-if="saveForm.data.vodType == 'vodOfAliyun'">
-            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyun.accessKeyId')" prop="vodOfAliyun.accessKeyId">
-                <el-input v-model="saveForm.data.vodOfAliyun.accessKeyId" :placeholder="t('platform.config.plugin.name.vodOfAliyun.accessKeyId')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyun.access_key_id')" prop="vodOfAliyun.access_key_id">
+                <el-input v-model="saveForm.data.vodOfAliyun.access_key_id" :placeholder="t('platform.config.plugin.name.vodOfAliyun.access_key_id')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyun.accessKeySecret')" prop="vodOfAliyun.accessKeySecret">
-                <el-input v-model="saveForm.data.vodOfAliyun.accessKeySecret" :placeholder="t('platform.config.plugin.name.vodOfAliyun.accessKeySecret')" :clearable="true" />
+            <el-form-item :label="t('platform.config.plugin.name.vodOfAliyun.access_key_secret')" prop="vodOfAliyun.access_key_secret">
+                <el-input v-model="saveForm.data.vodOfAliyun.access_key_secret" :placeholder="t('platform.config.plugin.name.vodOfAliyun.access_key_secret')" :clearable="true" />
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.vodOfAliyun.endpoint')" prop="vodOfAliyun.endpoint">
                 <el-input v-model="saveForm.data.vodOfAliyun.endpoint" :placeholder="t('platform.config.plugin.name.vodOfAliyun.endpoint')" :clearable="true" style="max-width: 500px" />

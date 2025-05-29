@@ -14,11 +14,11 @@ import (
 )
 
 type Sms struct {
-	AccessKeyId     string `json:"accessKeyId"`
-	AccessKeySecret string `json:"accessKeySecret"`
+	AccessKeyId     string `json:"access_key_id"`
+	AccessKeySecret string `json:"access_key_secret"`
 	Endpoint        string `json:"endpoint"`
-	SignName        string `json:"signName"`
-	TemplateCode    string `json:"templateCode"`
+	SignName        string `json:"sign_name"`
+	TemplateCode    string `json:"template_code"`
 	client          *dysmsapi20170525.Client
 }
 

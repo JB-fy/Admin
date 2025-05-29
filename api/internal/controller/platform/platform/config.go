@@ -28,7 +28,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 			switch configKey {
 			case `hot_search`, `user_agreement`, `privacy_agreement`:
 				actionIdSet.Add(`platformConfigCommonRead`)
-			case `smsType`, `smsOfAliyun`:
+			case `sms_type`, `sms_of_aliyun`:
 				actionIdSet.Add(`platformConfigSmsRead`)
 			case `email_code`, `email_type`, `email_of_common`:
 				actionIdSet.Add(`platformConfigEmailRead`)
@@ -79,7 +79,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 			switch configKey {
 			case `hot_search`, `user_agreement`, `privacy_agreement`:
 				actionIdSet.Add(`platformConfigCommonSave`)
-			case `smsType`, `smsOfAliyun`:
+			case `sms_type`, `sms_of_aliyun`:
 				actionIdSet.Add(`platformConfigSmsSave`)
 			case `email_code`, `email_type`, `email_of_common`:
 				actionIdSet.Add(`platformConfigEmailSave`)

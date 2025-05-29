@@ -14,13 +14,13 @@ export default {
         wxGzh: '公众号',
     },
     name: {
-        smsType: '短信方式',
-        smsOfAliyun: {
-            accessKeyId: '阿里云-AccessKeyId',
-            accessKeySecret: '阿里云-AccessKeySecret',
+        sms_type: '短信方式',
+        sms_of_aliyun: {
+            access_key_id: '阿里云-AccessKeyId',
+            access_key_secret: '阿里云-AccessKeySecret',
             endpoint: '阿里云-Endpoint',
-            signName: '阿里云-签名',
-            templateCode: '阿里云-模板标识',
+            sign_name: '阿里云-签名',
+            template_code: '阿里云-模板标识',
         },
 
         email_code: {
@@ -65,8 +65,8 @@ export default {
 
         vodType: '视频点播方式',
         vodOfAliyun: {
-            accessKeyId: '阿里云-AccessKeyId',
-            accessKeySecret: '阿里云-AccessKeySecret',
+            access_key_id: '阿里云-AccessKeyId',
+            access_key_secret: '阿里云-AccessKeySecret',
             endpoint: '阿里云-Endpoint',
             roleArn: '阿里云-RoleArn',
         },
@@ -80,7 +80,7 @@ export default {
         },
     },
     status: {
-        smsType: [{ value: `smsOfAliyun`, label: '阿里云' }],
+        sms_type: [{ value: `sms_of_aliyun`, label: '阿里云' }],
         email_type: [{ value: `email_of_common`, label: '通用' }],
         idCardType: [{ value: `idCardOfAliyun`, label: '阿里云' }],
         pushType: [{ value: `pushOfTx`, label: '腾讯移动推送' }],

@@ -12,9 +12,9 @@ import (
 var (
 	smsMap     = map[string]model.Sms{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	smsMu      sync.Mutex
-	smsTypeDef = `smsOfAliyun`
+	smsTypeDef = `sms_of_aliyun`
 	smsFuncMap = map[string]model.SmsFunc{
-		`smsOfAliyun`: aliyun.NewSms,
+		`sms_of_aliyun`: aliyun.NewSms,
 	}
 )
 
