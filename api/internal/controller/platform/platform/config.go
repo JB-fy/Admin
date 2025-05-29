@@ -26,11 +26,11 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 		actionIdSet := gset.NewStrSet()
 		for _, configKey := range *req.ConfigKeyArr {
 			switch configKey {
-			case `hotSearch`, `userAgreement`, `privacyAgreement`:
+			case `hot_search`, `user_agreement`, `privacy_agreement`:
 				actionIdSet.Add(`platformConfigCommonRead`)
 			case `smsType`, `smsOfAliyun`:
 				actionIdSet.Add(`platformConfigSmsRead`)
-			case `emailCode`, `emailType`, `emailOfCommon`:
+			case `email_code`, `email_type`, `email_of_common`:
 				actionIdSet.Add(`platformConfigEmailRead`)
 			case `idCardType`, `idCardOfAliyun`:
 				actionIdSet.Add(`platformConfigIdCardRead`)
@@ -77,11 +77,11 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 		actionIdSet := gset.NewStrSet()
 		for configKey := range config {
 			switch configKey {
-			case `hotSearch`, `userAgreement`, `privacyAgreement`:
+			case `hot_search`, `user_agreement`, `privacy_agreement`:
 				actionIdSet.Add(`platformConfigCommonSave`)
 			case `smsType`, `smsOfAliyun`:
 				actionIdSet.Add(`platformConfigSmsSave`)
-			case `emailCode`, `emailType`, `emailOfCommon`:
+			case `email_code`, `email_type`, `email_of_common`:
 				actionIdSet.Add(`platformConfigEmailSave`)
 			case `idCardType`, `idCardOfAliyun`:
 				actionIdSet.Add(`platformConfigIdCardSave`)

@@ -26,7 +26,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiOrg.ConfigGetReq)
 		actionIdSet := gset.NewStrSet()
 		for _, configKey := range *req.ConfigKeyArr {
 			switch configKey {
-			case `hotSearch`:
+			case `hot_search`:
 				actionIdSet.Add(`orgConfigCommonRead`)
 			}
 		}
@@ -64,7 +64,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiOrg.ConfigSaveRe
 		actionIdSet := gset.NewStrSet()
 		for configKey := range config {
 			switch configKey {
-			case `hotSearch`:
+			case `hot_search`:
 				actionIdSet.Add(`orgConfigCommonSave`)
 			}
 		}

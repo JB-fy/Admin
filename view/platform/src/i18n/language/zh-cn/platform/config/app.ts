@@ -3,9 +3,9 @@ export default {
         common: '常用',
     },
     name: {
-        hotSearch: '热门搜索',
-        userAgreement: '用户协议',
-        privacyAgreement: '隐私协议',
+        hot_search: '热门搜索',
+        user_agreement: '用户协议',
+        privacy_agreement: '隐私协议',
     },
     status: {},
     tip: {},

@@ -8,10 +8,10 @@ const saveForm = reactive({
     loading: false,
     data: {
         //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
-        hotSearch: [],
+        hot_search: [],
     } as { [propName: string]: any },
     rules: {
-        hotSearch: [
+        hot_search: [
             { type: 'array', trigger: 'change', message: t('validation.array'), defaultField: { type: 'string', message: t('validation.input') } }, // 限制数组数量时用：max: 10, message: t('validation.max.array', { max: 10 })
         ],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
@@ -46,15 +46,15 @@ const saveForm = reactive({
 const hotSearchHandle = reactive({
     ref: [] as any[],
     add: () => {
-        !Array.isArray(saveForm.data.hotSearch) && (saveForm.data.hotSearch = [])
-        saveForm.data.hotSearch.push(undefined)
+        !Array.isArray(saveForm.data.hot_search) && (saveForm.data.hot_search = [])
+        saveForm.data.hot_search.push(undefined)
         nextTick(() => hotSearchHandle.ref[hotSearchHandle.ref.length - 1].focus())
     },
     del: (index: number, isBlur: boolean = false) => {
-        if (isBlur && saveForm.data.hotSearch[index] !== undefined && saveForm.data.hotSearch[index] !== null && saveForm.data.hotSearch[index] !== '') {
+        if (isBlur && saveForm.data.hot_search[index] !== undefined && saveForm.data.hot_search[index] !== null && saveForm.data.hot_search[index] !== '') {
             return
         }
-        saveForm.data.hotSearch.splice(index, 1)
+        saveForm.data.hot_search.splice(index, 1)
         hotSearchHandle.ref.splice(index, 1)
     },
 })
@@ -64,10 +64,10 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('org.config.app.name.hotSearch')" prop="hotSearch">
-            <template v-for="(_, index) in saveForm.data.hotSearch" :key="index">
+        <el-form-item :label="t('org.config.app.name.hot_search')" prop="hot_search">
+            <template v-for="(_, index) in saveForm.data.hot_search" :key="index">
                 <el-tag type="info" :closable="true" @close="hotSearchHandle.del(index)" size="large" style="padding-left: 0; margin: 3px 10px 3px 0">
-                    <el-input :ref="(el: any) => hotSearchHandle.ref[index] = el" v-model="saveForm.data.hotSearch[index]" @blur="hotSearchHandle.del(index, true)" :placeholder="t('org.config.app.name.hotSearch')" style="width: 150px" />
+                    <el-input :ref="(el: any) => hotSearchHandle.ref[index] = el" v-model="saveForm.data.hot_search[index]" @blur="hotSearchHandle.del(index, true)" :placeholder="t('org.config.app.name.hot_search')" style="width: 150px" />
                 </el-tag>
             </template>
             <el-button type="primary" @click="hotSearchHandle.add" style="margin: 3px 0"> <autoicon-ep-plus />{{ t('common.add') }} </el-button>

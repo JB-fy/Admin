@@ -23,15 +23,15 @@ export default {
             templateCode: '阿里云-模板标识',
         },
 
-        emailCode: {
+        email_code: {
             subject: '验证码标题',
             template: '验证码模板',
         },
-        emailType: '邮箱方式',
-        emailOfCommon: {
-            smtpHost: '通用-SmtpHost',
-            smtpPort: '通用-SmtpPort',
-            fromEmail: '通用-邮箱',
+        email_type: '邮箱方式',
+        email_of_common: {
+            smtp_host: '通用-SmtpHost',
+            smtp_port: '通用-SmtpPort',
+            from_email: '通用-邮箱',
             password: '通用-密码',
         },
 
@@ -81,16 +81,16 @@ export default {
     },
     status: {
         smsType: [{ value: `smsOfAliyun`, label: '阿里云' }],
-        emailType: [{ value: `emailOfCommon`, label: '通用' }],
+        email_type: [{ value: `email_of_common`, label: '通用' }],
         idCardType: [{ value: `idCardOfAliyun`, label: '阿里云' }],
         pushType: [{ value: `pushOfTx`, label: '腾讯移动推送' }],
         vodType: [{ value: `vodOfAliyun`, label: '阿里云' }],
     },
     tip: {
-        emailCode: {
+        email_code: {
             template: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
         },
-        emailOfCommon: {
+        email_of_common: {
             password: '注意：如果使用QQ邮箱，此处应填写QQ邮箱的授权码，而不是密码',
         },
 

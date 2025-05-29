@@ -962,9 +962,9 @@ COMMENT ON TABLE "public"."platform_config" IS '平台配置表';
 -- ----------------------------
 -- Records of platform_config
 -- ----------------------------
-INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailCode', '{"subject":"您的验证码","template":"验证码：{code}\n说明：\n1. 验证码在发送后的5分钟内有效。如果验证码过期，请重新请求一个新的验证码。\n2. 出于安全考虑，请不要将此验证码分享给任何人。"}');
-INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailOfCommon', '{"fromEmail":"xxxxxxxx@qq.com","password":"xxxxxxxx","smtpHost":"smtp.qq.com","smtpPort":"465"}');
-INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'emailType', 'emailOfCommon');
+INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'email_code', '{"subject":"您的验证码","template":"验证码：{code}\n说明：\n1. 验证码在发送后的5分钟内有效。如果验证码过期，请重新请求一个新的验证码。\n2. 出于安全考虑，请不要将此验证码分享给任何人。"}');
+INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'email_of_common', '{"from_email":"xxxxxxxx@qq.com","password":"xxxxxxxx","smtp_host":"smtp.qq.com","smtp_port":"465"}');
+INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'email_type', 'email_of_common');
 INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardOfAliyun', '{"appcode":"appcode","url":"http://idcard.market.alicloudapi.com/lianzhuo/idcard"}');
 INSERT INTO "public"."platform_config" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'idCardType', 'idCardOfAliyun');
 

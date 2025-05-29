@@ -15,9 +15,9 @@ type ConfigGetRes struct {
 }
 
 type Config struct {
-	HotSearch        *[]string `json:"hotSearch,omitempty" dc:"热门搜索"`
-	UserAgreement    *string   `json:"userAgreement,omitempty" dc:"用户协议"`
-	PrivacyAgreement *string   `json:"privacyAgreement,omitempty" dc:"隐私协议"`
+	HotSearch        *[]string `json:"hot_search,omitempty" dc:"热门搜索"`
+	UserAgreement    *string   `json:"user_agreement,omitempty" dc:"用户协议"`
+	PrivacyAgreement *string   `json:"privacy_agreement,omitempty" dc:"隐私协议"`
 
 	SmsType     *string `json:"smsType,omitempty" dc:"短信方式"`
 	SmsOfAliyun *struct {
@@ -31,14 +31,14 @@ type Config struct {
 	EmailCode *struct {
 		Subject  *string `json:"subject,omitempty" dc:"标题"`
 		Template *string `json:"template,omitempty" dc:"内容"`
-	} `json:"emailCode,omitempty" dc:"验证码邮件配置"`
-	EmailType     *string `json:"emailType,omitempty" dc:"邮箱方式"`
+	} `json:"email_code,omitempty" dc:"验证码邮件配置"`
+	EmailType     *string `json:"email_type,omitempty" dc:"邮箱方式"`
 	EmailOfCommon *struct {
-		SmtpHost  *string `json:"smtpHost,omitempty" dc:"通用-SmtpHost"`
-		SmtpPort  *string `json:"smtpPort,omitempty" dc:"通用-SmtpPort"`
-		FromEmail *string `json:"fromEmail,omitempty" dc:"通用-邮箱"`
+		SmtpHost  *string `json:"smtp_host,omitempty" dc:"通用-SmtpHost"`
+		SmtpPort  *string `json:"smtp_port,omitempty" dc:"通用-SmtpPort"`
+		FromEmail *string `json:"from_email,omitempty" dc:"通用-邮箱"`
 		Password  *string `json:"password,omitempty" dc:"通用-密码"`
-	} `json:"emailOfCommon,omitempty" dc:"邮箱配置-通用"`
+	} `json:"email_of_common,omitempty" dc:"邮箱配置-通用"`
 
 	IdCardType     *string `json:"idCardType,omitempty" dc:"实名认证方式"`
 	IdCardOfAliyun *struct {
@@ -91,9 +91,9 @@ type Config struct {
 type ConfigSaveReq struct {
 	g.Meta `path:"/config/save" method:"post" tags:"平台后台/配置中心/平台配置" sm:"保存"`
 
-	HotSearch        *[]string `json:"hotSearch,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
-	UserAgreement    *string   `json:"userAgreement,omitempty" v:"" dc:"用户协议"`
-	PrivacyAgreement *string   `json:"privacyAgreement,omitempty" v:"" dc:"隐私协议"`
+	HotSearch        *[]string `json:"hot_search,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
+	UserAgreement    *string   `json:"user_agreement,omitempty" v:"" dc:"用户协议"`
+	PrivacyAgreement *string   `json:"privacy_agreement,omitempty" v:"" dc:"隐私协议"`
 
 	SmsType     *string `json:"smsType,omitempty" v:"in:smsOfAliyun" dc:"短信方式"`
 	SmsOfAliyun *struct {
@@ -107,14 +107,14 @@ type ConfigSaveReq struct {
 	EmailCode *struct {
 		Subject  *string `json:"subject,omitempty" v:"" dc:"标题"`
 		Template *string `json:"template,omitempty" v:"" dc:"内容"`
-	} `json:"emailCode,omitempty" v:"" dc:"验证码邮件配置"`
-	EmailType     *string `json:"emailType,omitempty" v:"in:emailOfCommon" dc:"邮箱方式"`
+	} `json:"email_code,omitempty" v:"" dc:"验证码邮件配置"`
+	EmailType     *string `json:"email_type,omitempty" v:"in:email_of_common" dc:"邮箱方式"`
 	EmailOfCommon *struct {
-		SmtpHost  *string `json:"smtpHost,omitempty" v:"" dc:"通用-SmtpHost"`
-		SmtpPort  *string `json:"smtpPort,omitempty" v:"" dc:"通用-SmtpPort"`
-		FromEmail *string `json:"fromEmail,omitempty" v:"email" dc:"通用-邮箱"`
+		SmtpHost  *string `json:"smtp_host,omitempty" v:"" dc:"通用-SmtpHost"`
+		SmtpPort  *string `json:"smtp_port,omitempty" v:"" dc:"通用-SmtpPort"`
+		FromEmail *string `json:"from_email,omitempty" v:"email" dc:"通用-邮箱"`
 		Password  *string `json:"password,omitempty" v:"" dc:"通用-密码"`
-	} `json:"emailOfCommon,omitempty" v:"required-if:EmailType,emailOfCommon" dc:"邮箱配置-通用"`
+	} `json:"email_of_common,omitempty" v:"required-if:EmailType,email_of_common" dc:"邮箱配置-通用"`
 
 	IdCardType     *string `json:"idCardType,omitempty" v:"in:idCardOfAliyun" dc:"实名认证方式"`
 	IdCardOfAliyun *struct {

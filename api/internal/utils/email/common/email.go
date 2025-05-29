@@ -10,9 +10,9 @@ import (
 )
 
 type Email struct {
-	SmtpHost  string `json:"smtpHost"`
-	SmtpPort  string `json:"smtpPort"`
-	FromEmail string `json:"fromEmail"`
+	SmtpHost  string `json:"smtp_host"`
+	SmtpPort  string `json:"smtp_port"`
+	FromEmail string `json:"from_email"`
 	Password  string `json:"password"`
 	// client    *smtp.Client //非并发安全的客户端，不能在初始化时生成
 	// clientMu  sync.Mutex   //互斥锁。确实需要复用客户端时，必须在发送时上锁

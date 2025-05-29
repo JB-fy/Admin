@@ -12,9 +12,9 @@ import (
 var (
 	emailMap     = map[string]model.Email{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
 	emailMu      sync.Mutex
-	emailTypeDef = `emailOfCommon`
+	emailTypeDef = `email_of_common`
 	emailFuncMap = map[string]model.EmailFunc{
-		`emailOfCommon`: common.NewEmail,
+		`email_of_common`: common.NewEmail,
 	}
 )
 

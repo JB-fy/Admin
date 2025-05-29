@@ -15,7 +15,7 @@ type ConfigGetRes struct {
 }
 
 type Config struct {
-	HotSearch *[]string `json:"hotSearch,omitempty" dc:"热门搜索"`
+	HotSearch *[]string `json:"hot_search,omitempty" dc:"热门搜索"`
 }
 
 /*--------获取 结束--------*/
@@ -24,7 +24,7 @@ type Config struct {
 type ConfigSaveReq struct {
 	g.Meta `path:"/config/save" method:"post" tags:"机构后台/配置中心/机构配置" sm:"保存"`
 
-	HotSearch *[]string `json:"hotSearch,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
+	HotSearch *[]string `json:"hot_search,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
 }
 
 /*--------保存 结束--------*/

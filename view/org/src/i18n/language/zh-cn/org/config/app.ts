@@ -3,7 +3,7 @@ export default {
         common: '常用',
     },
     name: {
-        hotSearch: '热门搜索',
+        hot_search: '热门搜索',
     },
     status: {},
     tip: {},
