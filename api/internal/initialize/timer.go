@@ -14,7 +14,7 @@ import (
 )
 
 func initTimer(ctx context.Context) {
-	if !utils.IsDev(ctx) && g.Cfg().MustGet(ctx, `timerServerNetworkIp`).String() != genv.Get(consts.LOCAL_SERVER_NETWORK_IP).String() {
+	if !utils.IsDev(ctx) && g.Cfg().MustGet(ctx, `timerServerNetworkIp`).String() != genv.Get(consts.ENV_SERVER_NETWORK_IP).String() {
 		return
 	}
 

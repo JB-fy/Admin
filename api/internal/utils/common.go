@@ -98,9 +98,9 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 		url = r.GetUrl()
 	case 10, 20: //http(s)://外网IP:端口	//http(s)://内网IP:端口
 		url = r.GetUrl()
-		ip := genv.Get(consts.LOCAL_SERVER_NETWORK_IP).String()
+		ip := genv.Get(consts.ENV_SERVER_NETWORK_IP).String()
 		if flag == 20 {
-			ip = genv.Get(consts.LOCAL_SERVER_LOCAL_IP).String()
+			ip = genv.Get(consts.ENV_SERVER_LOCAL_IP).String()
 		}
 		addr := ctx.Value(http.ServerContextKey).(*http.Server).Addr
 		if gstr.Pos(url, `https`) == 0 {
@@ -117,7 +117,7 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 
 // 获取文件内容（通用）
 func GetFileBytes(ctx context.Context, fileUrl string) (fileBytes []byte, err error) {
-	for _, ip := range []string{genv.Get(consts.LOCAL_SERVER_NETWORK_IP).String(), genv.Get(consts.LOCAL_SERVER_LOCAL_IP).String()} {
+	for _, ip := range []string{genv.Get(consts.ENV_SERVER_NETWORK_IP).String(), genv.Get(consts.ENV_SERVER_LOCAL_IP).String()} {
 		if ip != `` && gstr.Pos(fileUrl, ip) != -1 {
 			return GetFileBytesByLocal(ctx, fileUrl)
 		}

@@ -217,7 +217,7 @@ func (uploadThis *Upload) getUrl(ctx context.Context) string {
 	if uploadThis.IsCluster == 0 || uploadThis.IsSameServer == 0 {
 		return utils.GetRequestUrl(ctx, 0) + apiPath
 	}
-	serverIp := genv.Get(consts.LOCAL_SERVER_NETWORK_IP).String()
+	serverIp := genv.Get(consts.ENV_SERVER_NETWORK_IP).String()
 	for _, v := range uploadThis.ServerList {
 		if v.Ip == serverIp {
 			return g.RequestFromCtx(ctx).GetSchema() + `://` + v.Host + apiPath //scheme需与原请求一致
@@ -234,7 +234,7 @@ func (uploadThis *Upload) getFileUrlPrefix(ctx context.Context) string {
 	if uploadThis.IsCluster == 0 {
 		return utils.GetRequestUrl(ctx, 0)
 	}
-	serverIp := genv.Get(consts.LOCAL_SERVER_NETWORK_IP).String()
+	serverIp := genv.Get(consts.ENV_SERVER_NETWORK_IP).String()
 	for _, v := range uploadThis.ServerList {
 		if v.Ip == serverIp {
 			return g.RequestFromCtx(ctx).GetSchema() + `://` + v.Host //scheme需与原请求一致
