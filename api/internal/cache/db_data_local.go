@@ -30,6 +30,34 @@ func (cacheThis *dbDataLocal) key(daoModel *dao.DaoModel, id any) string {
 	return fmt.Sprintf(consts.CACHE_DB_DATA, daoModel.DbGroup, daoModel.DbTable, id)
 }
 
+func (cacheThis *dbDataLocal) Set(ctx context.Context, daoModel *dao.DaoModel, id any, value string, ttl time.Duration) {
+	cacheThis.cache().Set(cacheThis.key(daoModel, id), gvar.New(value), time.Duration(ttl)*time.Second)
+}
+
+func (cacheThis *dbDataLocal) Get(ctx context.Context, daoModel *dao.DaoModel, id any) (value *gvar.Var) {
+	if valueTmp, ok := cacheThis.cache().Get(cacheThis.key(daoModel, id)); ok {
+		value = valueTmp.(*gvar.Var)
+		return
+	}
+	return
+}
+
+func (cacheThis *dbDataLocal) GetInfo(ctx context.Context, daoModel *dao.DaoModel, id any) (info gdb.Record) {
+	cacheThis.Get(ctx, daoModel, id).Scan(&info)
+	return
+}
+
+func (cacheThis *dbDataLocal) GetList(ctx context.Context, daoModel *dao.DaoModel, id any) (list gdb.Result) {
+	cacheThis.Get(ctx, daoModel, id).Scan(&list)
+	return
+}
+
+func (cacheThis *dbDataLocal) Del(ctx context.Context, daoModel *dao.DaoModel, idArr ...any) {
+	for index := range idArr {
+		cacheThis.cache().Delete(cacheThis.key(daoModel, idArr[index]))
+	}
+}
+
 // ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
 func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, notExist bool, err error) {
 	key := cacheThis.key(daoModel, id)
@@ -119,32 +147,4 @@ func (cacheThis *dbDataLocal) GetOrSetPluck(ctx context.Context, daoModel *dao.D
 		record[gconv.String(id)] = value
 	}
 	return
-}
-
-func (cacheThis *dbDataLocal) Set(ctx context.Context, daoModel *dao.DaoModel, id any, value string, ttl time.Duration) {
-	cacheThis.cache().Set(cacheThis.key(daoModel, id), gvar.New(value), time.Duration(ttl)*time.Second)
-}
-
-func (cacheThis *dbDataLocal) Get(ctx context.Context, daoModel *dao.DaoModel, id any) (value *gvar.Var) {
-	if valueTmp, ok := cacheThis.cache().Get(cacheThis.key(daoModel, id)); ok {
-		value = valueTmp.(*gvar.Var)
-		return
-	}
-	return
-}
-
-func (cacheThis *dbDataLocal) GetInfo(ctx context.Context, daoModel *dao.DaoModel, id any) (info gdb.Record) {
-	cacheThis.Get(ctx, daoModel, id).Scan(&info)
-	return
-}
-
-func (cacheThis *dbDataLocal) GetList(ctx context.Context, daoModel *dao.DaoModel, id any) (list gdb.Result) {
-	cacheThis.Get(ctx, daoModel, id).Scan(&list)
-	return
-}
-
-func (cacheThis *dbDataLocal) Del(ctx context.Context, daoModel *dao.DaoModel, idArr ...any) {
-	for index := range idArr {
-		cacheThis.cache().Delete(cacheThis.key(daoModel, idArr[index]))
-	}
 }
