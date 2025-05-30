@@ -76,8 +76,8 @@ func (cacheThis *dbData) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, i
 func (cacheThis *dbData) GetOrSetMany(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
 	var value *gvar.Var
 	var notExist bool
-	for _, id := range idArr {
-		value, notExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
+	for index := range idArr {
+		value, notExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), idArr[index], ttlOrField, field...)
 		if err != nil {
 			return
 		}
@@ -94,23 +94,23 @@ func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoMod
 	var value *gvar.Var
 	var notExist bool
 	record = gdb.Record{}
-	for _, id := range idArr {
-		value, notExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
+	for index := range idArr {
+		value, notExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), idArr[index], ttlOrField, field...)
 		if err != nil {
 			return
 		}
 		if notExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
-		record[gconv.String(id)] = value
+		record[gconv.String(idArr[index])] = value
 	}
 	return
 }
 
 func (cacheThis *dbData) Del(ctx context.Context, daoModel *dao.DaoModel, idArr ...any) (row int64, err error) {
 	keyArr := make([]string, len(idArr))
-	for index, id := range idArr {
-		keyArr[index] = cacheThis.key(daoModel, id)
+	for index := range idArr {
+		keyArr[index] = cacheThis.key(daoModel, idArr[index])
 	}
 	row, err = cacheThis.cache().Del(ctx, keyArr...)
 	if err != nil {

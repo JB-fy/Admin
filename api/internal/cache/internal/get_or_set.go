@@ -17,17 +17,13 @@ import (
 )
 
 var (
-	GetOrSet      = getOrSet{redis: g.Redis(), goCache: cache.New(0, 0)}
-	getOrSetMuMap sync.Map //存放所有缓存KEY的锁（当前服务器用）
+	GetOrSet = getOrSet{redis: g.Redis(), goCache: cache.New(0, 0)}
 )
 
 type getOrSet struct {
 	redis   *gredis.Redis
 	goCache *cache.Cache
-}
-
-func (cacheThis *getOrSet) cache() *gredis.Redis {
-	return cacheThis.redis
+	muMap   sync.Map //存放所有缓存KEY的锁（当前服务器用）
 }
 
 func (cacheThis *getOrSet) key(key string) string {
@@ -45,7 +41,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	}
 
 	// 防止当前服务器并发
-	getOrSetMuTmp, _ := getOrSetMuMap.LoadOrStore(key, &sync.Mutex{})
+	getOrSetMuTmp, _ := cacheThis.muMap.LoadOrStore(key, &sync.Mutex{})
 	getOrSetMu := getOrSetMuTmp.(*sync.Mutex)
 	getOrSetMu.Lock()
 	defer getOrSetMu.Unlock()
@@ -72,25 +68,25 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	isSetOption := gredis.SetOption{TTLOption: gredis.TTLOption{EX: &isSetTtl}, NX: true}
 	var isSetVal *gvar.Var
 	for range numLock {
-		isSetVal, err = cacheThis.cache().Set(ctx, isSetKey, ``, isSetOption)
+		isSetVal, err = cacheThis.redis.Set(ctx, isSetKey, ``, isSetOption)
 		if err != nil {
 			return
 		}
 		if isSetVal.Bool() {
 			value, notExist, err = setFunc()
 			if notExist || err != nil {
-				cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
+				cacheThis.redis.Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 				return
 			}
 			cacheThis.goCache.Set(isSetKey, struct{}{}, isSetTtlOfLocal)
-			cacheThis.cache().Expire(ctx, isSetKey, isSetTtl)
+			cacheThis.redis.Expire(ctx, isSetKey, isSetTtl)
 			return
 		}
 		// 等待读取数据
 		for range numRead {
 			value, notExist, err = getFunc()
 			if !notExist /* || err != nil */ {
-				pttl, _ := cacheThis.cache().PTTL(ctx, isSetKey)
+				pttl, _ := cacheThis.redis.PTTL(ctx, isSetKey)
 				cacheThis.goCache.Set(isSetKey, struct{}{}, time.Until(gtime.Now().Add(time.Duration(pttl)*time.Millisecond).Time))
 				return
 			}
@@ -120,7 +116,7 @@ func (cacheThis *getOrSet) GetOrSetOfRedis(ctx context.Context, key string, setF
 		value = gvar.New(value)
 		return
 	}, func() (value any, notExist bool, err error) {
-		value, err = cacheThis.cache().Get(ctx, key)
+		value, err = cacheThis.redis.Get(ctx, key)
 		if err != nil {
 			return
 		}
@@ -138,5 +134,5 @@ func (cacheThis *getOrSet) Del(ctx context.Context, keyArr ...string) {
 		isSetKeyArr[index] = cacheThis.key(keyArr[index])
 		cacheThis.goCache.Delete(isSetKeyArr[index])
 	}
-	cacheThis.cache().Del(ctx, isSetKeyArr...)
+	cacheThis.redis.Del(ctx, isSetKeyArr...)
 }
