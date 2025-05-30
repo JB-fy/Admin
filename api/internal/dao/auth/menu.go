@@ -606,7 +606,7 @@ func (daoThis *menuDao) CacheSet(ctx context.Context) {
 		listMap[sceneId] = append(listMap[sceneId], info)
 	}
 	for sceneId, list := range listMap {
-		cache.DbDataLocal.Set(ctx, daoModel, `scene_id_`+sceneId, list.Json())
+		cache.DbDataLocal.Set(ctx, daoModel, `scene_id_`+sceneId, list.Json(), 0)
 	}
 }
 

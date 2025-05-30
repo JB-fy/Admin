@@ -379,7 +379,7 @@ func (daoThis *sceneDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
 	list, _ := daoModel.All()
 	for _, info := range list {
-		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().SceneId], info.Json())
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().SceneId], info.Json(), 0)
 	}
 }
 

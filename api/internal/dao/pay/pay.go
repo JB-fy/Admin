@@ -348,7 +348,7 @@ func (daoThis *payDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
 	list, _ := daoModel.All()
 	for _, info := range list {
-		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().PayId], info.Json())
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().PayId], info.Json(), 0)
 	}
 }
 

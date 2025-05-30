@@ -354,10 +354,10 @@ func (daoThis *uploadDao) CacheSet(ctx context.Context) {
 	daoModel := daoThis.CtxDaoModel(ctx)
 	list, _ := daoModel.OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).All()
 	for _, info := range list {
-		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().UploadId], info.Json())
+		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().UploadId], info.Json(), 0)
 	}
 	if len(list) > 0 {
-		cache.DbDataLocal.Set(ctx, daoModel, `default`, list[0].Json())
+		cache.DbDataLocal.Set(ctx, daoModel, `default`, list[0].Json(), 0)
 	}
 }
 
