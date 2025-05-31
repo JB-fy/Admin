@@ -381,13 +381,10 @@ func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id string) (info gdb.
 	// 	1：数据修改删除都需触发后置操作。即调用以下方法
 	// 		修改用：Scene.CtxDaoModel(ctx).SetIdArr(filter).HookUpdate(data).Update()
 	// 		删除用：Scene.CtxDaoModel(ctx).SetIdArr(filter).HookDelete().Delete()
-	// 	2：后置操作 HookUpdate 和 HookDelete 方法的判断受影响行后面添加删除缓存代码：cache.DbData.Del(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
+	// 	2：后置操作 HookUpdate 和 HookDelete 方法的判断受影响行后面添加删除缓存代码：cache.DbData.DelById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...) 或 cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 	// 		注意：要触发 HookUpdate 方法，还需注释 ParseUpdate 方法中的 if len(daoModel.AfterUpdate) > 0 { 这条件
-	value, _, err := cache.DbData.GetOrSet(ctx, daoThis, id, consts.CACHE_TIME_DEFAULT)
-	if err != nil {
-		return
-	}
-	value.Scan(&info) */
+	// value, err := cache.DbData.GetOrSetById(ctx, daoThis.CtxDaoModel(ctx), id, consts.CACHE_TIME_DEFAULT, daoThis.Columns().SceneConfig)
+	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, consts.CACHE_TIME_DEFAULT) */
 
 	// 数据修改无需立即同步缓存的表：第一次调用会缓存到当前服务器内存中，数据库修改分两种情况
 	// 	单服务器：可参考上面缓存在redis同步缓存的步骤，第2步后置操作改成删除本地缓存（但只对使用id为缓存key的缓存有效），即可做到同步缓存

@@ -51,7 +51,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 	}
 	/**--------权限验证 结束--------**/
 
-	config, err := daoPlatform.Config.Get(ctx, *req.ConfigKeyArr...)
+	config, err := daoPlatform.Config.GetPluck(ctx, *req.ConfigKeyArr...)
 	if err != nil {
 		return
 	}

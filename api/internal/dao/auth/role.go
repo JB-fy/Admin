@@ -6,7 +6,6 @@ package auth
 
 import (
 	"api/internal/cache"
-	"api/internal/consts"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/auth/internal"
 	daoOrg "api/internal/dao/org/allow"
@@ -469,16 +468,12 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 // Add your custom methods and functionality below.
 
 func (daoThis *roleDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	value, err := cache.DbData.GetOrSet(ctx, daoThis.CtxDaoModel(ctx), id, consts.CACHE_TIME_DEFAULT, append(daoThis.ColumnArr(), `action_id_arr`, `menu_id_arr`)...)
-	if err != nil {
-		return
-	}
-	value.Scan(&info)
+	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0, append(daoThis.ColumnArr(), `action_id_arr`, `menu_id_arr`)...)
 	return
 }
 
 func (daoThis *roleDao) CacheDeleteInfo(ctx context.Context, idArr ...uint) (row int64, err error) {
-	row, err = cache.DbData.Del(ctx, daoThis.CtxDaoModel(ctx), gconv.SliceAny(idArr)...)
+	row, err = cache.DbData.DelInfoById(ctx, daoThis.CtxDaoModel(ctx), gconv.SliceAny(idArr)...)
 	return
 }
 

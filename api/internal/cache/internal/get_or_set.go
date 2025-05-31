@@ -107,26 +107,6 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	return
 }
 
-func (cacheThis *getOrSet) GetOrSetOfRedis(ctx context.Context, key string, setFunc func() (value any, notExist bool, err error), numLock int, numRead int, oneTime time.Duration) (value *gvar.Var, notExist bool, err error) {
-	valueTmp, notExist, err := cacheThis.GetOrSet(ctx, key, func() (value any, notExist bool, err error) {
-		value, notExist, err = setFunc()
-		if notExist || err != nil {
-			return
-		}
-		value = gvar.New(value)
-		return
-	}, func() (value any, notExist bool, err error) {
-		value, err = cacheThis.redis.Get(ctx, key)
-		if err != nil {
-			return
-		}
-		notExist = value.(*gvar.Var).IsNil()
-		return
-	}, numLock, numRead, oneTime)
-	value, _ = valueTmp.(*gvar.Var)
-	return
-}
-
 // 删除时需同时删除redis竞争锁。建议：调用GetOrSet方法的缓存删除时也使用该方法。在缓存-删除-重设缓存三个步骤连续执行时，在第三步重设缓存会因redis竞争锁未删除报错：尝试多次查询缓存失败
 func (cacheThis *getOrSet) Del(ctx context.Context, keyArr ...string) {
 	isSetKeyArr := make([]string, len(keyArr))

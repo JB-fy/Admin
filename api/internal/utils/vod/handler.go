@@ -21,12 +21,12 @@ func NewHandler(ctx context.Context, scene string, vodTypeOpt ...string) model.H
 	if len(vodTypeOpt) > 0 {
 		vodType = vodTypeOpt[0]
 	} else {
-		vodType = daoPlatform.Config.GetOne(ctx, `vod_type`).String()
+		vodType = daoPlatform.Config.Get(ctx, `vod_type`).String()
 	}
 	if _, ok := vodFuncMap[vodType]; !ok {
 		vodType = vodTypeDef
 	}
-	config := daoPlatform.Config.GetOne(ctx, vodType).Map()
+	config := daoPlatform.Config.Get(ctx, vodType).Map()
 	handlerObj.vod = NewVod(ctx, vodType, config)
 	return handlerObj
 }

@@ -38,7 +38,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiOrg.ConfigGetReq)
 	/**--------权限验证 结束--------**/
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	config, err := daoOrg.Config.Get(ctx, loginInfo[daoOrg.Admin.Columns().OrgId].String(), *req.ConfigKeyArr...)
+	config, err := daoOrg.Config.GetPluck(ctx, loginInfo[daoOrg.Admin.Columns().OrgId].String(), *req.ConfigKeyArr...)
 	if err != nil {
 		return
 	}

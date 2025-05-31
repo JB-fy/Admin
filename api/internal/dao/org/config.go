@@ -6,7 +6,6 @@ package org
 
 import (
 	"api/internal/cache"
-	"api/internal/consts"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/org/internal"
 	"context"
@@ -365,20 +364,18 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 // Add your custom methods and functionality below.
 
 // 获取单个配置
-func (daoThis *configDao) GetOne(ctx context.Context, orgId string, configKey string) (configValue *gvar.Var) {
-	// configValue, _ = daoThis.CtxDaoModel(ctx).FilterPri(orgId+`|`+configKey).Value(daoThis.Columns().ConfigValue)
-	configValue, _ = cache.DbData.GetOrSet(ctx, daoThis.CtxDaoModel(ctx), orgId+`|`+configKey, consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
+func (daoThis *configDao) Get(ctx context.Context, orgId string, configKey string) (configValue *gvar.Var) {
+	configValue, _ = cache.DbData.GetOrSetById(ctx, daoThis.CtxDaoModel(ctx), orgId+`|`+configKey, 0, daoThis.Columns().ConfigValue)
 	return
 }
 
 // 获取配置
-func (daoThis *configDao) Get(ctx context.Context, orgId string, configKeyArr ...string) (config gdb.Record, err error) {
+func (daoThis *configDao) GetPluck(ctx context.Context, orgId string, configKeyArr ...string) (config gdb.Record, err error) {
 	idArr := make([]any, len(configKeyArr))
-	for index, configKey := range configKeyArr {
-		idArr[index] = orgId + `|` + configKey
+	for index := range configKeyArr {
+		idArr[index] = orgId + `|` + configKeyArr[index]
 	}
-	// configTmp, err := daoThis.CtxDaoModel(ctx).FilterPri(idArr).PluckStr(daoThis.Columns().ConfigKey, daoThis.Columns().ConfigValue)
-	configTmp, err := cache.DbData.GetOrSetPluck(ctx, daoThis.CtxDaoModel(ctx), idArr, consts.CACHE_TIME_DEFAULT, daoThis.Columns().ConfigValue)
+	configTmp, err := cache.DbData.GetOrSetPluckById(ctx, daoThis.CtxDaoModel(ctx), idArr, 0, daoThis.Columns().ConfigValue)
 	if err != nil {
 		return
 	}
@@ -410,6 +407,6 @@ func (daoThis *configDao) Save(ctx context.Context, orgId string, config map[str
 	if err != nil {
 		return
 	}
-	cache.DbData.Del(ctx, daoModelThis, idArr...)
+	cache.DbData.DelById(ctx, daoModelThis, idArr...)
 	return
 }

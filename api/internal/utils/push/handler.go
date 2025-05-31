@@ -20,12 +20,12 @@ func NewHandler(ctx context.Context, deviceType uint, pushTypeOpt ...string) mod
 	if len(pushTypeOpt) > 0 {
 		pushType = pushTypeOpt[0]
 	} else {
-		pushType = daoPlatform.Config.GetOne(ctx, `push_type`).String()
+		pushType = daoPlatform.Config.Get(ctx, `push_type`).String()
 	}
 	if _, ok := pushFuncMap[pushType]; !ok {
 		pushType = pushTypeDef
 	}
-	config := daoPlatform.Config.GetOne(ctx, pushType).Map()
+	config := daoPlatform.Config.Get(ctx, pushType).Map()
 	switch pushType {
 	case `push_of_tx`:
 		deviceTypeStr, ok := deviceTypeMap[deviceType]
