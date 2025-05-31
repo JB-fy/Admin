@@ -350,7 +350,7 @@ func (daoThis *roleDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				}
 			}
 
-			daoThis.CacheDeleteInfo(ctx, gconv.Uints(daoModel.IdArr)...)
+			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
@@ -384,13 +384,12 @@ func (daoThis *roleDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				return
 			}
 
-			daoThis.CacheDeleteInfo(ctx, gconv.Uints(daoModel.IdArr)...)
-
 			RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, daoModel.IdArr).Delete()
 			RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, daoModel.IdArr).Delete()
 			/* // 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
 			RoleRelOfOrgAdmin.CtxDaoModel(ctx).Filter(RoleRelOfOrgAdmin.Columns().RoleId, daoModel.IdArr).Delete()
 			RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(RoleRelOfPlatformAdmin.Columns().RoleId, daoModel.IdArr).Delete() */
+			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
 		},
 	}
@@ -469,11 +468,6 @@ func (daoThis *roleDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 
 func (daoThis *roleDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
 	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0, append(daoThis.ColumnArr(), `action_id_arr`, `menu_id_arr`)...)
-	return
-}
-
-func (daoThis *roleDao) CacheDeleteInfo(ctx context.Context, idArr ...uint) (row int64, err error) {
-	row, err = cache.DbData.DelInfoById(ctx, daoThis.CtxDaoModel(ctx), gconv.SliceAny(idArr)...)
 	return
 }
 

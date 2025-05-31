@@ -5,6 +5,7 @@
 package app
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/app/internal"
 	"context"
@@ -358,3 +359,8 @@ func (daoThis *appDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) 
 }
 
 // Add your custom methods and functionality below.
+
+func (daoThis *appDao) CacheGetInfo(ctx context.Context, id string) (info gdb.Record, err error) {
+	info, err = cache.DbDataLocal.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
+	return
+}

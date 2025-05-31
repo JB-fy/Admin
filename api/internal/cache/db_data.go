@@ -63,7 +63,7 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, m
 		err = cacheThis.cache().SetEX(ctx, key, gconv.String(value), gconv.Int64(ttl/time.Second))
 		return
 	}, func() (value any, notExist bool, err error) {
-		value, err = cacheThis.redis.Get(ctx, key)
+		value, err = cacheThis.cache().Get(ctx, key)
 		notExist = value.(*gvar.Var).IsNil()
 		return
 	}, 0, 0, 0)
