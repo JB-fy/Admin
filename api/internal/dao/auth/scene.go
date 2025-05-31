@@ -375,14 +375,6 @@ func (daoThis *sceneDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 
 // Add your custom methods and functionality below.
 
-func (daoThis *sceneDao) CacheSet(ctx context.Context) {
-	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.All()
-	for _, info := range list {
-		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().SceneId], info.Json(), 0)
-	}
-}
-
 func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id string) (info gdb.Record, err error) {
 	/* // 数据修改需要立即同步缓存的表：缓存在redis，数据修改可做到立即同步缓存
 	// 只需数据修改 或 删除时，同时删除缓存即可。要求如下：
@@ -396,10 +388,13 @@ func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id string) (info gdb.
 		return
 	}
 	value.Scan(&info) */
-	// 数据修改无需立即同步缓存的表：服务启动时，缓存在本机内存中，数据库修改，只能重启服务 或 等待定时器执行 才能同步缓存
-	info = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
-	if info.IsEmpty() {
-		info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
-	}
+
+	// 数据修改无需立即同步缓存的表：第一次调用会缓存到当前服务器内存中，数据库修改分两种情况
+	// 	单服务器：可参考上面缓存在redis同步缓存的步骤，第2步后置操作改成删除本地缓存（但只对使用id为缓存key的缓存有效），即可做到同步缓存
+	// 	多服务器：
+	// 		设置过期时间，无法做到全部服务器同时过期，不同服务器会出现不一致的情况
+	// 		全部服务器使用定时器删除缓存，不同服务器定时器执行存在时间差，也可能出现不一致的情况（时间差一般很小，基本可以接受）
+	// 	 	全部服务器重启服务
+	info, err = cache.DbDataLocal.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
 	return
 }

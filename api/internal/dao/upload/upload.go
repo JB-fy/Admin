@@ -12,6 +12,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"sync"
+	"time"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -350,28 +351,14 @@ func (daoThis *uploadDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 
 // Add your custom methods and functionality below.
 
-func (daoThis *uploadDao) CacheSet(ctx context.Context) {
-	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).All()
-	for _, info := range list {
-		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().UploadId], info.Json(), 0)
-	}
-	if len(list) > 0 {
-		cache.DbDataLocal.Set(ctx, daoModel, `default`, list[0].Json(), 0)
-	}
-}
-
 func (daoThis *uploadDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
 	if id > 0 {
-		info = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
-		if info.IsEmpty() {
-			info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
-		}
+		info, err = cache.DbDataLocal.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
 	} else {
-		info = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), `default`)
-		if info.IsEmpty() {
-			info, err = daoThis.CtxDaoModel(ctx).OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
-		}
+		info, err = cache.DbDataLocal.GetOrSetInfo(ctx, daoThis.CtxDaoModel(ctx), `default`, func(daoModel *daoIndex.DaoModel) (value gdb.Record, ttl time.Duration, err error) {
+			value, err = daoModel.OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
+			return
+		})
 	}
 	return
 }

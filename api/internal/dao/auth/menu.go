@@ -13,6 +13,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
@@ -593,28 +594,11 @@ func (daoThis *menuDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 
 // Add your custom methods and functionality below.
 
-func (daoThis *menuDao) CacheSet(ctx context.Context) {
-	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.Fields(append(daoThis.ColumnArr(), `id`, `label`, `tree`, `show_menu`)...).All()
-	listMap := map[string]gdb.Result{}
-	for _, info := range list {
-		sceneId := info[daoThis.Columns().SceneId].String()
-		delete(info, daoThis.Columns().SceneId)
-		if _, ok := listMap[sceneId]; !ok {
-			listMap[sceneId] = gdb.Result{}
-		}
-		listMap[sceneId] = append(listMap[sceneId], info)
-	}
-	for sceneId, list := range listMap {
-		cache.DbDataLocal.Set(ctx, daoModel, `scene_id_`+sceneId, list.Json(), 0)
-	}
-}
-
 func (daoThis *menuDao) CacheGetList(ctx context.Context, sceneId string) (list gdb.Result, err error) {
-	list = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId)
-	if len(list) == 0 {
-		list, err = daoThis.CtxDaoModel(ctx).Fields(append(daoThis.ColumnArr(), `id`, `label`, `tree`, `show_menu`)...).Filter(daoThis.Columns().SceneId, sceneId).All()
-	}
+	list, err = cache.DbDataLocal.GetOrSetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId, func(daoModel *daoIndex.DaoModel) (value gdb.Result, ttl time.Duration, err error) {
+		value, err = daoThis.CtxDaoModel(ctx).Fields(append(daoThis.ColumnArr(), `id`, `label`, `tree`, `show_menu`)...).Filter(daoThis.Columns().SceneId, sceneId).All()
+		return
+	})
 	return
 }
 

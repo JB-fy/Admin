@@ -1,16 +1,15 @@
 package cache
 
 import (
+	"api/internal/cache/internal"
 	"api/internal/consts"
 	"api/internal/dao"
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/patrickmn/go-cache"
 )
@@ -19,132 +18,135 @@ var DbDataLocal = dbDataLocal{goCache: cache.New(0, 0)}
 
 type dbDataLocal struct {
 	goCache *cache.Cache
-	muMap   sync.Map //存放所有缓存KEY的锁（当前服务器用）
 }
 
 func (cacheThis *dbDataLocal) cache() *cache.Cache {
 	return cacheThis.goCache
 }
 
-func (cacheThis *dbDataLocal) key(daoModel *dao.DaoModel, id any) string {
-	return fmt.Sprintf(consts.CACHE_DB_DATA, daoModel.DbGroup, daoModel.DbTable, id)
+func (cacheThis *dbDataLocal) key(daoModel *dao.DaoModel, method string, idOrCode any) string {
+	// method := gstr.ReplaceByMap(utils.GetMethodName(3), map[string]string{`GetOrSet`: ``, `ById`: ``})	//不传method，但必须注意层级问题，且更耗性能，故不用
+	return fmt.Sprintf(consts.CACHE_DB_DATA, daoModel.DbGroup, daoModel.DbTable, method, idOrCode)
 }
 
-func (cacheThis *dbDataLocal) Set(ctx context.Context, daoModel *dao.DaoModel, id any, value string, ttl time.Duration) {
-	cacheThis.cache().Set(cacheThis.key(daoModel, id), gvar.New(value), time.Duration(ttl)*time.Second)
-}
-
-func (cacheThis *dbDataLocal) Get(ctx context.Context, daoModel *dao.DaoModel, id any) (value *gvar.Var) {
-	if valueTmp, ok := cacheThis.cache().Get(cacheThis.key(daoModel, id)); ok {
-		value = valueTmp.(*gvar.Var)
+func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoModel, method string, code any, dbSelFunc func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error)) (value any, notExist bool, err error) {
+	key := cacheThis.key(daoModel, method, code)
+	value, notExist, err = internal.GetOrSetLocal.GetOrSetLocal(ctx, key, func() (value any, notExist bool, err error) {
+		value, ttl, err := dbSelFunc(daoModel)
+		if err != nil {
+			return
+		}
+		switch valueType := value.(type) {
+		case *gvar.Var:
+			notExist = valueType.IsNil()
+		case gdb.Record:
+			notExist = valueType.IsEmpty()
+		case gdb.Result:
+			notExist = len(valueType) == 0
+		default:
+			notExist = value == nil
+		}
+		if notExist {
+			return
+		}
+		cacheThis.cache().Set(key, value, ttl)
 		return
-	}
+	}, func() (value any, notExist bool, err error) {
+		value, notExist = cacheThis.cache().Get(key)
+		notExist = !notExist
+		return
+	})
 	return
 }
 
-func (cacheThis *dbDataLocal) GetInfo(ctx context.Context, daoModel *dao.DaoModel, id any) (info gdb.Record) {
-	cacheThis.Get(ctx, daoModel, id).Scan(&info)
+func (cacheThis *dbDataLocal) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value *gvar.Var, ttl time.Duration, err error)) (value *gvar.Var, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, ``, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.(*gvar.Var)
 	return
 }
 
-func (cacheThis *dbDataLocal) GetList(ctx context.Context, daoModel *dao.DaoModel, id any) (list gdb.Result) {
-	cacheThis.Get(ctx, daoModel, id).Scan(&list)
+func (cacheThis *dbDataLocal) GetOrSetInfo(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error)) (value gdb.Record, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, `info`, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.(gdb.Record)
 	return
 }
 
-func (cacheThis *dbDataLocal) Del(ctx context.Context, daoModel *dao.DaoModel, idArr ...any) {
+func (cacheThis *dbDataLocal) GetOrSetList(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Result, ttl time.Duration, err error)) (value gdb.Result, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, `list`, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.(gdb.Result)
+	return
+}
+
+func (cacheThis *dbDataLocal) GetOrSetById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, field string) (value *gvar.Var, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, ``, id, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, err = daoModel.FilterPri(id).Value(field)
+		ttl = ttlD
+		return
+	})
+	value, _ = valueTmp.(*gvar.Var)
+	return
+}
+
+func (cacheThis *dbDataLocal) GetOrSetInfoById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, fieldArr ...string) (value gdb.Record, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, `info`, id, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, err = daoModel.FilterPri(id).Fields(fieldArr...).One()
+		ttl = ttlD
+		return
+	})
+	value, _ = valueTmp.(gdb.Record)
+	return
+}
+
+func (cacheThis *dbDataLocal) GetOrSetListById(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlD time.Duration, fieldArr ...string) (value gdb.Result, err error) {
+	var valueTmp any
+	var notExist bool
 	for index := range idArr {
-		cacheThis.cache().Delete(cacheThis.key(daoModel, idArr[index]))
-	}
-}
-
-// ttlOrField是字符串类型时，确保是能从数据库查询结果中获得，且值必须是数字或时间类型
-func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, notExist bool, err error) {
-	key := cacheThis.key(daoModel, id)
-	if valueTmp, ok := cacheThis.cache().Get(key); ok { //先读一次（不加锁）
-		value = valueTmp.(*gvar.Var)
-		return
-	}
-	// 防止当前服务器并发
-	getOrSetLocalMuTmp, _ := cacheThis.muMap.LoadOrStore(key, &sync.Mutex{})
-	getOrSetLocalMu := getOrSetLocalMuTmp.(*sync.Mutex)
-	getOrSetLocalMu.Lock()
-	defer getOrSetLocalMu.Unlock()
-	if valueTmp, ok := cacheThis.cache().Get(key); ok { // 再读一次（加锁），防止重复初始化
-		value = valueTmp.(*gvar.Var)
-		return
-	}
-
-	fieldArr := field
-	ttlField, ok := ttlOrField.(string)
-	isTtlField := ok && ttlField != ``
-	if len(fieldArr) > 0 && isTtlField {
-		fieldArr = append(fieldArr, ttlField)
-	}
-	info, err := daoModel.FilterPri(id).Fields(fieldArr...).One()
-	if err != nil {
-		return
-	}
-	if info.IsEmpty() {
-		notExist = true
-		return
-	}
-	var ttl int64
-	if isTtlField {
-		ttl = info[ttlField].GTime().Unix()
-		if nowTime := gtime.Now().Unix(); ttl > nowTime {
-			ttl = ttl - nowTime
-		}
-	} else {
-		ttl = gconv.Int64(ttlOrField)
-	}
-	if ttl <= 0 || ttl > consts.CACHE_TIME_DEFAULT { //缓存时间不能超过默认缓存时间
-		ttl = consts.CACHE_TIME_DEFAULT
-	}
-	if len(field) == 1 {
-		value = gvar.New(info[field[0]].String())
-	} else {
-		value = gvar.New(info.Json())
-	}
-	cacheThis.cache().Set(key, value, time.Duration(ttl)*time.Second)
-	return
-}
-
-func (cacheThis *dbDataLocal) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, id any, ttlOrField any, field ...string) (value *gvar.Var, err error) {
-	value, _, err = cacheThis.getOrSet(ctx, daoModel, id, ttlOrField, field...)
-	return
-}
-
-func (cacheThis *dbDataLocal) GetOrSetMany(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (list gdb.Result, err error) {
-	var value *gvar.Var
-	var notExist bool
-	for _, id := range idArr {
-		value, notExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
+		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, `list`, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Fields(fieldArr...).One()
+			ttl = ttlD
+			return
+		})
 		if err != nil {
 			return
 		}
 		if notExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
-		list = append(list, gdb.Record{})
-		value.Scan(&list[len(list)-1])
+		value = append(value, valueTmp.(gdb.Record))
 	}
 	return
 }
 
-func (cacheThis *dbDataLocal) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlOrField any, field ...string) (record gdb.Record, err error) {
-	var value *gvar.Var
+func (cacheThis *dbDataLocal) GetOrSetPluckById(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlD time.Duration, field string) (value gdb.Record, err error) {
+	var valueTmp any
 	var notExist bool
-	record = gdb.Record{}
-	for _, id := range idArr {
-		value, notExist, err = cacheThis.getOrSet(ctx, daoModel.ResetNew(), id, ttlOrField, field...)
+	value = gdb.Record{}
+	for index := range idArr {
+		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, `pluck`, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Value(field)
+			ttl = ttlD
+			return
+		})
 		if err != nil {
 			return
 		}
 		if notExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
 			continue
 		}
-		record[gconv.String(id)] = value
+		value[gconv.String(idArr[index])], _ = valueTmp.(*gvar.Var)
 	}
 	return
+}
+
+func (cacheThis *dbDataLocal) Flush(ctx context.Context) {
+	cacheThis.cache().Flush()
 }

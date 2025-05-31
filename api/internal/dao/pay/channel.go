@@ -12,6 +12,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"sync"
+	"time"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -358,35 +359,15 @@ func (daoThis *channelDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMod
 
 // Add your custom methods and functionality below.
 
-func (daoThis *channelDao) CacheSet(ctx context.Context) {
-	daoModel := daoThis.CtxDaoModel(ctx)
-	list, _ := daoModel.OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
-	listMap := map[string]gdb.Result{}
-	for _, info := range list {
-		cache.DbDataLocal.Set(ctx, daoModel, info[daoThis.Columns().ChannelId], info.Json(), 0)
-		sceneId := info[daoThis.Columns().SceneId].String()
-		if _, ok := listMap[sceneId]; !ok {
-			listMap[sceneId] = gdb.Result{}
-		}
-		listMap[sceneId] = append(listMap[sceneId], info)
-	}
-	for sceneId, list := range listMap {
-		cache.DbDataLocal.Set(ctx, daoModel, `scene_id_`+sceneId, list.Json(), 0)
-	}
-}
-
 func (daoThis *channelDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	info = cache.DbDataLocal.GetInfo(ctx, daoThis.CtxDaoModel(ctx), id)
-	if info.IsEmpty() {
-		info, err = daoThis.CtxDaoModel(ctx).FilterPri(id).One()
-	}
+	info, err = cache.DbDataLocal.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
 	return
 }
 
 func (daoThis *channelDao) CacheGetList(ctx context.Context, sceneId uint) (list gdb.Result, err error) {
-	list = cache.DbDataLocal.GetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+gconv.String(sceneId))
-	if len(list) == 0 {
-		list, err = daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().SceneId, sceneId).OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
-	}
+	list, err = cache.DbDataLocal.GetOrSetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+gconv.String(sceneId), func(daoModel *daoIndex.DaoModel) (value gdb.Result, ttl time.Duration, err error) {
+		value, err = daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().SceneId, sceneId).OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
+		return
+	})
 	return
 }
