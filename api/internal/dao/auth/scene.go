@@ -390,7 +390,7 @@ func (daoThis *sceneDao) CacheGetInfo(ctx context.Context, id string) (info gdb.
 	// 	单服务器：可参考上面缓存在redis同步缓存的步骤，第2步后置操作改成删除本地缓存（但只对使用id为缓存key的缓存有效），即可做到同步缓存
 	// 	多服务器：
 	// 		设置过期时间，无法做到全部服务器同时过期，不同服务器会出现不一致的情况
-	// 		全部服务器使用定时器删除缓存，不同服务器定时器执行存在时间差，也可能出现不一致的情况（时间差一般很小，基本可以接受）
+	// 		全部服务器使用定时器删除缓存，不同服务器定时器执行存在时间差，也可能出现不一致的情况（但时间差很小，一般可以接受）
 	// 	 	全部服务器重启服务
 	info, err = cache.DbDataLocal.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
 	return

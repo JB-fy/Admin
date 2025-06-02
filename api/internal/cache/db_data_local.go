@@ -6,20 +6,26 @@ import (
 	"api/internal/dao"
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/patrickmn/go-cache"
 )
 
 var DbDataLocal = dbDataLocal{
-	goCache:  cache.New(0, 0),
-	goCache1: cache.New(consts.CACHE_TIME_DEFAULT, 2*time.Hour),
-	cacheKeyMap: map[string]uint8{
-		`default:item_task`:                 1,
-		`default:item_task_rel_to_plt_auth`: 1,
+	goCacheMap: sync.Map{}, //第一个缓存库默认凌晨3点清空
+	cacheKeyMap: map[string]uint8{ // 可根据 数据库或表 使用不同缓存库。不同缓存库每隔（值*consts.CACHE_LOCAL_INTERVAL_MINUTE）时间会删除缓存，可配合定时器使全部服务器同步缓存
+		// `default:auth_scene`:  0,
+		`default:auth_menu`:   1,
+		`default:auth_action`: 1,
+		// `default:upload`:      2,
+		// `default:pay`:         1,
+		// `default:pay_channel`: 1,
+		// `default:pay_scene`:   1,
 	},
 	methodCode:       ``,
 	methodCodeOfInfo: `info_`,
@@ -27,28 +33,34 @@ var DbDataLocal = dbDataLocal{
 }
 
 type dbDataLocal struct {
-	goCache          *cache.Cache
-	goCache1         *cache.Cache
+	goCacheMap       sync.Map
 	cacheKeyMap      map[string]uint8
 	methodCode       string
 	methodCodeOfInfo string
 	methodCodeOfList string
 }
 
-var cacheMap = map[uint8]*cache.Cache{
-	1: DbDataLocal.goCache1,
-}
-
-func (cacheThis *dbDataLocal) Flush(cacheKey uint8) {
-	cacheThis.parseCache(cacheKey).Flush()
+func (cacheThis *dbDataLocal) Flush(ctx context.Context) {
+	nowTime := gtime.Now().EndOfHour().Add(31 * time.Minute)
+	hour := nowTime.Hour()
+	minute := nowTime.Minute()
+	totalMinute := hour*60 + minute
+	cacheThis.goCacheMap.Range(func(key, value any) bool {
+		if cacheKey := key.(uint8); cacheKey > 0 {
+			if totalMinute%(int(cacheKey)*consts.CACHE_LOCAL_INTERVAL_MINUTE) == 0 {
+				value.(*cache.Cache).Flush()
+			}
+		} else if hour == 3 && minute == 0 { //第一个缓存库默认凌晨3点清空
+			value.(*cache.Cache).Flush()
+		}
+		return true
+	})
 }
 
 // 解析缓存分库
 func (cacheThis *dbDataLocal) parseCache(cacheKey uint8) *cache.Cache {
-	if _, ok := cacheMap[cacheKey]; ok {
-		return cacheMap[cacheKey]
-	}
-	return cacheThis.goCache
+	tmp, _ := cacheThis.goCacheMap.LoadOrStore(cacheKey, cache.New(0, 0))
+	return tmp.(*cache.Cache)
 }
 
 func (cacheThis *dbDataLocal) cache(daoModel *dao.DaoModel) *cache.Cache {
