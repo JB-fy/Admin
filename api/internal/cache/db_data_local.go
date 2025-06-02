@@ -15,7 +15,12 @@ import (
 )
 
 var DbDataLocal = dbDataLocal{
-	goCache:          cache.New(consts.CACHE_TIME_DEFAULT, 0),
+	goCache:  cache.New(0, 0),
+	goCache1: cache.New(consts.CACHE_TIME_DEFAULT, 2*time.Hour),
+	cacheKeyMap: map[string]uint8{
+		`default:item_task`:                 1,
+		`default:item_task_rel_to_plt_auth`: 1,
+	},
 	methodCode:       ``,
 	methodCodeOfInfo: `info_`,
 	methodCodeOfList: `list_`,
@@ -23,13 +28,31 @@ var DbDataLocal = dbDataLocal{
 
 type dbDataLocal struct {
 	goCache          *cache.Cache
+	goCache1         *cache.Cache
+	cacheKeyMap      map[string]uint8
 	methodCode       string
 	methodCodeOfInfo string
 	methodCodeOfList string
 }
 
-func (cacheThis *dbDataLocal) cache() *cache.Cache {
+var cacheMap = map[uint8]*cache.Cache{
+	1: DbDataLocal.goCache1,
+}
+
+func (cacheThis *dbDataLocal) Flush(cacheKey uint8) {
+	cacheThis.parseCache(cacheKey).Flush()
+}
+
+// 解析缓存分库
+func (cacheThis *dbDataLocal) parseCache(cacheKey uint8) *cache.Cache {
+	if _, ok := cacheMap[cacheKey]; ok {
+		return cacheMap[cacheKey]
+	}
 	return cacheThis.goCache
+}
+
+func (cacheThis *dbDataLocal) cache(daoModel *dao.DaoModel) *cache.Cache {
+	return cacheThis.parseCache(cacheThis.cacheKeyMap[daoModel.DbGroup+`:`+daoModel.DbTable])
 }
 
 func (cacheThis *dbDataLocal) key(daoModel *dao.DaoModel, method string, idOrCode any) string {
@@ -56,10 +79,10 @@ func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoMod
 		if notExist {
 			return
 		}
-		cacheThis.cache().Set(key, value, ttl)
+		cacheThis.cache(daoModel).Set(key, value, ttl)
 		return
 	}, func() (value any, notExist bool, err error) {
-		value, notExist = cacheThis.cache().Get(key)
+		value, notExist = cacheThis.cache(daoModel).Get(key)
 		notExist = !notExist
 		return
 	})
@@ -152,8 +175,4 @@ func (cacheThis *dbDataLocal) GetOrSetPluckById(ctx context.Context, daoModel *d
 		value[gconv.String(idArr[index])], _ = valueTmp.(*gvar.Var)
 	}
 	return
-}
-
-func (cacheThis *dbDataLocal) Flush(ctx context.Context) {
-	cacheThis.cache().Flush()
 }
