@@ -41,7 +41,7 @@ type dbDataLocal struct {
 }
 
 func (cacheThis *dbDataLocal) Flush(ctx context.Context) {
-	nowTime := gtime.Now().EndOfHour().Add(31 * time.Minute)
+	nowTime := gtime.Now()
 	hour := nowTime.Hour()
 	minute := nowTime.Minute()
 	totalMinute := hour*60 + minute
