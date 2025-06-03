@@ -19,13 +19,14 @@ import (
 var DbDataLocal = dbDataLocal{
 	goCacheMap: sync.Map{}, //第一个缓存库默认凌晨3点清空
 	cacheKeyMap: map[string]uint8{ // 可根据 数据库或表 使用不同缓存库。不同缓存库每隔（值*consts.CACHE_LOCAL_INTERVAL_MINUTE）时间会删除缓存，可配合定时器使全部服务器同步缓存
-		// `default:auth_scene`:  0,
+		// `default:auth_scene`:  0, //默认为0，即第一个缓存库
 		`default:auth_menu`:   1,
 		`default:auth_action`: 1,
 		// `default:upload`:      2,
 		// `default:pay`:         1,
 		// `default:pay_channel`: 1,
 		// `default:pay_scene`:   1,
+		// `default:app`:         0,
 	},
 	methodCode:       ``,
 	methodCodeOfInfo: `info_`,
