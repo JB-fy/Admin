@@ -64,7 +64,7 @@ timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
 
 /**--------ssh免密登录 开始--------**/
 当前系统执行ssh-keygen生成密钥
-	ssh-keygen -t rsa -b 4096 -N "密码，可为空" -f 密钥文件名（默认~/.ssh/id_rsa） -C "备注，非必须"
+	ssh-keygen -t rsa -b 4096 -N "密码（可为空）" -f 密钥文件名（默认~/.ssh/id_rsa） -C "备注，非必须"
 拷贝公钥到远程服务器账号的~/.ssh/authorized_keys目录下
 	方式1：
 		当前系统执行命令
