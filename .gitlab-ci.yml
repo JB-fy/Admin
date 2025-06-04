@@ -1,0 +1,38 @@
+image: docker:20.10.16
+
+services:
+  - docker:20.10.16-dind
+
+variables:
+  DOCKER_IMAGE: "admin:0.0.1"
+  DOCKER_TAR: "admin.tar"
+  REMOTE_SERVER: "远程服务器地址"
+  REMOTE_USER: "远程服务器用户名"
+  REMOTE_DIR: "/server/app/admin"
+  REMOTE_CONTAINER_NAME: "admin"
+
+stages:
+  - vue
+  - go
+
+buildVue:
+  stage: vue
+  script:
+    - echo "前端代码（platform后台）编译..."
+    - (cd ./view/platform && npm install && npm run build)
+    - echo "前端代码（org后台）编译..."
+    - (cd ./view/org && npm install && npm run build)
+    - echo "上传前端代码到服务器..."
+    - scp -r ./public/admin/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin
+  only:
+    - master
+
+buildGo:
+  stage: go
+  script:
+    - (cd ./api && gf build)
+    - docker build -t $DOCKER_IMAGE . && docker save -o $DOCKER_TAR $DOCKER_IMAGE
+    - scp $DOCKER_TAR $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR
+    - ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/compose.yaml down $REMOTE_CONTAINER_NAME && docker load -i $REMOTE_DIR/$DOCKER_TAR && docker compose -f $REMOTE_DIR/compose.yaml up -d $REMOTE_CONTAINER_NAME"
+  only:
+    - master
