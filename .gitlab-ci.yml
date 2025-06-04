@@ -46,8 +46,19 @@ buildGo:
 buildDocker:
   stage: docker
   image: docker:28.1.1
+  before_script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $REMOTE_SERVER >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    # - ssh-keygen -y -f ~/.ssh/id_rsa # 调试：打印当前私钥的公钥指纹
+    # - ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -v $REMOTE_USER@$REMOTE_SERVER 'echo SSH login successful' # 可选：调试 SSH 是否能登录
   script:
-    - docker build -t $DOCKER_IMAGE . && docker save -o $DOCKER_TAR $DOCKER_IMAGE
+    # - docker build -t $DOCKER_IMAGE . && docker save -o $DOCKER_TAR $DOCKER_IMAGE
+    - docker build -t $DOCKER_IMAGE .
+    - docker save -o $DOCKER_TAR $DOCKER_IMAGE
     - scp $DOCKER_TAR $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR
     - ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/compose.yaml down $REMOTE_CONTAINER_NAME && docker load -i $REMOTE_DIR/$DOCKER_TAR && docker compose -f $REMOTE_DIR/compose.yaml up -d $REMOTE_CONTAINER_NAME"
   only:
