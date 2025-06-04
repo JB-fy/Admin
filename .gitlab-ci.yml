@@ -22,6 +22,9 @@ buildVue:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $REMOTE_SERVER >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
+    # 调试：打印当前私钥的公钥指纹
+    - echo "Current public key:"
+    - ssh-keygen -y -f ~/.ssh/id_rsa
     # 可选：调试 SSH 是否能登录
     - ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -v $REMOTE_USER@$REMOTE_SERVER 'echo SSH login successful'
     # - npm config set registry=https://registry.npm.taobao.org/before_script:
