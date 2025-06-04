@@ -55,6 +55,31 @@ source /etc/profile
 /**--------设置环境变量 结束--------**/
 
 
+/**--------时区设置 开始--------**/
+timedatectl //查看时区设置
+timedatectl list-timezones	//列出所有可用时区
+timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
+/**--------时区设置 结束--------**/
+
+
+/**--------ssh免密登录 开始--------**/
+当前系统执行ssh-keygen生成密钥
+	ssh-keygen -t rsa -b 4096 -f 密钥文件名（默认~/.ssh/id_rsa） -C "备注，非必须"
+拷贝公钥到远程服务器账号的~/.ssh/authorized_keys目录下
+	方式1：
+		当前系统执行命令
+			ssh-copy-id -i ~/.ssh/id_rsa.pub 远程服务器账号@远程服务器IP
+	方式2：
+		复制当前系统账号~/.ssh/id_rsa.pub公钥文件内的内容 到 远程服务器账号~/.ssh/authorized_keys文件内（如已有其它密钥，则新增一行）。注意：远程服务器没有~/.ssh/authorized_keys文件时，可执行命令生成
+			ssh localhost
+如使用gitlab的CI/CD功能
+	方式1：
+		建议将私钥设置到gitlab后台：Admin > 设置 > CI/CD > 变量 中，后续直接在.gitlab-ci.yml文件中引用
+	方式2：
+		直接在gitlab-runner所在服务器中执行ssh-keygen生成密钥
+/**--------ssh免密登录 结束--------**/
+
+
 /**--------设置自启动 开始--------**/
 //一定要做，否则会造成权限不通过无法自启动。
 修改selinux的配置文件/etc/selinux/config将SELINUX的值改为disabled
@@ -124,12 +149,6 @@ vi /etc/NetworkManager/system-connections/ens33.nmconnection
 /**--------Centos9网络配置 结束--------**/
 
 
-/**--------时区设置 开始--------**/
-timedatectl //查看时区设置
-timedatectl list-timezones	//列出所有可用时区
-timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
-/**--------时区设置 结束--------**/
-
 /**--------生成ssl证书 开始--------**/
 生成RSA私钥（des3算法，长度2048位）
 	openssl genrsa -des3 -out ssl.key 2048
@@ -150,6 +169,7 @@ timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
 	curl -d 'a=1&b=2' -X POST post请求地址
 	curl -d '{}' -H 'Content-Type: application/json' post请求地址
 /**--------curl使用 结束--------**/
+
 
 /**--------压测工具ab安装与使用 开始--------**/
 安装
