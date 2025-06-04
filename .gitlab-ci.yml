@@ -8,44 +8,49 @@ variables:
   REMOTE_CONTAINER_NAME: "admin"
 
 stages:
-  - vue
-  - go
+  # - vue
+  # - go
   - docker
 
-buildVue:
-  stage: vue
-  image: node:22.15.1
-  before_script:
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H $REMOTE_SERVER >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    # - ssh-keygen -y -f ~/.ssh/id_rsa # 调试：打印当前私钥的公钥指纹
-    # - ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -v $REMOTE_USER@$REMOTE_SERVER 'echo SSH login successful' # 可选：调试 SSH 是否能登录
-    # - npm config set registry=https://registry.npm.taobao.org/before_script:
-  script:
-    - (cd ./view/platform && npm install && npm run build-only)
-    - (cd ./view/org && npm install && npm run build-only)
-    - scp -r ./public/admin/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin
-  only:
-    - master
+# buildVue:
+#   stage: vue
+#   image: node:22.15.1
+#   before_script:
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+#     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+#     - chmod 600 ~/.ssh/id_rsa
+#     - ssh-keyscan -H $REMOTE_SERVER >> ~/.ssh/known_hosts
+#     - chmod 644 ~/.ssh/known_hosts
+#     # - ssh-keygen -y -f ~/.ssh/id_rsa # 调试：打印当前私钥的公钥指纹
+#     # - ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -v $REMOTE_USER@$REMOTE_SERVER 'echo SSH login successful' # 可选：调试 SSH 是否能登录
+#     # - npm config set registry=https://registry.npm.taobao.org/before_script:
+#   script:
+#     - (cd ./view/platform && npm install && npm run build-only)
+#     - (cd ./view/org && npm install && npm run build-only)
+#     - scp -r ./public/admin/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin
+#   only:
+#     - master
 
-buildGo:
-  stage: go
-  image: golang:1.23.1
-  before_script:
-    - go env -w GOPROXY=https://goproxy.cn,direct
-    - go install github.com/gogf/gf/cmd/gf/v2@v2.9.0
-  script:
-    - (cd ./api && /go/bin/gf build)
-  only:
-    - master
+# buildGo:
+#   stage: go
+#   image: golang:1.23.1
+#   before_script:
+#     - go env -w GOPROXY=https://goproxy.cn,direct
+#     - go install github.com/gogf/gf/cmd/gf/v2@v2.9.0
+#   script:
+#     - (cd ./api && /go/bin/gf build)
+#   only:
+#     - master
 
 buildDocker:
   stage: docker
   image: docker:28.1.1
+  services:
+    - docker:28.1.1-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""  # 关闭 TLS 认证（用于简化）
   before_script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
