@@ -20,7 +20,7 @@ buildVue:
   script:
     - (cd ./view/platform && npm install && npm run build-only)
     - (cd ./view/org && npm install && npm run build-only)
-    - scp -r ./public/admin/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin
+    - scp -r ./public/admin/ $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin
   only:
     - master
 
