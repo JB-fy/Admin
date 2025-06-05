@@ -2,9 +2,9 @@
 # 远程ssh连接非root用户使用mkdir会报无权限，带sudo执行又要输入密码，故需先手动：mkdir -p /server/app/项目名/api/manifest && mkdir -p /server/app/项目名/public/admin && mkdir -p /server/app/项目名/public/upload && chmod -R 777 /server/app/项目名
 variables:
   # PROJECT_DIR: $CI_PROJECT_DIR  # GitLab自带预定义变量，表示项目根目录
-  DOCKER_IMAGE: "镜像名:版本"
-  DOCKER_TAR: "文件名.tar"
-  REMOTE_SERVER_ARR: "192.168.0.200" # 多IP空格隔开
+  DOCKER_IMAGE: "admin"
+  DOCKER_TAR: "admin.tar"
+  REMOTE_SERVER_ARR: "192.168.0.221" # 多IP空格隔开
   REMOTE_USER: "root"
   REMOTE_DIR: "/server/app/项目名"
 
