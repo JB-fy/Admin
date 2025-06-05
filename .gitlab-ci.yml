@@ -17,7 +17,7 @@ buildVue:
   stage: vue
   image: node:22.15.1
   cache:
-    key: "$DOCKER_IMAGE_vue"
+    key: "vue"
     paths:
       - ./view/platform/node_modules
       - ./view/org/node_modules
@@ -43,14 +43,14 @@ buildGo:
   stage: go
   image: golang:1.23.1
   cache:
-    key: "$DOCKER_IMAGE_go"
+    key: "go"
     paths:
       - /go
   before_script:
     - go env -w GOPROXY=https://goproxy.cn,direct # 更改镜像源
-  script:
     - ls -l /go/bin/gf || echo "gf not found"
     - "[ -f /go/bin/gf ] || go install github.com/gogf/gf/cmd/gf/v2@v2.9.0"
+  script:
     - (cd ./api && /go/bin/gf build)
   artifacts:
     paths: 
