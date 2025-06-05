@@ -42,10 +42,15 @@ buildVue:
 buildGo:
   stage: go
   image: golang:1.23.1
+  variables:
+    # 设置项目级GOPATH避免系统目录权限问题
+    GOPATH: "${CI_PROJECT_DIR}/.go"
   cache:
     key: $DOCKER_IMAGE-go
     paths:
-      - /go/bin/gf
+      - ./.go/bin
+      - ./.go/pkg
+    # prefix: $CI_PROJECT_NAME
   before_script:
     - go env -w GOPROXY=https://goproxy.cn,direct # 更改镜像源
     - ls -l /go/bin/gf || echo "gf not found"
@@ -80,7 +85,7 @@ buildDocker:
     - docker build -t $DOCKER_IMAGE . && docker save -o $DOCKER_TAR $DOCKER_IMAGE
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp $DOCKER_TAR $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR; done
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/compose.yaml down && docker load -i $REMOTE_DIR/$DOCKER_TAR && docker compose -f $REMOTE_DIR/compose.yaml up -d"; done
-  # after_script:
-  #   - rm -f ./api/main_new  # 清理构建产物
+  after_script:
+    - rm -f ./api/main_new  # 清理构建产物
   only:
     - master
