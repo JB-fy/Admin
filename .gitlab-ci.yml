@@ -49,7 +49,6 @@ buildGo:
     key: $DOCKER_IMAGE-go
     paths:
       - ./api/.go
-    # prefix: $CI_PROJECT_NAME
   before_script:
     - "[ -f ./api/.go/bin/gf ] || go install github.com/gogf/gf/cmd/gf/v2@v2.9.0"
   script:
