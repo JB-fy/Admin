@@ -45,7 +45,7 @@ buildGo:
   cache:
     key: $DOCKER_IMAGE-go
     paths:
-      - /go
+      - /go/bin/gf
   before_script:
     - go env -w GOPROXY=https://goproxy.cn,direct # 更改镜像源
     - ls -l /go/bin/gf || echo "gf not found"
