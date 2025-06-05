@@ -4,8 +4,8 @@ variables:
   # PROJECT_DIR: $CI_PROJECT_DIR  # GitLab自带预定义变量，表示项目根目录
   DOCKER_IMAGE: admin
   DOCKER_TAR: admin.tar
-  REMOTE_SERVER_ARR: 192.168.0.200 # 多IP空格隔开
-  REMOTE_USER: root
+  REMOTE_SERVER_ARR: 192.168.0.222 # 多IP空格隔开
+  REMOTE_USER: jb
   REMOTE_DIR: /server/app/admin
 
 stages:
@@ -43,15 +43,14 @@ buildGo:
   stage: go
   image: golang:1.23.1
   variables:
-    GOPATH: $CI_PROJECT_DIR/api/.go # 设置项目级GOPATH避免系统目录权限问题
+    GOPATH: $CI_PROJECT_DIR/api/.go # 设置GOPATH，默认/go无法缓存
+    GOPROXY: https://goproxy.cn,direct # 更改镜像源
   cache:
     key: $DOCKER_IMAGE-go
     paths:
-      - ./api/.go/bin
-      - ./api/.go/pkg
+      - ./api/.go
     # prefix: $CI_PROJECT_NAME
   before_script:
-    - go env -w GOPROXY=https://goproxy.cn,direct # 更改镜像源
     - "[ -f ./api/.go/bin/gf ] || go install github.com/gogf/gf/cmd/gf/v2@v2.9.0"
   script:
     - (cd ./api && ./.go/bin/gf build)
