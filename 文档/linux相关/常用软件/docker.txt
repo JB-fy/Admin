@@ -149,8 +149,8 @@ docker run -d -p 9092:9092 -p 9093:9093 -v 配置:/opt/bitnami/kafka/config/serv
             docker exec -it gitlab-ce cat /etc/gitlab/initial_root_password
     # gitlab-runner
         docker run -d --name gitlab-runner --network host -v /home/jb/dev/tool/gitlab/runner/v18.0.2/config:/etc/gitlab-runner -v /var/run/docker.sock:/var/run/docker.sock gitlab/gitlab-runner:v18.0.2
-        # 进入gitlab-runner注册Runner
-            docker exec -it gitlab-runner gitlab-runner register --non-interactive --url "域名" --registration-token "注册令牌(后台获取)" --executor "docker" --docker-image alpine:latest --description "docker-runner"
+        # 进入gitlab-runner注册Runner（--docker-privileged true非常重要，dind必须，否则无法使用CI/CD）
+            docker exec -it gitlab-runner gitlab-runner register --non-interactive --url "域名" --registration-token "注册令牌(后台获取)" --executor "docker" --docker-image alpine:latest --docker-privileged true --description "docker-runner"
 /**----------------常用软件 结束----------------**/
 
 

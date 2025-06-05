@@ -62,7 +62,6 @@ buildDocker:
   services:
     - name: docker:28.1.1-dind
       alias: docker
-      privileged: true
       command: ["--registry-mirror=https://docker.m.daocloud.io"] # 更改镜像源
   variables:
     DOCKER_HOST: "tcp://docker:2375"
