@@ -4,8 +4,8 @@ variables:
   # PROJECT_DIR: $CI_PROJECT_DIR  # GitLab自带预定义变量，表示项目根目录
   DOCKER_IMAGE: "admin"
   DOCKER_TAR: "admin.tar"
-  REMOTE_SERVER_ARR: "192.168.0.221" # 多IP空格隔开
-  REMOTE_USER: "jb"
+  REMOTE_SERVER_ARR: "192.168.0.200" # 多IP空格隔开
+  REMOTE_USER: "root"
   REMOTE_DIR: "/server/app/admin"
 
 stages:
