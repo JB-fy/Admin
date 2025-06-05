@@ -16,13 +16,13 @@ FROM alpine:3.21.3
 #                                INSTALLATION
 ###############################################################################
 
-ENV WORKDIR=/server/app/项目名
+ENV WORKDIR=/server/app/admin
 # ADD public  $WORKDIR/public
-ADD api/main_new  $WORKDIR/api/项目名
-RUN chmod +x $WORKDIR/api/项目名
+ADD api/main_new  $WORKDIR/api/admin
+RUN chmod +x $WORKDIR/api/admin
 
 ###############################################################################
 #                                   START
 ###############################################################################
 WORKDIR $WORKDIR/api
-CMD ["./项目名", "--gf.gcfg.file=config.prod.yaml"]
+CMD ["./admin", "--gf.gcfg.file=config.prod.yaml"]
