@@ -45,7 +45,9 @@ buildGo:
   cache:
     key: "$DOCKER_IMAGE_go"
     paths:
-      - /go
+      # - /go/
+      - /go/pkg/mod/
+      - /go/bin/
   before_script:
     - go env -w GOPROXY=https://goproxy.cn,direct # 更改镜像源
     - "[ -f /go/bin/gf ] || go install github.com/gogf/gf/cmd/gf/v2@v2.9.0"
