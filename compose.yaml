@@ -4,31 +4,20 @@
 #     前端代码：public/admin
 #     镜像文件：admin.tar
 #     docker部署文件：compose.yaml
-#     nginx配置文件：nginx.conf和admin.conf。注意IP，域名和ssl文件名需修改
 
 #   # 服务器执行以下命令
 #     # 生成内网IP和外网IP环境变量.env文件
 #       echo -e "SERVER_LOCAL_IP=$(hostname -I | awk '{printf "%s", $1}')\nSERVER_NETWORK_IP=$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)" > /server/app/admin/.env
 #     # admin需要
-#       docker load -i /server/app/admin/admin.tar
 #       mkdir -p /server/app/admin/public/upload && chmod -R 777 /server/app/admin/public/upload
-#     # nginx需要
-#       mkdir -p /server/tool/nginx/1.27.5/config/web
-#       mv /server/app/admin/nginx.conf /server/tool/nginx/1.27.5/config/nginx.conf
-#       mv /server/app/admin/admin.conf /server/tool/nginx/1.27.5/config/web/admin.conf
-#     # mysql需要
-#       mkdir -p /server/tool/mysql/9.3.0 && chmod -R 777 /server/tool/mysql/9.3.0
-#     # postgresql需要
-#       mkdir -p /server/tool/postgresql/17.5.0 && chmod -R 777 /server/tool/postgresql/17.5.0
 #     # 部署
 #       docker compose -f /server/app/admin/compose.yaml up -d
-
-#   # 上传新版本后重启服务命令
-#     docker compose -f /server/app/admin/compose.yaml down admin && docker load -i /server/app/admin/admin.tar && docker compose -f /server/app/admin/compose.yaml up -d admin
+#     # 新版本重启服务
+#       docker compose -f /server/app/admin/compose.yaml down admin && docker load -i /server/app/admin/admin.tar && docker compose -f /server/app/admin/compose.yaml up -d admin
 
 services:
   admin:
-    image: admin:0.0.1
+    image: admin
     container_name: admin
     restart: unless-stopped
     network_mode: host
@@ -38,101 +27,3 @@ services:
       - /server/app/admin/public:/server/app/admin/public
       - /server/app/admin/api/manifest:/server/app/admin/api/manifest
       - /server/app/admin/api/log:/server/app/admin/api/log
-    # depends_on:
-    #   - redis-alone
-    #   - mysql-node
-    #   - postgresql-node
-
-  nginx-alone:
-    image: nginx:1.27.5
-    container_name: nginx-alone
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /server/tool/nginx/1.27.5/config/nginx.conf:/etc/nginx/nginx.conf
-      - /server/tool/nginx/1.27.5/config/web:/etc/nginx/web
-      - /server/app:/server/app
-    # depends_on:
-    #   - admin
-
-  redis-alone:
-    image: redis:8.0.1
-    container_name: redis-alone
-    restart: unless-stopped
-    network_mode: host
-    command: ["redis-server", "--requirepass", "密码"]
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /server/tool/redis/8.0.1/data:/data
-
-#   mysql-alone:
-#     image: mysql:9.3.0
-#     container_name: mysql-alone
-#     restart: unless-stopped
-#     network_mode: host
-#     volumes:
-#       - /etc/localtime:/etc/localtime:ro
-#       - /server/tool/mysql/9.3.0/data:/var/lib/mysql
-#     environment:
-#       MYSQL_ROOT_PASSWORD: 密码
-#       MYSQL_DATABASE: 库名
-#       MYSQL_USER: 账号
-#       MYSQL_PASSWORD: 密码
-
-  mysql-node:
-    image: bitnami/mysql:9.3.0
-    container_name: mysql-node
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /server/tool/mysql/9.3.0:/bitnami/mysql # 宿主机需先创建目录，并赋予写入权限：mkdir -p /server/tool/mysql/9.3.0 && chmod -R 777 /server/tool/mysql/9.3.0
-    environment:
-      MYSQL_PORT_NUMBER: 3306
-      MYSQL_ROOT_USER: 账号
-      MYSQL_ROOT_PASSWORD: 密码
-      MYSQL_DATABASE: 库名
-      MYSQL_USER: 账号
-      MYSQL_PASSWORD: 密码
-      MYSQL_REPLICATION_MODE: master或slave
-      MYSQL_REPLICATION_USER: 复制用户
-      MYSQL_REPLICATION_PASSWORD: 复制密码
-      MYSQL_MASTER_HOST: 主库IP（从库设置）
-      MYSQL_MASTER_PORT_NUMBER: 主库端口（从库设置）
-      MYSQL_MASTER_ROOT_USER: 主库账号（从库设置）
-      MYSQL_MASTER_ROOT_PASSWORD: 主库密码（从库设置）
-
-#   postgresql-alone:
-#     image: postgres:17.4
-#     container_name: postgresql-alone
-#     restart: unless-stopped
-#     network_mode: host
-#     volumes:
-#       - /etc/localtime:/etc/localtime:ro
-#       - /server/tool/postgresql/17.4/data:/var/lib/postgresql/data
-#     environment:
-#       POSTGRES_USER: 账号
-#       POSTGRES_PASSWORD: 密码
-#       MYSQL_DATABASE: 库名
-
-  postgresql-node:
-    image: bitnami/postgresql:17.5.0
-    container_name: postgresql-node
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /server/tool/postgresql/17.5.0:/bitnami/postgresql # 宿主机需先创建目录，并赋予写入权限：mkdir -p /server/tool/postgresql/17.5.0 && chmod -R 777 /server/tool/postgresql/17.5.0
-    environment:
-      POSTGRESQL_PORT_NUMBER: 5432
-      POSTGRESQL_USERNAME: 账号
-      POSTGRESQL_PASSWORD: 密码
-      POSTGRESQL_DATABASE: 库名
-      POSTGRESQL_REPLICATION_MODE: master或slave
-      POSTGRESQL_REPLICATION_USER: 复制用户
-      POSTGRESQL_REPLICATION_PASSWORD: 复制密码
-      POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS: 0（同步复制副本数量，需从库确认主库才提交事务）
-      POSTGRESQL_SYNCHRONOUS_COMMIT_MODE: on或remote_write或remote_apply（越后面越安全） 
-      POSTGRESQL_MASTER_HOST: 主库IP（从库设置）
-      POSTGRESQL_MASTER_PORT: 主库端口（从库设置）
