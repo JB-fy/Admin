@@ -10,8 +10,8 @@ variables:
 
 stages:
   - vue
-  # - go
-  # - docker
+  - go
+  - docker
 
 buildVue:
   stage: vue
@@ -31,53 +31,53 @@ buildVue:
     # - npm config set registry=https://registry.npm.taobao.org/  # 更改镜像源
     # - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "mkdir -p $REMOTE_DIR/api/manifest && mkdir -p $REMOTE_DIR/public/admin && mkdir -p $REMOTE_DIR/public/upload && chmod -R 777 $REMOTE_DIR"; done  # 非root用户使用mkdir会报无权限
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp ./compose.yaml $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/compose.yaml && scp -r ./api/manifest/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/api/manifest; done
-    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER 'echo -e "SERVER_LOCAL_IP=$(hostname -I | awk '{printf "%s", $1}')\nSERVER_NETWORK_IP=$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)' > $REMOTE_DIR/api/.env"; done
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "echo -e \"SERVER_LOCAL_IP=\$(hostname -I | awk '{printf \"%s\", $1}')\nSERVER_NETWORK_IP=\$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)\" > $REMOTE_DIR/api/.env"; done
   script:
-    # - (cd ./view/platform && npm install && npm run build-only)
-    # - (cd ./view/org && npm install && npm run build-only)
+    - (cd ./view/platform && npm install && npm run build-only)
+    - (cd ./view/org && npm install && npm run build-only)
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp -r ./public/admin/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin; done
   only:
     - master
 
-# buildGo:
-#   stage: go
-#   image: golang:1.23.1
-#   cache:
-#     key: "$DOCKER_IMAGE_go"
-#     paths:
-#       - /go
-#   before_script:
-#     - go env -w GOPROXY=https://goproxy.cn,direct # 更改镜像源
-#     - ls -l /go/bin/gf || echo "gf not found"
-#     - "[ -f /go/bin/gf ] || go install github.com/gogf/gf/cmd/gf/v2@v2.9.0"
-#   script:
-#     - (cd ./api && /go/bin/gf build)
-#   artifacts:
-#     paths: 
-#       - ./api/main_new  # 保留构建产物。下方buildDocker需要
-#   only:
-#     - master
+buildGo:
+  stage: go
+  image: golang:1.23.1
+  cache:
+    key: "$DOCKER_IMAGE_go"
+    paths:
+      - /go
+  before_script:
+    - go env -w GOPROXY=https://goproxy.cn,direct # 更改镜像源
+    - ls -l /go/bin/gf || echo "gf not found"
+    - "[ -f /go/bin/gf ] || go install github.com/gogf/gf/cmd/gf/v2@v2.9.0"
+  script:
+    - (cd ./api && /go/bin/gf build)
+  artifacts:
+    paths: 
+      - ./api/main_new  # 保留构建产物。下方buildDocker需要
+  only:
+    - master
 
-# buildDocker:
-#   stage: docker
-#   image: docker:28.1.1
-#   services:
-#     - name: docker:28.1.1-dind
-#       alias: docker
-#       command: ["--registry-mirror=https://docker.m.daocloud.io"] # 更改镜像源
-#   variables:
-#     DOCKER_HOST: "tcp://docker:2375"
-#     DOCKER_TLS_CERTDIR: ""
-#   before_script:
-#     - mkdir -p ~/.ssh
-#     - chmod 700 ~/.ssh
-#     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-#     - chmod 600 ~/.ssh/id_rsa
-#     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh-keyscan -H $REMOTE_SERVER >> ~/.ssh/known_hosts; done
-#     - chmod 644 ~/.ssh/known_hosts
-#   script:
-#     - docker build -t $DOCKER_IMAGE . && docker save -o $DOCKER_TAR $DOCKER_IMAGE
-#     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp $DOCKER_TAR $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR; done
-#     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/compose.yaml down && docker load -i $REMOTE_DIR/$DOCKER_TAR && docker compose -f $REMOTE_DIR/compose.yaml up -d"; done
-#   only:
-#     - master
+buildDocker:
+  stage: docker
+  image: docker:28.1.1
+  services:
+    - name: docker:28.1.1-dind
+      alias: docker
+      command: ["--registry-mirror=https://docker.m.daocloud.io"] # 更改镜像源
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh-keyscan -H $REMOTE_SERVER >> ~/.ssh/known_hosts; done
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - docker build -t $DOCKER_IMAGE . && docker save -o $DOCKER_TAR $DOCKER_IMAGE
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp $DOCKER_TAR $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR; done
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/compose.yaml down && docker load -i $REMOTE_DIR/$DOCKER_TAR && docker compose -f $REMOTE_DIR/compose.yaml up -d"; done
+  only:
+    - master
