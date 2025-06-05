@@ -48,7 +48,7 @@ buildGo:
       - /go
   before_script:
     - go env -w GOPROXY=https://goproxy.cn,direct # 更改镜像源
-    - go install github.com/gogf/gf/cmd/gf/v2@v2.9.0
+    - "[ -f /go/bin/gf ] || go install github.com/gogf/gf/cmd/gf/v2@v2.9.0"
   script:
     - (cd ./api && /go/bin/gf build)
   artifacts:
