@@ -2,18 +2,18 @@
 #   # 上传文件
 #     配置文件：api/manifest
 #     前端代码：public/admin
-#     镜像文件：admin.tar
+#     镜像文件：项目名.tar
 #     docker部署文件：compose.yaml
 
 #   # 服务器执行以下命令
 #     # 生成内网IP和外网IP环境变量.env文件
-#       echo -e "SERVER_LOCAL_IP=$(hostname -I | awk '{printf "%s", $1}')\nSERVER_NETWORK_IP=$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)" > /server/app/admin/.env
+#       echo -e "SERVER_LOCAL_IP=$(hostname -I | awk '{printf "%s", $1}')\nSERVER_NETWORK_IP=$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)" > /server/app/项目名/.env
 #     # admin需要
-#       mkdir -p /server/app/admin/public/upload && chmod -R 777 /server/app/admin/public/upload
+#       mkdir -p /server/app/项目名/public/upload && chmod -R 777 /server/app/项目名/public/upload
 #     # 部署
-#       docker compose -f /server/app/admin/compose.yaml up -d
+#       docker compose -f /server/app/项目名/compose.yaml up -d
 #     # 新版本重启服务
-#       docker compose -f /server/app/admin/compose.yaml down && docker load -i /server/app/admin/admin.tar && docker compose -f /server/app/admin/compose.yaml up -d
+#       docker compose -f /server/app/项目名/compose.yaml down && docker load -i /server/app/项目名/项目名.tar && docker compose -f /server/app/项目名/compose.yaml up -d
 
 services:
   admin:
