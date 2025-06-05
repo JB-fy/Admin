@@ -7,7 +7,6 @@ variables:
   REMOTE_SERVER_ARR: "192.168.0.200" # 多IP空格隔开
   REMOTE_USER: "root"
   REMOTE_DIR: "/server/app/项目名"
-  REMOTE_CONTAINER_NAME: "项目名"
 
 stages:
   - vue
@@ -69,6 +68,6 @@ buildDocker:
   script:
     - docker build -t $DOCKER_IMAGE . && docker save -o $DOCKER_TAR $DOCKER_IMAGE
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp $DOCKER_TAR $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR; done
-    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/compose.yaml down $REMOTE_CONTAINER_NAME && docker load -i $REMOTE_DIR/$DOCKER_TAR && docker compose -f $REMOTE_DIR/compose.yaml up -d $REMOTE_CONTAINER_NAME"; done
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/compose.yaml down && docker load -i $REMOTE_DIR/$DOCKER_TAR && docker compose -f $REMOTE_DIR/compose.yaml up -d"; done
   only:
     - master

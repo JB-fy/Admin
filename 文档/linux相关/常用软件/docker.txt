@@ -48,6 +48,8 @@ docker load -i 文件名.tar
 docker build -t 镜像名:版本 Dockerfile文件所在目录
 # 拉取
 docker pull 镜像名:版本
+# 修改版本
+docker tag 镜像名:旧版本 镜像名:新版本
 # 删除
 docker rmi 镜像名:版本
 # 创建（-p 主机:容器。--network host使用当前主机网络；-v /etc/localtime:/etc/localtime:ro使用当前主机时间时区）

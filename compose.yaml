@@ -13,7 +13,7 @@
 #     # 部署
 #       docker compose -f /server/app/admin/compose.yaml up -d
 #     # 新版本重启服务
-#       docker compose -f /server/app/admin/compose.yaml down admin && docker load -i /server/app/admin/admin.tar && docker compose -f /server/app/admin/compose.yaml up -d admin
+#       docker compose -f /server/app/admin/compose.yaml down && docker load -i /server/app/admin/admin.tar && docker compose -f /server/app/admin/compose.yaml up -d
 
 services:
   admin:
