@@ -17,7 +17,7 @@ buildVue:
   stage: vue
   image: node:22.15.1
   cache:
-    key: "vue"
+    key: $DOCKER_IMAGE_vue
     paths:
       - ./view/platform/node_modules
       - ./view/org/node_modules
@@ -43,7 +43,7 @@ buildGo:
   stage: go
   image: golang:1.23.1
   cache:
-    key: "go"
+    key: $DOCKER_IMAGE_go
     paths:
       - /go
   before_script:
@@ -55,6 +55,7 @@ buildGo:
   artifacts:
     paths: 
       - ./api/main_new  # 保留构建产物。下方buildDocker需要
+    expire_in: 1 hour  # 1小时后自动清理
   only:
     - master
 
@@ -79,5 +80,7 @@ buildDocker:
     - docker build -t $DOCKER_IMAGE . && docker save -o $DOCKER_TAR $DOCKER_IMAGE
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp $DOCKER_TAR $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR; done
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/compose.yaml down && docker load -i $REMOTE_DIR/$DOCKER_TAR && docker compose -f $REMOTE_DIR/compose.yaml up -d"; done
+  # after_script:
+  #   - rm -f ./api/main_new  # 清理构建产物
   only:
     - master
