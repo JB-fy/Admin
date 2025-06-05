@@ -17,7 +17,7 @@ buildVue:
   stage: vue
   image: node:22.15.1
   cache:
-    key: $DOCKER_IMAGE_vue
+    key: $DOCKER_IMAGE-vue
     paths:
       - ./view/platform/node_modules
       - ./view/org/node_modules
@@ -43,7 +43,7 @@ buildGo:
   stage: go
   image: golang:1.23.1
   cache:
-    key: $DOCKER_IMAGE_go
+    key: $DOCKER_IMAGE-go
     paths:
       - /go
   before_script:
