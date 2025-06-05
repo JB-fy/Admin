@@ -31,7 +31,7 @@ buildVue:
     # - npm config set registry=https://registry.npm.taobao.org/  # 更改镜像源
     # - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "mkdir -p $REMOTE_DIR/api/manifest && mkdir -p $REMOTE_DIR/public/admin && mkdir -p $REMOTE_DIR/public/upload && chmod -R 777 $REMOTE_DIR"; done  # 非root用户使用mkdir会报无权限
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp ./compose.yaml $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/compose.yaml && scp -r ./api/manifest/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/api/manifest; done
-    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "echo -e "SERVER_LOCAL_IP=\$(hostname -I | awk '{printf "%s", $1}')\nSERVER_NETWORK_IP=\$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)" > $REMOTE_DIR/api/.env"; done
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "echo -e "SERVER_LOCAL_IP=\$(hostname -I | awk '{printf "%s", \$1}')\nSERVER_NETWORK_IP=\$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)" > $REMOTE_DIR/api/.env"; done
   script:
     # - (cd ./view/platform && npm install && npm run build-only)
     # - (cd ./view/org && npm install && npm run build-only)
