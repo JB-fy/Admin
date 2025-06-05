@@ -21,7 +21,7 @@ services:
     container_name: admin
     restart: unless-stopped
     network_mode: host
-    env_file: /server/app/admin/.env
+    env_file: /server/app/admin/api/.env
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /server/app/admin/public:/server/app/admin/public
