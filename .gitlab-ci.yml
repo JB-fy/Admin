@@ -5,7 +5,7 @@ variables:
   DOCKER_IMAGE: admin
   DOCKER_TAR: admin.tar
   REMOTE_SERVER_ARR: 192.168.0.200 # 多IP空格隔开
-  REMOTE_USER: jb
+  REMOTE_USER: root
   REMOTE_DIR: /server/app/admin
 
 stages:
