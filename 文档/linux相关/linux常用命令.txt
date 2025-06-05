@@ -67,11 +67,11 @@ timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
 	ssh-keygen -t rsa -b 4096 -N "密码（可为空）" -f 密钥文件名（默认~/.ssh/id_rsa） -C "备注，非必须"
 拷贝公钥到远程服务器账号的~/.ssh/authorized_keys目录下
 	方式1：
-		当前系统执行命令
-			ssh-copy-id -i ~/.ssh/id_rsa.pub 远程服务器账号@远程服务器IP
+		当前系统执行命令：ssh-copy-id -i ~/.ssh/id_rsa.pub 远程服务器账号@远程服务器IP
+			注意：远程服务器没有~/.ssh目录时，先执行以下命令：ssh 远程服务器账号@远程服务器IP "mkdir -p ~/.ssh && chmod 700 ~/.ssh"
 	方式2：
-		复制当前系统账号~/.ssh/id_rsa.pub公钥文件内的内容 到 远程服务器账号~/.ssh/authorized_keys文件内（如已有其它密钥，则新增一行）。注意：远程服务器没有~/.ssh/authorized_keys文件时，可执行命令生成
-			ssh localhost
+		复制当前系统账号~/.ssh/id_rsa.pub公钥文件内的内容 到 远程服务器账号~/.ssh/authorized_keys文件内（如已有其它密钥，则新增一行）
+			注意：远程服务器没有~/.ssh/authorized_keys文件时，先执行以下命令：ssh localhost
 如使用gitlab的CI/CD功能
 	方式1：
 		建议将私钥设置到gitlab后台：Admin > 设置 > CI/CD > 变量 中，后续直接在.gitlab-ci.yml文件中引用
