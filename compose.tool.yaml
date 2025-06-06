@@ -1,19 +1,19 @@
 # # 安装教程：
 #   # 上传文件
 #     docker部署文件：compose.tool.yaml
-#     nginx配置文件：nginx.conf和admin.conf。注意IP，域名和ssl文件名需修改
+#     nginx配置文件：nginx.conf和项目名.conf。注意IP，域名和ssl文件名需修改
 
 #   # 服务器执行以下命令
 #     # nginx需要
 #       mkdir -p /server/tool/nginx/1.27.5/config/web
-#       mv /server/app/admin/nginx.conf /server/tool/nginx/1.27.5/config/nginx.conf
-#       mv /server/app/admin/admin.conf /server/tool/nginx/1.27.5/config/web/admin.conf
+#       mv /server/app/项目名/nginx.conf /server/tool/nginx/1.27.5/config/nginx.conf
+#       mv /server/app/项目名/项目名.conf /server/tool/nginx/1.27.5/config/web/项目名.conf
 #     # mysql需要
 #       mkdir -p /server/tool/mysql/9.3.0 && chmod -R 777 /server/tool/mysql/9.3.0
 #     # postgresql需要
 #       mkdir -p /server/tool/postgresql/17.5.0 && chmod -R 777 /server/tool/postgresql/17.5.0
 #     # 部署
-#       docker compose -f /server/app/admin/compose.tool.yaml up -d
+#       docker compose -f /server/app/项目名/compose.tool.yaml up -d
 
 services:
   nginx-alone:
