@@ -143,7 +143,7 @@ docker run -d -p 9092:9092 -p 9093:9093 -v 配置:/opt/bitnami/kafka/config/serv
     # 示例：docker run -d --name kafka-alone --network host -v /home/jb/dev/tool/kafka/4.0.0/data:/bitnami/kafka -e KAFKA_CFG_NODE_ID=1 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@192.168.0.200:9093 -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:SASL_PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -e KAFKA_CFG_INTER_BROKER_LISTENER_NAME=SASL_PLAINTEXT -e KAFKA_CLIENT_LISTENER_NAME=SASL_PLAINTEXT -e KAFKA_CFG_LISTENERS=CONTROLLER://:9093,SASL_PLAINTEXT://:9092 -e KAFKA_CFG_ADVERTISED_LISTENERS=SASL_PLAINTEXT://192.168.0.200:9092 bitnami/kafka:4.0.0
 
 # gitlab
-    # gitlab-ce（不建议用--network host。gitlab只带软件所用端口可能与当前服务器已安装软件冲突）
+    # gitlab-ce（不建议用--network host。gitlab自带软件所用端口可能与当前服务器已安装软件冲突）
         docker run -d --name gitlab-ce -p 22:22 -p 30000:80 -p 443:443 -v /home/jb/dev/tool/gitlab/ce/17.11.3-ce.0/config:/etc/gitlab -v /home/jb/dev/tool/gitlab/ce/17.11.3-ce.0/logs:/var/log/gitlab -v /home/jb/dev/tool/gitlab/ce/17.11.3-ce.0/data:/var/opt/gitlab -e GITLAB_OMNIBUS_CONFIG="external_url '域名'; gitlab_rails['gitlab_shell_ssh_port'] = 22; postgresql['port'] = 5432; redis['port'] = 6379; nginx['listen_port'] = 80; nginx['ssl_listen_port'] = 443;" gitlab/gitlab-ce:17.11.3-ce.0
         # root密码查看（只保留24小时）
             docker exec -it gitlab-ce cat /etc/gitlab/initial_root_password

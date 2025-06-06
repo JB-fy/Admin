@@ -16,7 +16,7 @@ services:
     image: gitlab/gitlab-ce:17.11.3-ce.0
     container_name: gitlab-ce
     restart: unless-stopped
-    # network_mode: host
+    # network_mode: host  # 不建议用。gitlab自带软件所用端口可能与当前服务器已安装软件冲突
     ports:
       # - "22:22"
       - "30000:80"
