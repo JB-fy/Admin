@@ -1,5 +1,4 @@
 # 需先在远程服务器设置ssh免密登录（参考linux常用命令）,并在gitlab中设置私钥环境变量SSH_PRIVATE_KEY
-# 远程ssh连接非root用户使用mkdir会报无权限，带sudo执行又要输入密码，故需先手动：mkdir -p /server/app/项目名/api/manifest && mkdir -p /server/app/项目名/public/admin && mkdir -p /server/app/项目名/public/upload && chmod -R 777 /server/app/项目名
 variables:
   # PROJECT_DIR: $CI_PROJECT_DIR  # GitLab自带预定义变量，表示项目根目录
   APP_NAME: admin
@@ -33,7 +32,7 @@ buildVue:
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh-keyscan -H $REMOTE_SERVER >> ~/.ssh/known_hosts; done
     - chmod 644 ~/.ssh/known_hosts
     # - npm config set registry=https://registry.npm.taobao.org/  # 更改镜像源
-    # - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "mkdir -p $REMOTE_DIR/api/manifest && mkdir -p $REMOTE_DIR/public/admin && mkdir -p $REMOTE_DIR/public/upload && chmod -R 777 $REMOTE_DIR"; done  # 非root用户使用mkdir会报无权限
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "mkdir -p $REMOTE_DIR/api/manifest && mkdir -p $REMOTE_DIR/public/admin && mkdir -p $REMOTE_DIR/public/upload && chmod -R 777 $REMOTE_DIR"; done  # 注意：非root用户连接ssh，使用mkdir会报无权限，增加sudo执行则需输入密码。故必须手动执行
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp ./deploy/docker/compose.yaml $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/deploy/docker/compose.yaml && scp -r ./api/manifest/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/api/manifest; done
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "echo -e \"SERVER_LOCAL_IP=\$(hostname -I | awk '{printf \"%s\", \$1}')\nSERVER_NETWORK_IP=\$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)\" > $REMOTE_DIR/api/.env"; done
   script:
