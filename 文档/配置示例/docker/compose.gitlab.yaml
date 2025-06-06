@@ -1,0 +1,38 @@
+# # 安装教程：
+#   # 上传文件
+#     docker部署文件：compose.gitlab.yaml
+
+#   # 服务器执行以下命令
+#     # 部署
+#       docker compose -f /server/app/p2p/compose.tool.yaml up -d
+#     # root密码查看（只保留24小时）
+#       docker exec -it gitlab-ce cat /etc/gitlab/initial_root_password
+#     #  进入gitlab-runner注册Runner（--docker-privileged true非常重要，dind必须，否则无法使用CI/CD）
+#       docker exec -it gitlab-runner gitlab-runner register --non-interactive --url "域名" --registration-token "注册令牌(后台获取)" --executor "docker" --docker-image alpine:latest --docker-privileged true --description "docker-runner"
+            
+
+services:
+  gitlab-ce:
+    image: gitlab/gitlab-ce:17.11.3-ce.0
+    container_name: gitlab-ce
+    restart: unless-stopped
+    # network_mode: host
+    ports:
+      # - "22:22"
+      - "30000:80"
+      # - "443:443"
+    volumes:
+      - /server/tool/gitlab/ce/17.11.3-ce.0/config:/etc/gitlab
+      - /server/tool/gitlab/ce/17.11.3-ce.0/logs:/var/log/gitlab
+      - /server/tool/gitlab/ce/17.11.3-ce.0/data:/var/opt/gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: "external_url '域名'; gitlab_rails['gitlab_shell_ssh_port'] = 22; postgresql['port'] = 5432; redis['port'] = 6379; nginx['listen_port'] = 80; nginx['ssl_listen_port'] = 443;"
+
+  gitlab-runner:
+    image: gitlab/gitlab-runner:v18.0.2
+    container_name: gitlab-runner
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /server/tool/gitlab/runner/v18.0.2/config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
