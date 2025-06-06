@@ -18,7 +18,7 @@ buildVue:
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       changes:
-        - ./view/**/*
+        - view/**/*
       when: on_success
   image: node:22.15.1
   cache:
@@ -47,7 +47,7 @@ buildGo:
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       changes:
-        - ./api/**/*
+        - api/**/*
       when: on_success
   image: golang:1.23.1
   variables:
@@ -71,7 +71,7 @@ buildDocker:
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       changes:
-        - ./api/**/*
+        - api/**/*
       when: on_success
   image: docker:28.1.1
   services:
