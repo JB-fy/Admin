@@ -6,14 +6,14 @@
 #   # 服务器执行以下命令
 #     # nginx需要
 #       mkdir -p /server/tool/nginx/1.27.5/config/web
-#       mv /server/app/项目名/nginx.conf /server/tool/nginx/1.27.5/config/nginx.conf
-#       mv /server/app/项目名/项目名.conf /server/tool/nginx/1.27.5/config/web/项目名.conf
+#       mv /server/app/项目名/deploy/nginx/nginx.conf /server/tool/nginx/1.27.5/config/nginx.conf
+#       mv /server/app/项目名/deploy/nginx/项目名.conf /server/tool/nginx/1.27.5/config/web/项目名.conf
 #     # mysql需要
 #       mkdir -p /server/tool/mysql/9.3.0 && chmod -R 777 /server/tool/mysql/9.3.0
 #     # postgresql需要
 #       mkdir -p /server/tool/postgresql/17.5.0 && chmod -R 777 /server/tool/postgresql/17.5.0
 #     # 部署
-#       docker compose -f /server/app/项目名/compose.tool.yaml up -d
+#       docker compose -f /server/app/项目名/deploy/docker/compose.tool.yaml up -d
 
 services:
   nginx-alone:

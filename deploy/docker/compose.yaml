@@ -11,9 +11,9 @@
 #     # 创建上传目录
 #       mkdir -p /server/app/项目名/public/upload && chmod -R 777 /server/app/项目名/public/upload
 #     # 部署
-#       docker compose -f /server/app/项目名/compose.yaml up -d
+#       docker compose -f /server/app/项目名/deploy/docker/compose.yaml up -d
 #     # 新版本重启服务
-#       docker compose -f /server/app/项目名/compose.yaml down && docker load -i /server/app/项目名/项目名.tar && docker compose -f /server/app/项目名/compose.yaml up -d
+#       docker compose -f /server/app/项目名/deploy/docker/compose.yaml down && docker load -i /server/app/项目名/项目名.tar && docker compose -f /server/app/项目名/deploy/docker/compose.yaml up -d
 
 services:
   admin:
