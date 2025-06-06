@@ -2,11 +2,10 @@
 # 远程ssh连接非root用户使用mkdir会报无权限，带sudo执行又要输入密码，故需先手动：mkdir -p /server/app/项目名/api/manifest && mkdir -p /server/app/项目名/public/admin && mkdir -p /server/app/项目名/public/upload && chmod -R 777 /server/app/项目名
 variables:
   # PROJECT_DIR: $CI_PROJECT_DIR  # GitLab自带预定义变量，表示项目根目录
-  DOCKER_IMAGE: admin
-  DOCKER_TAR: admin.tar
+  APP_NAME: admin
   REMOTE_SERVER_ARR: "192.168.0.200" # 多IP空格隔开
   REMOTE_USER: root
-  REMOTE_DIR: /server/app/admin
+  REMOTE_DIR: /server/app/$APP_NAME
 
 stages:
   - vue
@@ -22,7 +21,7 @@ buildVue:
       when: on_success
   image: node:22.15.1
   cache:
-    key: $DOCKER_IMAGE-vue
+    key: $APP_NAME-vue
     paths:
       - ./view/platform/node_modules
       - ./view/org/node_modules
@@ -54,7 +53,7 @@ buildGo:
     GOPATH: $CI_PROJECT_DIR/api/.go # 设置GOPATH，默认/go无法缓存
     GOPROXY: https://goproxy.cn,direct # 更改镜像源
   cache:
-    key: $DOCKER_IMAGE-go
+    key: $APP_NAME-go
     paths:
       - ./api/.go
   before_script:
@@ -89,8 +88,8 @@ buildDocker:
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh-keyscan -H $REMOTE_SERVER >> ~/.ssh/known_hosts; done
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - docker build -t $DOCKER_IMAGE . && docker save -o $DOCKER_TAR $DOCKER_IMAGE
-    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp $DOCKER_TAR $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR; done
-    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/deploy/docker/compose.yaml down && docker load -i $REMOTE_DIR/$DOCKER_TAR && docker compose -f $REMOTE_DIR/deploy/docker/compose.yaml up -d"; done
+    - docker build -t $APP_NAME . && docker save -o $APP_NAME.tar $APP_NAME
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp $APP_NAME.tar $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR; done
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/deploy/docker/compose.yaml down && docker tag $APP_NAME:latest $APP_NAME:bak && docker load -i $REMOTE_DIR/$APP_NAME.tar && docker image prune -f && docker compose -f $REMOTE_DIR/deploy/docker/compose.yaml up -d"; done
   # after_script:
   #   - rm -f ./api/main_new  # 清理构建产物

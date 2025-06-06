@@ -13,7 +13,7 @@
 #     # 部署
 #       docker compose -f /server/app/项目名/deploy/docker/compose.yaml up -d
 #     # 新版本重启服务
-#       docker compose -f /server/app/项目名/deploy/docker/compose.yaml down && docker load -i /server/app/项目名/项目名.tar && docker compose -f /server/app/项目名/deploy/docker/compose.yaml up -d
+#       docker compose -f /server/app/项目名/deploy/docker/compose.yaml down && docker tag 项目名:latest 项目名:bak && docker load -i /server/app/项目名/项目名.tar && docker image prune -f && docker compose -f /server/app/项目名/deploy/docker/compose.yaml up -d
 
 services:
   admin:
