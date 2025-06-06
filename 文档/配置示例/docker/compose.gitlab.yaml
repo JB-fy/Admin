@@ -5,7 +5,7 @@
 #   # 服务器执行以下命令
 #     # 部署
 #       docker compose -f /server/app/p2p/compose.tool.yaml up -d
-#     # root密码查看（只保留24小时）
+#     # root密码查看（只保留24小时），登录后台修改密码
 #       docker exec -it gitlab-ce cat /etc/gitlab/initial_root_password
 #     #  进入gitlab-runner注册Runner（--docker-privileged true非常重要，dind必须，否则无法使用CI/CD）
 #       docker exec -it gitlab-runner gitlab-runner register --non-interactive --url "域名" --registration-token "注册令牌(后台获取)" --executor "docker" --docker-image alpine:latest --docker-privileged true --description "docker-runner"
