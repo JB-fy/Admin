@@ -18,9 +18,9 @@ services:
     restart: unless-stopped
     # network_mode: host  # 不建议用。gitlab自带软件所用端口可能与当前服务器已安装软件冲突
     ports:
-      # - "22:22"
-      - "30000:80"
-      # - "443:443"
+      - "22:22"
+      - "80:80"
+      - "443:443"
     volumes:
       - /server/tool/gitlab/ce/17.11.3-ce.0/config:/etc/gitlab
       - /server/tool/gitlab/ce/17.11.3-ce.0/logs:/var/log/gitlab

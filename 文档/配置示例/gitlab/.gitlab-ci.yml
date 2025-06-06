@@ -1,4 +1,4 @@
-# 需先在远程服务器设置ssh免密登录（参考linux常用命令）
+# 需先在远程服务器设置ssh免密登录（参考linux常用命令）,并在gitlab中设置私钥环境变量SSH_PRIVATE_KEY
 # 远程ssh连接非root用户使用mkdir会报无权限，带sudo执行又要输入密码，故需先手动：mkdir -p /server/app/项目名/api/manifest && mkdir -p /server/app/项目名/public/admin && mkdir -p /server/app/项目名/public/upload && chmod -R 777 /server/app/项目名
 variables:
   # PROJECT_DIR: $CI_PROJECT_DIR  # GitLab自带预定义变量，表示项目根目录
@@ -15,6 +15,11 @@ stages:
 
 buildVue:
   stage: vue
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      changes:
+        - ./view/**/*
+      when: on_success
   image: node:22.15.1
   cache:
     key: $DOCKER_IMAGE-vue
@@ -36,11 +41,14 @@ buildVue:
     - (cd ./view/platform && npm install && npm run build-only)
     - (cd ./view/org && npm install && npm run build-only)
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp -r ./public/admin/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin; done
-  only:
-    - master
 
 buildGo:
   stage: go
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      changes:
+        - ./api/**/*
+      when: on_success
   image: golang:1.23.1
   variables:
     GOPATH: $CI_PROJECT_DIR/api/.go # 设置GOPATH，默认/go无法缓存
@@ -57,11 +65,14 @@ buildGo:
     paths: 
       - ./api/main_new  # 保留构建产物。下方buildDocker需要
     expire_in: 1 hour  # 1小时后自动清理
-  only:
-    - master
 
 buildDocker:
   stage: docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      changes:
+        - ./api/**/*
+      when: on_success
   image: docker:28.1.1
   services:
     - name: docker:28.1.1-dind
@@ -83,5 +94,3 @@ buildDocker:
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "docker compose -f $REMOTE_DIR/compose.yaml down && docker load -i $REMOTE_DIR/$DOCKER_TAR && docker compose -f $REMOTE_DIR/compose.yaml up -d"; done
   # after_script:
   #   - rm -f ./api/main_new  # 清理构建产物
-  only:
-    - master
