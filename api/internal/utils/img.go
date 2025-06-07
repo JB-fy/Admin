@@ -1,6 +1,7 @@
 package utils
 
 /* import (
+	"bytes"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
@@ -27,8 +28,7 @@ func ImgDecode(imgBytes []byte, opts ...imaging.DecodeOption) (img image.Image, 
 }
 
 func ImgEncode(img image.Image, format imaging.Format, opts ...imaging.EncodeOption) ([]byte, error) {
-	buf := BytesBufferPoolGet()
-	defer BytesBufferPoolPut(buf)
+	buf := bytes.NewBuffer(nil)
 	err := imaging.Encode(buf, img, format, opts...)
 	return buf.Bytes(), err
 }

@@ -26,6 +26,7 @@ var bytesBufferPool = sync.Pool{
 	},
 }
 
+// 返回值必须在使用完成后，才可以放回对象池。注意：因为buf.Bytes()返回的是底层切片引用，故当buf.Bytes()的返回值还再使用时，也不能将buf放回对象池
 func BytesBufferPoolGet() *bytes.Buffer {
 	buf := bytesBufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
@@ -42,6 +43,7 @@ var bytesReaderPool = sync.Pool{
 	},
 }
 
+// 返回值必须在使用完成后，才可以放回对象池
 func BytesReaderPoolGet(b []byte) *bytes.Reader {
 	reader := bytesReaderPool.Get().(*bytes.Reader)
 	reader.Reset(b)
@@ -58,6 +60,7 @@ var stringsBuilderPool = sync.Pool{
 	},
 }
 
+// 返回值必须在使用完成后，才可以放回对象池
 func StringsBuilderPoolGet() *strings.Builder {
 	builder := stringsBuilderPool.Get().(*strings.Builder)
 	builder.Reset()
@@ -65,7 +68,6 @@ func StringsBuilderPoolGet() *strings.Builder {
 }
 
 func StringsBuilderPoolPut(builder *strings.Builder) {
-	builder.Reset()
 	stringsBuilderPool.Put(builder)
 }
 
