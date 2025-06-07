@@ -12,6 +12,7 @@ const saveForm = reactive({
         ...saveCommon.data,
         scene_id: saveCommon.data.scene_id ? saveCommon.data.scene_id : undefined,
         pid: saveCommon.data.pid ? saveCommon.data.pid : undefined,
+        is_input_menu_icon: saveCommon.data.menu_icon ? saveCommon.data.menu_icon.indexOf('http') !== 0 : false,
     } as { [propName: string]: any },
     rules: {
         menu_name: [
@@ -24,7 +25,7 @@ const saveForm = reactive({
         ],
         pid: [{ type: 'integer', trigger: 'change', min: 0, max: 4294967295, message: t('validation.select') }],
         menu_icon: [
-            { type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) },
+            { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
             // { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
         menu_url: [
@@ -104,8 +105,18 @@ const saveDrawer = reactive({
                     />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.menu_icon')" prop="menu_icon">
-                    <el-input v-model="saveForm.data.menu_icon" :placeholder="t('auth.menu.name.menu_icon')" maxlength="30" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <el-alert :title="t('auth.menu.tip.menu_icon')" type="info" :show-icon="true" :closable="false" />
+                    <div style="width: 100%">
+                        <el-checkbox v-model="saveForm.data.is_input_menu_icon" :label="t('auth.menu.name.is_input_menu_icon')" />
+                    </div>
+                    <template v-if="saveForm.data.is_input_menu_icon">
+                        <el-input v-model="saveForm.data.menu_icon" :placeholder="t('auth.menu.name.menu_icon')" maxlength="200" :show-word-limit="true" :clearable="true" style="max-width: 300px" />
+                        <el-alert type="info" :show-icon="true" :closable="false">
+                            <template #title>
+                                <span v-html="t('auth.menu.tip.menu_icon')"></span>
+                            </template>
+                        </el-alert>
+                    </template>
+                    <my-upload v-else v-model="saveForm.data.menu_icon" accept="image/*" />
                 </el-form-item>
                 <el-form-item :label="t('auth.menu.name.menu_url')" prop="menu_url">
                     <el-input v-model="saveForm.data.menu_url" :placeholder="t('auth.menu.name.menu_url')" maxlength="120" :show-word-limit="true" :clearable="true" />

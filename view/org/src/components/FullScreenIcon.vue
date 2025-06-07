@@ -12,7 +12,6 @@ screenfull.onchange(() => (fullScreenIcon.isFullscreen = screenfull.isFullscreen
 </script>
 
 <template>
-    <van-icon :name="fullScreenIcon.isFullscreen ? 'shrink' : 'expand-o'" @click="fullScreenIcon.click" :size="16.8" />
-    <!-- <autoicon-ep-aim v-if="fullScreenIcon.isFullscreen" @click="fullScreenIcon.click" />
-    <autoicon-ep-full-screen v-else @click="fullScreenIcon.click" /> -->
+    <autoicon-material-symbols-fullscreen-exit v-if="fullScreenIcon.isFullscreen" @click="fullScreenIcon.click" />
+    <autoicon-material-symbols-fullscreen v-else @click="fullScreenIcon.click" />
 </template>

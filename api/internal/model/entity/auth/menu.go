@@ -21,7 +21,7 @@ type Menu struct {
 	Level     uint        `json:"level"     orm:"level"      ` // 层级
 	IdPath    string      `json:"idPath"    orm:"id_path"    ` // ID路径
 	NamePath  string      `json:"namePath"  orm:"name_path"  ` // 名称路径
-	MenuIcon  string      `json:"menuIcon"  orm:"menu_icon"  ` // 图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}
+	MenuIcon  string      `json:"menuIcon"  orm:"menu_icon"  ` // 图标
 	MenuUrl   string      `json:"menuUrl"   orm:"menu_url"   ` // 链接
 	ExtraData string      `json:"extraData" orm:"extra_data" ` // 额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}
 	Sort      uint        `json:"sort"      orm:"sort"       ` // 排序值。从大到小排序

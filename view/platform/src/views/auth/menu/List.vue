@@ -141,7 +141,7 @@ const table = reactive({
             align: 'center',
             width: 100,
             cellRenderer: (props: any): any => {
-                return <my-icon-dynamic icon={props.rowData.menu_icon} size="18px" />
+                return <my-icon-dynamic icon={props.rowData.menu_icon} size="24px" />
             },
         },
         {

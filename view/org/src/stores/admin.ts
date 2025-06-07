@@ -88,17 +88,6 @@ export const useAdminStore = defineStore('admin', {
                         url: 'https://element-plus.gitee.io/zh-CN/',
                         children: [],
                     },
-                    {
-                        i18n: {
-                            title: {
-                                en: 'Vant 4',
-                                'zh-cn': 'Vant 4',
-                            },
-                        },
-                        icon: 'vant-wechat-moments',
-                        url: 'https://vant-contrib.gitee.io/vant/#/zh-CN',
-                        children: [],
-                    },
                 ],
             } as { i18n: { title: { [propName: string]: string } }; icon: string; url: string; children: { [propName: string]: any }[] },
         }

@@ -13,13 +13,6 @@ app.use(router)
 app.use(createPinia())
 app.mount('#app')
 
-/*-------- 动态加载图标 开始 --------*/
-import * as epIconList from '@element-plus/icons-vue'
-for (const [key, component] of Object.entries(epIconList)) {
-    app.component('AutoiconEp' + key, component) //兼容图标插件unplugin-icons，如插件以后支持动态加载<component :is="图标标识变量"/>，不用修改代码
-}
-/*-------- 动态加载图标 结束 --------*/
-
 /*-------- 错误处理 开始 --------*/
 //不好用，很多地方无法触发这个机制。例如：路由router.beforeEach前置导航守护; element plus的表单验证提交formRef.validate((valid) => { throw new Error('你大爷') })
 // import { AxiosError } from "axios"; //这个错误类导入会报错，所以只能用err.name来识别错误类型

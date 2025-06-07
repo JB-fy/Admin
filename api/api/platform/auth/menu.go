@@ -17,7 +17,7 @@ type MenuInfo struct {
 	Level     *uint       `json:"level,omitempty" dc:"层级"`
 	IdPath    *string     `json:"id_path,omitempty" dc:"ID路径"`
 	NamePath  *string     `json:"name_path,omitempty" dc:"名称路径"`
-	MenuIcon  *string     `json:"menu_icon,omitempty" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
+	MenuIcon  *string     `json:"menu_icon,omitempty" dc:"图标"`
 	MenuUrl   *string     `json:"menu_url,omitempty" dc:"链接"`
 	ExtraData *string     `json:"extra_data,omitempty" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
 	Sort      *uint       `json:"sort,omitempty" dc:"排序值。从大到小排序"`
@@ -82,7 +82,7 @@ type MenuCreateReq struct {
 	MenuName  *string `json:"menu_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	SceneId   *string `json:"scene_id,omitempty" v:"required|max-length:15" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
-	MenuIcon  *string `json:"menu_icon,omitempty" v:"max-length:30" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
+	MenuIcon  *string `json:"menu_icon,omitempty" v:"max-length:200" dc:"图标"`
 	MenuUrl   *string `json:"menu_url,omitempty" v:"max-length:120" dc:"链接"`
 	ExtraData *string `json:"extra_data,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
 	Sort      *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序"`
@@ -99,7 +99,7 @@ type MenuUpdateReq struct {
 	MenuName  *string `json:"menu_name,omitempty" filter:"-" data:"menu_name,omitempty" v:"max-length:30" dc:"名称"`
 	SceneId   *string `json:"scene_id,omitempty" filter:"-" data:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" filter:"-" data:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
-	MenuIcon  *string `json:"menu_icon,omitempty" filter:"-" data:"menu_icon,omitempty" v:"max-length:30" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
+	MenuIcon  *string `json:"menu_icon,omitempty" filter:"-" data:"menu_icon,omitempty" v:"max-length:200" dc:"图标"`
 	MenuUrl   *string `json:"menu_url,omitempty" filter:"-" data:"menu_url,omitempty" v:"max-length:120" dc:"链接"`
 	ExtraData *string `json:"extra_data,omitempty" filter:"-" data:"extra_data,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
 	Sort      *uint   `json:"sort,omitempty" filter:"-" data:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序"`

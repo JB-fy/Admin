@@ -15,7 +15,7 @@ type MenuInfo struct {
 	Level    *uint   `json:"level,omitempty" dc:"层级"`
 	IdPath   *string `json:"id_path,omitempty" dc:"ID路径"`
 	NamePath *string `json:"name_path,omitempty" dc:"名称路径"`
-	MenuIcon *string `json:"menu_icon,omitempty" dc:"图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}"`
+	MenuIcon *string `json:"menu_icon,omitempty" dc:"图标"`
 	MenuUrl  *string `json:"menu_url,omitempty" dc:"链接"`
 	I18n     struct {
 		Title struct {

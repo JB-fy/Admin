@@ -475,7 +475,7 @@ COMMENT ON COLUMN "public"."auth_menu"."is_leaf" IS '叶子：0否 1是';
 COMMENT ON COLUMN "public"."auth_menu"."level" IS '层级';
 COMMENT ON COLUMN "public"."auth_menu"."id_path" IS 'ID路径';
 COMMENT ON COLUMN "public"."auth_menu"."name_path" IS '名称路径';
-COMMENT ON COLUMN "public"."auth_menu"."menu_icon" IS '图标。常用格式：autoicon-{集合}-{标识}；vant格式：vant-{标识}';
+COMMENT ON COLUMN "public"."auth_menu"."menu_icon" IS '图标';
 COMMENT ON COLUMN "public"."auth_menu"."menu_url" IS '链接';
 COMMENT ON COLUMN "public"."auth_menu"."extra_data" IS '额外数据。JSON格式：{"i18n（国际化设置）": {"title": {"语言标识":"标题",...}}';
 COMMENT ON COLUMN "public"."auth_menu"."sort" IS '排序值。从大到小排序';
