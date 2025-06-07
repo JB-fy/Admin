@@ -12,7 +12,7 @@
  Target Server Version : 170005 (170005)
  File Encoding         : 65001
 
- Date: 29/05/2025 01:20:11
+ Date: 08/06/2025 01:33:31
 */
 
 
@@ -458,7 +458,7 @@ CREATE TABLE "public"."auth_menu" (
   "level" int2 NOT NULL DEFAULT 0,
   "id_path" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
   "name_path" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
-  "menu_icon" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "menu_icon" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "menu_url" varchar(120) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "extra_data" json,
   "sort" int2 NOT NULL DEFAULT 100
