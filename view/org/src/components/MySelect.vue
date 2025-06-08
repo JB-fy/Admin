@@ -101,13 +101,15 @@ const select = reactive({
             }
             return options
         },
-        addOptions: () => select.api.getOptions().then((options) => {
-            if (select.api.param.page === 1) {
-                select.options = [...((attrs.options as any[]) ?? []), ...(options ?? [])]
-            }else if (options) {
-                select.options = select.options.concat(options)
-            }
-        }),
+        addOptions: () => {
+            select.api.getOptions().then((options) => {
+                if (select.api.param.page === 1) {
+                    select.options = [...((attrs.options as any[]) ?? []), ...(options ?? [])]
+                } else if (options) {
+                    select.options = select.options.concat(options)
+                }
+            })
+        },
     },
     visibleChange: (val: boolean) => {
         if (val) {
