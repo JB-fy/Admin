@@ -7,6 +7,7 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 // isForce 是否强制验证登录
@@ -35,7 +36,7 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 		/**--------验证token 结束--------**/
 
 		/**--------获取登录用户信息并验证 开始--------**/
-		info, _ := daoPlatform.Admin.CtxDaoModel(r.GetCtx()).FilterPri(tokenInfo.LoginId).One()
+		info, _ := daoPlatform.Admin.CacheGetInfo(r.GetCtx(), gconv.Uint(tokenInfo.LoginId))
 		if info.IsEmpty() {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994100, ``))

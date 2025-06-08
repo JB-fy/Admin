@@ -5,6 +5,7 @@
 package users
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/users/allow"
 	"api/internal/dao/users/internal"
@@ -342,10 +343,10 @@ func (daoThis *usersDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				}
 			}
 
-			/* row, _ := result.RowsAffected()
+			row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			} */
+			}
 
 			/* for k, v := range daoModel.AfterUpdate {
 				switch k {
@@ -355,6 +356,7 @@ func (daoThis *usersDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 					}
 				}
 			} */
+			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
 		},
 	}
@@ -375,6 +377,7 @@ func (daoThis *usersDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			}
 
 			Privacy.CtxDaoModel(ctx).Filter(Privacy.Columns().UserId, daoModel.IdArr).Delete()
+			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
 		},
 	}
@@ -452,3 +455,8 @@ func (daoThis *usersDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 }
 
 // Add your custom methods and functionality below.
+
+func (daoThis *usersDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
+	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
+	return
+}

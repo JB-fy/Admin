@@ -5,6 +5,7 @@
 package org
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/dao/org/internal"
@@ -297,10 +298,10 @@ func (daoThis *adminDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				}
 			}
 
-			/* row, _ := result.RowsAffected()
+			row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			} */
+			}
 
 			/* for k, v := range daoModel.AfterUpdate {
 				switch k {
@@ -310,6 +311,7 @@ func (daoThis *adminDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 					}
 				}
 			} */
+			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
 		},
 	}
@@ -330,6 +332,7 @@ func (daoThis *adminDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			}
 
 			daoAuth.RoleRelOfOrgAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfOrgAdmin.Columns().AdminId, daoModel.IdArr).Delete()
+			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
 		},
 	}
@@ -399,3 +402,8 @@ func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 }
 
 // Add your custom methods and functionality below.
+
+func (daoThis *adminDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
+	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
+	return
+}
