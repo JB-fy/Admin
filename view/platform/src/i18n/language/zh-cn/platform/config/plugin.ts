@@ -87,6 +87,10 @@ export default {
         vod_type: [{ value: `vod_of_aliyun`, label: '阿里云' }],
     },
     tip: {
+        sms_of_aliyun: {
+            endpoint: '参考：<a target="_blank" href="https://api.aliyun.com/product/Dysmsapi">https://api.aliyun.com/product/Dysmsapi</a>',
+        },
+
         email_code: {
             template: '需保证至少拥有一个验证码占位符：' + "{'{'}" + 'code' + "{'}'}" + '',
         },

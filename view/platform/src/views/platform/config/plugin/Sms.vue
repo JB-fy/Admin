@@ -86,7 +86,12 @@ saveForm.initData()
                 <el-input v-model="saveForm.data.sms_of_aliyun.access_key_secret" :placeholder="t('platform.config.plugin.name.sms_of_aliyun.access_key_secret')" :clearable="true" />
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.sms_of_aliyun.endpoint')" prop="sms_of_aliyun.endpoint">
-                <el-input v-model="saveForm.data.sms_of_aliyun.endpoint" :placeholder="t('platform.config.plugin.name.sms_of_aliyun.endpoint')" :clearable="true" />
+                <el-input v-model="saveForm.data.sms_of_aliyun.endpoint" :placeholder="t('platform.config.plugin.name.sms_of_aliyun.endpoint')" :clearable="true" style="max-width: 500px" />
+                <el-alert type="info" :show-icon="true" :closable="false">
+                    <template #title>
+                        <span v-html="t('platform.config.plugin.tip.sms_of_aliyun.endpoint')"></span>
+                    </template>
+                </el-alert>
             </el-form-item>
             <el-form-item :label="t('platform.config.plugin.name.sms_of_aliyun.sign_name')" prop="sms_of_aliyun.sign_name">
                 <el-input v-model="saveForm.data.sms_of_aliyun.sign_name" :placeholder="t('platform.config.plugin.name.sms_of_aliyun.sign_name')" :clearable="true" />
