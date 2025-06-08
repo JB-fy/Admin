@@ -88,7 +88,7 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/profile', menu: { i18n: { title: { en: 'Profile', 'zh-cn': '个人中心' } }, icon: 'autoicon-ep-user-filled' } },
             },
             {
-                path: '/thirdSite', //必须带query.url参数。示例：/thirdSite?url=https://element-plus.gitee.io/zh-CN/
+                path: '/thirdSite', //必须带query.url参数。示例：/thirdSite?url=https://element-plus.org/zh-CN/
                 component: () => import('@/views/ThirdSite.vue'),
                 meta: { isAuth: true, keepAlive: false, menu: { i18n: { title: { en: 'Third Site', 'zh-cn': '第三方站点' } }, icon: 'autoicon-ep-chrome-filled' } },
             },

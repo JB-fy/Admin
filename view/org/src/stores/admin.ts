@@ -85,7 +85,7 @@ export const useAdminStore = defineStore('admin', {
                             },
                         },
                         icon: 'autoicon-ep-element-plus',
-                        url: 'https://element-plus.gitee.io/zh-CN/',
+                        url: 'https://element-plus.org/zh-CN/',
                         children: [],
                     },
                 ],
