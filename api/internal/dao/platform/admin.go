@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -428,6 +429,6 @@ func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 // Add your custom methods and functionality below.
 
 func (daoThis *adminDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
+	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0, gset.NewStrSetFrom(daoThis.ColumnArr()).Diff(gset.NewStrSetFrom([]string{daoThis.Columns().Password, daoThis.Columns().Salt})).Slice()...)
 	return
 }
