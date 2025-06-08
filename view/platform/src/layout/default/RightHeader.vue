@@ -78,7 +78,7 @@ const menuTab = reactive({
 
                 <el-dropdown>
                     <el-link :underline="false">
-                        <autoicon-ep-place />
+                        <autoicon-material-symbols-language />
                     </el-link>
                     <template #dropdown>
                         <el-dropdown-menu>
