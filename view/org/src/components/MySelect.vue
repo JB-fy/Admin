@@ -101,7 +101,13 @@ const select = reactive({
             }
             return options
         },
-        addOptions: () => select.api.getOptions().then((options) => (select.options = select.api.param.page === 1 ? [...((attrs.options as any[]) ?? []), ...(options ?? [])] : select.options.concat(options ?? []))),
+        addOptions: () => select.api.getOptions().then((options) => {
+            if (select.api.param.page === 1) {
+                select.options = [...((attrs.options as any[]) ?? []), ...(options ?? [])]
+            }else if (options) {
+                select.options = select.options.concat(options)
+            }
+        }),
     },
     visibleChange: (val: boolean) => {
         if (val) {
@@ -158,7 +164,7 @@ if (model.value || (Array.isArray(model.value) && model.value.length)) {
 
 //滚动方法。需要写外面，否则无法通过removeEventListener移除事件
 const scrollFunc = (event: any) => {
-    if (event.target.scrollTop > 0 && event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight) {
+    if (event.target.scrollTop > 0 && event.target.scrollHeight - event.target.scrollTop <= event.target.clientHeight && !select.api.loading) {
         select.api.param.page++
         select.api.addOptions()
     }
