@@ -52,7 +52,7 @@ database:
       # role: "master" # 主从配置(master/slave)
       # weight: "100" # 负载均衡权重，用于负载均衡控制，不使用应用层的负载均衡机制请置空
       # prefix: ""
-      # charset: "utf8"
+      charset: "utf8mb4"
       timezone: "Local"
       maxIdle: "50" # 连接池最大闲置的连接数
       maxOpen: "50" # 连接池最大打开的连接数
