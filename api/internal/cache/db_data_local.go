@@ -28,19 +28,23 @@ var DbDataLocal = dbDataLocal{
 		// `default:pay_scene`:   1,
 		// `default:app`:         0,
 	},
-	methodCode:       ``,
-	methodCodeOfArr:  `arr_`,
-	methodCodeOfInfo: `info_`,
-	methodCodeOfList: `list_`,
+	methodCode:        ``,
+	methodCodeOfArr:   `arr_`,
+	methodCodeOfSet:   `set_`,
+	methodCodeOfInfo:  `info_`,
+	methodCodeOfList:  `list_`,
+	methodCodeOfPluck: `pluck_`,
 }
 
 type dbDataLocal struct {
-	goCacheMap       sync.Map
-	cacheKeyMap      map[string]uint8
-	methodCode       string
-	methodCodeOfArr  string
-	methodCodeOfInfo string
-	methodCodeOfList string
+	goCacheMap        sync.Map
+	cacheKeyMap       map[string]uint8
+	methodCode        string
+	methodCodeOfArr   string
+	methodCodeOfSet   string
+	methodCodeOfInfo  string
+	methodCodeOfList  string
+	methodCodeOfPluck string
 }
 
 func (cacheThis *dbDataLocal) Flush(ctx context.Context) {
@@ -86,6 +90,8 @@ func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoMod
 			notExist = val.IsNil()
 		case []*gvar.Var:
 			notExist = len(val) == 0
+		case map[*gvar.Var]struct{}:
+			notExist = len(val) == 0
 		case gdb.Record:
 			notExist = val.IsEmpty()
 		case gdb.Result:
@@ -124,6 +130,15 @@ func (cacheThis *dbDataLocal) GetOrSetArr(ctx context.Context, daoModel *dao.Dao
 	return
 }
 
+func (cacheThis *dbDataLocal) GetOrSetSet(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value map[*gvar.Var]struct{}, ttl time.Duration, err error)) (value map[*gvar.Var]struct{}, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfSet, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.(map[*gvar.Var]struct{})
+	return
+}
+
 func (cacheThis *dbDataLocal) GetOrSetInfo(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error)) (value gdb.Record, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfInfo, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
@@ -139,6 +154,15 @@ func (cacheThis *dbDataLocal) GetOrSetList(ctx context.Context, daoModel *dao.Da
 		return
 	})
 	value, _ = valueTmp.(gdb.Result)
+	return
+}
+
+func (cacheThis *dbDataLocal) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error)) (value gdb.Record, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfPluck, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.(gdb.Record)
 	return
 }
 

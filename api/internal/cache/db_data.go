@@ -16,19 +16,23 @@ import (
 )
 
 var DbData = dbData{
-	redis:            g.Redis(),
-	methodCode:       ``,
-	methodCodeOfArr:  `arr_`,
-	methodCodeOfInfo: `info_`,
-	methodCodeOfList: `list_`,
+	redis:             g.Redis(),
+	methodCode:        ``,
+	methodCodeOfArr:   `arr_`,
+	methodCodeOfSet:   `set_`,
+	methodCodeOfInfo:  `info_`,
+	methodCodeOfList:  `list_`,
+	methodCodeOfPluck: `pluck_`,
 }
 
 type dbData struct {
-	redis            *gredis.Redis
-	methodCode       string
-	methodCodeOfArr  string
-	methodCodeOfInfo string
-	methodCodeOfList string
+	redis             *gredis.Redis
+	methodCode        string
+	methodCodeOfArr   string
+	methodCodeOfSet   string
+	methodCodeOfInfo  string
+	methodCodeOfList  string
+	methodCodeOfPluck string
 }
 
 func (cacheThis *dbData) cache() *gredis.Redis {
@@ -50,6 +54,8 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, m
 		case *gvar.Var:
 			notExist = val.IsNil()
 		case []*gvar.Var:
+			notExist = len(val) == 0
+		case map[*gvar.Var]struct{}:
 			notExist = len(val) == 0
 		case gdb.Record:
 			notExist = val.IsEmpty()
@@ -92,6 +98,15 @@ func (cacheThis *dbData) GetOrSetArr(ctx context.Context, daoModel *dao.DaoModel
 	return
 }
 
+func (cacheThis *dbData) GetOrSetSet(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value map[*gvar.Var]struct{}, ttl time.Duration, err error)) (value map[*gvar.Var]struct{}, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfSet, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.(map[*gvar.Var]struct{})
+	return
+}
+
 func (cacheThis *dbData) GetOrSetInfo(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error)) (value gdb.Record, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfInfo, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
@@ -113,6 +128,15 @@ func (cacheThis *dbData) GetOrSetList(ctx context.Context, daoModel *dao.DaoMode
 	if !ok {
 		valueTmp.(*gvar.Var).Scan(&value)
 	}
+	return
+}
+
+func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error)) (value gdb.Record, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfPluck, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.(gdb.Record)
 	return
 }
 
