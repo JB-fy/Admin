@@ -31,9 +31,9 @@ var DbDataLocal = dbDataLocal{
 	methodCode:        ``,
 	methodCodeOfArr:   `arr_`,
 	methodCodeOfSet:   `set_`,
+	methodCodeOfPluck: `pluck_`,
 	methodCodeOfInfo:  `info_`,
 	methodCodeOfList:  `list_`,
-	methodCodeOfPluck: `pluck_`,
 }
 
 type dbDataLocal struct {
@@ -42,9 +42,9 @@ type dbDataLocal struct {
 	methodCode        string
 	methodCodeOfArr   string
 	methodCodeOfSet   string
+	methodCodeOfPluck string
 	methodCodeOfInfo  string
 	methodCodeOfList  string
-	methodCodeOfPluck string
 }
 
 func (cacheThis *dbDataLocal) Flush(ctx context.Context) {
@@ -139,6 +139,15 @@ func (cacheThis *dbDataLocal) GetOrSetSet(ctx context.Context, daoModel *dao.Dao
 	return
 }
 
+func (cacheThis *dbDataLocal) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error)) (value gdb.Record, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfPluck, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.(gdb.Record)
+	return
+}
+
 func (cacheThis *dbDataLocal) GetOrSetInfo(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error)) (value gdb.Record, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfInfo, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
@@ -157,15 +166,6 @@ func (cacheThis *dbDataLocal) GetOrSetList(ctx context.Context, daoModel *dao.Da
 	return
 }
 
-func (cacheThis *dbDataLocal) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error)) (value gdb.Record, err error) {
-	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfPluck, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-		value, ttl, err = dbSelFunc(daoModel)
-		return
-	})
-	value, _ = valueTmp.(gdb.Record)
-	return
-}
-
 func (cacheThis *dbDataLocal) GetOrSetById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, field string) (value *gvar.Var, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, id, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, err = daoModel.FilterPri(id).Value(field)
@@ -173,6 +173,27 @@ func (cacheThis *dbDataLocal) GetOrSetById(ctx context.Context, daoModel *dao.Da
 		return
 	})
 	value, _ = valueTmp.(*gvar.Var)
+	return
+}
+
+func (cacheThis *dbDataLocal) GetOrSetPluckById(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlD time.Duration, field string) (value gdb.Record, err error) {
+	var valueTmp any
+	var notExist bool
+	value = gdb.Record{}
+	for index := range idArr {
+		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Value(field)
+			ttl = ttlD
+			return
+		})
+		if err != nil {
+			return
+		}
+		if notExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
+			continue
+		}
+		value[gconv.String(idArr[index])], _ = valueTmp.(*gvar.Var)
+	}
 	return
 }
 
@@ -202,27 +223,6 @@ func (cacheThis *dbDataLocal) GetOrSetListById(ctx context.Context, daoModel *da
 			continue
 		}
 		value = append(value, valueTmp.(gdb.Record))
-	}
-	return
-}
-
-func (cacheThis *dbDataLocal) GetOrSetPluckById(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlD time.Duration, field string) (value gdb.Record, err error) {
-	var valueTmp any
-	var notExist bool
-	value = gdb.Record{}
-	for index := range idArr {
-		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Value(field)
-			ttl = ttlD
-			return
-		})
-		if err != nil {
-			return
-		}
-		if notExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
-			continue
-		}
-		value[gconv.String(idArr[index])], _ = valueTmp.(*gvar.Var)
 	}
 	return
 }
