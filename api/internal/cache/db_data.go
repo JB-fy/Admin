@@ -197,6 +197,47 @@ func (cacheThis *dbData) GetOrSetById(ctx context.Context, daoModel *dao.DaoMode
 	return
 }
 
+/* func (cacheThis *dbData) GetOrSetArrById(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlD time.Duration, field string) (value []*gvar.Var, err error) {
+	var valueTmp any
+	var notExist bool
+	for index := range idArr {
+		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Value(field)
+			ttl = ttlD
+			return
+		})
+		if err != nil {
+			return
+		}
+		if notExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
+			continue
+		}
+		value = append(value, valueTmp.(*gvar.Var))
+	}
+	return
+}
+
+func (cacheThis *dbData) GetOrSetSetById(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlD time.Duration, field string) (value map[*gvar.Var]struct{}, err error) {
+	var valueTmp any
+	var notExist bool
+	value = map[*gvar.Var]struct{}{}
+	for index := range idArr {
+		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Value(field)
+			ttl = ttlD
+			return
+		})
+		if err != nil {
+			return
+		}
+		if notExist { //缓存的是数据库数据，就需要和数据库SQL查询一样。故无数据时不返回
+			continue
+		}
+		value[valueTmp.(*gvar.Var)] = struct{}{}
+	}
+	return
+} */
+
 func (cacheThis *dbData) GetOrSetPluckById(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlD time.Duration, field string) (value gdb.Record, err error) {
 	var valueTmp any
 	var notExist bool
