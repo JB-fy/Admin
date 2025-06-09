@@ -310,9 +310,9 @@ func (daoThis *usersDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 			}
 		}
 		m = m.Data(daoModel.SaveData)
-		if len(daoModel.AfterUpdate) > 0 {
-			m = m.Hook(daoThis.HookUpdate(daoModel))
-		}
+		// if len(daoModel.AfterUpdate) > 0 {
+		m = m.Hook(daoThis.HookUpdate(daoModel))
+		// }
 		return m
 	}
 }
