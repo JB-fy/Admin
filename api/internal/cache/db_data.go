@@ -18,6 +18,7 @@ import (
 var DbData = dbData{
 	redis:            g.Redis(),
 	methodCode:       ``,
+	methodCodeOfArr:  `arr_`,
 	methodCodeOfInfo: `info_`,
 	methodCodeOfList: `list_`,
 }
@@ -25,6 +26,7 @@ var DbData = dbData{
 type dbData struct {
 	redis            *gredis.Redis
 	methodCode       string
+	methodCodeOfArr  string
 	methodCodeOfInfo string
 	methodCodeOfList string
 }
@@ -47,6 +49,8 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, m
 		switch val := value.(type) {
 		case *gvar.Var:
 			notExist = val.IsNil()
+		case []*gvar.Var:
+			notExist = len(val) == 0
 		case gdb.Record:
 			notExist = val.IsEmpty()
 		case gdb.Result:
@@ -76,6 +80,15 @@ func (cacheThis *dbData) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, c
 		return
 	})
 	value, _ = valueTmp.(*gvar.Var)
+	return
+}
+
+func (cacheThis *dbData) GetOrSetArr(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value []*gvar.Var, ttl time.Duration, err error)) (value []*gvar.Var, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfArr, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.([]*gvar.Var)
 	return
 }
 

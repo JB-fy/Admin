@@ -29,6 +29,7 @@ var DbDataLocal = dbDataLocal{
 		// `default:app`:         0,
 	},
 	methodCode:       ``,
+	methodCodeOfArr:  `arr_`,
 	methodCodeOfInfo: `info_`,
 	methodCodeOfList: `list_`,
 }
@@ -37,6 +38,7 @@ type dbDataLocal struct {
 	goCacheMap       sync.Map
 	cacheKeyMap      map[string]uint8
 	methodCode       string
+	methodCodeOfArr  string
 	methodCodeOfInfo string
 	methodCodeOfList string
 }
@@ -82,6 +84,8 @@ func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoMod
 		switch val := value.(type) {
 		case *gvar.Var:
 			notExist = val.IsNil()
+		case []*gvar.Var:
+			notExist = len(val) == 0
 		case gdb.Record:
 			notExist = val.IsEmpty()
 		case gdb.Result:
@@ -108,6 +112,15 @@ func (cacheThis *dbDataLocal) GetOrSet(ctx context.Context, daoModel *dao.DaoMod
 		return
 	})
 	value, _ = valueTmp.(*gvar.Var)
+	return
+}
+
+func (cacheThis *dbDataLocal) GetOrSetArr(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value []*gvar.Var, ttl time.Duration, err error)) (value []*gvar.Var, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfArr, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.([]*gvar.Var)
 	return
 }
 
