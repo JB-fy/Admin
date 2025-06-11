@@ -288,10 +288,10 @@ INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgAdminDelete', '权限管理-机构管理员-删除', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgAdminRead', '权限管理-机构管理员-查看', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgAdminUpdate', '权限管理-机构管理员-编辑', '');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'OrgCfgCommonRead', '应用配置-常用-查看', '只能读取机构配置表中的某些配置。对应前端页面：配置中心-应用配置-常用');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'OrgCfgCommonSave', '应用配置-常用-保存', '只能保存机构配置表中的某些配置。对应前端页面：配置中心-应用配置-常用');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'OrgCfgRead', '配置中心-查看', '可任意读取机构配置表');
-INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'OrgCfgSave', '配置中心-保存', '可任意保存机构配置表');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgCfgCommonRead', '应用配置-常用-查看', '只能读取机构配置表中的某些配置。对应前端页面：配置中心-应用配置-常用');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgCfgCommonSave', '应用配置-常用-保存', '只能保存机构配置表中的某些配置。对应前端页面：配置中心-应用配置-常用');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgCfgRead', '配置中心-查看', '可任意读取机构配置表');
+INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgCfgSave', '配置中心-保存', '可任意保存机构配置表');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgCreate', '机构管理-机构-新增', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgDelete', '机构管理-机构-删除', '');
 INSERT INTO "public"."auth_action" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgRead', '机构管理-机构-查看', '');
@@ -401,8 +401,8 @@ INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminRead', 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminUpdate', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminUpdate', 'platform');
-INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'OrgCfgRead', 'org');
-INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'OrgCfgSave', 'org');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgRead', 'org');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgSave', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCreate', 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgDelete', 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgRead', 'platform');
