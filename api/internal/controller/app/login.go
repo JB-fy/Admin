@@ -153,7 +153,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 		data[daoUsers.Users.Columns().Phone] = req.Phone
-		data[daoUsers.Users.Columns().Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
+		data[daoUsers.Users.Columns().Nickname] = req.Phone[:3] + gstr.Repeat(`*`, len(req.Phone)-7) + req.Phone[len(req.Phone)-4:]
 	}
 	if req.Email != `` {
 		code, _ := cache.Code.Get(ctx, sceneId, req.Email, 11) //场景：11注册(邮箱)
@@ -177,7 +177,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 		data[daoUsers.Users.Columns().Account] = req.Account
-		data[daoUsers.Users.Columns().Nickname] = req.Account
+		data[daoUsers.Users.Columns().Nickname] = req.Account[:1] + gstr.Repeat(`*`, len(req.Account)-2) + req.Account[len(req.Account)-1:]
 	}
 	if req.Password != `` {
 		data[daoUsers.Privacy.Columns().Password] = req.Password

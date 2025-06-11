@@ -10,6 +10,7 @@ export default {
 //import Common from './app/Common.vue'
 //下面方式引入好处：组件会被打包成单独一个文件
 const Common = defineAsyncComponent(() => import('./app/Common.vue'))
+const Org = defineAsyncComponent(() => import('./app/Org.vue'))
 
 const { t } = useI18n()
 const adminStore = useAdminStore()
@@ -19,6 +20,8 @@ const isSave = adminStore.isAction('platformConfigSave')
 const authAction: { [propName: string]: boolean } = {
     isCommonRead: isRead || adminStore.isAction('platformConfigCommonRead'),
     isCommonSave: isSave || adminStore.isAction('platformConfigCommonSave'),
+    isOrgRead: isRead || adminStore.isAction('platformConfigOrgRead'),
+    isOrgSave: isSave || adminStore.isAction('platformConfigOrgSave'),
 }
 provide('authAction', authAction)
 const notReadAll = !authAction.isCommonRead
@@ -30,6 +33,7 @@ const notReadAll = !authAction.isCommonRead
         <el-main>
             <el-tabs type="border-card" tab-position="top">
                 <el-tab-pane v-if="authAction.isCommonRead" :label="t('platform.config.app.label.common')" :lazy="true"><common /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isOrgRead" :label="t('platform.config.app.label.org')" :lazy="true"><org /></el-tab-pane>
             </el-tabs>
         </el-main>
     </el-container>

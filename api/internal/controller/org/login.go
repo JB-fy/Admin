@@ -6,6 +6,7 @@ import (
 	"api/internal/cache"
 	daoAuth "api/internal/dao/auth"
 	daoOrg "api/internal/dao/org"
+	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils"
 	"api/internal/utils/token"
 	"context"
@@ -104,7 +105,6 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 // 注册
 func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
 	data := g.Map{}
-	data[daoOrg.Admin.Columns().IsSuper] = 1 //只允许注册超级管理员
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	if req.Phone != `` {
@@ -120,7 +120,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 		data[daoOrg.Admin.Columns().Phone] = req.Phone
-		data[daoOrg.Admin.Columns().Nickname] = req.Phone[:3] + `****` + req.Phone[len(req.Phone)-4:]
+		data[daoOrg.Admin.Columns().Nickname] = req.Phone[:3] + gstr.Repeat(`*`, len(req.Phone)-7) + req.Phone[len(req.Phone)-4:]
 	}
 	if req.Email != `` {
 		code, _ := cache.Code.Get(ctx, sceneId, req.Email, 11) //场景：11注册(邮箱)
@@ -144,12 +144,12 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 		data[daoOrg.Admin.Columns().Account] = req.Account
-		data[daoOrg.Admin.Columns().Nickname] = req.Account
+		data[daoOrg.Admin.Columns().Nickname] = req.Account[:1] + gstr.Repeat(`*`, len(req.Account)-2) + req.Account[len(req.Account)-1:]
 	}
-	if req.Password != `` {
-		data[daoOrg.Admin.Columns().Password] = req.Password
-	}
+	data[daoOrg.Admin.Columns().Password] = req.Password
 
+	data[daoOrg.Admin.Columns().IsSuper] = 1                                            //只允许注册超级管理员
+	data[`role_id_arr`] = daoPlatform.Config.Get(ctx, `role_id_arr_of_org_def`).Slice() //默认角色
 	adminId, err := daoOrg.Admin.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
 	if err != nil {
 		return

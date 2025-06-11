@@ -19,6 +19,8 @@ type Config struct {
 	UserAgreement    *string   `json:"user_agreement,omitempty" dc:"用户协议"`
 	PrivacyAgreement *string   `json:"privacy_agreement,omitempty" dc:"隐私协议"`
 
+	RoleIdArrOfOrgDef *[]uint `json:"role_id_arr_of_org_def,omitempty" dc:"默认角色"`
+
 	SmsType     *string `json:"sms_type,omitempty" dc:"短信方式"`
 	SmsOfAliyun *struct {
 		AccessKeyId     *string `json:"access_key_id,omitempty" dc:"阿里云-AccessKeyId"`
@@ -94,6 +96,8 @@ type ConfigSaveReq struct {
 	HotSearch        *[]string `json:"hot_search,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
 	UserAgreement    *string   `json:"user_agreement,omitempty" v:"" dc:"用户协议"`
 	PrivacyAgreement *string   `json:"privacy_agreement,omitempty" v:"" dc:"隐私协议"`
+
+	RoleIdArrOfOrgDef *[]uint `json:"role_id_arr_of_org_def,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"默认角色"`
 
 	SmsType     *string `json:"sms_type,omitempty" v:"in:sms_of_aliyun" dc:"短信方式"`
 	SmsOfAliyun *struct {
