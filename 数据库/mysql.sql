@@ -11,7 +11,7 @@
  Target Server Version : 90300 (9.3.0)
  File Encoding         : 65001
 
- Date: 08/06/2025 21:45:46
+ Date: 11/06/2025 22:30:59
 */
 
 SET NAMES utf8mb4;
@@ -140,6 +140,10 @@ INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgIdCardSave', '插件配置-实名认证-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-实名认证');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgOneClickRead', '插件配置-一键登录-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-一键登录');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgOneClickSave', '插件配置-一键登录-保存', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-一键登录');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgOrgRead', '应用配置-机构-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-应用配置-机构');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgOrgSave', '应用配置-机构-保存', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-应用配置-机构');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgPlatformRead', '应用配置-平台-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-应用配置-平台');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgPlatformSave', '应用配置-平台-保存', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-应用配置-平台');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgPushRead', '插件配置-推送-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-推送');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgPushSave', '插件配置-推送-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-推送');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgRead', '平台配置-查看', '可任意读取平台配置表');
@@ -176,10 +180,10 @@ CREATE TABLE `auth_action_rel_to_scene`  (
 -- ----------------------------
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appCreate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appDelete', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 'appPkgCreate', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 'appPkgDelete', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 'appPkgRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2025-05-28 01:45:24', '2025-05-28 01:45:24', 'appPkgUpdate', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appPkgCreate', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appPkgDelete', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appPkgRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appPkgUpdate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appRead', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appUpdate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authActionCreate', 'platform');
@@ -214,6 +218,8 @@ INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-0
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminRead', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminUpdate', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminUpdate', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'OrgCfgRead', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'OrgCfgSave', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCreate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgDelete', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgRead', 'platform');
@@ -242,6 +248,10 @@ INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-0
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgIdCardSave', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgOneClickRead', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgOneClickSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgOrgRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgOrgSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgPlatformRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgPlatformSave', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgPushRead', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgPushSave', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgRead', 'platform');
