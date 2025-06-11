@@ -36,9 +36,9 @@ type ProfileUpdateReq struct {
 	Gender                 *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday               *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
 	Address                *string     `json:"address,omitempty" v:"max-length:60" dc:"详细地址"`
-	Phone                  *string     `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
+	Phone                  *string     `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
 	Email                  *string     `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	Account                *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	Account                *string     `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password               *string     `json:"password,omitempty" v:"size:32" dc:"新密码。加密后发送，公式：md5(新密码)"`
 	PasswordToCheck        *string     `json:"password_to_check,omitempty" v:"required-with:Account|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号,密码用，password_to_check,sms_code_to_password,email_code_to_password传一个即可"`
 	SmsCodeToPassword      *string     `json:"sms_code_to_password,omitempty" v:"size:4" dc:"短信验证码。修改密码用，password_to_check,sms_code_to_password,email_code_to_password传一个即可"`

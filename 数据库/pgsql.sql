@@ -12,7 +12,7 @@
  Target Server Version : 170005 (170005)
  File Encoding         : 65001
 
- Date: 11/06/2025 22:42:13
+ Date: 11/06/2025 23:59:07
 */
 
 
@@ -702,9 +702,9 @@ CREATE TABLE "public"."org_admin" (
   "is_super" int2 NOT NULL DEFAULT 0,
   "nickname" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "avatar" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "phone" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
+  "phone" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
   "email" varchar(60) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
-  "account" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
+  "account" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
   "password" char(32) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar,
   "salt" char(8) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar
 )
