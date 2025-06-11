@@ -12,7 +12,7 @@
  Target Server Version : 170005 (170005)
  File Encoding         : 65001
 
- Date: 11/06/2025 22:30:34
+ Date: 11/06/2025 22:42:13
 */
 
 
@@ -1343,19 +1343,16 @@ ALTER TABLE "public"."org" ADD CONSTRAINT "org_pkey" PRIMARY KEY ("org_id");
 -- ----------------------------
 -- Indexes structure for table org_admin
 -- ----------------------------
-CREATE UNIQUE INDEX "org_admin_org_id_account_idx" ON "public"."org_admin" USING btree (
-  "org_id" "pg_catalog"."int4_ops" ASC NULLS LAST,
+CREATE UNIQUE INDEX "org_admin_account_idx" ON "public"."org_admin" USING btree (
   "account" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
-CREATE UNIQUE INDEX "org_admin_org_id_email_idx" ON "public"."org_admin" USING btree (
-  "org_id" "pg_catalog"."int4_ops" ASC NULLS LAST,
+CREATE UNIQUE INDEX "org_admin_email_idx" ON "public"."org_admin" USING btree (
   "email" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
 CREATE INDEX "org_admin_org_id_idx" ON "public"."org_admin" USING btree (
   "org_id" "pg_catalog"."int4_ops" ASC NULLS LAST
 );
-CREATE UNIQUE INDEX "org_admin_org_id_phone_idx" ON "public"."org_admin" USING btree (
-  "org_id" "pg_catalog"."int4_ops" ASC NULLS LAST,
+CREATE UNIQUE INDEX "org_admin_phone_idx" ON "public"."org_admin" USING btree (
   "phone" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
 
