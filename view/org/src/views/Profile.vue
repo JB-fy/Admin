@@ -143,13 +143,23 @@ const emailCountdown = reactive({
                     <el-input v-model="saveForm.data.phone" :placeholder="t('profile.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px">
                         <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
                     </el-input>
-                    <el-alert :title="t('profile.tip.phone', { phone: adminStore.info.phone ? adminStore.info.phone : t('common.tip.notSet') })" type="info" :show-icon="true" :closable="false" />
+                    <el-alert
+                        :title="t('profile.tip.phone', { phone: adminStore.info.phone ? (adminStore.info.phone.indexOf(':') === -1 ? adminStore.info.phone : adminStore.info.phone.split(':')[1]) : t('common.tip.notSet') })"
+                        type="info"
+                        :show-icon="true"
+                        :closable="false"
+                    />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.email')" prop="email">
                     <el-input v-model="saveForm.data.email" :placeholder="t('profile.name.email')" maxlength="60" :show-word-limit="true" :clearable="true" style="max-width: 250px">
                         <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
                     </el-input>
-                    <el-alert :title="t('profile.tip.email', { email: adminStore.info.email ? adminStore.info.email : t('common.tip.notSet') })" type="info" :show-icon="true" :closable="false" />
+                    <el-alert
+                        :title="t('profile.tip.email', { email: adminStore.info.email ? (adminStore.info.email.indexOf(':') === -1 ? adminStore.info.email : adminStore.info.email.split(':')[1]) : t('common.tip.notSet') })"
+                        type="info"
+                        :show-icon="true"
+                        :closable="false"
+                    />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.account')" prop="account">
                     <el-input v-model="saveForm.data.account" :placeholder="t('profile.name.account')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px">
