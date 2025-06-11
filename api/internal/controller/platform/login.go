@@ -12,6 +12,8 @@ import (
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"
 )
 
@@ -82,10 +84,34 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
-	salt, _ := cache.Salt.Get(ctx, sceneId, req.LoginName)
-	if salt == `` || gmd5.MustEncrypt(info[daoPlatform.Admin.Columns().Password].String()+salt) != req.Password {
-		err = utils.NewErrorCode(ctx, 39990001, ``)
-		return
+	if req.Password != `` { //密码
+		salt, _ := cache.Salt.Get(ctx, sceneId, req.LoginName)
+		if salt == `` || gmd5.MustEncrypt(info[daoPlatform.Admin.Columns().Password].String()+salt) != req.Password {
+			err = utils.NewErrorCode(ctx, 39990001, ``)
+			return
+		}
+	} else if req.SmsCode != `` { //短信验证码
+		phone := info[daoPlatform.Admin.Columns().Phone].String()
+		if phone == `` {
+			err = utils.NewErrorCode(ctx, 39991003, ``)
+			return
+		}
+		code, _ := cache.Code.Get(ctx, sceneId, phone, 0) //场景：0登录(手机)
+		if code == `` || code != req.SmsCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
+	} else if req.EmailCode != `` { //邮箱验证码
+		email := info[daoPlatform.Admin.Columns().Email].String()
+		if email == `` {
+			err = utils.NewErrorCode(ctx, 39991013, ``)
+			return
+		}
+		code, _ := cache.Code.Get(ctx, sceneId, email, 10) //场景：10登录(邮箱)
+		if code == `` || code != req.EmailCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
 	}
 
 	token, err := token.NewHandler(ctx).Create(info[daoPlatform.Admin.Columns().AdminId].String(), nil)
@@ -94,5 +120,105 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	}
 
 	res = &api.CommonTokenRes{Token: token}
+	return
+}
+
+// 注册
+func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
+	data := g.Map{}
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
+	if req.Phone != `` {
+		code, _ := cache.Code.Get(ctx, sceneId, req.Phone, 1) //场景：1注册(手机)
+		if code == `` || code != req.SmsCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
+		info, _ := daoPlatform.Admin.CtxDaoModel(ctx).Filter(daoPlatform.Admin.Columns().Phone, req.Phone).One()
+		if !info.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 39991000, ``)
+			return
+		}
+		data[daoPlatform.Admin.Columns().Phone] = req.Phone
+		data[daoPlatform.Admin.Columns().Nickname] = req.Phone[:3] + gstr.Repeat(`*`, len(req.Phone)-7) + req.Phone[len(req.Phone)-4:]
+	}
+	if req.Email != `` {
+		code, _ := cache.Code.Get(ctx, sceneId, req.Email, 11) //场景：11注册(邮箱)
+		if code == `` || code != req.EmailCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
+		info, _ := daoPlatform.Admin.CtxDaoModel(ctx).Filter(daoPlatform.Admin.Columns().Email, req.Email).One()
+		if !info.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 39991010, ``)
+			return
+		}
+		data[daoPlatform.Admin.Columns().Email] = req.Email
+		data[daoPlatform.Admin.Columns().Nickname] = gstr.Split(req.Email, `@`)[0]
+	}
+	if req.Account != `` {
+		info, _ := daoPlatform.Admin.CtxDaoModel(ctx).Filter(daoPlatform.Admin.Columns().Account, req.Account).One()
+		if !info.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 39991020, ``)
+			return
+		}
+		data[daoPlatform.Admin.Columns().Account] = req.Account
+		data[daoPlatform.Admin.Columns().Nickname] = req.Account[:1] + gstr.Repeat(`*`, len(req.Account)-2) + req.Account[len(req.Account)-1:]
+	}
+	data[daoPlatform.Admin.Columns().Password] = req.Password
+
+	data[`role_id_arr`] = daoPlatform.Config.Get(ctx, `role_id_arr_of_platform_def`).Slice() //默认角色
+	adminId, err := daoPlatform.Admin.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
+	if err != nil {
+		return
+	}
+
+	token, err := token.NewHandler(ctx).Create(gconv.String(adminId), nil)
+	if err != nil {
+		return
+	}
+
+	res = &api.CommonTokenRes{Token: token}
+	return
+}
+
+// 密码找回
+func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurrent.LoginPasswordRecoveryReq) (res *api.CommonNoDataRes, err error) {
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
+	filter := g.Map{}
+	if req.Phone != `` {
+		if g.Validator().Rules(`phone`).Data(req.Phone).Run(ctx) != nil {
+			err = utils.NewErrorCode(ctx, 89990000, ``)
+			return
+		}
+		code, _ := cache.Code.Get(ctx, sceneId, req.Phone, 2) //场景：2密码找回(手机)
+		if code == `` || code != req.SmsCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
+		filter[daoPlatform.Admin.Columns().Phone] = req.Phone
+	} else if req.Email != `` {
+		if g.Validator().Rules(`email`).Data(req.Email).Run(ctx) != nil {
+			err = utils.NewErrorCode(ctx, 89990000, ``)
+			return
+		}
+		code, _ := cache.Code.Get(ctx, sceneId, req.Email, 12) //场景：12密码找回(邮箱)
+		if code == `` || code != req.EmailCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
+		filter[daoPlatform.Admin.Columns().Email] = req.Email
+	}
+
+	daoModelOrgAdmin := daoPlatform.Admin.CtxDaoModel(ctx).SetIdArr(filter)
+	if len(daoModelOrgAdmin.IdArr) == 0 {
+		err = utils.NewErrorCode(ctx, 39990000, ``)
+		return
+	}
+	_, err = daoModelOrgAdmin.HookUpdateOne(daoPlatform.Admin.Columns().Password, req.Password).Update()
+	if err != nil {
+		return
+	}
 	return
 }

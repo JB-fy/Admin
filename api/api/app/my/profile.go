@@ -40,7 +40,7 @@ type ProfileUpdateReq struct {
 	Email                  *string     `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
 	Account                *string     `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Password               *string     `json:"password,omitempty" v:"size:32" dc:"新密码。加密后发送，公式：md5(新密码)"`
-	PasswordToCheck        *string     `json:"password_to_check,omitempty" v:"required-with:Account|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号,密码用，password_to_check和sms_code_to_password传一个即可"`
+	PasswordToCheck        *string     `json:"password_to_check,omitempty" v:"required-with:Account|size:32|different:Password" dc:"旧密码。加密后发送，公式：md5(新密码)。修改账号,密码用，password_to_check,sms_code_to_password,email_code_to_password传一个即可"`
 	SmsCodeToPassword      *string     `json:"sms_code_to_password,omitempty" v:"size:4" dc:"短信验证码。修改密码用，password_to_check,sms_code_to_password,email_code_to_password传一个即可"`
 	SmsCodeToBindPhone     *string     `json:"sms_code_to_bind_phone,omitempty" v:"required-with:Phone|size:4" dc:"短信验证码。绑定手机用"`
 	SmsCodeToUnbingPhone   *string     `json:"sms_code_to_unbing_phone,omitempty" v:"size:4" dc:"短信验证码。解绑手机用"`

@@ -146,7 +146,6 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
 		}
-
 		info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Phone, req.Phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39991000, ``)
@@ -161,7 +160,6 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
 		}
-
 		info, _ := daoUsers.Users.CtxDaoModel(ctx).Filter(daoUsers.Users.Columns().Email, req.Email).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39991010, ``)

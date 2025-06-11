@@ -87,10 +87,34 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
-	salt, _ := cache.Salt.Get(ctx, sceneId, req.LoginName)
-	if salt == `` || gmd5.MustEncrypt(info[daoOrg.Admin.Columns().Password].String()+salt) != req.Password {
-		err = utils.NewErrorCode(ctx, 39990001, ``)
-		return
+	if req.Password != `` { //密码
+		salt, _ := cache.Salt.Get(ctx, sceneId, req.LoginName)
+		if salt == `` || gmd5.MustEncrypt(info[daoOrg.Admin.Columns().Password].String()+salt) != req.Password {
+			err = utils.NewErrorCode(ctx, 39990001, ``)
+			return
+		}
+	} else if req.SmsCode != `` { //短信验证码
+		phone := info[daoOrg.Admin.Columns().Phone].String()
+		if phone == `` {
+			err = utils.NewErrorCode(ctx, 39991003, ``)
+			return
+		}
+		code, _ := cache.Code.Get(ctx, sceneId, phone, 0) //场景：0登录(手机)
+		if code == `` || code != req.SmsCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
+	} else if req.EmailCode != `` { //邮箱验证码
+		email := info[daoOrg.Admin.Columns().Email].String()
+		if email == `` {
+			err = utils.NewErrorCode(ctx, 39991013, ``)
+			return
+		}
+		code, _ := cache.Code.Get(ctx, sceneId, email, 10) //场景：10登录(邮箱)
+		if code == `` || code != req.EmailCode {
+			err = utils.NewErrorCode(ctx, 39991999, ``)
+			return
+		}
 	}
 
 	token, err := token.NewHandler(ctx).Create(info[daoOrg.Admin.Columns().AdminId].String(), nil)
@@ -113,7 +137,6 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
 		}
-
 		info, _ := daoOrg.Admin.CtxDaoModel(ctx).Filter(daoOrg.Admin.Columns().Phone, req.Phone).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39991000, ``)
@@ -128,7 +151,6 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
 		}
-
 		info, _ := daoOrg.Admin.CtxDaoModel(ctx).Filter(daoOrg.Admin.Columns().Email, req.Email).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39991010, ``)
