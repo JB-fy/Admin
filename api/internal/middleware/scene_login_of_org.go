@@ -45,7 +45,7 @@ func SceneLoginOfOrg(isForce bool) func(r *ghttp.Request) {
 			}
 			return
 		}
-		if info[daoOrg.Admin.Columns().IsStop].Uint() == 1 {
+		if info[daoOrg.Admin.Columns().IsStop].Uint8() == 1 {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994101, ``))
 			} else {

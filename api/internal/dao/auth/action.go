@@ -436,7 +436,7 @@ func (daoThis *actionDao) CacheGetListOfNoStop(ctx context.Context, sceneId stri
 		return
 	}
 	for _, info := range listOfAll {
-		if info[daoThis.Columns().IsStop].Uint() == 0 {
+		if info[daoThis.Columns().IsStop].Uint8() == 0 {
 			list = append(list, info)
 		}
 	}

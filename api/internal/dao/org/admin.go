@@ -404,6 +404,20 @@ func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 
 // Add your custom methods and functionality below.
 
+func (daoThis *adminDao) JoinLoginName(orgId uint, loginName string) string {
+	if loginName == `` {
+		return ``
+	}
+	return fmt.Sprintf(`%d:%s`, orgId, loginName)
+}
+
+func (daoThis *adminDao) GetLoginName(loginName string) string {
+	if index := gstr.Pos(loginName, `:`); index != -1 {
+		loginName = gstr.SubStr(loginName, index+1)
+	}
+	return loginName
+}
+
 func (daoThis *adminDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
 	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0, gset.NewStrSetFrom(daoThis.ColumnArr()).Diff(gset.NewStrSetFrom([]string{daoThis.Columns().Password, daoThis.Columns().Salt})).Slice()...)
 	return

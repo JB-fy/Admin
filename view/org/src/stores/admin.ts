@@ -259,21 +259,13 @@ export const useAdminStore = defineStore('admin', {
         },
         /**
          * 登录
-         * @param {*} org_id 机构ID
          * @param {*} login_name 手机/邮箱/账号
          * @param {*} password  密码
          * @returns
          */
-        async login(org_id: number, login_name: string, password: string) {
-            let res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/salt', {
-                org_id: org_id,
-                login_name: login_name,
-            })
-            res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/login', {
-                org_id: org_id,
-                login_name: login_name,
-                password: md5(md5(md5(password) + res.data.salt_static) + res.data.salt_dynamic),
-            })
+        async login(login_name: string, password: string) {
+            let res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/salt', { login_name: login_name })
+            res = await request(import.meta.env.VITE_HTTP_API_PREFIX + '/login/login', { login_name: login_name, password: md5(md5(md5(password) + res.data.salt_static) + res.data.salt_dynamic) })
             this.$reset() //重置状态（可有效清理上一个登录用户的脏数据）
             //不用清空缓存组件，登录后切换页面过程中，layout布局组件已经重新生成，其内部所有缓存组件已经重置
             //useKeepAliveStore().$reset()

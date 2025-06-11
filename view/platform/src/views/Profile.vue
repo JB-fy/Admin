@@ -8,8 +8,8 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
-        nickname: adminStore.info.nickname,
-        avatar: adminStore.info.avatar,
+        nickname: adminStore.info.nickname ? adminStore.info.nickname : undefined,
+        avatar: adminStore.info.avatar ? adminStore.info.avatar : undefined,
     } as { [propName: string]: any },
     rules: {
         nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
@@ -35,12 +35,7 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
             {
                 trigger: 'blur',
-                validator: (rule: any, value: any, callback: any) => {
-                    if (saveForm.data.password != saveForm.data.repeat_password) {
-                        callback(new Error())
-                    }
-                    callback()
-                },
+                validator: (rule: any, value: any, callback: any) => (saveForm.data.password != saveForm.data.repeat_password ? callback(new Error()) : callback()),
                 message: t('validation.repeat_password'),
             },
         ],
@@ -49,12 +44,7 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
             {
                 trigger: 'blur',
-                validator: (rule: any, value: any, callback: any) => {
-                    if (saveForm.data.password && saveForm.data.password == saveForm.data.password_to_check) {
-                        callback(new Error())
-                    }
-                    callback()
-                },
+                validator: (rule: any, value: any, callback: any) => (saveForm.data.password && saveForm.data.password == saveForm.data.password_to_check ? callback(new Error()) : callback()),
                 message: t('validation.new_password_diff_old_password'),
             },
         ],

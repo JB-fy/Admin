@@ -30,7 +30,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq)
 		err = utils.NewErrorCode(ctx, 30011000, ``)
 		return
 	}
-	if paySceneInfo[daoPay.Scene.Columns().IsStop].Uint() == 0 {
+	if paySceneInfo[daoPay.Scene.Columns().IsStop].Uint8() == 0 {
 		err = utils.NewErrorCode(ctx, 30011001, ``)
 		return
 	}
@@ -61,7 +61,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		err = utils.NewErrorCode(ctx, 30012000, ``)
 		return
 	}
-	if channelInfo[daoPay.Channel.Columns().IsStop].Uint() == 0 {
+	if channelInfo[daoPay.Channel.Columns().IsStop].Uint8() == 0 {
 		err = utils.NewErrorCode(ctx, 30012001, ``)
 		return
 	}

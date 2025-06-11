@@ -5,12 +5,23 @@ const { t, tm } = useI18n()
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
 
+let loginNamePrefix = ``
+if (saveCommon.data.phone && saveCommon.data.phone.indexOf(':') !== -1) {
+    loginNamePrefix = saveCommon.data.phone.split(':')[0] + `:`
+} else if (saveCommon.data.email && saveCommon.data.email.indexOf(':') !== -1) {
+    loginNamePrefix = saveCommon.data.email.split(':')[0] + `:`
+} else if (saveCommon.data.account && saveCommon.data.account.indexOf(':') !== -1) {
+    loginNamePrefix = saveCommon.data.account.split(':')[0] + `:`
+}
 const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
         ...saveCommon.data,
         // org_id: saveCommon.data.org_id ? saveCommon.data.org_id : undefined,
+        phone: saveCommon.data.phone ? (saveCommon.data.phone.indexOf(':') === -1 ? saveCommon.data.phone : saveCommon.data.phone.split(':')[1]) : undefined,
+        email: saveCommon.data.email ? (saveCommon.data.email.indexOf(':') === -1 ? saveCommon.data.email : saveCommon.data.email.split(':')[1]) : undefined,
+        account: saveCommon.data.account ? (saveCommon.data.account.indexOf(':') === -1 ? saveCommon.data.account : saveCommon.data.account.split(':')[1]) : undefined,
     } as { [propName: string]: any },
     rules: {
         /* org_id: [
@@ -101,13 +112,19 @@ const saveDrawer = reactive({
                     <my-upload v-model="saveForm.data.avatar" accept="image/*" />
                 </el-form-item>
                 <el-form-item :label="t('org.admin.name.phone')" prop="phone">
-                    <el-input v-model="saveForm.data.phone" :placeholder="t('org.admin.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true" />
+                    <el-input v-model="saveForm.data.phone" :placeholder="t('org.admin.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true">
+                        <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
+                    </el-input>
                 </el-form-item>
                 <el-form-item :label="t('org.admin.name.email')" prop="email">
-                    <el-input v-model="saveForm.data.email" :placeholder="t('org.admin.name.email')" maxlength="60" :show-word-limit="true" :clearable="true" />
+                    <el-input v-model="saveForm.data.email" :placeholder="t('org.admin.name.email')" maxlength="60" :show-word-limit="true" :clearable="true">
+                        <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
+                    </el-input>
                 </el-form-item>
                 <el-form-item :label="t('org.admin.name.account')" prop="account">
-                    <el-input v-model="saveForm.data.account" :placeholder="t('org.admin.name.account')" maxlength="20" :show-word-limit="true" :clearable="true" />
+                    <el-input v-model="saveForm.data.account" :placeholder="t('org.admin.name.account')" maxlength="20" :show-word-limit="true" :clearable="true">
+                        <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
+                    </el-input>
                 </el-form-item>
                 <el-form-item :label="t('org.admin.name.password')" prop="password">
                     <el-input v-model="saveForm.data.password" :placeholder="t('org.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />

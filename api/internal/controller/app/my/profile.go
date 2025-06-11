@@ -35,14 +35,8 @@ func (controllerThis *Profile) Info(ctx context.Context, req *apiMy.ProfileInfoR
 func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
-	if len(data) == 0 {
-		err = utils.NewErrorCode(ctx, 89999999, ``)
-		return
-	}
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	var isGetPrivacy bool
 	var privacyInfo gdb.Record
 	initPrivacyInfo := func() {
@@ -64,6 +58,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				return
 			}
 		case `password_to_check`:
+			delete(data, k)
 			initPrivacyInfo()
 			if privacyInfo[daoUsers.Privacy.Columns().Password].String() == `` {
 				err = utils.NewErrorCode(ctx, 39990004, ``)
@@ -73,86 +68,83 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39990003, ``)
 				return
 			}
-			delete(data, k)
 		case `sms_code_to_password`:
+			delete(data, k)
 			phone := loginInfo[daoUsers.Users.Columns().Phone].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39991003, ``)
 				return
 			}
-
-			code, _ := cache.Code.Get(ctx, sceneId, phone, 3) //场景：3密码修改(手机)
+			code, _ := cache.Code.Get(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), phone, 3) //场景：3密码修改(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
-			delete(data, k)
 		case `sms_code_to_bind_phone`:
+			delete(data, k)
+			if req.Phone == nil {
+				continue
+			}
 			if loginInfo[daoUsers.Users.Columns().Phone].String() != `` {
 				err = utils.NewErrorCode(ctx, 39991001, ``)
 				return
 			}
-
-			phone := gconv.String(data[`phone`])
-			code, _ := cache.Code.Get(ctx, sceneId, phone, 4) //场景：4绑定(手机)
+			code, _ := cache.Code.Get(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), *req.Phone, 4) //场景：4绑定(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
-			delete(data, k)
 		case `sms_code_to_unbing_phone`:
+			delete(data, k)
 			phone := loginInfo[daoUsers.Users.Columns().Phone].String()
 			if phone == `` {
 				err = utils.NewErrorCode(ctx, 39991003, ``)
 				return
 			}
-
-			code, _ := cache.Code.Get(ctx, sceneId, phone, 5) //场景：5解绑(手机)
+			code, _ := cache.Code.Get(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), phone, 5) //场景：5解绑(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
-			delete(data, k)
 			data[daoUsers.Users.Columns().Phone] = nil
 		case `email_code_to_password`:
+			delete(data, k)
 			email := loginInfo[daoUsers.Users.Columns().Email].String()
 			if email == `` {
 				err = utils.NewErrorCode(ctx, 39991013, ``)
 				return
 			}
-
-			code, _ := cache.Code.Get(ctx, sceneId, email, 13) //场景：13密码修改(邮箱)
+			code, _ := cache.Code.Get(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), email, 13) //场景：13密码修改(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
-			delete(data, k)
 		case `email_code_to_bind_email`:
+			delete(data, k)
+			if req.Email == nil {
+				continue
+			}
 			if loginInfo[daoUsers.Users.Columns().Email].String() != `` {
 				err = utils.NewErrorCode(ctx, 39991011, ``)
 				return
 			}
-
-			email := gconv.String(data[`email`])
-			code, _ := cache.Code.Get(ctx, sceneId, email, 14) //场景：14绑定(邮箱)
+			code, _ := cache.Code.Get(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), *req.Email, 14) //场景：14绑定(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
-			delete(data, k)
 		case `email_code_to_unbing_email`:
+			delete(data, k)
 			email := loginInfo[daoUsers.Users.Columns().Email].String()
 			if email == `` {
 				err = utils.NewErrorCode(ctx, 39991013, ``)
 				return
 			}
-
-			code, _ := cache.Code.Get(ctx, sceneId, email, 15) //场景：15解绑(邮箱)
+			code, _ := cache.Code.Get(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), email, 15) //场景：15解绑(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
-			delete(data, k)
 			data[daoUsers.Users.Columns().Email] = nil
 		case `id_card_no`:
 			initPrivacyInfo()
@@ -185,6 +177,10 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				}
 			}
 		}
+	}
+	if len(data) == 0 {
+		err = utils.NewErrorCode(ctx, 89999999, ``)
+		return
 	}
 
 	filter := map[string]any{`id`: loginInfo[`login_id`]}

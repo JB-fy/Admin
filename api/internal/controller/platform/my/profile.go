@@ -11,6 +11,7 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -32,41 +33,54 @@ func (controllerThis *Profile) Info(ctx context.Context, req *apiMy.ProfileInfoR
 func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
-	if len(data) == 0 {
-		err = utils.NewErrorCode(ctx, 89999999, ``)
-		return
-	}
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
+	var isGetPrivacy bool
+	var privacyInfo gdb.Record
+	initPrivacyInfo := func() {
+		if !isGetPrivacy {
+			isGetPrivacy = true
+			privacyInfo, _ = daoPlatform.Admin.CtxDaoModel(ctx).FilterPri(loginInfo[`login_id`]).Fields(daoPlatform.Admin.Columns().Password, daoPlatform.Admin.Columns().Salt).One()
+		}
+	}
 	for k, v := range data {
 		switch k {
 		case `password_to_check`:
-			if gmd5.MustEncrypt(gconv.String(v)+loginInfo[daoPlatform.Admin.Columns().Salt].String()) != loginInfo[daoPlatform.Admin.Columns().Password].String() {
+			delete(data, k)
+			initPrivacyInfo()
+			if privacyInfo[daoPlatform.Admin.Columns().Password].String() == `` {
+				err = utils.NewErrorCode(ctx, 39990004, ``)
+				return
+			}
+			if gmd5.MustEncrypt(gconv.String(v)+privacyInfo[daoPlatform.Admin.Columns().Salt].String()) != privacyInfo[daoPlatform.Admin.Columns().Password].String() {
 				err = utils.NewErrorCode(ctx, 39990003, ``)
 				return
 			}
-			delete(data, k)
 		case `sms_code_to_bind_phone`:
-			phone := gconv.String(data[`phone`])
-			sceneInfo := utils.GetCtxSceneInfo(ctx)
-			sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
-			code, _ := cache.Code.Get(ctx, sceneId, phone, 4) //场景：4绑定(手机)
+			delete(data, k)
+			if req.Phone == nil {
+				continue
+			}
+			code, _ := cache.Code.Get(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), *req.Phone, 4) //场景：4绑定(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
-			delete(data, k)
 		case `email_code_to_bind_email`:
-			email := gconv.String(data[`email`])
-			sceneInfo := utils.GetCtxSceneInfo(ctx)
-			sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
-			code, _ := cache.Code.Get(ctx, sceneId, email, 14) //场景：14绑定(邮箱)
+			delete(data, k)
+			if req.Email == nil {
+				continue
+			}
+			code, _ := cache.Code.Get(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), *req.Email, 14) //场景：14绑定(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
 			}
-			delete(data, k)
 		}
+	}
+	if len(data) == 0 {
+		err = utils.NewErrorCode(ctx, 89999999, ``)
+		return
 	}
 
 	filter := map[string]any{`id`: loginInfo[`login_id`]}

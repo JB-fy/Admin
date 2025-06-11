@@ -1,15 +1,22 @@
 <script setup lang="tsx">
 import md5 from 'js-md5'
-
 const { t } = useI18n()
 const adminStore = useAdminStore()
 
+let loginNamePrefix = ``
+if (adminStore.info.phone && adminStore.info.phone.indexOf(':') !== -1) {
+    loginNamePrefix = adminStore.info.phone.split(':')[0] + `:`
+} else if (adminStore.info.email && adminStore.info.email.indexOf(':') !== -1) {
+    loginNamePrefix = adminStore.info.email.split(':')[0] + `:`
+} else if (adminStore.info.account && adminStore.info.account.indexOf(':') !== -1) {
+    loginNamePrefix = adminStore.info.account.split(':')[0] + `:`
+}
 const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
-        nickname: adminStore.info.nickname,
-        avatar: adminStore.info.avatar,
+        nickname: adminStore.info.nickname ? adminStore.info.nickname : undefined,
+        avatar: adminStore.info.avatar ? adminStore.info.avatar : undefined,
     } as { [propName: string]: any },
     rules: {
         nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
@@ -35,12 +42,7 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
             {
                 trigger: 'blur',
-                validator: (rule: any, value: any, callback: any) => {
-                    if (saveForm.data.password != saveForm.data.repeat_password) {
-                        callback(new Error())
-                    }
-                    callback()
-                },
+                validator: (rule: any, value: any, callback: any) => (saveForm.data.password != saveForm.data.repeat_password ? callback(new Error()) : callback()),
                 message: t('validation.repeat_password'),
             },
         ],
@@ -49,12 +51,7 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
             {
                 trigger: 'blur',
-                validator: (rule: any, value: any, callback: any) => {
-                    if (saveForm.data.password && saveForm.data.password == saveForm.data.password_to_check) {
-                        callback(new Error())
-                    }
-                    callback()
-                },
+                validator: (rule: any, value: any, callback: any) => (saveForm.data.password && saveForm.data.password == saveForm.data.password_to_check ? callback(new Error()) : callback()),
                 message: t('validation.new_password_diff_old_password'),
             },
         ],
@@ -143,16 +140,27 @@ const emailCountdown = reactive({
                     <my-upload v-model="saveForm.data.avatar" accept="image/*" />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.phone')" prop="phone">
-                    <el-input v-model="saveForm.data.phone" :placeholder="t('profile.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-input v-model="saveForm.data.phone" :placeholder="t('profile.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px">
+                        <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
+                    </el-input>
                     <el-alert :title="t('profile.tip.phone', { phone: adminStore.info.phone ? adminStore.info.phone : t('common.tip.notSet') })" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.email')" prop="email">
-                    <el-input v-model="saveForm.data.email" :placeholder="t('profile.name.email')" maxlength="60" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-input v-model="saveForm.data.email" :placeholder="t('profile.name.email')" maxlength="60" :show-word-limit="true" :clearable="true" style="max-width: 250px">
+                        <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
+                    </el-input>
                     <el-alert :title="t('profile.tip.email', { email: adminStore.info.email ? adminStore.info.email : t('common.tip.notSet') })" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.account')" prop="account">
-                    <el-input v-model="saveForm.data.account" :placeholder="t('profile.name.account')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
-                    <el-alert :title="t('profile.tip.account', { account: adminStore.info.account ? adminStore.info.account : t('common.tip.notSet') })" type="info" :show-icon="true" :closable="false" />
+                    <el-input v-model="saveForm.data.account" :placeholder="t('profile.name.account')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px">
+                        <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
+                    </el-input>
+                    <el-alert
+                        :title="t('profile.tip.account', { account: adminStore.info.account ? (adminStore.info.account.indexOf(':') === -1 ? adminStore.info.account : adminStore.info.account.split(':')[1]) : t('common.tip.notSet') })"
+                        type="info"
+                        :show-icon="true"
+                        :closable="false"
+                    />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.password')" prop="password">
                     <el-input v-model="saveForm.data.password" :placeholder="t('profile.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />

@@ -41,7 +41,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			err = utils.NewErrorCode(ctx, 39990000, ``)
 			return
 		}
-		if info[daoUsers.Users.Columns().IsStop].Uint() == 1 {
+		if info[daoUsers.Users.Columns().IsStop].Uint8() == 1 {
 			err = utils.NewErrorCode(ctx, 39990002, ``)
 			return
 		}
@@ -94,7 +94,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			err = utils.NewErrorCode(ctx, 39990000, ``)
 			return
 		}
-		if info[daoUsers.Users.Columns().IsStop].Uint() == 1 {
+		if info[daoUsers.Users.Columns().IsStop].Uint8() == 1 {
 			err = utils.NewErrorCode(ctx, 39990002, ``)
 			return
 		}
@@ -143,8 +143,6 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 		}
 	}
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	code := grand.Digits(4)
 	switch req.Scene {
 	case 0, 1, 2, 3, 4, 5:
@@ -155,6 +153,6 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	if err != nil {
 		return
 	}
-	err = cache.Code.Set(ctx, sceneId, to, req.Scene, code, 5*60)
+	err = cache.Code.Set(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), to, req.Scene, code, 5*60)
 	return
 }

@@ -114,9 +114,19 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq)
 // 新增
 func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	orgId := loginInfo[daoOrg.Admin.Columns().OrgId].Uint()
+	if req.Phone != nil {
+		*req.Phone = daoOrg.Admin.JoinLoginName(orgId, *req.Phone)
+	}
+	if req.Email != nil {
+		*req.Email = daoOrg.Admin.JoinLoginName(orgId, *req.Email)
+	}
+	if req.Account != nil {
+		*req.Account = daoOrg.Admin.JoinLoginName(orgId, *req.Account)
+	}
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 
-	loginInfo := utils.GetCtxLoginInfo(ctx)
 	data[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	data[daoOrg.Admin.Columns().IsSuper] = 0 //不允许创建机构超级管理员
 	/**--------参数处理 结束--------**/
@@ -139,6 +149,17 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreate
 // 修改
 func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	orgId := loginInfo[daoOrg.Admin.Columns().OrgId].Uint()
+	if req.Phone != nil {
+		*req.Phone = daoOrg.Admin.JoinLoginName(orgId, *req.Phone)
+	}
+	if req.Email != nil {
+		*req.Email = daoOrg.Admin.JoinLoginName(orgId, *req.Email)
+	}
+	if req.Account != nil {
+		*req.Account = daoOrg.Admin.JoinLoginName(orgId, *req.Account)
+	}
 	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
 	if len(data) == 0 {
@@ -146,7 +167,6 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdate
 		return
 	}
 
-	loginInfo := utils.GetCtxLoginInfo(ctx)
 	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	filter[daoOrg.Admin.Columns().IsSuper] = 0 //不允许修改机构超级管理员
 	/**--------参数处理 结束--------**/
