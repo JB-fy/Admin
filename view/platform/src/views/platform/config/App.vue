@@ -27,7 +27,7 @@ const authAction: { [propName: string]: boolean } = {
     isOrgSave: isSave || adminStore.isAction('pltCfgOrgSave'),
 }
 provide('authAction', authAction)
-const notReadAll = !authAction.isCommonRead
+const notReadAll = !(authAction.isCommonRead || authAction.isPlatformRead || authAction.isOrgRead)
 </script>
 
 <template>
