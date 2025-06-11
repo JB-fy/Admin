@@ -10,23 +10,23 @@ const Wx = defineAsyncComponent(() => import('./plugin/Wx.vue'))
 const { t } = useI18n()
 const adminStore = useAdminStore()
 
-const isRead = adminStore.isAction('platformConfigRead')
-const isSave = adminStore.isAction('platformConfigSave')
+const isRead = adminStore.isAction('pltCfgRead')
+const isSave = adminStore.isAction('pltCfgSave')
 const authAction: { [propName: string]: boolean } = {
-    isSmsRead: isRead || adminStore.isAction('platformConfigSmsRead'),
-    isSmsSave: isSave || adminStore.isAction('platformConfigSmsSave'),
-    isEmailRead: isRead || adminStore.isAction('platformConfigEmailRead'),
-    isEmailSave: isSave || adminStore.isAction('platformConfigEmailSave'),
-    isIdCardRead: isRead || adminStore.isAction('platformConfigIdCardRead'),
-    isIdCardSave: isSave || adminStore.isAction('platformConfigIdCardSave'),
-    isOneClickRead: isRead || adminStore.isAction('platformConfigOneClickRead'),
-    isOneClickSave: isSave || adminStore.isAction('platformConfigOneClickSave'),
-    isPushRead: isRead || adminStore.isAction('platformConfigPushRead'),
-    isPushSave: isSave || adminStore.isAction('platformConfigPushSave'),
-    isVodRead: isRead || adminStore.isAction('platformConfigVodRead'),
-    isVodSave: isSave || adminStore.isAction('platformConfigVodSave'),
-    isWxRead: isRead || adminStore.isAction('platformConfigWxRead'),
-    isWxSave: isSave || adminStore.isAction('platformConfigWxSave'),
+    isSmsRead: isRead || adminStore.isAction('pltCfgSmsRead'),
+    isSmsSave: isSave || adminStore.isAction('pltCfgSmsSave'),
+    isEmailRead: isRead || adminStore.isAction('pltCfgEmailRead'),
+    isEmailSave: isSave || adminStore.isAction('pltCfgEmailSave'),
+    isIdCardRead: isRead || adminStore.isAction('pltCfgIdCardRead'),
+    isIdCardSave: isSave || adminStore.isAction('pltCfgIdCardSave'),
+    isOneClickRead: isRead || adminStore.isAction('pltCfgOneClickRead'),
+    isOneClickSave: isSave || adminStore.isAction('pltCfgOneClickSave'),
+    isPushRead: isRead || adminStore.isAction('pltCfgPushRead'),
+    isPushSave: isSave || adminStore.isAction('pltCfgPushSave'),
+    isVodRead: isRead || adminStore.isAction('pltCfgVodRead'),
+    isVodSave: isSave || adminStore.isAction('pltCfgVodSave'),
+    isWxRead: isRead || adminStore.isAction('pltCfgWxRead'),
+    isWxSave: isSave || adminStore.isAction('pltCfgWxSave'),
 }
 provide('authAction', authAction)
 const notReadAll = !(authAction.isSmsRead || authAction.isEmailRead || authAction.isIdCardRead || authAction.isOneClickRead || authAction.isPushRead || authAction.isVodRead || authAction.isWxRead)
