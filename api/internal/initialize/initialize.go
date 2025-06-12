@@ -1,10 +1,7 @@
 package initialize
 
 import (
-	daoPlatform "api/internal/dao/platform"
 	"context"
-
-	"github.com/gogf/gf/v2/util/gutil"
 )
 
 // 初始化可能有顺序要求，故统一到这里执行初始化函数
@@ -19,7 +16,4 @@ func Entry(ctx context.Context) {
 
 	initCron(ctx)  // 定时任务设置
 	initTimer(ctx) // 定时器设置
-
-	gutil.Dump(daoPlatform.Admin.CtxDaoModel(ctx).SetIdArr(1).HookUpdateOne(daoPlatform.AdminPrivacy.Columns().Password, `123456`).Update())
-
 }
