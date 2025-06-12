@@ -12,6 +12,7 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -182,7 +183,20 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 
 	data[daoOrg.Admin.Columns().IsSuper] = 1                                            //只允许注册超级管理员
 	data[`role_id_arr`] = daoPlatform.Config.Get(ctx, `role_id_arr_of_org_def`).Slice() //默认角色
-	adminId, err := daoOrg.Admin.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
+	var adminId int64
+	orgAdminDaoModel := daoOrg.Admin.CtxDaoModel(ctx)
+	err = orgAdminDaoModel.Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
+		adminId, err = orgAdminDaoModel.CloneNew().TX(tx).HookInsert(data).InsertAndGetId()
+		if err != nil {
+			return
+		}
+		orgId, err := daoOrg.Org.CtxDaoModel(ctx).Data(g.Map{daoOrg.Org.Columns().OrgName: data[daoOrg.Admin.Columns().Nickname]}).InsertAndGetId() //创建机构
+		if err != nil {
+			return
+		}
+		_, err = orgAdminDaoModel.CloneNew().TX(tx).SetIdArr(adminId).HookUpdateOne(daoOrg.Admin.Columns().OrgId, orgId).Update() //更新管理员所属机构ID
+		return
+	})
 	if err != nil {
 		return
 	}
