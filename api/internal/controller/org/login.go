@@ -239,11 +239,11 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		filter[daoOrg.Admin.Columns().Email] = req.Email
 	}
 
-	adminId, _ := daoOrg.Admin.CtxDaoModel(ctx).Filters(filter).Value(daoOrg.Admin.Columns().AdminId)
-	if adminId.Uint() == 0 {
+	daoModelOrgAdmin := daoOrg.Admin.CtxDaoModel(ctx).SetIdArr(filter)
+	if len(daoModelOrgAdmin.IdArr) == 0 {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	_, err = daoOrg.AdminPrivacy.CtxDaoModel(ctx).FilterPri(adminId).HookUpdateOne(daoOrg.AdminPrivacy.Columns().Password, req.Password).Update()
+	_, err = daoModelOrgAdmin.HookUpdateOne(daoOrg.AdminPrivacy.Columns().Password, req.Password).Update()
 	return
 }
