@@ -11,6 +11,7 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"reflect"
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
@@ -227,7 +228,7 @@ func (daoThis *sceneDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 		if len(daoModel.AfterUpdate) > 0 {
 			m = m.Hook(daoThis.HookUpdate(daoModel))
 			if len(daoModel.SaveData) == 0 { //解决主表无数据更新无法触发扩展表更新的问题
-				m = m.Data(gstr.Replace(daoThis.ParseId(daoModel), daoModel.DbTable+`.`, ``), struct{}{})
+				m = m.Data(reflect.ValueOf(daoThis.Columns()).Field(0).String(), struct{}{})
 			}
 		}
 		return m

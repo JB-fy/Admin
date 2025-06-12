@@ -211,7 +211,7 @@ func (daoThis *orderRelDao) ParseUpdate(update map[string]any, daoModel *daoInde
 		if len(daoModel.AfterUpdate) > 0 {
 			m = m.Hook(daoThis.HookUpdate(daoModel))
 			if len(daoModel.SaveData) == 0 { //解决主表无数据更新无法触发扩展表更新的问题
-				m = m.Data(gstr.Replace(daoThis.ParseId(daoModel), daoModel.DbTable+`.`, ``), struct{}{})
+				m = m.Data(reflect.ValueOf(daoThis.Columns()).Field(0).String(), struct{}{})
 			}
 		}
 		return m
