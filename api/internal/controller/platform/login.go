@@ -47,14 +47,17 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
+	saltStatic, _ := daoPlatform.AdminPrivacy.CtxDaoModel(ctx).FilterPri(info[daoPlatform.Admin.Columns().AdminId]).ValueStr(daoPlatform.AdminPrivacy.Columns().Salt)
+	if saltStatic == `` {
+		err = utils.NewErrorCode(ctx, 39990004, ``)
+		return
+	}
 	saltDynamic := grand.S(8)
-	err = cache.Salt.Set(ctx, sceneId, req.LoginName, saltDynamic, 5)
+	err = cache.Salt.Set(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), req.LoginName, saltDynamic, 5)
 	if err != nil {
 		return
 	}
-	res = &api.CommonSaltRes{SaltStatic: info[daoPlatform.Admin.Columns().Salt].String(), SaltDynamic: saltDynamic}
+	res = &api.CommonSaltRes{SaltStatic: saltStatic, SaltDynamic: saltDynamic}
 	return
 }
 
@@ -85,8 +88,13 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	if req.Password != `` { //密码
+		password, _ := daoPlatform.AdminPrivacy.CtxDaoModel(ctx).FilterPri(info[daoPlatform.Admin.Columns().AdminId]).ValueStr(daoPlatform.AdminPrivacy.Columns().Password)
+		if password == `` {
+			err = utils.NewErrorCode(ctx, 39990004, ``)
+			return
+		}
 		salt, _ := cache.Salt.Get(ctx, sceneId, req.LoginName)
-		if salt == `` || gmd5.MustEncrypt(info[daoPlatform.Admin.Columns().Password].String()+salt) != req.Password {
+		if salt == `` || gmd5.MustEncrypt(password+salt) != req.Password {
 			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
 		}
@@ -165,7 +173,9 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[daoPlatform.Admin.Columns().Account] = req.Account
 		data[daoPlatform.Admin.Columns().Nickname] = req.Account[:1] + gstr.Repeat(`*`, len(req.Account)-2) + req.Account[len(req.Account)-1:]
 	}
-	data[daoPlatform.Admin.Columns().Password] = req.Password
+	if req.Password != `` {
+		data[daoPlatform.AdminPrivacy.Columns().Password] = req.Password
+	}
 
 	data[`role_id_arr`] = daoPlatform.Config.Get(ctx, `role_id_arr_of_platform_def`).Slice() //默认角色
 	adminId, err := daoPlatform.Admin.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
@@ -216,7 +226,7 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	_, err = daoModelOrgAdmin.HookUpdateOne(daoPlatform.Admin.Columns().Password, req.Password).Update()
+	_, err = daoModelOrgAdmin.HookUpdateOne(daoPlatform.AdminPrivacy.Columns().Password, req.Password).Update()
 	if err != nil {
 		return
 	}

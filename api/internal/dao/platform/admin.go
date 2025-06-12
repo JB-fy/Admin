@@ -13,15 +13,13 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"slices"
 	"sync"
 
-	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/container/gvar"
-	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
-	"github.com/gogf/gf/v2/util/grand"
 )
 
 // adminDao is the data access object for the table platform_admin.
@@ -121,6 +119,10 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]an
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
+			case AdminPrivacy.Columns().Password, AdminPrivacy.Columns().Salt:
+				tableAdminPrivacy := AdminPrivacy.ParseDbTable(m.GetCtx())
+				m = m.Fields(tableAdminPrivacy + `.` + v)
+				m = m.Handler(daoThis.ParseJoin(tableAdminPrivacy, daoModel))
 			case `role_id_arr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().AdminId)
 				daoModel.AfterField[v] = struct{}{}
@@ -205,15 +207,16 @@ func (daoThis *adminDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 					v = nil
 				}
 				daoModel.SaveData[k] = v
-			case daoThis.Columns().Password:
-				password := gconv.String(v)
-				if len(password) != 32 {
-					password = gmd5.MustEncrypt(password)
+			case AdminPrivacy.Columns().Password, AdminPrivacy.Columns().Salt:
+				if slices.Contains([]string{``, `0`, `[]`, `{}`}, gconv.String(v)) { //gvar.New(v).IsEmpty()无法验证指针的值是空的数据
+					continue
 				}
-				salt := grand.S(8)
-				daoModel.SaveData[daoThis.Columns().Salt] = salt
-				password = gmd5.MustEncrypt(password + salt)
-				daoModel.SaveData[k] = password
+				insertData, ok := daoModel.AfterInsert[`admin_privacy`].(map[string]any)
+				if !ok {
+					insertData = map[string]any{}
+				}
+				insertData[k] = v
+				daoModel.AfterInsert[`admin_privacy`] = insertData
 			case `role_id_arr`:
 				daoModel.AfterInsert[k] = v
 			default:
@@ -242,6 +245,10 @@ func (daoThis *adminDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 
 			for k, v := range daoModel.AfterInsert {
 				switch k {
+				case `admin_privacy`:
+					insertData, _ := v.(map[string]any)
+					insertData[AdminPrivacy.Columns().AdminId] = id
+					AdminPrivacy.CtxDaoModel(ctx).HookInsert(insertData).Insert()
 				case `role_id_arr`:
 					vArr := gconv.SliceAny(v)
 					insertList := make([]map[string]any, len(vArr))
@@ -276,15 +283,13 @@ func (daoThis *adminDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 					v = nil
 				}
 				daoModel.SaveData[k] = v
-			case daoThis.Columns().Password:
-				password := gconv.String(v)
-				if len(password) != 32 {
-					password = gmd5.MustEncrypt(password)
+			case AdminPrivacy.Columns().Password, AdminPrivacy.Columns().Salt:
+				updateData, ok := daoModel.AfterUpdate[`admin_privacy`].(map[string]any)
+				if !ok {
+					updateData = map[string]any{}
 				}
-				salt := grand.S(8)
-				daoModel.SaveData[daoThis.Columns().Salt] = salt
-				password = gmd5.MustEncrypt(password + salt)
-				daoModel.SaveData[k] = password
+				updateData[k] = v
+				daoModel.AfterUpdate[`admin_privacy`] = updateData
 			case `role_id_arr`:
 				daoModel.AfterUpdate[k] = v
 			default:
@@ -316,6 +321,14 @@ func (daoThis *adminDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 
 			for k, v := range daoModel.AfterUpdate {
 				switch k {
+				case `admin_privacy`:
+					updateData, _ := v.(map[string]any)
+					for _, id := range daoModel.IdArr {
+						updateData[AdminPrivacy.Columns().AdminId] = id
+						if row, _ := AdminPrivacy.CtxDaoModel(ctx).Filter(AdminPrivacy.Columns().AdminId, id).HookUpdate(updateData).UpdateAndGetAffected(); row == 0 { //更新失败，有可能记录不存在，这时做插入操作
+							AdminPrivacy.CtxDaoModel(ctx).HookInsert(updateData).Insert()
+						}
+					}
 				case `role_id_arr`:
 					// daoIndex.SaveArrRelManyWithSort(ctx, &daoAuth.RoleRelOfPlatformAdmin, daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId, gconv.SliceAny(daoModel.IdArr), gconv.SliceAny(v)) // 有顺序要求时使用，同时注释下面代码
 					valArr := gconv.Strings(v)
@@ -358,6 +371,7 @@ func (daoThis *adminDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 
+			AdminPrivacy.CtxDaoModel(ctx).Filter(AdminPrivacy.Columns().AdminId, daoModel.IdArr).Delete()
 			daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, daoModel.IdArr).Delete()
 			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
@@ -417,6 +431,8 @@ func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
+		case AdminPrivacy.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable, joinTable+`.`+AdminPrivacy.Columns().AdminId+` = `+daoModel.DbTable+`.`+daoThis.Columns().AdminId)
 		case daoAuth.RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId+` = `+daoModel.DbTable+`.`+daoThis.Columns().AdminId)
 		default:
@@ -429,6 +445,6 @@ func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 // Add your custom methods and functionality below.
 
 func (daoThis *adminDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0, gset.NewStrSetFrom(daoThis.ColumnArr()).Diff(gset.NewStrSetFrom([]string{daoThis.Columns().Password, daoThis.Columns().Salt})).Slice()...)
+	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
 	return
 }

@@ -42,7 +42,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	initPrivacyInfo := func() {
 		if !isGetPrivacy {
 			isGetPrivacy = true
-			privacyInfo, _ = daoUsers.Privacy.CtxDaoModel(ctx).Filter(daoUsers.Privacy.Columns().UserId, loginInfo[`login_id`]).Fields(daoUsers.Privacy.Columns().Password, daoUsers.Privacy.Columns().Salt).One()
+			privacyInfo, _ = daoUsers.Privacy.CtxDaoModel(ctx).FilterPri(loginInfo[`login_id`]).Fields(daoUsers.Privacy.Columns().Password, daoUsers.Privacy.Columns().Salt).One()
 		}
 	}
 	for k, v := range data {

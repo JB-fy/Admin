@@ -34,8 +34,6 @@ type AdminColumns struct {
 	Phone     string // 手机
 	Email     string // 邮箱
 	Account   string // 账号
-	Password  string // 密码。md5保存
-	Salt      string // 密码盐
 }
 
 // adminColumns holds the columns for the table platform_admin.
@@ -50,8 +48,6 @@ var adminColumns = AdminColumns{
 	Phone:     "phone",
 	Email:     "email",
 	Account:   "account",
-	Password:  "password",
-	Salt:      "salt",
 }
 
 // NewAdminDao creates and returns a new DAO object for table data access.

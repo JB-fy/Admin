@@ -34,10 +34,13 @@ const queryForm = reactive({
             <el-input v-model="queryCommon.data.nickname" :placeholder="t('org.admin.name.nickname')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="phone">
-            <el-input v-model="queryCommon.data.phone" :placeholder="t('org.admin.name.phone')" maxlength="20" :clearable="true" />
+            <el-input v-model="queryCommon.data.phone" :placeholder="t('org.admin.name.phone')" maxlength="30" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="email">
+            <el-input v-model="queryCommon.data.email" :placeholder="t('org.admin.name.email')" maxlength="60" :clearable="true" />
         </el-form-item>
         <el-form-item prop="account">
-            <el-input v-model="queryCommon.data.account" :placeholder="t('org.admin.name.account')" maxlength="20" :clearable="true" />
+            <el-input v-model="queryCommon.data.account" :placeholder="t('org.admin.name.account')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="is_super">
             <el-select-v2 v-model="queryCommon.data.is_super" :options="tm('common.status.whether')" :placeholder="t('org.admin.name.is_super')" :clearable="true" style="width: 86px" />

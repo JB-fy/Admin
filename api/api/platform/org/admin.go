@@ -36,6 +36,7 @@ type AdminFilter struct {
 	OrgId          *uint       `json:"org_id,omitempty" v:"between:1,4294967295" dc:"机构ID"`
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Phone          string      `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
+	Email          string      `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
 	Account        string      `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	IsSuper        *uint       `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
 	RoleId         *uint       `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
@@ -78,11 +79,11 @@ type AdminCreateReq struct {
 	OrgId    *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
 	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
-	Phone    *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
-	Email    *string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	Account  *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
-	Password *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
+	Phone    *string `json:"phone,omitempty" v:"required-without-all:Email,Account|max-length:20|phone" dc:"手机"`
+	Email    *string `json:"email,omitempty" v:"required-without-all:Phone,Account|max-length:60|email" dc:"邮箱"`
+	Account  *string `json:"account,omitempty" v:"required-without-all:Phone,Email|max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	// IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
+	Password  *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
 	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"角色ID"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
@@ -100,8 +101,8 @@ type AdminUpdateReq struct {
 	Phone    *string `json:"phone,omitempty" filter:"-" data:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
 	Email    *string `json:"email,omitempty" filter:"-" data:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
 	Account  *string `json:"account,omitempty" filter:"-" data:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
-	Password *string `json:"password,omitempty" filter:"-" data:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	// IsSuper   *uint   `json:"is_super,omitempty" filter:"-" data:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
+	Password  *string `json:"password,omitempty" filter:"-" data:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	RoleIdArr *[]uint `json:"role_id_arr,omitempty" filter:"-" data:"role_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"角色ID"`
 	IsStop    *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }

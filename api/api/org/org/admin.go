@@ -7,10 +7,10 @@ import (
 
 // 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
 type AdminInfo struct {
-	Id      *uint   `json:"id,omitempty" dc:"ID"`
-	Label   *string `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	AdminId *uint   `json:"admin_id,omitempty" dc:"管理员ID"`
-	// OrgId     *uint       `json:"org_id,omitempty" dc:"机构ID"`
+	Id        *uint       `json:"id,omitempty" dc:"ID"`
+	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	AdminId   *uint       `json:"admin_id,omitempty" dc:"管理员ID"`
+	OrgId     *uint       `json:"org_id,omitempty" dc:"机构ID"`
 	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
 	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
 	Phone     *string     `json:"phone,omitempty" dc:"手机"`
@@ -35,8 +35,9 @@ type AdminFilter struct {
 	AdminId        *uint       `json:"admin_id,omitempty" v:"between:1,4294967295" dc:"管理员ID"`
 	// OrgId          *uint       `json:"org_id,omitempty" v:"between:1,4294967295" dc:"机构ID"`
 	Nickname string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
-	Phone    string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
-	Account  string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	Phone    string `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
+	Email    string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
+	Account  string `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	IsSuper  *uint  `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
 	RoleId   *uint  `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
 	IsStop   *uint  `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -75,14 +76,14 @@ type AdminInfoRes struct {
 /*--------新增 开始--------*/
 type AdminCreateReq struct {
 	g.Meta `path:"/admin/create" method:"post" tags:"机构后台/权限管理/管理员" sm:"新增"`
-	// OrgId     *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
+	// OrgId    *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
 	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
-	Phone    *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
-	Email    *string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	Account  *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
-	Password *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
+	Phone    *string `json:"phone,omitempty" v:"required-without-all:Email,Account|max-length:20|phone" dc:"手机"`
+	Email    *string `json:"email,omitempty" v:"required-without-all:Phone,Account|max-length:60|email" dc:"邮箱"`
+	Account  *string `json:"account,omitempty" v:"required-without-all:Phone,Email|max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	// IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
+	Password  *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
 	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"角色ID"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
@@ -100,8 +101,8 @@ type AdminUpdateReq struct {
 	Phone    *string `json:"phone,omitempty" filter:"-" data:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
 	Email    *string `json:"email,omitempty" filter:"-" data:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
 	Account  *string `json:"account,omitempty" filter:"-" data:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
-	Password *string `json:"password,omitempty" filter:"-" data:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	// IsSuper   *uint   `json:"is_super,omitempty" filter:"-" data:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
+	Password  *string `json:"password,omitempty" filter:"-" data:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	RoleIdArr *[]uint `json:"role_id_arr,omitempty" filter:"-" data:"role_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"角色ID"`
 	IsStop    *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }

@@ -49,15 +49,13 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 
-	saltStatic, _ := daoUsers.Privacy.CtxDaoModel(ctx).Filter(daoUsers.Privacy.Columns().UserId, info[daoUsers.Users.Columns().UserId]).ValueStr(daoUsers.Privacy.Columns().Salt)
+	saltStatic, _ := daoUsers.Privacy.CtxDaoModel(ctx).FilterPri(info[daoUsers.Users.Columns().UserId]).ValueStr(daoUsers.Privacy.Columns().Salt)
 	if saltStatic == `` {
 		err = utils.NewErrorCode(ctx, 39990004, ``)
 		return
 	}
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	saltDynamic := grand.S(8)
-	err = cache.Salt.Set(ctx, sceneId, req.LoginName, saltDynamic, 5)
+	err = cache.Salt.Set(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), req.LoginName, saltDynamic, 5)
 	if err != nil {
 		return
 	}
@@ -92,7 +90,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 	sceneInfo := utils.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	if req.Password != `` { //密码
-		password, _ := daoUsers.Privacy.CtxDaoModel(ctx).Filter(daoUsers.Privacy.Columns().UserId, info[daoUsers.Users.Columns().UserId]).ValueStr(daoUsers.Privacy.Columns().Password)
+		password, _ := daoUsers.Privacy.CtxDaoModel(ctx).FilterPri(info[daoUsers.Users.Columns().UserId]).ValueStr(daoUsers.Privacy.Columns().Password)
 		if password == `` {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return

@@ -21,6 +21,4 @@ type Admin struct {
 	Phone     string      `json:"phone"     orm:"phone"      ` // 手机
 	Email     string      `json:"email"     orm:"email"      ` // 邮箱
 	Account   string      `json:"account"   orm:"account"    ` // 账号
-	Password  string      `json:"password"  orm:"password"   ` // 密码。md5保存
-	Salt      string      `json:"salt"      orm:"salt"       ` // 密码盐
 }

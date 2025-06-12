@@ -5,7 +5,7 @@ const { t, tm } = useI18n()
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }
 const listCommon = inject('listCommon') as { ref: any }
 
-let loginNamePrefix = ``
+let loginNamePrefix = saveCommon.data.id ? '' : useAdminStore().info.org_id + ':'
 if (saveCommon.data.phone && saveCommon.data.phone.indexOf(':') !== -1) {
     loginNamePrefix = saveCommon.data.phone.split(':')[0] + `:`
 } else if (saveCommon.data.email && saveCommon.data.email.indexOf(':') !== -1) {
@@ -34,23 +34,36 @@ const saveForm = reactive({
             { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
         phone: [
+            {
+                required: computed((): boolean => (saveForm.data.email || saveForm.data.account ? false : true)),
+                message: t('validation.required'),
+            },
             { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
             { type: 'string', trigger: 'blur', pattern: /^1[3-9]\d{9}$/, message: t('validation.phone') },
         ],
         email: [
+            {
+                required: computed((): boolean => (saveForm.data.phone || saveForm.data.account ? false : true)),
+                message: t('validation.required'),
+            },
             { type: 'string', trigger: 'blur', max: 60, message: t('validation.max.string', { max: 60 }) },
             { type: 'email', trigger: 'blur', message: t('validation.email') },
         ],
         account: [
+            {
+                required: computed((): boolean => (saveForm.data.phone || saveForm.data.email ? false : true)),
+                message: t('validation.required'),
+            },
             { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
+        // is_super: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         password: [
             { required: computed((): boolean => (saveForm.data.id ? false : true)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
         ],
-        // is_super: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         role_id_arr: [
+            { required: true, message: t('validation.required') },
             { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, max: 4294967295, message: t('validation.select') } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
         ],
         is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
@@ -112,23 +125,22 @@ const saveDrawer = reactive({
                     <my-upload v-model="saveForm.data.avatar" accept="image/*" />
                 </el-form-item>
                 <el-form-item :label="t('org.admin.name.phone')" prop="phone">
-                    <el-input v-model="saveForm.data.phone" :placeholder="t('org.admin.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true">
+                    <el-input v-model="saveForm.data.phone" :placeholder="t('org.admin.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px">
                         <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
                     </el-input>
+                    <el-alert :title="t('common.tip.notDuplicate') + (loginNamePrefix ? t('org.admin.tip.login_name_prefix', { login_name_prefix: loginNamePrefix }) : '')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('org.admin.name.email')" prop="email">
-                    <el-input v-model="saveForm.data.email" :placeholder="t('org.admin.name.email')" maxlength="60" :show-word-limit="true" :clearable="true">
+                    <el-input v-model="saveForm.data.email" :placeholder="t('org.admin.name.email')" maxlength="60" :show-word-limit="true" :clearable="true" style="max-width: 250px">
                         <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
                     </el-input>
+                    <el-alert :title="t('common.tip.notDuplicate') + (loginNamePrefix ? t('org.admin.tip.login_name_prefix', { login_name_prefix: loginNamePrefix }) : '')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('org.admin.name.account')" prop="account">
-                    <el-input v-model="saveForm.data.account" :placeholder="t('org.admin.name.account')" maxlength="20" :show-word-limit="true" :clearable="true">
+                    <el-input v-model="saveForm.data.account" :placeholder="t('org.admin.name.account')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px">
                         <template v-if="loginNamePrefix" #prepend>{{ loginNamePrefix }}</template>
                     </el-input>
-                </el-form-item>
-                <el-form-item :label="t('org.admin.name.password')" prop="password">
-                    <el-input v-model="saveForm.data.password" :placeholder="t('org.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <el-alert v-if="saveForm.data.id" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                    <el-alert :title="t('common.tip.notDuplicate') + (loginNamePrefix ? t('org.admin.tip.login_name_prefix', { login_name_prefix: loginNamePrefix }) : '')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <!-- <el-form-item :label="t('org.admin.name.is_super')" prop="is_super">
                     <el-switch
@@ -141,6 +153,10 @@ const saveDrawer = reactive({
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
                 </el-form-item> -->
+                <el-form-item :label="t('org.admin.name.password')" prop="password">
+                    <el-input v-model="saveForm.data.password" :placeholder="t('org.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
+                    <el-alert v-if="saveForm.data.id" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
                 <el-form-item :label="t('org.admin.name.role_id_arr')" prop="role_id_arr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
                     <!-- <my-select v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list' }" :multiple="true" /> -->

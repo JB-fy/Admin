@@ -41,11 +41,11 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
             { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
+        // is_super: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         password: [
             { required: computed((): boolean => (saveForm.data.id ? false : true)), message: t('validation.required') },
             { type: 'string', trigger: 'blur', min: 6, max: 20, message: t('validation.between.string', { min: 6, max: 20 }) },
         ],
-        // is_super: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         role_id_arr: [
             { required: true, message: t('validation.required') },
             { type: 'array', trigger: 'change', message: t('validation.select'), defaultField: { type: 'integer', min: 1, max: 4294967295, message: t('validation.select') } }, // 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })
@@ -116,10 +116,6 @@ const saveDrawer = reactive({
                     <el-input v-model="saveForm.data.account" :placeholder="t('platform.admin.name.account')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
                     <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
-                <el-form-item :label="t('platform.admin.name.password')" prop="password">
-                    <el-input v-model="saveForm.data.password" :placeholder="t('platform.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
-                    <el-alert v-if="saveForm.data.id" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                </el-form-item>
                 <!-- <el-form-item :label="t('platform.admin.name.is_super')" prop="is_super">
                     <el-switch
                         v-model="saveForm.data.is_super"
@@ -131,6 +127,10 @@ const saveDrawer = reactive({
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
                 </el-form-item> -->
+                <el-form-item :label="t('platform.admin.name.password')" prop="password">
+                    <el-input v-model="saveForm.data.password" :placeholder="t('platform.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
+                    <el-alert v-if="saveForm.data.id" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
                 <el-form-item :label="t('platform.admin.name.role_id_arr')" prop="role_id_arr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
                     <!-- <my-select v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { scene_id: `platform` } } }" :multiple="true" /> -->

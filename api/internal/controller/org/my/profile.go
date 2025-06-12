@@ -52,7 +52,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	initPrivacyInfo := func() {
 		if !isGetPrivacy {
 			isGetPrivacy = true
-			privacyInfo, _ = daoOrg.Admin.CtxDaoModel(ctx).FilterPri(loginInfo[`login_id`]).Fields(daoOrg.Admin.Columns().Password, daoOrg.Admin.Columns().Salt).One()
+			privacyInfo, _ = daoOrg.AdminPrivacy.CtxDaoModel(ctx).FilterPri(loginInfo[`login_id`]).Fields(daoOrg.AdminPrivacy.Columns().Password, daoOrg.AdminPrivacy.Columns().Salt).One()
 		}
 	}
 	for k, v := range data {
@@ -60,11 +60,11 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		case `password_to_check`:
 			delete(data, k)
 			initPrivacyInfo()
-			if privacyInfo[daoOrg.Admin.Columns().Password].String() == `` {
+			if privacyInfo[daoOrg.AdminPrivacy.Columns().Password].String() == `` {
 				err = utils.NewErrorCode(ctx, 39990004, ``)
 				return
 			}
-			if gmd5.MustEncrypt(gconv.String(v)+privacyInfo[daoOrg.Admin.Columns().Salt].String()) != privacyInfo[daoOrg.Admin.Columns().Password].String() {
+			if gmd5.MustEncrypt(gconv.String(v)+privacyInfo[daoOrg.AdminPrivacy.Columns().Salt].String()) != privacyInfo[daoOrg.AdminPrivacy.Columns().Password].String() {
 				err = utils.NewErrorCode(ctx, 39990003, ``)
 				return
 			}
