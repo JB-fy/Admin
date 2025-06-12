@@ -150,11 +150,11 @@ func genDao(tpl myGenTpl) {
 	"github.com/gogf/gf/v2/util/grand"`, 1)
 
 	if dao.idParse != `` {
-		idParsePoint := `daoModel.DbTable + ` + "`.`" + ` + reflect.ValueOf(daoThis.Columns()).Field(0).String()`
+		idParsePoint := `daoModel.DbTable + ` + "`.`" + ` + reflect.ValueOf(*daoThis.Columns()).Field(0).String()`
 		tplDao = gstr.Replace(tplDao, idParsePoint, dao.idParse, 1)
 	}
 	if dao.labelParse != `` {
-		labelParsePoint := `daoModel.DbTable + ` + "`.`" + ` + reflect.ValueOf(daoThis.Columns()).Field(1).String()`
+		labelParsePoint := `daoModel.DbTable + ` + "`.`" + ` + reflect.ValueOf(*daoThis.Columns()).Field(1).String()`
 		tplDao = gstr.Replace(tplDao, labelParsePoint, dao.labelParse, 1)
 	}
 

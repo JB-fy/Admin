@@ -59,12 +59,12 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseDbTable(ctx context.Context, dbTa
 
 // 解析Id（未使用代码自动生成，且id字段不在第1个位置时，需手动修改）
 func (daoThis *roleRelOfPlatformAdminDao) ParseId(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(0).String()
+	return daoModel.DbTable + `.` + reflect.ValueOf(*daoThis.Columns()).Field(0).String()
 }
 
 // 解析Label（未使用代码自动生成，且id字段不在第2个位置时，需手动修改）
 func (daoThis *roleRelOfPlatformAdminDao) ParseLabel(daoModel *daoIndex.DaoModel) string {
-	return daoModel.DbTable + `.` + reflect.ValueOf(daoThis.Columns()).Field(1).String()
+	return daoModel.DbTable + `.` + reflect.ValueOf(*daoThis.Columns()).Field(1).String()
 }
 
 // 解析filter
@@ -211,7 +211,7 @@ func (daoThis *roleRelOfPlatformAdminDao) ParseUpdate(update map[string]any, dao
 		if len(daoModel.AfterUpdate) > 0 {
 			m = m.Hook(daoThis.HookUpdate(daoModel))
 			if len(daoModel.SaveData) == 0 { //解决主表无数据更新无法触发扩展表更新的问题
-				m = m.Data(reflect.ValueOf(daoThis.Columns()).Field(0).String(), struct{}{})
+				m = m.Data(reflect.ValueOf(*daoThis.Columns()).Field(0).String(), struct{}{})
 			}
 		}
 		return m
