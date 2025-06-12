@@ -11,7 +11,7 @@
  Target Server Version : 90300 (9.3.0)
  File Encoding         : 65001
 
- Date: 11/06/2025 23:58:53
+ Date: 12/06/2025 10:35:03
 */
 
 SET NAMES utf8mb4;
@@ -202,13 +202,9 @@ INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-0
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authRoleRead', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authRoleUpdate', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authRoleUpdate', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneCreate', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneCreate', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneDelete', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneDelete', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneRead', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneUpdate', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneUpdate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminCreate', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminCreate', 'platform');
@@ -218,6 +214,8 @@ INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-0
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminRead', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminUpdate', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminUpdate', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgCommonRead', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgCommonSave', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgRead', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgSave', 'org');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCreate', 'platform');
@@ -476,8 +474,6 @@ CREATE TABLE `org_admin`  (
   `phone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '手机',
   `email` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
   `account` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '账号',
-  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码。md5保存',
-  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码盐',
   PRIMARY KEY (`admin_id`) USING BTREE,
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
   UNIQUE INDEX `email`(`email` ASC) USING BTREE,
@@ -487,6 +483,23 @@ CREATE TABLE `org_admin`  (
 
 -- ----------------------------
 -- Records of org_admin
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for org_admin_privacy
+-- ----------------------------
+DROP TABLE IF EXISTS `org_admin_privacy`;
+CREATE TABLE `org_admin_privacy`  (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `admin_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '管理员ID',
+  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码。md5保存',
+  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码盐',
+  PRIMARY KEY (`admin_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '机构管理员表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of org_admin_privacy
 -- ----------------------------
 
 -- ----------------------------
@@ -635,8 +648,6 @@ CREATE TABLE `platform_admin`  (
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '手机',
   `email` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱',
   `account` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '账号',
-  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码。md5保存',
-  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码盐',
   PRIMARY KEY (`admin_id`) USING BTREE,
   UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
   UNIQUE INDEX `email`(`email` ASC) USING BTREE,
@@ -646,7 +657,25 @@ CREATE TABLE `platform_admin`  (
 -- ----------------------------
 -- Records of platform_admin
 -- ----------------------------
-INSERT INTO `platform_admin` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, 1, '超级管理员', '', NULL, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB');
+INSERT INTO `platform_admin` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, 1, '超级管理员', '', NULL, NULL, 'admin');
+
+-- ----------------------------
+-- Table structure for platform_admin_privacy
+-- ----------------------------
+DROP TABLE IF EXISTS `platform_admin_privacy`;
+CREATE TABLE `platform_admin_privacy`  (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `admin_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '管理员ID',
+  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码。md5保存',
+  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '密码盐',
+  PRIMARY KEY (`admin_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '平台管理员表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of platform_admin_privacy
+-- ----------------------------
+INSERT INTO `platform_admin_privacy` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB');
 
 -- ----------------------------
 -- Table structure for platform_config

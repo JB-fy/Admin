@@ -12,7 +12,7 @@
  Target Server Version : 170005 (170005)
  File Encoding         : 65001
 
- Date: 11/06/2025 23:59:07
+ Date: 12/06/2025 10:44:49
 */
 
 
@@ -385,13 +385,9 @@ INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authRoleRead', 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authRoleUpdate', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authRoleUpdate', 'platform');
-INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneCreate', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneCreate', 'platform');
-INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneDelete', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneDelete', 'platform');
-INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneRead', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneRead', 'platform');
-INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneUpdate', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneUpdate', 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminCreate', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminCreate', 'platform');
@@ -401,6 +397,8 @@ INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminRead', 'platform');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminUpdate', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminUpdate', 'platform');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgCommonRead', 'org');
+INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgCommonSave', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgRead', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgSave', 'org');
 INSERT INTO "public"."auth_action_rel_to_scene" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCreate', 'platform');
@@ -704,9 +702,7 @@ CREATE TABLE "public"."org_admin" (
   "avatar" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "phone" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
   "email" varchar(60) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
-  "account" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
-  "password" char(32) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar,
-  "salt" char(8) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar
+  "account" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying
 )
 ;
 COMMENT ON COLUMN "public"."org_admin"."created_at" IS '创建时间';
@@ -720,12 +716,33 @@ COMMENT ON COLUMN "public"."org_admin"."avatar" IS '头像';
 COMMENT ON COLUMN "public"."org_admin"."phone" IS '手机';
 COMMENT ON COLUMN "public"."org_admin"."email" IS '邮箱';
 COMMENT ON COLUMN "public"."org_admin"."account" IS '账号';
-COMMENT ON COLUMN "public"."org_admin"."password" IS '密码。md5保存';
-COMMENT ON COLUMN "public"."org_admin"."salt" IS '密码盐';
 COMMENT ON TABLE "public"."org_admin" IS '机构管理员表';
 
 -- ----------------------------
 -- Records of org_admin
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for org_admin_privacy
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."org_admin_privacy";
+CREATE TABLE "public"."org_admin_privacy" (
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "admin_id" int4 NOT NULL DEFAULT 0,
+  "password" char(32) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar,
+  "salt" char(8) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar
+)
+;
+COMMENT ON COLUMN "public"."org_admin_privacy"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."org_admin_privacy"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."org_admin_privacy"."admin_id" IS '管理员ID';
+COMMENT ON COLUMN "public"."org_admin_privacy"."password" IS '密码。md5保存';
+COMMENT ON COLUMN "public"."org_admin_privacy"."salt" IS '密码盐';
+COMMENT ON TABLE "public"."org_admin_privacy" IS '机构管理员表';
+
+-- ----------------------------
+-- Records of org_admin_privacy
 -- ----------------------------
 
 -- ----------------------------
@@ -928,9 +945,7 @@ CREATE TABLE "public"."platform_admin" (
   "avatar" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "phone" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
   "email" varchar(60) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
-  "account" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
-  "password" char(32) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar,
-  "salt" char(8) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar
+  "account" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying
 )
 ;
 COMMENT ON COLUMN "public"."platform_admin"."created_at" IS '创建时间';
@@ -943,14 +958,36 @@ COMMENT ON COLUMN "public"."platform_admin"."avatar" IS '头像';
 COMMENT ON COLUMN "public"."platform_admin"."phone" IS '手机';
 COMMENT ON COLUMN "public"."platform_admin"."email" IS '邮箱';
 COMMENT ON COLUMN "public"."platform_admin"."account" IS '账号';
-COMMENT ON COLUMN "public"."platform_admin"."password" IS '密码。md5保存';
-COMMENT ON COLUMN "public"."platform_admin"."salt" IS '密码盐';
 COMMENT ON TABLE "public"."platform_admin" IS '平台管理员表';
 
 -- ----------------------------
 -- Records of platform_admin
 -- ----------------------------
-INSERT INTO "public"."platform_admin" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, 1, '超级管理员', '', NULL, NULL, 'admin', '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB');
+INSERT INTO "public"."platform_admin" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, 1, '超级管理员', '', NULL, NULL, 'admin');
+
+-- ----------------------------
+-- Table structure for platform_admin_privacy
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."platform_admin_privacy";
+CREATE TABLE "public"."platform_admin_privacy" (
+  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "admin_id" int4 NOT NULL DEFAULT 0,
+  "password" char(32) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar,
+  "salt" char(8) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::bpchar
+)
+;
+COMMENT ON COLUMN "public"."platform_admin_privacy"."created_at" IS '创建时间';
+COMMENT ON COLUMN "public"."platform_admin_privacy"."updated_at" IS '更新时间';
+COMMENT ON COLUMN "public"."platform_admin_privacy"."admin_id" IS '管理员ID';
+COMMENT ON COLUMN "public"."platform_admin_privacy"."password" IS '密码。md5保存';
+COMMENT ON COLUMN "public"."platform_admin_privacy"."salt" IS '密码盐';
+COMMENT ON TABLE "public"."platform_admin_privacy" IS '平台管理员表';
+
+-- ----------------------------
+-- Records of platform_admin_privacy
+-- ----------------------------
+INSERT INTO "public"."platform_admin_privacy" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB');
 
 -- ----------------------------
 -- Table structure for platform_config
@@ -1362,6 +1399,11 @@ CREATE UNIQUE INDEX "org_admin_phone_idx" ON "public"."org_admin" USING btree (
 ALTER TABLE "public"."org_admin" ADD CONSTRAINT "org_admin_pkey" PRIMARY KEY ("admin_id");
 
 -- ----------------------------
+-- Primary Key structure for table org_admin_privacy
+-- ----------------------------
+ALTER TABLE "public"."org_admin_privacy" ADD CONSTRAINT "org_admin_privacy_pkey" PRIMARY KEY ("admin_id");
+
+-- ----------------------------
 -- Primary Key structure for table org_config
 -- ----------------------------
 ALTER TABLE "public"."org_config" ADD CONSTRAINT "org_config_pkey" PRIMARY KEY ("org_id", "config_key");
@@ -1439,6 +1481,11 @@ CREATE UNIQUE INDEX "platform_admin_phone_idx" ON "public"."platform_admin" USIN
 -- Primary Key structure for table platform_admin
 -- ----------------------------
 ALTER TABLE "public"."platform_admin" ADD CONSTRAINT "platform_admin_pkey" PRIMARY KEY ("admin_id");
+
+-- ----------------------------
+-- Primary Key structure for table platform_admin_privacy
+-- ----------------------------
+ALTER TABLE "public"."platform_admin_privacy" ADD CONSTRAINT "platform_admin_privacy_pkey" PRIMARY KEY ("admin_id");
 
 -- ----------------------------
 -- Primary Key structure for table platform_config
