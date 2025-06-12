@@ -214,12 +214,12 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		filter[daoUsers.Users.Columns().Email] = req.Email
 	}
 
-	daoModelUsers := daoUsers.Users.CtxDaoModel(ctx).SetIdArr(filter)
-	if len(daoModelUsers.IdArr) == 0 {
+	userId, _ := daoUsers.Users.CtxDaoModel(ctx).Filters(filter).Value(daoUsers.Users.Columns().UserId)
+	if userId.Uint() == 0 {
 		err = utils.NewErrorCode(ctx, 39990000, ``)
 		return
 	}
-	_, err = daoModelUsers.HookUpdateOne(daoUsers.Privacy.Columns().Password, req.Password).Update()
+	_, err = daoUsers.Privacy.CtxDaoModel(ctx).FilterPri(userId).HookUpdateOne(daoUsers.Privacy.Columns().Password, req.Password).Update()
 	return
 }
 
