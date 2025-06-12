@@ -220,9 +220,6 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		return
 	}
 	_, err = daoModelUsers.HookUpdateOne(daoUsers.Privacy.Columns().Password, req.Password).Update()
-	if err != nil {
-		return
-	}
 	return
 }
 
