@@ -171,7 +171,9 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 		data[daoPlatform.Admin.Columns().Account] = req.Account
-		data[daoPlatform.Admin.Columns().Nickname] = req.Account[:1] + gstr.Repeat(`*`, len(req.Account)-2) + req.Account[len(req.Account)-1:]
+		accountRune := []rune(req.Account)
+		accountRuneLen := len(accountRune)
+		data[daoPlatform.Admin.Columns().Nickname] = string(accountRune[:1]) + gstr.Repeat(`*`, accountRuneLen-2) + string(accountRune[accountRuneLen-1:])
 	}
 	if req.Password != `` {
 		data[daoPlatform.AdminPrivacy.Columns().Password] = req.Password
