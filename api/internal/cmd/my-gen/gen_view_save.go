@@ -470,7 +470,11 @@ func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath
                     <!-- <my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree'` + tpl.Handle.Pid.Tpl.PidDefValOfView + ` }" :props="{ emitPath: false }" /> -->`
 		}
 		viewSaveField.paramHandle.Method = internal.ReturnTypeName
-		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = 0)`
+		defVal := `0`
+		if !slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, v.FieldType) {
+			defVal = `''`
+		}
+		viewSaveField.paramHandle.DataTypeName = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = ` + defVal + `)`
 	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		viewSaveField.isI18nTm = true
 		defaultVal := gconv.String(v.Default)
