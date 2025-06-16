@@ -15,11 +15,14 @@ package allow
 import (
 	"api/internal/dao"
 	"api/internal/dao/org/internal"
+	"context"
+	"github.com/gogf/gf/v2/database/gdb"
 )
 
 type DaoOrg interface {
 	dao.DaoInterface
 	Columns() *internal.OrgColumns
+	CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error)
 }
 
 var Org DaoOrg

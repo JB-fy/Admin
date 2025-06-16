@@ -15,11 +15,14 @@ package allow
 import (
 	"api/internal/dao"
 	"api/internal/dao/users/internal"
+	"context"
+	"github.com/gogf/gf/v2/database/gdb"
 )
 
 type DaoUsers interface {
 	dao.DaoInterface
 	Columns() *internal.UsersColumns
+	CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error)
 }
 
 var Users DaoUsers

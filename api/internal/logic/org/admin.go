@@ -24,7 +24,8 @@ func init() {
 // 验证数据（create和update共用）
 func (logicThis *sOrgAdmin) verifyData(ctx context.Context, data map[string]any) (err error) {
 	if _, ok := data[daoOrg.Admin.Columns().OrgId]; ok && gconv.Uint(data[daoOrg.Admin.Columns().OrgId]) > 0 {
-		if count, _ := daoOrg.Org.CtxDaoModel(ctx).FilterPri(data[daoOrg.Admin.Columns().OrgId]).Count(); count == 0 {
+		// if count, _ := daoOrg.Org.CtxDaoModel(ctx).FilterPri(data[daoOrg.Admin.Columns().OrgId]).Count(); count == 0 {
+		if info, _ := daoOrg.Org.CacheGetInfo(ctx, gconv.Uint(data[daoOrg.Admin.Columns().OrgId])); info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.org.org`)}})
 			return
 		}
