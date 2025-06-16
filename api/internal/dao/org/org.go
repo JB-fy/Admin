@@ -5,6 +5,7 @@
 package org
 
 import (
+	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/org/allow"
 	"api/internal/dao/org/internal"
@@ -229,12 +230,12 @@ func (daoThis *orgDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Dao
 			}
 		}
 		m = m.Data(daoModel.SaveData)
-		if len(daoModel.AfterUpdate) > 0 {
-			m = m.Hook(daoThis.HookUpdate(daoModel))
-			if len(daoModel.SaveData) == 0 { //解决主表无数据更新无法触发扩展表更新的问题
-				m = m.Data(reflect.ValueOf(*daoThis.Columns()).Field(0).String(), struct{}{})
-			}
+		// if len(daoModel.AfterUpdate) > 0 {
+		m = m.Hook(daoThis.HookUpdate(daoModel))
+		if len(daoModel.SaveData) == 0 { //解决主表无数据更新无法触发扩展表更新的问题
+			m = m.Data(reflect.ValueOf(*daoThis.Columns()).Field(0).String(), struct{}{})
 		}
+		// }
 		return m
 	}
 }
@@ -252,10 +253,10 @@ func (daoThis *orgDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 				}
 			}
 
-			/* row, _ := result.RowsAffected()
+			row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			} */
+			}
 
 			/* for k, v := range daoModel.AfterUpdate {
 				switch k {
@@ -265,6 +266,7 @@ func (daoThis *orgDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 					}
 				}
 			} */
+			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
 		},
 	}
@@ -279,14 +281,15 @@ func (daoThis *orgDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 				return
 			}
 
-			/* row, _ := result.RowsAffected()
+			row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			} */
+			}
 
 			/* // 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
 			Admin.CtxDaoModel(ctx).Filter(Admin.Columns().OrgId, daoModel.IdArr).Delete() */
 			Config.CtxDaoModel(ctx).Filter(Config.Columns().OrgId, daoModel.IdArr).Delete()
+			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
 		},
 	}
@@ -352,3 +355,8 @@ func (daoThis *orgDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel) 
 }
 
 // Add your custom methods and functionality below.
+
+func (daoThis *orgDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
+	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
+	return
+}
