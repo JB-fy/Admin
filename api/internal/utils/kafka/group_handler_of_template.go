@@ -1,4 +1,4 @@
-package handler
+package kafka
 
 import (
 	"api/internal/utils/kafka/model"
