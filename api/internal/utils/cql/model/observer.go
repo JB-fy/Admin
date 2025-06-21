@@ -9,45 +9,45 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 )
 
-type Log struct {
-	Log       *glog.Logger
-	CqlConfig *Config
+type Observer struct {
+	Log    *glog.Logger
+	Config *Config
 }
 
-func (logThis *Log) ObserveQuery(ctx context.Context, observedQuery gocql.ObservedQuery) {
-	logThis.Log.Debug(ctx, fmt.Sprintf(`[%d ms] [CQL] [%s] [%s] [rows:%d] %s`,
+func (obThis *Observer) ObserveQuery(ctx context.Context, observedQuery gocql.ObservedQuery) {
+	obThis.Log.Debug(ctx, fmt.Sprintf(`[%d ms] [CQL] [%s] [%s] [rows:%d] %s`,
 		observedQuery.End.UnixMilli()-observedQuery.Start.UnixMilli(),
-		logThis.CqlConfig.Group,
+		obThis.Config.Group,
 		observedQuery.Keyspace,
 		observedQuery.Rows,
 		fmt.Sprintf(gstr.Replace(observedQuery.Statement, `?`, `%v`), observedQuery.Values...),
 	))
 	if observedQuery.Err != nil {
-		logThis.Log.Error(ctx, observedQuery.Err.Error())
+		obThis.Log.Error(ctx, observedQuery.Err.Error())
 	}
 }
 
-func (logThis *Log) ObserveBatch(ctx context.Context, observedBatch gocql.ObservedBatch) {
-	logThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [BATCH] [%s] [%s] %s`,
-		logThis.CqlConfig.Group,
+func (obThis *Observer) ObserveBatch(ctx context.Context, observedBatch gocql.ObservedBatch) {
+	obThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [BATCH] [%s] [%s] %s`,
+		obThis.Config.Group,
 		observedBatch.Keyspace,
 		`BEGIN BATCH`,
 	))
 	for index, statement := range observedBatch.Statements {
-		logThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [BATCH] [%s] [%s] %s`,
-			logThis.CqlConfig.Group,
+		obThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [BATCH] [%s] [%s] %s`,
+			obThis.Config.Group,
 			observedBatch.Keyspace,
 			fmt.Sprintf(gstr.Replace(statement, `?`, `%v`), observedBatch.Values[index]...),
 		))
 	}
-	logThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [BATCH] [%d ms] [%s] [%s] %s`,
+	obThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [BATCH] [%d ms] [%s] [%s] %s`,
 		observedBatch.End.UnixMilli()-observedBatch.Start.UnixMilli(),
-		logThis.CqlConfig.Group,
+		obThis.Config.Group,
 		observedBatch.Keyspace,
 		`APPLY BATCH`,
 	))
 
 	if observedBatch.Err != nil {
-		logThis.Log.Error(ctx, observedBatch.Err.Error())
+		obThis.Log.Error(ctx, observedBatch.Err.Error())
 	}
 }

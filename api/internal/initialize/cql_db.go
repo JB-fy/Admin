@@ -17,8 +17,8 @@ func initCqlDb(ctx context.Context) {
 	// 字段类型:int,smallint,bigint,decimal,text,blob,TIMESTAMP,DATE,TIME
 	// `CREATE TABLE IF NOT EXISTS 表名 (字段 类型, 字段2 类型, PRIMARY KEY (（主键1, 主键2），多聚类键)) WITH default_time_to_live=过期秒数`
 	cqlArr := []string{}
-	cqlFormat := `CREATE TABLE IF NOT EXISTS %s (created_at TIMESTAMP, item_id text, item_info blob, PRIMARY KEY (item_id)) WITH default_time_to_live=%d`
-	cqlArr = append(cqlArr, fmt.Sprintf(cqlFormat, `test`, consts.CACHE_TIME_DEFAULT))
+	cqlFormat := `CREATE TABLE IF NOT EXISTS %s (created_at TIMESTAMP, test_id text, test_info blob, PRIMARY KEY (test_id)) WITH default_time_to_live=%d`
+	cqlArr = append(cqlArr, fmt.Sprintf(cqlFormat, `test`, 7*24*60*60))
 	db := cql.DB()
 	var err error
 	for _, cql := range cqlArr {
