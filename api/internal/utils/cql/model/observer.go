@@ -10,8 +10,8 @@ import (
 )
 
 type Observer struct {
-	Log    *glog.Logger
 	Config *Config
+	Log    *glog.Logger
 }
 
 func (obThis *Observer) ObserveQuery(ctx context.Context, observedQuery gocql.ObservedQuery) {

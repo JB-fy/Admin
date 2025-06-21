@@ -31,9 +31,9 @@ func InitSession(ctx context.Context, config *model.Config) (session *gocql.Sess
 		cluster.NumConns = *config.NumConns
 	}
 	if config.Debug { //日志记录
-		log := &model.Observer{Log: g.Log(`cql`), Config: config}
-		cluster.QueryObserver = log
-		cluster.BatchObserver = log
+		observer := &model.Observer{Config: config, Log: g.Log(`cql`)}
+		cluster.QueryObserver = observer
+		cluster.BatchObserver = observer
 	}
 	/*--------数据库配置 结束--------*/
 
