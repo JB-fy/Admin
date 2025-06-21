@@ -78,3 +78,32 @@ redis:
     address: "0.0.0.0:6379"
     # pass:    ""
     # db:      0
+
+# cqlDb:
+#   default:
+#     hosts: # 设置单个节点IP即可连接整个集群。但建议设置多个节点IP以保证连接稳定
+#       - "0.0.0.0:9042"
+#     userName: ""
+#     password: ""
+#     keyspace: "" # 键空间
+#     dcName: "" # 数据中心名称。指定当前服务器使用的数据中心
+#     dcList: # 数据中心配置。键空间不存在时需设置，当len(dcList) == 1 && dcList[0].dcName == ``时，复制策略默认为SimpleStrategy，否则为NetworkTopologyStrategy
+#       - dcName: "" # 数据中心名称
+#         replNum: 1 # 副本数量
+#     # protoVersion: 0 # 协议版本
+#     consistency: 1 # 一致性级别
+#     # mumConns: 10 # 每个节点的连接数
+#     debug: true # 开启调试模式。默认为false
+
+# kafka:
+#   default:
+#     hosts:
+#       - "0.0.0.0:9092"
+#     userName: ""
+#     password: ""
+#     saslType: "" # 认证方式：PLAIN SCRAM-SHA-256 SCRAM-SHA-512。默认为PLAIN
+#     # producerType: "sync" # 生产者类型：sync同步 async异步。默认为async
+#     consumerList: # 消费者列表。根据 groupId 或 topicArr[0] 在api/internal/utils/kafka/handler目录下实现处理器
+#       - groupId: "" # 分组ID
+#         topicArr: # 主题。groupId空时，只有第一个主题生效
+#           - ""
