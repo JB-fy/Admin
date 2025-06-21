@@ -5,12 +5,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/IBM/sarama"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
-	"github.com/gogf/gf/v2/util/gutil"
 )
 
 type GroupHandlerOfTemplate struct {
@@ -45,7 +43,5 @@ func (handlerThis *GroupHandlerOfTemplate) handle(msg *sarama.ConsumerMessage) (
 		}
 	}()
 	// 业务处理
-	gutil.Dump(`group`, msg.Value)
-	time.Sleep(3 * time.Second)
 	return
 }
