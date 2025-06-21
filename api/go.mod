@@ -19,7 +19,7 @@ require (
 	github.com/gogf/gf/v2 v2.9.0
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/scylladb/gocqlx/v3 v3.0.2
+	github.com/scylladb/gocqlx/v3 v3.0.1
 	github.com/smartwalle/alipay/v3 v3.2.20
 	github.com/wechatpay-apiv3/wechatpay-go v0.2.18
 	github.com/xdg-go/scram v1.1.2
