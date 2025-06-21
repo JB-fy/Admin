@@ -1,4 +1,4 @@
-package consumer
+package internal
 
 import (
 	"api/internal/utils/kafka/model"

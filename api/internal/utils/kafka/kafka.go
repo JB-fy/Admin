@@ -1,10 +1,9 @@
 package kafka
 
 import (
-	"api/internal/utils/kafka/consumer"
 	"api/internal/utils/kafka/handler"
+	"api/internal/utils/kafka/internal"
 	"api/internal/utils/kafka/model"
-	"api/internal/utils/kafka/producer"
 	"context"
 	"errors"
 
@@ -22,9 +21,9 @@ func AddProducer(ctx context.Context, group string, configMap map[string]any) {
 	var producerTmp any
 	var err error
 	if config.ProducerType == `sync` {
-		producerTmp, err = producer.InitSyncProducer(ctx, producerConfig, config)
+		producerTmp, err = internal.InitSyncProducer(ctx, producerConfig, config)
 	} else {
-		producerTmp, err = producer.InitAsyncProducer(ctx, producerConfig, config)
+		producerTmp, err = internal.InitAsyncProducer(ctx, producerConfig, config)
 	}
 	if err != nil {
 		panic(`生产者(分组:` + config.Group + `)连接失败：` + err.Error())
@@ -82,12 +81,12 @@ func AddConsumer(ctx context.Context, group string, configMap map[string]any) {
 			if _, ok := handlerMapOfTopic[consumerInfo.TopicArr[0]]; !ok {
 				panic(`消费者(分组:` + config.Group + `，主题:` + consumerInfo.TopicArr[0] + `)缺少处理器，请实现！`)
 			}
-			_, err = consumer.InitConsumer(ctx, consumerConfig, config, consumerInfo, handlerMapOfTopic[consumerInfo.TopicArr[0]](ctx, config, consumerInfo))
+			_, err = internal.InitConsumer(ctx, consumerConfig, config, consumerInfo, handlerMapOfTopic[consumerInfo.TopicArr[0]](ctx, config, consumerInfo))
 		} else {
 			if _, ok := handlerMapOfGroupId[consumerInfo.GroupId]; !ok {
 				panic(`消费者(分组:` + config.Group + `，组ID:` + consumerInfo.GroupId + `)缺少处理器，请实现！`)
 			}
-			_, err = consumer.InitConsumerGroup(ctx, consumerConfig, config, consumerInfo, handlerMapOfGroupId[consumerInfo.GroupId](ctx, config, consumerInfo))
+			_, err = internal.InitConsumerGroup(ctx, consumerConfig, config, consumerInfo, handlerMapOfGroupId[consumerInfo.GroupId](ctx, config, consumerInfo))
 		}
 		if err != nil {
 			panic(`消费者(分组:` + config.Group + `)连接失败：` + err.Error())
