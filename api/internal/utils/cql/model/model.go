@@ -9,8 +9,8 @@ type Config struct {
 	Hosts    []string `json:"hosts"`
 	UserName string   `json:"userName"`
 	Password string   `json:"password"`
-	DcName   string   `json:"dcName"`
 	Keyspace string   `json:"keyspace"`
+	DcName   string   `json:"dcName"`
 	DcList   []struct {
 		DcName  string `json:"dcName"`
 		ReplNum uint8  `json:"replNum"`
