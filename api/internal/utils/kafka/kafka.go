@@ -1,7 +1,6 @@
 package kafka
 
 import (
-	"api/internal/utils/kafka/handler"
 	"api/internal/utils/kafka/internal"
 	"api/internal/utils/kafka/model"
 	"context"
@@ -63,12 +62,12 @@ func SendMessage(ctx context.Context, topic, value string, groupOpt ...string) (
 
 var (
 	handlerMapOfTopic = map[string]func(ctx context.Context, config *model.Config, consumerInfo *model.ConsumerInfo) func(msg *sarama.ConsumerMessage){
-		`test`: handler.TopicHandlerOfTemplate,
+		// `template`: handler.TopicHandlerOfTemplate,
 	}
 	handlerMapOfGroupId = map[string]func(ctx context.Context, config *model.Config, consumerInfo *model.ConsumerInfo) sarama.ConsumerGroupHandler{
-		`test`: func(ctx context.Context, config *model.Config, consumerInfo *model.ConsumerInfo) sarama.ConsumerGroupHandler {
+		/* `template`: func(ctx context.Context, config *model.Config, consumerInfo *model.ConsumerInfo) sarama.ConsumerGroupHandler {
 			return &handler.GroupHandlerOfTemplate{Ctx: ctx, Config: config, ConsumerInfo: consumerInfo}
-		},
+		}, */
 	}
 )
 
