@@ -11,6 +11,7 @@ func Entry(ctx context.Context) {
 	initGtime(ctx) // 时区设置
 
 	initDb(ctx) // 数据库设置
+	// initCqlDb(ctx) // CQL数据库设置
 
 	initGvalid(ctx) // 自定义校验规则注册
 
