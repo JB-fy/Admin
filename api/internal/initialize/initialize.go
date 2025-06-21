@@ -14,6 +14,8 @@ func Entry(ctx context.Context) {
 
 	initGvalid(ctx) // 自定义校验规则注册
 
+	initKafka(ctx) // kafka设置
+
 	initCron(ctx)  // 定时任务设置
 	initTimer(ctx) // 定时器设置
 }
