@@ -107,7 +107,7 @@ redis:
 #     password: ""
 #     saslType: "" # 认证方式：PLAIN SCRAM-SHA-256 SCRAM-SHA-512。默认为PLAIN
 #     # producerType: "sync" # 生产者类型：sync同步 async异步。默认为async
-#     consumerList: # 消费者列表。在api/internal/utils/kafka目录下根据 groupId 或 topicArr[0] 实现处理器，并设置到 handlerMapOfGroupId 或 handlerMapOfGroupId 全局变量中
+#     consumerList: # 消费者列表。在api/internal/utils/kafka/consumer目录下根据 groupId 或 topicArr[0] 实现处理器，并设置到 handlerMapOfGroupId 或 handlerMapOfGroupId 全局变量中
 #       - groupId: "" # 分组ID
 #         topicArr: # 主题。groupId空时，只有第一个主题生效
 #           - ""
