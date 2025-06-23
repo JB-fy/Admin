@@ -11,7 +11,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"net/http"
-	"os"
 	"sort"
 	"time"
 
@@ -101,7 +100,7 @@ func (uploadThis *Upload) Upload(ctx context.Context, r *ghttp.Request) (notifyI
 		return
 	}
 
-	fileTmp, err := os.Open(uploadThis.FileSaveDir + dir + filename)
+	fileTmp, err := file.Open()
 	if err == nil {
 		defer fileTmp.Close()
 		//获取图片宽高
