@@ -853,17 +853,16 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	for index, mayBeTable := range mayBeTableArr {
 		scanInfo = append(scanInfo, color.HiYellowString(`  `+gconv.String(index)+`：`+mayBeTable+"\n"))
 	}
-	scanInfo = append(scanInfo, color.HiYellowString(`  -1：都不匹配`+"\n"), color.BlueString(`> 请输入正确的表序号？默认(0)：`))
+	scanInfo = append(scanInfo, color.HiYellowString(`  0：都不匹配`+"\n"), color.BlueString(`> 请输入正确的表序号？默认(0)：`))
 	indexStr := gcmd.Scan(scanInfo...)
 isRelEnd:
 	for {
 		index := gconv.Int(indexStr)
-		if index < len(mayBeTableArr) {
-			if index >= 0 {
-				relTpl = getTableTplFunc(mayBeTableArr[index])
-				return
-			}
+		if index == 0 {
 			break isRelEnd
+		} else if index > 0 && index <= len(mayBeTableArr) {
+			relTpl = getTableTplFunc(mayBeTableArr[index-1])
+			return
 		}
 		indexStr = gcmd.Scan(color.BlueString(`> 输入错误，请重新输入？默认(0)：`))
 	}
