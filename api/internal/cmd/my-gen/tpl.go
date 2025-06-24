@@ -849,11 +849,11 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		}
 	}
 
-	scanInfo := append([]any{}, color.HiYellowString(`表(`+tpl.Table+`)的id后缀字段(`+field.FieldRaw+`)匹配到多个表：`+"\n"))
+	scanInfo := append([]any{}, color.HiYellowString(`表(`+tpl.Table+`)的id后缀字段(`+field.FieldRaw+`)匹配到多个表：`+"\n"), color.HiYellowString(`  0：都不匹配`+"\n"))
 	for index, mayBeTable := range mayBeTableArr {
-		scanInfo = append(scanInfo, color.HiYellowString(`  `+gconv.String(index)+`：`+mayBeTable+"\n"))
+		scanInfo = append(scanInfo, color.HiYellowString(`  `+gconv.String(index+1)+`：`+mayBeTable+"\n"))
 	}
-	scanInfo = append(scanInfo, color.HiYellowString(`  0：都不匹配`+"\n"), color.BlueString(`> 请输入正确的表序号？默认(0)：`))
+	scanInfo = append(scanInfo, color.BlueString(`> 请输入正确的表序号？默认(0)：`))
 	indexStr := gcmd.Scan(scanInfo...)
 isRelEnd:
 	for {
