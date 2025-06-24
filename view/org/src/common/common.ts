@@ -2,6 +2,16 @@
 common.ts：基于当前框架封装的常用函数（与框架耦合）
 functions.ts：基于原生js封装的常用函数（不与框架耦合） */
 
+/**
+ * 获取请求基础地址
+ */
+export const getHttpBaseUrl = (): string => {
+    if (import.meta.env.DEV && import.meta.env.VITE_HTTP_HOST.indexOf('http') != 0) {
+        return import.meta.env.VITE_DEV_API_PREFIX + import.meta.env.VITE_HTTP_HOST
+    }
+    return import.meta.env.VITE_HTTP_HOST
+}
+
 /*--------使用方式 开始--------*/
 /* request(t('config.VITE_HTTP_API_PREFIX') + '/index/index', data).then((res) => {
     console.log(res)

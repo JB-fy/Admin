@@ -2,7 +2,12 @@
 <!-- accept示例：image/*; video/*; audio/*; text/*; application/*; .png,.xls,.pdf,.apk,.ipa等 -->
 <!-- <my-upload v-model="saveForm.data.avatar" accept="image/*" :multiple="true" />
 
-<my-upload v-model="saveForm.data.avatar" :api="{ data: { scene: '指定上传场景' } }" accept="video/*" size="small" /> -->
+<my-upload v-model="saveForm.data.avatar" :api="{ data: { scene: '指定上传场景' } }" accept="video/*" size="small" />
+
+直接手动上传文件到指定接口
+    <my-upload :ref="(el: any) => saveForm.uploadRef = el" :api="{ isSignApi: false, code: '直传接口地址' }" :data="saveForm.data" name="saveForm.data中的字段名" />
+提交按钮执行
+    saveForm.uploadRef.submit() -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 import clipboard3 from 'vue-clipboard3'
@@ -20,7 +25,8 @@ const props = defineProps({
         type: [String, Array],
     },
     /**
-     * 接口。格式：{ code: string, data: Object }
+     * 接口。格式：{ isSignApi: true, code: string, data: Object }
+     *      isSignApi：非必须。是否签名Api。默认true，false则表示直接上传指定接口
      *      code：非必须。接口标识。参考common/utils/common.js文件内request方法的参数说明
      *      data：非必须。接口函数所需参数。格式：{ [propName: string]: any }
      */
@@ -201,9 +207,18 @@ const upload = reactive({
         return classStr
     }),
     action: '' as string,
-    data: {} as { [propName: string]: any },
+    headers: (attrs.headers as { [propName: string]: any }) ?? {},
+    data: (attrs.data as { [propName: string]: any }) ?? {},
+    autoUpload: (attrs.autoUpload ?? true) as boolean,
     signInfo: {} as { [propName: string]: any }, //缓存的签名信息。示例：{ upload_url: "https://xxxxx.com/upload", upload_data: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, is_res: 1 }
-    initSignInfo: async () => {
+    initHttp: async () => {
+        if (!upload.api.isSignApi) {
+            upload.action = getHttpBaseUrl() + upload.api.code
+            upload.headers[import.meta.env.VITE_LANGUAGE_NAME] = getLanguage()
+            upload.headers[import.meta.env.VITE_ACCESS_TOKEN_NAME] = getAccessToken()
+            upload.autoUpload = false
+            return
+        }
         const signInfo = await upload.api.getSignInfo()
         if (signInfo && Object.keys(signInfo).length) {
             upload.signInfo = { ...signInfo }
@@ -214,9 +229,9 @@ const upload = reactive({
             let timeout = upload.signInfo.expire * 1000 - new Date().getTime() - bufferTime
             setTimeout(() => {
                 //组件销毁后，倒计时还会继续执行。如果用户点击新增|编辑|复制等按钮多次，将会创建多个倒计时
-                //upload.initSignInfo()
+                //upload.initHttp()
                 //判断元素是否还存在，防止组件销毁后，倒计时却还在重复执行
-                document.getElementById(upload.id) && upload.initSignInfo()
+                document.getElementById(upload.id) && upload.initHttp()
             }, timeout)
         }
     },
@@ -231,6 +246,7 @@ const upload = reactive({
     },
     api: {
         loading: false,
+        isSignApi: props.api?.isSignApi ?? true,
         code: props.api?.code ?? t('config.VITE_HTTP_API_PREFIX') + '/upload/sign',
         data: { ...props.api?.data },
         getSignInfo: async () => {
@@ -253,6 +269,9 @@ const upload = reactive({
         imageViewer.visible = true
     },
     onRemove: (file: any) => {
+        if (!upload.api.isSignApi) {
+            return
+        }
         if (attrs.multiple) {
             upload.value.splice(upload.value.indexOf(upload.getUrl(file)), 1)
         } else {
@@ -262,6 +281,9 @@ const upload = reactive({
         emits('change')
     },
     onSuccess: (res: any, file: any, fileList: any) => {
+        if (!upload.api.isSignApi) {
+            return
+        }
         if (upload.signInfo?.is_res) {
             //如有回调服务器且有报错，则默认失败
             if (res.code !== 0) {
@@ -290,8 +312,11 @@ const upload = reactive({
             ElMessage.error(t('common.tip.notWithinFileSize'))
             return false
         }
+        if (!upload.api.isSignApi) {
+            return
+        }
         rawFile.saveInfo = upload.createSaveInfo(rawFile)
-        upload.data.key = rawFile.saveInfo.fileName //这是文件保存路径及文件名，必须唯一，否则会覆盖oss服务器同名文件
+        upload.data.key = rawFile.saveInfo.fileName //这是文件保存路径及文件名，必须唯一，否则会覆盖服务器同名文件
     },
     getUrl: (file: any): string => (file?.response === undefined ? file.url : file.raw.saveInfo.url),
     copyUrl: (file: any) =>
@@ -323,7 +348,16 @@ const imageViewer = reactive({
     close: () => (imageViewer.visible = false),
 })
 
-upload.initSignInfo() //初始化签名信息
+upload.initHttp() //初始化签名信息
+
+/* const exposedMethods = {} as { [propName: string]: any }
+Object.keys(upload.ref).forEach(key => {
+    if (typeof upload.ref[key] === 'function') {
+    exposedMethods[key] = () => upload.ref[key]()
+    }
+})
+defineExpose(exposedMethods) */
+defineExpose({ submit: () => upload.ref.submit() })
 </script>
 
 <template>
@@ -332,14 +366,16 @@ upload.initSignInfo() //初始化签名信息
             v-if="['text' , 'picture'].includes($attrs.listType as string)"
             :ref="(el: any) => upload.ref = el"
             v-model:file-list="upload.fileList"
-            :action="upload.action"
-            :data="upload.data"
             :before-upload="upload.beforeUpload"
             :on-success="upload.onSuccess"
             :on-error="upload.onError"
             :on-remove="upload.onRemove"
             :on-preview="upload.onPreview"
             v-bind="$attrs"
+            :action="upload.action"
+            :headers="upload.headers"
+            :data="upload.data"
+            :auto-upload="upload.autoUpload"
         >
             <template #default>
                 <slot v-if="slots.default" name="default"></slot>
@@ -359,14 +395,16 @@ upload.initSignInfo() //初始化签名信息
             v-else
             :ref="(el: any) => upload.ref = el"
             v-model:file-list="upload.fileList"
-            :action="upload.action"
-            :data="upload.data"
             :before-upload="upload.beforeUpload"
             :on-success="upload.onSuccess"
             :on-error="upload.onError"
             :on-remove="upload.onRemove"
             :on-preview="upload.onPreview"
             v-bind="$attrs"
+            :action="upload.action"
+            :headers="upload.headers"
+            :data="upload.data"
+            :auto-upload="upload.autoUpload"
             list-type="picture-card"
             :drag="true"
             :class="upload.class"
@@ -387,7 +425,7 @@ upload.initSignInfo() //初始化签名信息
             <template #file="{ file }">
                 <slot v-if="slots.file" name="file" :file="file"></slot>
                 <template v-else>
-                    <template v-if="['ready', 'uploading'].includes(file.status)">
+                    <template v-if="['uploading'].includes(file.status)">
                         <el-progress v-if="size == 'small'" type="circle" :percentage="file.percentage" :stroke-width="3" :width="45" />
                         <el-progress v-else type="circle" :percentage="file.percentage" />
                     </template>
@@ -413,7 +451,7 @@ upload.initSignInfo() //初始化签名信息
                         <template v-if="size == 'small'">
                             <span class="el-upload-list__item-actions">
                                 <span v-if="file?.response === undefined" @click="upload.download(file)"><autoicon-ep-download /></span>
-                                <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
+                                <span v-if="upload.api.isSignApi" @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
                             </span>
                             <el-icon v-if="!$attrs.disabled" class="el-icon--close" @click="upload.ref.handleRemove(file)"><autoicon-ep-close /></el-icon>
                         </template>
@@ -429,7 +467,7 @@ upload.initSignInfo() //初始化签名信息
                                 <span v-if="upload.showType(file) == 'image'" @click="upload.onPreview(file)"><autoicon-ep-zoom-in /></span>
                                 <!-- 刚上传的文件没必要给下载按钮 -->
                                 <span v-else-if="file?.response === undefined" @click="upload.download(file)"><autoicon-ep-download /></span>
-                                <span @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
+                                <span v-if="upload.api.isSignApi" @click="upload.copyUrl(file)"><autoicon-ep-document-copy /></span>
                                 <span v-if="!$attrs.disabled" @click="upload.ref.handleRemove(file)"><autoicon-ep-delete /></span>
                             </span>
                         </template>
