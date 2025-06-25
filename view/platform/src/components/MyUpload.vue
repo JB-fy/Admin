@@ -5,9 +5,10 @@
 <my-upload v-model="saveForm.data.avatar" :api="{ data: { scene: '指定上传场景' } }" accept="video/*" size="small" />
 
 直接手动上传文件到指定接口
-    <my-upload :ref="(el: any) => saveForm.uploadRef = el" :api="{ isSignApi: false, code: '直传接口地址' }" :data="saveForm.data" name="saveForm.data中的字段名" />
+    <my-upload :ref="(el: any) => saveForm.uploadRef = el" :api="{ isSignApi: false, code: '接口地址' }" name="接口字段名" :data="其它接口参数" />
+    <my-upload :ref="(el: any) => saveForm.uploadRef = el" :api="{ isSignApi: false }" name="接口字段名" />
 提交按钮执行
-    saveForm.uploadRef.submit() -->
+    await saveForm.uploadRef.submit('接口地址(比组件地址优先级高)', 其它接口参数(比组件data优先级高), true) -->
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 import clipboard3 from 'vue-clipboard3'
@@ -357,7 +358,23 @@ Object.keys(upload.ref).forEach(key => {
     }
 })
 defineExpose(exposedMethods) */
-defineExpose({ submit: () => upload.ref.submit() })
+defineExpose({
+    submit: async (apiCode: string = '', data: { [propName: string]: any } = {}, isSuccessTip: boolean = false, isErrorHandle: boolean = true, method: string = 'post', headers: { [propName: string]: any } = {}) => {
+        if (apiCode != '') {
+            upload.api.code = apiCode
+            upload.action = getHttpBaseUrl() + upload.api.code
+        }
+        if (Object.keys(data).length > 0) {
+            upload.data = data
+        }
+        if (upload.fileList.length == 0) {
+            //文件非必填时，直接请求
+            await request(upload.api.code, upload.data, isSuccessTip, isErrorHandle, method, headers)
+            return
+        }
+        upload.ref.submit()
+    },
+})
 </script>
 
 <template>
