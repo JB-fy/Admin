@@ -283,6 +283,10 @@ const upload = reactive({
     },
     onSuccess: (res: any, file: any, fileList: any) => {
         if (!upload.api.isSignApi) {
+            if (res.code !== 0) {
+                ElMessage.error(t('common.tip.uploadFail') + '(' + (res.msg ?? res) + ')')
+                return
+            }
             return
         }
         if (upload.signInfo?.is_res) {
@@ -359,6 +363,7 @@ Object.keys(upload.ref).forEach(key => {
 })
 defineExpose(exposedMethods) */
 defineExpose({
+    isExistFile: computed(() => (upload.fileList.length == 0 ? false : true)),
     submit: async (apiCode: string = '', data: { [propName: string]: any } = {}, isSuccessTip: boolean = false, isErrorHandle: boolean = true, method: string = 'post', headers: { [propName: string]: any } = {}) => {
         if (apiCode != '') {
             upload.api.code = apiCode
