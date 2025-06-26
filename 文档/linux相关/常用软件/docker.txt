@@ -144,6 +144,8 @@ docker run -d -p 9092:9092 -p 9093:9093 -v 配置:/opt/bitnami/kafka/config/serv
     # 注意事项
         # 宿主机需先创建数据目录，并赋予写入权限
             mkdir -p /home/jb/dev/tool/kafka/4.0.0 && chmod -R 777 /home/jb/dev/tool/kafka/4.0.0
+        # 云服务器设置--network host，且主机名不是IP时，会无法识别主机名，需修改/etc/hosts文件追加
+            当前服务器IP 服务器主机名(hostname查看)
 
 # gitlab
     # gitlab-ce（不建议用--network host。gitlab只带软件所用端口可能与当前服务器已安装软件冲突）
