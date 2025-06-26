@@ -168,7 +168,7 @@ func (cacheThis *dbDataLocal) GetOrSetList(ctx context.Context, daoModel *dao.Da
 
 func (cacheThis *dbDataLocal) GetOrSetById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, field string) (value *gvar.Var, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, id, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-		value, err = daoModel.FilterPri(id).Value(field)
+		value, err = daoModel.Master().FilterPri(id).Value(field)
 		ttl = ttlD
 		return
 	})
@@ -182,7 +182,7 @@ func (cacheThis *dbDataLocal) GetOrSetPluckById(ctx context.Context, daoModel *d
 	value = gdb.Record{}
 	for index := range idArr {
 		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Value(field)
+			value, err = daoModel.ResetNew().Master().FilterPri(idArr[index]).Value(field)
 			ttl = ttlD
 			return
 		})
@@ -199,7 +199,7 @@ func (cacheThis *dbDataLocal) GetOrSetPluckById(ctx context.Context, daoModel *d
 
 func (cacheThis *dbDataLocal) GetOrSetInfoById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, fieldArr ...string) (value gdb.Record, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfInfo, id, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-		value, err = daoModel.FilterPri(id).Fields(fieldArr...).One()
+		value, err = daoModel.Master().FilterPri(id).Fields(fieldArr...).One()
 		ttl = ttlD
 		return
 	})
@@ -212,7 +212,7 @@ func (cacheThis *dbDataLocal) GetOrSetListById(ctx context.Context, daoModel *da
 	var notExist bool
 	for index := range idArr {
 		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfInfo, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Fields(fieldArr...).One()
+			value, err = daoModel.ResetNew().Master().FilterPri(idArr[index]).Fields(fieldArr...).One()
 			ttl = ttlD
 			return
 		})

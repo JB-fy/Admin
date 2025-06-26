@@ -189,7 +189,7 @@ func (cacheThis *dbData) DelList(ctx context.Context, daoModel *dao.DaoModel, co
 
 func (cacheThis *dbData) GetOrSetById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, field string) (value *gvar.Var, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, id, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-		value, err = daoModel.FilterPri(id).Value(field)
+		value, err = daoModel.Master().FilterPri(id).Value(field)
 		ttl = ttlD
 		return
 	})
@@ -202,7 +202,7 @@ func (cacheThis *dbData) GetOrSetById(ctx context.Context, daoModel *dao.DaoMode
 	var notExist bool
 	for index := range idArr {
 		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Value(field)
+			value, err = daoModel.ResetNew().Master().FilterPri(idArr[index]).Value(field)
 			ttl = ttlD
 			return
 		})
@@ -223,7 +223,7 @@ func (cacheThis *dbData) GetOrSetSetById(ctx context.Context, daoModel *dao.DaoM
 	value = map[*gvar.Var]struct{}{}
 	for index := range idArr {
 		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Value(field)
+			value, err = daoModel.ResetNew().Master().FilterPri(idArr[index]).Value(field)
 			ttl = ttlD
 			return
 		})
@@ -244,7 +244,7 @@ func (cacheThis *dbData) GetOrSetPluckById(ctx context.Context, daoModel *dao.Da
 	value = gdb.Record{}
 	for index := range idArr {
 		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Value(field)
+			value, err = daoModel.ResetNew().Master().FilterPri(idArr[index]).Value(field)
 			ttl = ttlD
 			return
 		})
@@ -261,7 +261,7 @@ func (cacheThis *dbData) GetOrSetPluckById(ctx context.Context, daoModel *dao.Da
 
 func (cacheThis *dbData) GetOrSetInfoById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, fieldArr ...string) (value gdb.Record, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfInfo, id, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-		value, err = daoModel.FilterPri(id).Fields(fieldArr...).One()
+		value, err = daoModel.Master().FilterPri(id).Fields(fieldArr...).One()
 		ttl = ttlD
 		return
 	})
@@ -278,7 +278,7 @@ func (cacheThis *dbData) GetOrSetListById(ctx context.Context, daoModel *dao.Dao
 	var ok bool
 	for index := range idArr {
 		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfInfo, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-			value, err = daoModel.ResetNew().FilterPri(idArr[index]).Fields(fieldArr...).One()
+			value, err = daoModel.ResetNew().Master().FilterPri(idArr[index]).Fields(fieldArr...).One()
 			ttl = ttlD
 			return
 		})

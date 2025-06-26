@@ -370,7 +370,7 @@ func (daoThis *channelDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.
 
 func (daoThis *channelDao) CacheGetList(ctx context.Context, sceneId uint) (list gdb.Result, err error) {
 	list, err = cache.DbDataLocal.GetOrSetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+gconv.String(sceneId), func(daoModel *daoIndex.DaoModel) (value gdb.Result, ttl time.Duration, err error) {
-		value, err = daoThis.CtxDaoModel(ctx).Filter(daoThis.Columns().SceneId, sceneId).OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
+		value, err = daoThis.CtxDaoModel(ctx).Master().Filter(daoThis.Columns().SceneId, sceneId).OrderDesc(daoThis.Columns().Sort).OrderAsc(daoThis.Columns().ChannelId).All()
 		return
 	})
 	return
