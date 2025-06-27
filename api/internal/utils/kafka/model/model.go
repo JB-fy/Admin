@@ -24,9 +24,10 @@ type TopicInfo struct {
 }
 
 type ConsumerInfo struct {
-	GroupId  string   `json:"groupId"`
-	Number   int      `json:"number"`
-	TopicArr []string `json:"topicArr"`
+	GroupId    string   `json:"groupId"`
+	Number     int      `json:"number"`
+	AutoCommit *bool    `json:"autoCommit"`
+	TopicArr   []string `json:"topicArr"`
 }
 
 func GetConfig(group string, configMap map[string]any) (config *Config) {
@@ -48,9 +49,12 @@ func CreateProducerConfig(config *Config) (saramaConfig *sarama.Config) {
 	return
 }
 
-func CreateConsumerConfig(config *Config) (saramaConfig *sarama.Config) {
+func CreateConsumerConfig(config *Config, consumerInfo *ConsumerInfo) (saramaConfig *sarama.Config) {
 	saramaConfig = createSaramaConfig(config)
 	saramaConfig.Consumer.Return.Errors = true
+	if consumerInfo.AutoCommit != nil {
+		saramaConfig.Consumer.Offsets.AutoCommit.Enable = *consumerInfo.AutoCommit
+	}
 	return
 }
 

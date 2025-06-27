@@ -22,9 +22,9 @@ var (
 
 func Add(ctx context.Context, group string, configMap map[string]any) {
 	config := model.GetConfig(group, configMap)
-	consumerConfig := model.CreateConsumerConfig(config)
 	var err error
 	for _, consumerInfo := range config.ConsumerList {
+		consumerConfig := model.CreateConsumerConfig(config, consumerInfo)
 		if consumerInfo.GroupId == `` {
 			if _, ok := handlerMapOfTopic[consumerInfo.TopicArr[0]]; !ok {
 				panic(`消费者(分组:` + config.Group + `，主题:` + consumerInfo.TopicArr[0] + `)缺少处理器，请实现！`)
