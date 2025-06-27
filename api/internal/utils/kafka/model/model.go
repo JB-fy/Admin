@@ -18,6 +18,7 @@ type Config struct {
 
 type ConsumerInfo struct {
 	GroupId  string   `json:"groupId"`
+	Number   int      `json:"number"`
 	TopicArr []string `json:"topicArr"`
 }
 

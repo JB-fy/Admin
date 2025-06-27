@@ -30,14 +30,19 @@ func Add(ctx context.Context, group string, configMap map[string]any) {
 				panic(`消费者(分组:` + config.Group + `，主题:` + consumerInfo.TopicArr[0] + `)缺少处理器，请实现！`)
 			}
 			_, err = internal.InitConsumer(ctx, consumerConfig, config, consumerInfo, handlerMapOfTopic[consumerInfo.TopicArr[0]](ctx, config, consumerInfo))
+			if err != nil {
+				panic(`消费者(分组:` + config.Group + `，主题:` + consumerInfo.TopicArr[0] + `)连接失败：` + err.Error())
+			}
 		} else {
 			if _, ok := handlerMapOfGroupId[consumerInfo.GroupId]; !ok {
 				panic(`消费者(分组:` + config.Group + `，组ID:` + consumerInfo.GroupId + `)缺少处理器，请实现！`)
 			}
-			_, err = internal.InitConsumerGroup(ctx, consumerConfig, config, consumerInfo, handlerMapOfGroupId[consumerInfo.GroupId](ctx, config, consumerInfo))
-		}
-		if err != nil {
-			panic(`消费者(分组:` + config.Group + `)连接失败：` + err.Error())
+			for range consumerInfo.Number {
+				_, err = internal.InitConsumerGroup(ctx, consumerConfig, config, consumerInfo, handlerMapOfGroupId[consumerInfo.GroupId](ctx, config, consumerInfo))
+				if err != nil {
+					panic(`消费者(分组:` + config.Group + `，组ID:` + consumerInfo.GroupId + `)连接失败：` + err.Error())
+				}
+			}
 		}
 	}
 	g.Log(`kafka`).Info(ctx, `消费者(分组:`+config.Group+`)连接成功`)
