@@ -23,12 +23,12 @@ log.dirs=/server/tool/kafka_2.13-3.8.1/log
         启动：/server/tool/kafka_2.13-3.8.1/bin/kafka-server-start.sh /server/tool/kafka_2.13-3.8.1/config/kraft/server.properties
         关闭：/server/tool/kafka_2.13-3.8.1/bin/kafka-server-stop.sh
 
-        主题查询：/server/tool/kafka_2.13-3.8.1/bin/kafka-topics.sh --list --bootstrap-server 连接地址1,连接地址2
-        主题详情：/server/tool/kafka_2.13-3.8.1/bin/kafka-topics.sh --describe --topic 主题名 --bootstrap-server 连接地址1,连接地址2
-        主题创建：/server/tool/kafka_2.13-3.8.1/bin/kafka-topics.sh --create --topic 主题名 --bootstrap-server 连接地址1,连接地址2 --partitions 10 --replication-factor 1
-        发布消息：/server/tool/kafka_2.13-3.8.1/bin/kafka-console-producer.sh --broker-list 连接地址1,连接地址2 --topic 主题名
-        消费消息：/server/tool/kafka_2.13-3.8.1/bin/kafka-console-consumer.sh --bootstrap-server 连接地址1,连接地址2 --topic 主题名 --from-beginning
-        集群状态：/server/tool/kafka_2.13-3.8.1/bin/kafka-metadata-quorum.sh --bootstrap-server 连接地址1:9092 describe --status
+        集群状态：/server/tool/kafka_2.13-3.8.1/bin/kafka-metadata-quorum.sh --bootstrap-server 连接地址1:9092,连接地址2:9092 describe --status
+        主题查询：/server/tool/kafka_2.13-3.8.1/bin/kafka-topics.sh --bootstrap-server 连接地址1:9092,连接地址2:9092 --list
+        主题详情：/server/tool/kafka_2.13-3.8.1/bin/kafka-topics.sh --bootstrap-server 连接地址1:9092,连接地址2:9092 --describe --topic 主题名
+        主题创建：/server/tool/kafka_2.13-3.8.1/bin/kafka-topics.sh --bootstrap-server 连接地址1:9092,连接地址2:9092 --create --topic 主题名 --partitions 分区数 --replication-factor 副本数
+        发布消息：/server/tool/kafka_2.13-3.8.1/bin/kafka-console-producer.sh --bootstrap-server 连接地址1:9092,连接地址2:9092 --topic 主题名
+        消费消息：/server/tool/kafka_2.13-3.8.1/bin/kafka-console-consumer.sh --bootstrap-server 连接地址1:9092,连接地址2:9092 --topic 主题名 --from-beginning
     5、编辑自启动文件
         vi /etc/systemd/system/kafka_2.13-3.8.1.service
 [Unit]

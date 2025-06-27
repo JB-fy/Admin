@@ -12,8 +12,15 @@ type Config struct {
 	UserName     string          `json:"userName"`
 	Password     string          `json:"password"`
 	SaslType     string          `json:"saslType"`
+	TopicList    []*TopicInfo    `json:"topicList"`
 	ProducerType string          `json:"producerType"`
 	ConsumerList []*ConsumerInfo `json:"consumerList"`
+}
+
+type TopicInfo struct {
+	Name    string `json:"name"`
+	PartNum int32  `json:"partNum"`
+	ReplNum int16  `json:"replNum"`
 }
 
 type ConsumerInfo struct {
@@ -25,6 +32,11 @@ type ConsumerInfo struct {
 func GetConfig(group string, configMap map[string]any) (config *Config) {
 	config = &Config{Group: group}
 	gconv.Struct(configMap, config)
+	return
+}
+
+func CreateClusterAdmin(config *Config) (saramaConfig *sarama.Config) {
+	saramaConfig = createSaramaConfig(config)
 	return
 }
 
