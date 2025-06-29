@@ -1208,7 +1208,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 				otherRelTableList = append(otherRelTableList, handleOtherRelObj)
 			}
 			otherRelTableCmdLog = append(otherRelTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `关联表`, otherRelTpl.Table, field.FieldRaw, isOtherRel))
-			break
+			// break //可能有多个字段关联同一个表
 		}
 	}
 	return
