@@ -77,7 +77,7 @@ const select = reactive({
                 return props.api.selectedField
             }
             if (select.api.param.field[0] == 'id') {
-                return attrs.multiple ? 'id_arr' : 'id'
+                return attrs.multiple || attrs.multiple === '' ? 'id_arr' : 'id'
             }
             return select.api.param.field[0]
         }),
