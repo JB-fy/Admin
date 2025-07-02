@@ -36,7 +36,7 @@ buildVue:
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "rm -rf $REMOTE_DIR/public/admin && mkdir -p $REMOTE_DIR/public/admin"; done # 注意：非root用户连接ssh，使用mkdir会报无权限，增加sudo执行则需输入密码。故必须手动执行
     - (cd ./view/platform && npm install && npm run build-only)
     - (cd ./view/org && npm install && npm run build-only)
-    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp ./public/admin $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin; done
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp -r ./public/admin/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin; done
 
 buildGo:
   stage: go
@@ -86,7 +86,7 @@ buildDocker:
     - chmod 644 ~/.ssh/known_hosts
   script:
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "mkdir -p $REMOTE_DIR/api/manifest && mkdir -p $REMOTE_DIR/public/upload && chmod -R 777 $REMOTE_DIR"; done # 注意：非root用户连接ssh，使用mkdir会报无权限，增加sudo执行则需输入密码。故必须手动执行
-    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp ./api/manifest $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/api/manifest && scp ./deploy/docker/compose.yaml $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/deploy/docker; done
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp -r ./api/manifest/* $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/api/manifest && scp ./deploy/docker/compose.yaml $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/deploy/docker/compose.yaml; done
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "echo -e \"SERVER_LOCAL_IP=\$(hostname -I | awk '{printf \"%s\", \$1}')\nSERVER_NETWORK_IP=\$(curl -s --max-time 3 ifconfig.me || curl -s --max-time 3 https://ipinfo.io/ip || curl -s --max-time 3 https://checkip.amazonaws.com || curl -s --max-time 3 https://icanhazip.com || curl -s --max-time 3 https://api.ipify.org)\" > $REMOTE_DIR/api/.env"; done
     - docker build -t $APP_NAME . && docker save -o $APP_NAME.tar $APP_NAME
     - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp $APP_NAME.tar $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR; done
