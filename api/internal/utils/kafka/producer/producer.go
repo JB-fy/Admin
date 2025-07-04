@@ -40,6 +40,7 @@ func SendMessage(ctx context.Context, topic string, value []byte, groupOpt ...st
 	producerTmp, ok := producerMap[group]
 	if !ok {
 		err = errors.New(`生产者(分组:` + group + `)不存在`)
+		g.Log(`kafka`).Error(ctx, `发送消息失败`, err)
 		return
 	}
 	switch producer := producerTmp.(type) {
