@@ -30,7 +30,7 @@ func (handlerThis *GroupHandlerOfTemplate) Cleanup(session sarama.ConsumerGroupS
 func (handlerThis *GroupHandlerOfTemplate) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) (err error) {
 	for msg := range claim.Messages() {
 		handlerThis.handle(msg)
-		session.MarkMessage(msg, ``) // 标记消息为已处理
+		// session.MarkMessage(msg, ``) // 标记消息为已处理
 		// session.Commit()             // 马上提交到kafka
 	}
 	return
