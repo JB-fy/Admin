@@ -205,16 +205,6 @@ services:
       - /home/jb/dev/tool/nginx/1.27.5/config/web:/etc/nginx/web
       - /home/jb/dev/app:/home/jb/dev/app
 
-  redis-alone:
-    image: redis:8.0.1
-    container_name: redis-alone
-    restart: unless-stopped
-    network_mode: host
-    command: ["redis-server", "--requirepass", "密码"]
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /home/jb/dev/tool/redis/8.0.1/data:/data
-
 #   mysql-alone:
 #     image: mysql:9.3.0
 #     container_name: mysql-alone
@@ -285,4 +275,14 @@ services:
       POSTGRESQL_SYNCHRONOUS_COMMIT_MODE: on或remote_write或remote_apply（越后面越安全） 
       POSTGRESQL_MASTER_HOST: 主库IP（从库设置）
       POSTGRESQL_MASTER_PORT: 主库端口（从库设置）
+
+  redis-alone:
+    image: redis:8.0.1
+    container_name: redis-alone
+    restart: unless-stopped
+    network_mode: host
+    command: ["redis-server", "--requirepass", "密码"]
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /home/jb/dev/tool/redis/8.0.1/data:/data
 /**----------------compose.yaml示例 结束----------------**/
