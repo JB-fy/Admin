@@ -103,7 +103,7 @@ services:
     container_name: redis-alone
     restart: unless-stopped
     network_mode: host
-    command: ["redis-server", "--requirepass", "密码"]
+    command: ["redis-server", "--port", "6379", "--requirepass", "密码"] # command: ["redis-server", "--port", "6379", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes", "--requirepass", "密码", "--masterauth", "密码"] # 任意容器执行以下命令启动集群：docker exec -it redis-node redis-cli --cluster create -a 密码 节点IP:6379 节点IP:6379 节点IP:6379 --cluster-replicas 0
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /server/tool/redis/8.0.1/data:/data

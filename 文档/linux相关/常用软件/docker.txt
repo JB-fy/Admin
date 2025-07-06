@@ -85,15 +85,6 @@ docker run -v /home/jb/dev/app:/app -w 工作目录 --rm -it golang:1.22.12 bash
 docker run -d -p 80:80 -v 配置:/etc/nginx/nginx.conf -v 静态文件:/usr/share/nginx/html -v 日志:/var/log/nginx nginx:latest
     # 示例：docker run -d --name nginx-alone --network host -v /home/jb/dev/tool/nginx/1.27.5/config/nginx.conf:/etc/nginx/nginx.conf -v /home/jb/dev/tool/nginx/1.27.5/config/web:/etc/nginx/web -v /home/jb/dev/app:/home/jb/dev/app nginx:1.27.5
 
-# redis
-docker run -d -p 6379:6379 -v 配置:/usr/local/etc/redis/redis.conf -v 数据:/data redis:latest redis-server /usr/local/etc/redis/redis.conf --requirepass 密码
-# 示例：docker run -d --name redis-alone --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1
-# 集群示例：
-    # 使用以下命令启动多个节点
-        docker run -d --name redis-node --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1 redis-server --port 6379 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-node-timeout 5000 --appendonly yes --requirepass 密码 --masterauth 密码
-    # 任意容器执行以下命令
-        docker exec -it redis-node redis-cli --cluster create -a 密码 节点IP:6379 节点IP:6379 节点IP:6379 --cluster-replicas 0
-
 # mysql
 docker run -d -p 3306:3306 -v 配置:/etc/mysql/my.cnf -v 数据:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 mysql:latest --defaults-file=/etc/mysql/my.cnf
     # 示例：docker run -d --name mysql-alone --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql:9.3.0
@@ -117,6 +108,15 @@ docker run -d -p 5432:5432 -v 配置:/etc/postgresql -v 数据:/var/lib/postgres
             docker run -d --name postgresql-node --network host -v /home/jb/dev/tool/postgresql/17.5.0:/bitnami/postgresql -e POSTGRESQL_PASSWORD=123456 -e POSTGRESQL_REPLICATION_MODE=master -e POSTGRESQL_REPLICATION_USER=repl_user -e POSTGRESQL_REPLICATION_PASSWORD=123456 bitnami/postgresql:17.5.0
         # 从库执行
             docker run -d --name postgresql-node --network host -v /home/jb/dev/tool/postgresql/17.5.0:/bitnami/postgresql -e POSTGRESQL_PASSWORD=123456 -e POSTGRESQL_REPLICATION_MODE=slave -e POSTGRESQL_REPLICATION_USER=repl_user -e POSTGRESQL_REPLICATION_PASSWORD=123456 -e POSTGRESQL_MASTER_HOST=192.168.0.200 bitnami/postgresql:17.5.0
+
+# redis
+docker run -d -p 6379:6379 -v 配置:/usr/local/etc/redis/redis.conf -v 数据:/data redis:latest redis-server /usr/local/etc/redis/redis.conf --requirepass 密码
+# 示例：docker run -d --name redis-alone --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1
+# 集群示例：
+    # 使用以下命令启动多个节点
+        docker run -d --name redis-node --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1 redis-server --port 6379 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-node-timeout 5000 --appendonly yes --requirepass 密码 --masterauth 密码
+    # 任意容器执行以下命令启动集群
+        docker exec -it redis-node redis-cli --cluster create -a 密码 节点IP:6379 节点IP:6379 节点IP:6379 --cluster-replicas 0
 
 # mongodb
 docker run -d -p 27017:27017 -v 配置:/etc/mongod.conf -v 数据:/data/db -e MONGO_INITDB_ROOT_USERNAME=用户 -e MONGO_INITDB_ROOT_PASSWORD=密码 mongo:latest --config /etc/mongod.conf
@@ -281,7 +281,7 @@ services:
     container_name: redis-alone
     restart: unless-stopped
     network_mode: host
-    command: ["redis-server", "--requirepass", "密码"]
+    command: ["redis-server", "--port", "6379", "--requirepass", "密码"] # command: ["redis-server", "--port", "6379", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes", "--requirepass", "密码", "--masterauth", "密码"] # 任意节点执行docker exec -it redis-node redis-cli --cluster create -a 密码 节点IP:6379 节点IP:6379 节点IP:6379 --cluster-replicas 0
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /home/jb/dev/tool/redis/8.0.1/data:/data
