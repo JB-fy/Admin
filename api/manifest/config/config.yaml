@@ -1,7 +1,6 @@
 dev: true # 是否开发环境
 
-cronServerNetworkIp: "" # 对应的外网IP服务器将开启定时任务（线上必须设置。多服务器时，开启其中一台服务器即可）
-timerServerNetworkIp: "" # 对应的外网IP服务器将开启定时器（线上必须设置。多服务器时，开启其中一台服务器即可）
+masterServerNetworkIp: "" # 主服务器外网IP（线上必须设置。多服务器时，只开启其中一台服务器执行某些任务）
 
 i18n:
   path: "manifest/i18n" # i18n文件的存储目录路径
