@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -73,6 +74,12 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 			return
 		}
 		if isSetVal.Bool() {
+			defer func() {
+				if rec := recover(); rec != nil { //防止panic导致消费者断开
+					err = errors.New(`设置缓存panic错误：` + gconv.String(rec) + `。栈信息：` + string(debug.Stack()))
+					cacheThis.redis.Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
+				}
+			}()
 			value, notExist, err = setFunc()
 			if notExist || err != nil {
 				cacheThis.redis.Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
