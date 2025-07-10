@@ -88,7 +88,7 @@ docker run -d -p 80:80 -v 配置:/etc/nginx/nginx.conf -v 静态文件:/usr/shar
 # mysql
 docker run -d -p 3306:3306 -v 配置:/etc/mysql/my.cnf -v 数据:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 mysql:latest --defaults-file=/etc/mysql/my.cnf
     # 示例：docker run -d --name mysql-alone --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql:9.3.0
-    # 集群示例（使用bitnami/mysql镜像比较简单方便，不用手动写配置文件）：
+    # 集群示例（使用bitnami/mysql镜像比较简单方便，不用手动写配置文件。如果设置主从复制，还是建议手动设置配置文件，修改binlog_expire_logs_seconds清理日志，防止日志太大，导致硬盘满）：
         docker run -d --name mysql-node --network host -v 配置:/opt/bitnami/mysql/conf/my.cnf -v 数据:/bitnami/mysql/data -e MYSQL_PORT_NUMBER=3306 -e MYSQL_ROOT_USER=用户 -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 -e MYSQL_REPLICATION_MODE=master或slave -e MYSQL_REPLICATION_USER=复制用户 -e MYSQL_REPLICATION_PASSWORD=复制密码 -e MYSQL_MASTER_HOST=主库IP（从库设置） -e MYSQL_MASTER_PORT_NUMBER=主库端口（从库设置） -e MYSQL_MASTER_ROOT_USER=主库账号（从库设置） -e MYSQL_MASTER_ROOT_PASSWORD=主库密码（从库设置） bitnami/mysql:9.3.0
         # 宿主机需先创建目录，并赋予写入权限
             mkdir -p /home/jb/dev/tool/mysql/9.3.0/data && chmod -R 777 /home/jb/dev/tool/mysql/9.3.0/data
