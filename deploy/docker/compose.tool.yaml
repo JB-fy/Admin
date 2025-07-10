@@ -48,7 +48,7 @@ services:
     network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      # - /server/tool/mysql/9.3.0/conf/my.cnf:/opt/bitnami/mysql/conf/my.cnf # 自定义配置文件用。主从复制建议设置binlog_expire_logs_seconds（单位：秒）定时清理日志。防止日志过大撑爆硬盘
+      # - /server/tool/mysql/9.3.0/conf/my.cnf:/opt/bitnami/mysql/conf/my.cnf # 自定义配置文件用。主从复制建议设置binlog_expire_logs_seconds（单位：秒）清理日志
       - /server/tool/mysql/9.3.0/data:/bitnami/mysql/data # 宿主机需先创建目录，并赋予写入权限：mkdir -p /server/tool/mysql/9.3.0/data && chmod -R 777 /server/tool/mysql/9.3.0/data
     environment:
       MYSQL_PORT_NUMBER: 3306
