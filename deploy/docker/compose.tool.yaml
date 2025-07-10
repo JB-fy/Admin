@@ -9,7 +9,7 @@
 #       mv /server/app/项目名/deploy/nginx/nginx.conf /server/tool/nginx/1.27.5/config/nginx.conf
 #       mv /server/app/项目名/deploy/nginx/项目名.conf /server/tool/nginx/1.27.5/config/web/项目名.conf
 #     # mysql需要
-#       mkdir -p /server/tool/mysql/9.3.0 && chmod -R 777 /server/tool/mysql/9.3.0
+#       mkdir -p /server/tool/mysql/9.3.0/data && chmod -R 777 /server/tool/mysql/9.3.0/data
 #     # postgresql需要
 #       mkdir -p /server/tool/postgresql/17.5.0 && chmod -R 777 /server/tool/postgresql/17.5.0
 #     # 部署
@@ -48,7 +48,8 @@ services:
     network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /server/tool/mysql/9.3.0:/bitnami/mysql # 宿主机需先创建目录，并赋予写入权限：mkdir -p /server/tool/mysql/9.3.0 && chmod -R 777 /server/tool/mysql/9.3.0
+      # - /server/tool/mysql/9.3.0/conf/my.cnf:/opt/bitnami/mysql/conf/my.cnf # 自定义配置文件用
+      - /server/tool/mysql/9.3.0/data:/bitnami/mysql/data # 宿主机需先创建目录，并赋予写入权限：mkdir -p /server/tool/mysql/9.3.0/data && chmod -R 777 /server/tool/mysql/9.3.0/data
     environment:
       MYSQL_PORT_NUMBER: 3306
       MYSQL_ROOT_USER: 账号
