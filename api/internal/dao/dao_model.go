@@ -125,6 +125,11 @@ func (daoModelThis *DaoModel) cloneModel() *gdb.Model {
 }
 
 /*--------业务可能用到的方法 开始--------*/
+// 获取当前数据库连接
+func (daoModelThis *DaoModel) GetDB() gdb.DB {
+	return daoModelThis.db
+}
+
 // 复制新的daoModel（所有属性重置）。作用：对同一个表做多次操作时，不用再解析分库分表
 func (daoModelThis *DaoModel) CloneNew() *DaoModel {
 	daoModelObj := DaoModel{
