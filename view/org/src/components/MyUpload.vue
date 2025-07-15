@@ -370,7 +370,14 @@ defineExpose({
             upload.action = getHttpBaseUrl() + upload.api.code
         }
         if (Object.keys(data).length > 0) {
-            upload.data = data
+            upload.data = {}
+            Object.entries(data).forEach(([key, value]) => {
+                if (value === undefined || value === null) {
+                    return
+                }
+                //数组，对象等复杂参数直接转json发送
+                upload.data[key] = (Array.isArray(value) || value instanceof Object) ?  jsonEncode(value) : value
+            })
         }
         if (upload.fileList.length == 0) {
             //文件非必填时，直接请求
