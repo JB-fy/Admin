@@ -84,7 +84,11 @@ func (daoThis *configDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				for index, id := range idArr {
 					inStrArr[index] = `('` + gstr.Replace(id, `|`, `', '`) + `')`
 				}
-				m = m.Where(fmt.Sprintf(`(%s, %s) IN (%s)`, daoModel.DbTable+`.`+daoThis.Columns().OrgId, daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, gstr.Join(inStrArr, `, `)))
+				operator := `IN`
+				if len(inStrArr) == 1 {
+					operator = `=`
+				}
+				m = m.Where(fmt.Sprintf(`(%s, %s) %s (%s)`, daoModel.DbTable+`.`+daoThis.Columns().OrgId, daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, operator, gstr.Join(inStrArr, `, `)))
 			case `exc_id`, `exc_id_arr`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
@@ -94,7 +98,11 @@ func (daoThis *configDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				for index, id := range idArr {
 					inStrArr[index] = `('` + gstr.Replace(id, `|`, `', '`) + `')`
 				}
-				m = m.Where(fmt.Sprintf(`(%s, %s) NOT IN (%s)`, daoModel.DbTable+`.`+daoThis.Columns().OrgId, daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, gstr.Join(inStrArr, `, `)))
+				operator := `NOT IN`
+				if len(inStrArr) == 1 {
+					operator = `!=`
+				}
+				m = m.Where(fmt.Sprintf(`(%s, %s) %s (%s)`, daoModel.DbTable+`.`+daoThis.Columns().OrgId, daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, operator, gstr.Join(inStrArr, `, `)))
 			case `label`:
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().ConfigKey, `%`+gconv.String(v)+`%`)
 			case `time_range_start`:

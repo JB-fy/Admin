@@ -397,7 +397,11 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				for index, id := range idArr {
 					inStrArr[index] = `+"`('`+gstr.Replace(id, `"+concatStr+"`, `', '`)+`')`"+`
 				}
-				m = m.Where(fmt.Sprintf(`+"`(%s, %s) IN (%s)`, "+gstr.Join(idArrStrArr, `, `)+", gstr.Join(inStrArr, `, `)))")
+				operator := `+"`IN`"+`
+				if len(inStrArr) == 1 {
+					operator = `+"`=`"+`
+				}
+				m = m.Where(fmt.Sprintf(`+"`(%s, %s) %s (%s)`, "+gstr.Join(idArrStrArr, `, `)+", operator, gstr.Join(inStrArr, `, `)))")
 		dao.filterParse = append(dao.filterParse, `case `+"`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)+"`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)+"`"+`:
 				idArr := []string{gconv.String(v)}
 				if gvar.New(v).IsSlice() {
@@ -407,7 +411,11 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 				for index, id := range idArr {
 					inStrArr[index] = `+"`('`+gstr.Replace(id, `"+concatStr+"`, `', '`)+`')`"+`
 				}
-				m = m.Where(fmt.Sprintf(`+"`(%s, %s) NOT IN (%s)`, "+gstr.Join(idArrStrArr, `, `)+", gstr.Join(inStrArr, `, `)))")
+				operator := `+"`NOT IN`"+`
+				if len(inStrArr) == 1 {
+					operator = `+"`!=`"+`
+				}
+				m = m.Where(fmt.Sprintf(`+"`(%s, %s) %s (%s)`, "+gstr.Join(idArrStrArr, `, `)+", operator, gstr.Join(inStrArr, `, `)))")
 		dao.groupParse = append(dao.groupParse, `case `+"`id`"+`:
 				m = m.Group(`+gstr.Join(idArrStrArr, `, `)+`)`)
 		dao.orderParse = append(dao.orderParse, `case `+"`id`"+`:
