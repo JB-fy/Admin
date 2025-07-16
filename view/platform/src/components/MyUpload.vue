@@ -376,7 +376,7 @@ defineExpose({
                     return
                 }
                 //数组，对象等复杂参数直接转json发送
-                upload.data[key] = (Array.isArray(value) || value instanceof Object) ?  jsonEncode(value) : value
+                upload.data[key] = Array.isArray(value) || value instanceof Object ? jsonEncode(value) : value
             })
         }
         if (upload.fileList.length == 0) {
