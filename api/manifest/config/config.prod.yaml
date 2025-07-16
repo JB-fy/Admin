@@ -70,7 +70,7 @@ database:
       charset: "utf8mb4"
       timezone: "Local"
       maxIdle: "10" # 连接池最大闲置的连接数
-      maxOpen: "50" # 连接池最大打开的连接数
+      maxOpen: "100" # 连接池最大打开的连接数
       maxLifetime: "30s" # 连接对象可重复使用的时间长度
       # debug: true # 开启调试模式。默认为false
       # dryRun: false # ORM空跑(只读不写)
