@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	GetOrSet = getOrSet{redis: g.Redis(), goCache: cache.New(0, 0)}
+	GetOrSet = getOrSet{redis: g.Redis(), goCache: cache.New(0, consts.CACHE_LOCAL_INTERVAL_MINUTE*time.Minute)}
 )
 
 type getOrSet struct {
