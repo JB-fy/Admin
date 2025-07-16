@@ -45,7 +45,10 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	muTmp, _ := cacheThis.muMap.LoadOrStore(key, &sync.Mutex{})
 	mu := muTmp.(*sync.Mutex)
 	mu.Lock()
-	defer mu.Unlock()
+	defer func() {
+		mu.Unlock()
+		cacheThis.muMap.Delete(key)
+	}()
 	isSetKey := cacheThis.key(key)
 	if _, isSetOfLocal := cacheThis.goCache.Get(isSetKey); isSetOfLocal { //当有协程（一般是第一个上锁成功的协程）执行setFunc设置缓存 或 发现缓存已存在 后，后续协程即可直接执行getFunc获取缓存
 		value, notExist, err = getFunc()

@@ -23,7 +23,10 @@ func (cacheThis *getOrSetLocal) GetOrSetLocal(ctx context.Context, key string, s
 	muTmp, _ := cacheThis.muMap.LoadOrStore(key, &sync.Mutex{})
 	mu := muTmp.(*sync.Mutex)
 	mu.Lock()
-	defer mu.Unlock()
+	defer func() {
+		mu.Unlock()
+		cacheThis.muMap.Delete(key)
+	}()
 	value, notExist, err = getFunc() // 再读一次（加锁），防止重复初始化
 	if !notExist || err != nil {
 		return
