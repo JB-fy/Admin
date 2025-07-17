@@ -12,8 +12,21 @@
 #       mkdir -p /server/tool/mysql/9.3.0/data && chmod -R 777 /server/tool/mysql/9.3.0/data
 #     # postgresql需要
 #       mkdir -p /server/tool/postgresql/17.5.0 && chmod -R 777 /server/tool/postgresql/17.5.0
+#     # scylladb需要（注意：数据中心名称 和 物理机标识）
+#       mkdir -p /server/tool/scylladb/6.2.3/data /server/tool/scylladb/6.2.3/conf
+#       chmod -R 777 /server/tool/scylladb/6.2.3/data
+#       echo -e "dc=DC_Xx\nrack=Xx_1" > /server/tool/scylladb/6.2.3/conf/cassandra-rackdc.properties
+#     # kafka需要
+#       mkdir -p /server/tool/kafka/4.0.0 && chmod -R 777 /server/tool/kafka/4.0.0
+#       vi /etc/hosts追加: 服务器IP 主机名(hostname查看)
 #     # 部署
 #       docker compose -f /server/app/项目名/deploy/docker/compose.tool.yaml up -d
+#     # redis任意容器执行以下命令
+#       docker exec -it redis-node redis-cli --cluster create -a 密码 服务器IP:6379 服务器IP:6379 服务器IP:6379 --cluster-replicas 0
+#     # 修改scylladb默认密码
+#       docker exec -it scylladb-node bash
+#       cqlsh -u cassandra -p cassandra
+#       ALTER USER 'cassandra' WITH PASSWORD '密码';
 
 services:
   nginx-alone:
@@ -27,19 +40,19 @@ services:
       - /server/tool/nginx/1.27.5/config/web:/etc/nginx/web
       - /server/app:/server/app
 
-#   mysql-alone:
-#     image: mysql:9.3.0
-#     container_name: mysql-alone
-#     restart: unless-stopped
-#     network_mode: host
-#     volumes:
-#       - /etc/localtime:/etc/localtime:ro
-#       - /server/tool/mysql/9.3.0/data:/var/lib/mysql
-#     environment:
-#       MYSQL_ROOT_PASSWORD: 密码
-#       MYSQL_DATABASE: 库名
-#       MYSQL_USER: 账号
-#       MYSQL_PASSWORD: 密码
+  # mysql-alone:
+  #   image: mysql:9.3.0
+  #   container_name: mysql-alone
+  #   restart: unless-stopped
+  #   network_mode: host
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /server/tool/mysql/9.3.0/data:/var/lib/mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 密码
+  #     MYSQL_DATABASE: 库名
+  #     MYSQL_USER: 账号
+  #     MYSQL_PASSWORD: 密码
 
   mysql-node:
     image: bitnami/mysql:9.3.0
@@ -65,18 +78,18 @@ services:
       MYSQL_MASTER_ROOT_USER: 主库账号（从库设置）
       MYSQL_MASTER_ROOT_PASSWORD: 主库密码（从库设置）
 
-#   postgresql-alone:
-#     image: postgres:17.4
-#     container_name: postgresql-alone
-#     restart: unless-stopped
-#     network_mode: host
-#     volumes:
-#       - /etc/localtime:/etc/localtime:ro
-#       - /server/tool/postgresql/17.4/data:/var/lib/postgresql/data
-#     environment:
-#       POSTGRES_USER: 账号
-#       POSTGRES_PASSWORD: 密码
-#       MYSQL_DATABASE: 库名
+  # postgresql-alone:
+  #   image: postgres:17.4
+  #   container_name: postgresql-alone
+  #   restart: unless-stopped
+  #   network_mode: host
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /server/tool/postgresql/17.4/data:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_USER: 账号
+  #     POSTGRES_PASSWORD: 密码
+  #     MYSQL_DATABASE: 库名
 
   postgresql-node:
     image: bitnami/postgresql:17.5.0
@@ -108,3 +121,52 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /server/tool/redis/8.0.1/data:/data
+
+  # scylladb-node:
+  #   image: bitnami/scylladb:6.2.3
+  #   container_name: scylladb-node
+  #   restart: unless-stopped
+  #   network_mode: host
+  #   ulimits:
+  #     memlock: -1
+  #     nofile:
+  #       soft: 100000
+  #       hard: 100000
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /server/tool/scylladb/6.2.3/conf:/conf # 宿主机需先创建配置目录：mkdir -p /server/tool/scylladb/6.2.3/conf
+  #     - /server/tool/scylladb/6.2.3/data:/bitnami/scylladb/data # 宿主机需先创建数据目录，并赋予写入权限：mkdir -p /server/tool/scylladb/6.2.3/data && chmod -R 777 /server/tool/scylladb/6.2.3/data
+  #   environment:
+  #     # SCYLLADB_CQL_PORT_NUMBER: 9042
+  #     SCYLLADB_CLUSTER_NAME: 集群名称
+  #     SCYLLADB_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+  #     SCYLLADB_SEEDS: 服务器IP,服务器IP,服务器IP # 注意修改。集群第一个主节点启动时只能设置自身IP
+  #     SCYLLADB_HOST: 服务器IP # 注意修改
+
+  # kafka-node:
+  #   image: bitnami/kafka:4.0.0
+  #   container_name: kafka-node
+  #   restart: unless-stopped
+  #   network_mode: host
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /server/tool/kafka/4.0.0:/bitnami/kafka # 宿主机需先创建数据目录，并赋予写入权限：mkdir -p /server/tool/kafka/4.0.0 && chmod -R 777 /server/tool/kafka/4.0.0
+  #   environment:
+  #     KAFKA_CLUSTER_ID: 集群标识
+  #     KAFKA_CFG_NODE_ID: 1 # 注意修改
+  #     KAFKA_CFG_PROCESS_ROLES: controller,broker
+  #     KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@服务器IP:9093,2@服务器IP:9093,3@服务器IP:9093 # 注意修改
+  #     KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:SASL_PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT
+  #     KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+  #     KAFKA_CFG_INTER_BROKER_LISTENER_NAME: SASL_PLAINTEXT
+  #     KAFKA_CLIENT_LISTENER_NAME: SASL_PLAINTEXT
+  #     KAFKA_CFG_LISTENERS: CONTROLLER://:9093,SASL_PLAINTEXT://:9092,EXTERNAL://:30003
+  #     KAFKA_CFG_ADVERTISED_LISTENERS: SASL_PLAINTEXT://服务器IP:9092,EXTERNAL://服务器IP(增加额外端口时使用):30003 # 注意修改
+  #     KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL: PLAIN
+  #     KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+  #     KAFKA_INTER_BROKER_USER: 账号_broker
+  #     KAFKA_INTER_BROKER_PASSWORD: 密码
+  #     KAFKA_CONTROLLER_USER: 账号_controller
+  #     KAFKA_CONTROLLER_PASSWORD: 密码
+  #     KAFKA_CLIENT_USERS: 账号
+  #     KAFKA_CLIENT_PASSWORDS: 密码
