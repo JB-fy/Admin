@@ -142,6 +142,7 @@ services:
   #     - /server/tool/scylladb/6.2.3/conf:/conf # 宿主机需先创建配置目录：mkdir -p /server/tool/scylladb/6.2.3/conf
   #     - /server/tool/scylladb/6.2.3/data:/bitnami/scylladb/data # 宿主机需先创建数据目录，并赋予写入权限：mkdir -p /server/tool/scylladb/6.2.3/data && chmod -R 777 /server/tool/scylladb/6.2.3/data
   #   environment:
+  #     # SCYLLADB_DEVELOPER_MODE: "no"
   #     # SCYLLADB_CQL_PORT_NUMBER: 9042
   #     SCYLLADB_CLUSTER_NAME: 集群名称
   #     SCYLLADB_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
