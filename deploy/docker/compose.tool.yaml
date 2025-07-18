@@ -136,7 +136,7 @@ services:
   #     nofile:
   #       soft: 100000
   #       hard: 100000
-  #   command: ["--memory=6G", "--reserve-memory=1G", "--smp", "4"]
+  #   command: ["/opt/bitnami/scripts/scylladb/run.sh", "--memory=6G", "--reserve-memory=1G", "--smp", "4"]
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
   #     - /server/tool/scylladb/6.2.3/conf:/conf # 宿主机需先创建配置目录：mkdir -p /server/tool/scylladb/6.2.3/conf
