@@ -285,4 +285,63 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /home/jb/dev/tool/redis/8.0.1/data:/data
+
+  scylladb-node:
+    image: bitnami/scylladb:6.2.3
+    container_name: scylladb-node
+    restart: unless-stopped
+    network_mode: host
+    deploy:
+      resources:
+        limits:
+          memory: 8g
+    ulimits:
+      memlock: -1
+      nofile:
+        soft: 100000
+        hard: 100000
+    # command: ["/opt/bitnami/scripts/scylladb/run.sh", "--memory=6G", "--reserve-memory=1G", "--smp", "4"]
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /server/tool/scylladb/6.2.3/conf:/conf # 宿主机需先创建配置目录：mkdir -p /server/tool/scylladb/6.2.3/conf && echo -e "dc=DC_Xx\nrack=Xx_1" > /server/tool/scylladb/6.2.3/conf/cassandra-rackdc.properties
+      - /server/tool/scylladb/6.2.3/data:/bitnami/scylladb/data # 宿主机需先创建数据目录，并赋予写入权限：mkdir -p /server/tool/scylladb/6.2.3/data && chmod -R 777 /server/tool/scylladb/6.2.3/data
+    environment:
+      # SCYLLADB_DEVELOPER_MODE: "no"
+      # SCYLLADB_CQL_PORT_NUMBER: 9042
+      SCYLLADB_CLUSTER_NAME: 集群名称
+      SCYLLADB_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      SCYLLADB_SEEDS: 服务器IP,服务器IP,服务器IP # 注意修改。集群第一个主节点启动时只能设置自身IP
+      SCYLLADB_HOST: 服务器IP # 注意修改
+    # 启动成功后修改数据库密码
+    # docker exec -it scylladb-node bash
+    # cqlsh -u cassandra -p cassandra
+    # ALTER USER 'cassandra' WITH PASSWORD '密码';
+
+  kafka-node: # 云服务器可能需要执行：vi /etc/hosts追加: 服务器IP 主机名(hostname查看)
+    image: bitnami/kafka:4.0.0
+    container_name: kafka-node
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /server/tool/kafka/4.0.0:/bitnami/kafka # 宿主机需先创建数据目录，并赋予写入权限：mkdir -p /server/tool/kafka/4.0.0 && chmod -R 777 /server/tool/kafka/4.0.0
+    environment:
+      KAFKA_CLUSTER_ID: 集群标识
+      KAFKA_CFG_NODE_ID: 1 # 注意修改
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@服务器IP:9093,2@服务器IP:9093,3@服务器IP:9093 # 注意修改
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:SASL_PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: SASL_PLAINTEXT
+      KAFKA_CLIENT_LISTENER_NAME: SASL_PLAINTEXT
+      KAFKA_CFG_LISTENERS: CONTROLLER://:9093,SASL_PLAINTEXT://:9092,EXTERNAL://:30003
+      KAFKA_CFG_ADVERTISED_LISTENERS: SASL_PLAINTEXT://服务器IP:9092,EXTERNAL://服务器IP(增加额外端口时使用):30003 # 注意修改
+      KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL: PLAIN
+      KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_INTER_BROKER_USER: 账号_broker
+      KAFKA_INTER_BROKER_PASSWORD: 密码
+      KAFKA_CONTROLLER_USER: 账号_controller
+      KAFKA_CONTROLLER_PASSWORD: 密码
+      KAFKA_CLIENT_USERS: 账号
+      KAFKA_CLIENT_PASSWORDS: 密码
 /**----------------compose.yaml示例 结束----------------**/

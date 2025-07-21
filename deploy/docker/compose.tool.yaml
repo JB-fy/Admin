@@ -139,7 +139,7 @@ services:
   #   # command: ["/opt/bitnami/scripts/scylladb/run.sh", "--memory=6G", "--reserve-memory=1G", "--smp", "4"]
   #   volumes:
   #     - /etc/localtime:/etc/localtime:ro
-  #     - /server/tool/scylladb/6.2.3/conf:/conf # 宿主机需先创建配置目录：mkdir -p /server/tool/scylladb/6.2.3/conf
+  #     - /server/tool/scylladb/6.2.3/conf:/conf # 宿主机需先创建配置目录：mkdir -p /server/tool/scylladb/6.2.3/conf && echo -e "dc=DC_Xx\nrack=Xx_1" > /server/tool/scylladb/6.2.3/conf/cassandra-rackdc.properties
   #     - /server/tool/scylladb/6.2.3/data:/bitnami/scylladb/data # 宿主机需先创建数据目录，并赋予写入权限：mkdir -p /server/tool/scylladb/6.2.3/data && chmod -R 777 /server/tool/scylladb/6.2.3/data
   #   environment:
   #     # SCYLLADB_DEVELOPER_MODE: "no"
@@ -148,8 +148,12 @@ services:
   #     SCYLLADB_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
   #     SCYLLADB_SEEDS: 服务器IP,服务器IP,服务器IP # 注意修改。集群第一个主节点启动时只能设置自身IP
   #     SCYLLADB_HOST: 服务器IP # 注意修改
+  #   # 启动成功后修改数据库密码
+  #   # docker exec -it scylladb-node bash
+  #   # cqlsh -u cassandra -p cassandra
+  #   # ALTER USER 'cassandra' WITH PASSWORD '密码';
 
-  # kafka-node:
+  # kafka-node: # 云服务器可能需要执行：vi /etc/hosts追加: 服务器IP 主机名(hostname查看)
   #   image: bitnami/kafka:4.0.0
   #   container_name: kafka-node
   #   restart: unless-stopped
