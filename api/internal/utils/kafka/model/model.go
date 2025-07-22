@@ -60,6 +60,7 @@ func CreateConsumerConfig(config *Config, consumerInfo *ConsumerInfo) (saramaCon
 
 func createSaramaConfig(config *Config) (saramaConfig *sarama.Config) {
 	saramaConfig = sarama.NewConfig()
+	// saramaConfig.Version = sarama.V4_0_0_0
 	if config.UserName != `` && config.Password != `` {
 		saramaConfig.Net.SASL.Enable = true
 		saramaConfig.Net.SASL.User = config.UserName
