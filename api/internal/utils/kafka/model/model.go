@@ -1,6 +1,8 @@
 package model
 
 import (
+	"time"
+
 	"github.com/IBM/sarama"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/xdg-go/scram"
@@ -52,6 +54,8 @@ func CreateProducerConfig(config *Config) (saramaConfig *sarama.Config) {
 func CreateConsumerConfig(config *Config, consumerInfo *ConsumerInfo) (saramaConfig *sarama.Config) {
 	saramaConfig = createSaramaConfig(config)
 	saramaConfig.Consumer.Return.Errors = true
+	saramaConfig.Consumer.Group.Session.Timeout = 30 * time.Second
+	saramaConfig.Consumer.Group.Heartbeat.Interval = 5 * time.Second
 	if consumerInfo.AutoCommit != nil {
 		saramaConfig.Consumer.Offsets.AutoCommit.Enable = *consumerInfo.AutoCommit
 	}
