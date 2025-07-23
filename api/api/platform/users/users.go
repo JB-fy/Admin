@@ -59,7 +59,7 @@ type UsersListReq struct {
 	g.Meta `path:"/users/list" method:"post" tags:"平台后台/用户管理/用户" sm:"列表"`
 	Filter UsersFilter `json:"filter" dc:"过滤条件"`
 	Field  []string    `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string      `json:"sort" default:"created_at DESC" dc:"排序"`
+	Sort   string      `json:"sort" default:"id DESC" dc:"排序"`
 	Page   int         `json:"page" v:"min:1" default:"1" dc:"页码"`
 	Limit  int         `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
