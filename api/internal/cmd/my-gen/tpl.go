@@ -266,7 +266,6 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			fieldTmp.FieldTypeName = internal.TypeNameUpdated
 		} else if slices.Contains(internal.ConfigFieldNameArrCreated, fieldTmp.FieldCaseCamel) {
 			fieldTmp.FieldTypeName = internal.TypeNameCreated
-			tpl.Handle.DefSort.Field = fieldTmp.FieldRaw
 		} else if slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}, fieldTmp.FieldType) && fieldTmp.FieldRaw == `pid` { //pid，且与主键类型相同时（才）有效
 			fieldTmp.FieldTypeName = internal.TypeNamePid
 		} else if slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeText}, fieldTmp.FieldType) && slices.Contains([]string{`IdPath`, `NamePath`}, fieldTmp.FieldCaseCamel) { //id_path|idPath，且pid同时存在时（才）有效	//name_path|namePath，且pid，id_path|idPath同时存在时（才）有效
@@ -587,6 +586,24 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				tpl.Handle.LabelList = append(tpl.Handle.LabelList, idAndLabelfieldList[1].FieldRaw)
 			} else {
 				tpl.Handle.LabelList = append(tpl.Handle.LabelList, fieldList[1].FieldRaw)
+			}
+		}
+	}
+
+	// 非自增主键，且存在创建时间字段时，按创建时间排序
+	isAutoIncPrimary := false
+	if tpl.Handle.Id.IsPrimary {
+		for _, v := range tpl.Handle.Id.List {
+			if isAutoIncPrimary = v.IsAutoInc; isAutoIncPrimary {
+				break
+			}
+		}
+	}
+	if !isAutoIncPrimary {
+		for _, item := range fieldList {
+			if item.FieldTypeName == internal.TypeNameCreated {
+				tpl.Handle.DefSort.Field = item.FieldRaw
+				break
 			}
 		}
 	}
