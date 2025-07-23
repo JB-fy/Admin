@@ -121,9 +121,9 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 // 删除时需同时删除redis竞争锁。建议：调用GetOrSet方法的缓存删除时也使用该方法。在缓存-删除-重设缓存三个步骤连续执行时，在第三步重设缓存会因redis竞争锁未删除报错：尝试多次查询缓存失败
 func (cacheThis *getOrSet) Del(ctx context.Context, keyArr ...string) {
 	isSetKeyArr := make([]string, len(keyArr))
-	cacheThis.redis.Del(ctx, isSetKeyArr...)
 	for index := range keyArr {
 		isSetKeyArr[index] = cacheThis.key(keyArr[index])
 		cacheThis.goCache.Delete(isSetKeyArr[index])
 	}
+	cacheThis.redis.Del(ctx, isSetKeyArr...)
 }
