@@ -265,7 +265,7 @@ const table = reactive({
     ] as any,
     data: [],
     loading: false,
-    sort: { key: 'created_at', order: 'desc' } as any,
+    sort: { key: 'id', order: 'desc' } as any,
     handleSort: (sort: any) => {
         table.sort.key = sort.key
         table.sort.order = sort.order
