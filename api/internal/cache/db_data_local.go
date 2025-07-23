@@ -112,6 +112,16 @@ func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoMod
 	return
 }
 
+func (cacheThis *dbDataLocal) del(ctx context.Context, daoModel *dao.DaoModel, method string, code any) {
+	cacheThis.cache(daoModel).Delete(cacheThis.key(daoModel, method, code))
+}
+
+func (cacheThis *dbDataLocal) delById(ctx context.Context, daoModel *dao.DaoModel, method string, idArr []any) {
+	for index := range idArr {
+		cacheThis.cache(daoModel).Delete(cacheThis.key(daoModel, method, idArr[index]))
+	}
+}
+
 func (cacheThis *dbDataLocal) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value *gvar.Var, ttl time.Duration, err error)) (value *gvar.Var, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
@@ -164,6 +174,30 @@ func (cacheThis *dbDataLocal) GetOrSetList(ctx context.Context, daoModel *dao.Da
 	})
 	value, _ = valueTmp.(gdb.Result)
 	return
+}
+
+func (cacheThis *dbDataLocal) Del(ctx context.Context, daoModel *dao.DaoModel, code any) {
+	cacheThis.del(ctx, daoModel, cacheThis.methodCode, code)
+}
+
+func (cacheThis *dbDataLocal) DelArr(ctx context.Context, daoModel *dao.DaoModel, code any) {
+	cacheThis.del(ctx, daoModel, cacheThis.methodCodeOfArr, code)
+}
+
+func (cacheThis *dbDataLocal) DelSet(ctx context.Context, daoModel *dao.DaoModel, code any) {
+	cacheThis.del(ctx, daoModel, cacheThis.methodCodeOfSet, code)
+}
+
+func (cacheThis *dbDataLocal) DelPluck(ctx context.Context, daoModel *dao.DaoModel, code any) {
+	cacheThis.del(ctx, daoModel, cacheThis.methodCodeOfPluck, code)
+}
+
+func (cacheThis *dbDataLocal) DelInfo(ctx context.Context, daoModel *dao.DaoModel, code any) {
+	cacheThis.del(ctx, daoModel, cacheThis.methodCodeOfInfo, code)
+}
+
+func (cacheThis *dbDataLocal) DelList(ctx context.Context, daoModel *dao.DaoModel, code any) {
+	cacheThis.del(ctx, daoModel, cacheThis.methodCodeOfList, code)
 }
 
 func (cacheThis *dbDataLocal) GetOrSetById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, field string) (value *gvar.Var, err error) {
@@ -225,4 +259,12 @@ func (cacheThis *dbDataLocal) GetOrSetListById(ctx context.Context, daoModel *da
 		value = append(value, valueTmp.(gdb.Record))
 	}
 	return
+}
+
+func (cacheThis *dbDataLocal) DelById(ctx context.Context, daoModel *dao.DaoModel, idArr ...any) {
+	cacheThis.delById(ctx, daoModel, cacheThis.methodCode, idArr)
+}
+
+func (cacheThis *dbDataLocal) DelInfoById(ctx context.Context, daoModel *dao.DaoModel, idArr ...any) {
+	cacheThis.delById(ctx, daoModel, cacheThis.methodCodeOfInfo, idArr)
 }
