@@ -13,7 +13,7 @@ import (
 
 func InitRouterApp(ctx context.Context, s *ghttp.Server) {
 	s.Group(`/app`, func(group *ghttp.RouterGroup) {
-		group.Middleware(middleware.Scene)
+		group.Middleware(middleware.Scene())
 
 		// 无需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
