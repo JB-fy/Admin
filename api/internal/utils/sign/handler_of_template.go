@@ -45,7 +45,7 @@ func (handlerThis *HandlerOfTemplate) Create(data map[string]any) (sign string) 
 }
 
 func (handlerThis *HandlerOfTemplate) Verify(r *ghttp.Request) (err error) {
-	if diffSec := gtime.Now().Sub(r.Get(`ts`).GTime()).Seconds(); diffSec < -5 || diffSec > 30 { //误差超过多少秒会报错
+	if diffSec := time.Since(r.Get(`ts`).Time()).Seconds(); diffSec < -10 || diffSec > 10 { //误差超过多少秒会报错
 		err = errors.New(`时间戳失效`)
 		return
 	}
