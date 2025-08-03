@@ -76,7 +76,7 @@ type AdminInfoRes struct {
 /*--------新增 开始--------*/
 type AdminCreateReq struct {
 	g.Meta   `path:"/admin/create" method:"post" tags:"平台后台/权限管理/机构管理员" sm:"新增"`
-	OrgId    *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
+	OrgId    *uint   `json:"org_id,omitempty" v:"required|between:1,4294967295" dc:"机构ID"`
 	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Phone    *string `json:"phone,omitempty" v:"required-without-all:Email,Account|max-length:20|phone" dc:"手机"`
