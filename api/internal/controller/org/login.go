@@ -192,7 +192,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		if err != nil {
 			return
 		}
-		orgId, err := daoOrg.Org.CtxDaoModel(ctx).Data(g.Map{daoOrg.Org.Columns().OrgName: data[daoOrg.Admin.Columns().Nickname]}).InsertAndGetId() //创建机构
+		orgId, err := daoOrg.Org.CtxDaoModel(ctx).HookInsert(g.Map{daoOrg.Org.Columns().OrgName: data[daoOrg.Admin.Columns().Nickname]}).InsertAndGetId() //创建机构
 		if err != nil {
 			return
 		}
