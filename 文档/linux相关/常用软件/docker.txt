@@ -39,13 +39,11 @@ docker info
 # 查看当前镜像
 docker images
 # 打包镜像
-docker build -t 镜像名:版本 Dockerfile文件所在目录
+docker build -t 镜像名:版本 -f Dockerfile文件路径 构建上下文路径
 # 保存镜像
 docker save -o 文件名.tar 镜像名:版本
 # 加载镜像
 docker load -i 文件名.tar
-# 打包镜像
-docker build -t 镜像名:版本 Dockerfile文件所在目录
 # 拉取
 docker pull 镜像名:版本
 # 修改版本
