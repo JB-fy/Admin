@@ -7,22 +7,48 @@ variables:
   REMOTE_DIR: /server/app/$APP_NAME
 
 stages:
-  - vue
+  - vue-platform
+  - vue-org
   - go
   - docker
 
-buildVue:
-  stage: vue
+
+buildVuePlatform:
+  stage: vue-platform
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
       changes:
-        - view/**/*
+        - view/platform/**/*
       when: on_success
   image: node:22.15.1
   cache:
-    key: $APP_NAME-vue
+    key: $APP_NAME-vue-platform
     paths:
       - ./view/platform/node_modules
+  before_script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh-keyscan -H $REMOTE_SERVER >> ~/.ssh/known_hosts; done
+    - chmod 644 ~/.ssh/known_hosts
+    # - npm config set registry=https://registry.npm.taobao.org/  # 更改镜像源
+  script:
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "rm -rf $REMOTE_DIR/public/admin/platform && mkdir -p $REMOTE_DIR/public/admin/platform"; done  # 注意：非root用户连接ssh，使用mkdir会报无权限，增加sudo执行则需输入密码。故必须手动执行
+    - (cd ./view/platform && npm install && npm run build-only)
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp -r ./public/admin/platform $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin; done
+
+buildVueOrg:
+  stage: vue-org
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      changes:
+        - view/org/**/*
+      when: on_success
+  image: node:22.15.1
+  cache:
+    key: $APP_NAME-vue-org
+    paths:
       - ./view/org/node_modules
   before_script:
     - mkdir -p ~/.ssh
@@ -33,10 +59,9 @@ buildVue:
     - chmod 644 ~/.ssh/known_hosts
     # - npm config set registry=https://registry.npm.taobao.org/  # 更改镜像源
   script:
-    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "rm -rf $REMOTE_DIR/public/admin && mkdir -p $REMOTE_DIR/public/admin"; done # 注意：非root用户连接ssh，使用mkdir会报无权限，增加sudo执行则需输入密码。故必须手动执行
-    - (cd ./view/platform && npm install && npm run build-only)
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do ssh $REMOTE_USER@$REMOTE_SERVER "rm -rf $REMOTE_DIR/public/admin/org && mkdir -p $REMOTE_DIR/public/admin/org"; done  # 注意：非root用户连接ssh，使用mkdir会报无权限，增加sudo执行则需输入密码。故必须手动执行
     - (cd ./view/org && npm install && npm run build-only)
-    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp -r ./public/admin $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public; done
+    - for REMOTE_SERVER in $REMOTE_SERVER_ARR; do scp -r ./public/admin/org $REMOTE_USER@$REMOTE_SERVER:$REMOTE_DIR/public/admin; done
 
 buildGo:
   stage: go
