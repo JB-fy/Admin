@@ -1,7 +1,7 @@
 FROM alpine:3.21.3
 ###############################################################################
 # 构建镜像（项目根目录执行）
-    # 生成并打包镜像：docker build -t 项目名:版本 -f /server/app/项目名/deploy/docker/Dockerfile  . && docker save -o 项目名.tar 项目名:版本
+    # 生成并打包镜像：docker build -t 项目名:版本 -f /server/app/项目名/deploy/docker/Dockerfile . && docker save -o 项目名.tar 项目名:版本
     # 上传镜像解压：docker load -i 项目名.tar
 
 # 宿主机需执行以下命令
