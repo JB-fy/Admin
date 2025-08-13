@@ -116,7 +116,7 @@ docker run -d -p 6379:6379 -v 配置:/usr/local/etc/redis/redis.conf -v 数据:/
 # 示例：docker run -d --name redis-alone --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1
 # 集群示例：
     # 使用以下命令启动多个节点
-        docker run -d --name redis-node --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1 redis-server --protected-mode no --bind 0.0.0.0 --port 6379 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-announce-ip 外网IP（集群需对外时才设置） --cluster-node-timeout 5000 --appendonly yes --requirepass 密码 --masterauth 密码
+        docker run -d --name redis-node --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1 redis-server --protected-mode no --bind 0.0.0.0 --port 6379 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-announce-ip 外网IP（集群需对外时才设置） cluster-announce-port 6379 cluster-announce-bus-port 节点间通讯端口（默认16379） --cluster-node-timeout 5000 --appendonly yes --requirepass 密码 --masterauth 密码
     # 任意容器执行以下命令启动集群
         docker exec -it redis-node redis-cli --cluster create -a 密码 节点IP:6379 节点IP:6379 节点IP:6379 --cluster-replicas 0
 
