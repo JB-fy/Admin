@@ -4,8 +4,6 @@ import (
 	"api/internal/utils/kafka/model"
 	"context"
 	"fmt"
-	"syscall"
-	"time"
 
 	"github.com/IBM/sarama"
 	"github.com/gogf/gf/v2/frame/g"
@@ -53,8 +51,8 @@ func InitConsumerGroup(ctx context.Context, saramaConfig *sarama.Config, config 
 	go func() {
 		if err := consumer.Consume(ctx, consumerInfo.TopicArr, consumerGroupHandler); err != nil {
 			g.Log(`kafka`).Error(ctx, fmt.Sprintf(`消费者(分组:%s，组ID:%s，主题:%s)创建失败`, config.Group, consumerInfo.GroupId, gconv.String(consumerInfo.TopicArr)), err)
-			time.Sleep(3 * time.Second)
-			syscall.Kill(syscall.Getpid(), syscall.SIGTERM) //消费者组启动失败时，直接关闭进程，触发服务重启
+			// time.Sleep(3 * time.Second)
+			// syscall.Kill(syscall.Getpid(), syscall.SIGTERM) //消费者组启动失败时，直接关闭进程，触发服务重启
 			return
 		}
 	}()
