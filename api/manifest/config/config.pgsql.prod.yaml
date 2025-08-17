@@ -108,7 +108,7 @@ redis:
 #     topicList:  # 主题列表。没有时会自动创建
 #       - name: "" # 主题名称
 #         partNum: 4 # 分区数量
-#         replNum: 2 # 副本数量
+#         replNum: 1 # 副本数量
 #     # producerType: "sync" # 生产者类型：sync同步 async异步。默认为async
 #     consumerList: # 消费者列表。在api/internal/utils/kafka/consumer目录下根据 groupId 或 topicArr[0] 实现处理器，并设置到 handlerMapOfGroupId 或 handlerMapOfGroupId 全局变量中
 #       - groupId: "" # 分组ID
