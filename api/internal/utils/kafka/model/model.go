@@ -54,8 +54,9 @@ func CreateProducerConfig(config *Config) (saramaConfig *sarama.Config) {
 func CreateConsumerConfig(config *Config, consumerInfo *ConsumerInfo) (saramaConfig *sarama.Config) {
 	saramaConfig = createSaramaConfig(config)
 	saramaConfig.Consumer.Return.Errors = true
-	saramaConfig.Consumer.Group.Rebalance.GroupStrategies = []sarama.BalanceStrategy{sarama.NewBalanceStrategySticky(), sarama.NewBalanceStrategyRoundRobin(), sarama.NewBalanceStrategyRange()}
+	saramaConfig.Consumer.Group.Rebalance.GroupStrategies = []sarama.BalanceStrategy{sarama.NewBalanceStrategySticky() /* , sarama.NewBalanceStrategyRoundRobin(), sarama.NewBalanceStrategyRange() */}
 	saramaConfig.Consumer.Group.Rebalance.Retry.Backoff = 5 * time.Second
+	// saramaConfig.Consumer.Group.Rebalance.Timeout = 60 * time.Second
 	saramaConfig.Consumer.Group.Session.Timeout = 30 * time.Second
 	saramaConfig.Consumer.Group.Heartbeat.Interval = 5 * time.Second
 	// saramaConfig.Consumer.MaxWaitTime = 250 * time.Millisecond       // 多久拉取一次消息
