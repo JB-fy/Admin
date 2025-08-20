@@ -1,23 +1,16 @@
 package initialize
 
 import (
-	"api/internal/consts"
-	"api/internal/utils"
 	"api/internal/utils/cql"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/genv"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
 func initCqlDb(ctx context.Context) {
 	for group, config := range g.Cfg().MustGet(ctx, `cqlDb`).Map() {
 		cql.AddDB(ctx, group, gconv.Map(config))
-	}
-
-	if !utils.IsDev(ctx) && g.Cfg().MustGet(ctx, `masterServerNetworkIp`).String() != genv.Get(consts.ENV_SERVER_NETWORK_IP).String() {
-		return
 	}
 
 	/* // 启动自动创建表时使用
