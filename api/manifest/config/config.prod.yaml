@@ -88,7 +88,7 @@ redisDb: # 参考redis.UniversalOption结构体
     # password: ""
     # db: 0
   # test:
-  #   addrs: 
+  #   addrs:
   #     - "外网IP1:6379"
   #     - 外网IP2:6379"
   #   dialer: # 集群对外开放时使用。必须与addrs顺序对应
