@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"api/internal/utils/cql"
+	"api/internal/utils/jbcql"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -10,7 +10,7 @@ import (
 
 func initCqlDb(ctx context.Context) {
 	for group, config := range g.Cfg().MustGet(ctx, `cqlDb`).Map() {
-		cql.AddDB(ctx, group, gconv.Map(config))
+		jbcql.AddDB(ctx, group, gconv.Map(config))
 	}
 
 	/* // 启动自动创建表时使用
@@ -19,7 +19,7 @@ func initCqlDb(ctx context.Context) {
 	cqlArr := []string{}
 	cqlFormat := `CREATE TABLE IF NOT EXISTS %s (created_at TIMESTAMP, test_id text, test_info blob, PRIMARY KEY (test_id)) WITH default_time_to_live=%d`
 	cqlArr = append(cqlArr, fmt.Sprintf(cqlFormat, `test`, 7*24*60*60))
-	db := cql.DB()
+	db := jbcql.DB()
 	var err error
 	for _, cql := range cqlArr {
 		err = db.ExecStmt(cql)

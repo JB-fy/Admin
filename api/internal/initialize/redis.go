@@ -1,11 +1,7 @@
 package initialize
 
 import (
-	// daoCh "api/internal/dao/ch"
-	// daoAuth "api/internal/dao/auth"
-	// daoOrg "api/internal/dao/org"
-	// daoPlt "api/internal/dao/plt"
-	"api/internal/utils/redis"
+	"api/internal/utils/jbredis"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -14,6 +10,6 @@ import (
 
 func initRedis(ctx context.Context) {
 	for group, config := range g.Cfg().MustGet(ctx, `redisDb`).Map() {
-		redis.AddDB(ctx, group, gconv.Map(config))
+		jbredis.AddDB(ctx, group, gconv.Map(config))
 	}
 }

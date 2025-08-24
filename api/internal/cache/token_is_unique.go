@@ -2,35 +2,30 @@ package cache
 
 import (
 	"api/internal/consts"
+	"api/internal/utils/jbredis"
 	"context"
 	"fmt"
+	"time"
 
-	"github.com/gogf/gf/v2/database/gredis"
-	"github.com/gogf/gf/v2/frame/g"
+	"github.com/redis/go-redis/v9"
 )
 
-var TokenIsUnique = tokenIsUnique{redis: g.Redis()}
+var TokenIsUnique = tokenIsUnique{}
 
-type tokenIsUnique struct{ redis *gredis.Redis }
+type tokenIsUnique struct{}
 
-func (cacheThis *tokenIsUnique) cache() *gredis.Redis {
-	return cacheThis.redis
+func (cacheThis *tokenIsUnique) cache() redis.UniversalClient {
+	return jbredis.DB()
 }
 
 func (cacheThis *tokenIsUnique) key(sceneId string, loginId string) string {
 	return fmt.Sprintf(consts.CACHE_TOKEN_IS_UNIQUE, sceneId, loginId)
 }
 
-func (cacheThis *tokenIsUnique) Set(ctx context.Context, sceneId string, loginId string, value string, ttl int64) (err error) {
-	err = cacheThis.cache().SetEX(ctx, cacheThis.key(sceneId, loginId), value, ttl)
-	return
+func (cacheThis *tokenIsUnique) Set(ctx context.Context, sceneId string, loginId string, value string, ttl time.Duration) error {
+	return cacheThis.cache().SetEx(ctx, cacheThis.key(sceneId, loginId), value, ttl).Err()
 }
 
-func (cacheThis *tokenIsUnique) Get(ctx context.Context, sceneId string, loginId string) (value string, err error) {
-	valueTmp, err := cacheThis.cache().Get(ctx, cacheThis.key(sceneId, loginId))
-	if err != nil {
-		return
-	}
-	value = valueTmp.String()
-	return
+func (cacheThis *tokenIsUnique) Get(ctx context.Context, sceneId string, loginId string) (string, error) {
+	return cacheThis.cache().Get(ctx, cacheThis.key(sceneId, loginId)).Result()
 }

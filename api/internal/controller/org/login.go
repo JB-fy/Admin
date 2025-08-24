@@ -10,6 +10,7 @@ import (
 	"api/internal/utils"
 	"api/internal/utils/token"
 	"context"
+	"time"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -56,7 +57,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 	saltDynamic := grand.S(8)
-	err = cache.Salt.Set(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), req.LoginName, saltDynamic, 5)
+	err = cache.Salt.Set(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), req.LoginName, saltDynamic, 5*time.Second)
 	if err != nil {
 		return
 	}

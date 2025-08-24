@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"api/internal/utils/cql/model"
+	"api/internal/utils/jbcql/model"
 	"context"
 	"fmt"
 	"strings"

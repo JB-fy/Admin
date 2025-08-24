@@ -76,28 +76,25 @@ database:
       # dryRun: false # ORM空跑(只读不写)
       timeMaintainDisabled: true # 是否完全关闭时间更新特性，true时CreatedAt/UpdatedAt/DeletedAt都将失效
 
-redis:
-  default:
-    address: "0.0.0.0:6379"
-    # pass:    ""
-    # db:      0
+# redis:
+#   default:
+#     address: "0.0.0.0:6379"
+#     # pass: ""
+#     # db: 0
 
-# 参考redis.UniversalOption结构体
-redisDb:
+redisDb: # 参考redis.UniversalOption结构体
   default:
-    addrs: 0.0.0.0:6379
-    password: hJ2xH7gQ2xH4uN5aN4aM
+    addrs: "0.0.0.0:6379"
+    # password: ""
     # db: 0
   # test:
   #   addrs: 
-  #     - 39.98.65.241:30001
-  #     - 47.92.84.64:30001
-  #     - 47.92.94.52:30001
-  #   password: hJ2xH7gQ2xH4uN5aN4aM
-  #   dialer:
-  #     - 192.168.16.181:30001
-  #     - 192.168.16.182:30001
-  #     - 192.168.16.183:30001
+  #     - "外网IP1:6379"
+  #     - 外网IP2:6379"
+  #   dialer: # 集群对外开放时使用。必须与addrs顺序对应
+  #     - "内网IP1:6379"
+  #     - "内网IP2:6379"
+  #   # password: ""
 
 # cqlDb:
 #   default:

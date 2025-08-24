@@ -1,8 +1,8 @@
-package cql
+package jbcql
 
 import (
-	"api/internal/utils/cql/internal"
-	"api/internal/utils/cql/model"
+	"api/internal/utils/jbcql/internal"
+	"api/internal/utils/jbcql/model"
 	"context"
 
 	"github.com/scylladb/gocqlx/v3"

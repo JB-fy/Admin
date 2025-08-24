@@ -2,6 +2,7 @@ package internal
 
 import (
 	"api/internal/consts"
+	"api/internal/utils/jbredis"
 	"context"
 	"errors"
 	"fmt"
@@ -9,22 +10,21 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gogf/gf/v2/container/gvar"
-	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/patrickmn/go-cache"
+	"github.com/redis/go-redis/v9"
 )
 
-var (
-	GetOrSet = getOrSet{redis: g.Redis(), goCache: cache.New(0, consts.CACHE_LOCAL_INTERVAL_MINUTE*time.Minute)}
-)
+var GetOrSet = getOrSet{goCache: cache.New(0, consts.CACHE_LOCAL_INTERVAL_MINUTE*time.Minute)}
 
 type getOrSet struct {
-	redis   *gredis.Redis
 	goCache *cache.Cache
 	muMap   sync.Map //存放所有缓存KEY的锁（当前服务器用）
+}
+
+func (cacheThis *getOrSet) cache() redis.UniversalClient {
+	return jbredis.DB()
 }
 
 func (cacheThis *getOrSet) key(key string) string {
@@ -68,29 +68,27 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 		oneTime = 200 * time.Millisecond
 	}
 	isSetTtlOfLocal := time.Duration(numLock*numRead) * oneTime
-	isSetTtl := gconv.Int64(isSetTtlOfLocal / time.Second) //redis锁缓存Key时间
-	isSetOption := gredis.SetOption{TTLOption: gredis.TTLOption{EX: &isSetTtl}, NX: true}
-	var isSetVal *gvar.Var
+	var isSetVal bool
 	for range numLock {
-		isSetVal, err = cacheThis.redis.Set(ctx, isSetKey, ``, isSetOption)
+		isSetVal, err = cacheThis.cache().SetNX(ctx, isSetKey, ``, isSetTtlOfLocal).Result()
 		if err != nil {
 			return
 		}
-		if isSetVal.Bool() {
+		if isSetVal {
 			defer func() {
 				if rec := recover(); rec != nil { //防止panic导致redis锁长时间没释放，造成频繁执行getFunc()方法
 					err = errors.New(`设置缓存panic错误：` + gconv.String(rec) + `。栈信息：` + string(debug.Stack()))
-					cacheThis.redis.Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
+					cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 					g.Log().Error(ctx, err.Error())
 				}
 			}()
 			value, notExist, err = setFunc()
 			if notExist || err != nil {
-				cacheThis.redis.Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
+				cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 				return
 			}
 			cacheThis.goCache.Set(isSetKey, struct{}{}, isSetTtlOfLocal)
-			cacheThis.redis.Expire(ctx, isSetKey, isSetTtl)
+			cacheThis.cache().Expire(ctx, isSetKey, isSetTtlOfLocal)
 			return
 		}
 		// 等待读取数据
@@ -100,8 +98,8 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 				return
 			}
 			if !notExist /* || err != nil */ {
-				pttl, _ := cacheThis.redis.PTTL(ctx, isSetKey)
-				cacheThis.goCache.Set(isSetKey, struct{}{}, time.Until(gtime.Now().Add(time.Duration(pttl)*time.Millisecond).Time))
+				pttl, _ := cacheThis.cache().TTL(ctx, isSetKey).Result()
+				cacheThis.goCache.Set(isSetKey, struct{}{}, time.Until(time.Now().Add(pttl)))
 				return
 			}
 			// 放for前面执行。坏处：首次读取缓存有延迟；好处：减少缓存压力
@@ -125,5 +123,5 @@ func (cacheThis *getOrSet) Del(ctx context.Context, keyArr ...string) {
 		isSetKeyArr[index] = cacheThis.key(keyArr[index])
 		cacheThis.goCache.Delete(isSetKeyArr[index])
 	}
-	cacheThis.redis.Del(ctx, isSetKeyArr...)
+	cacheThis.cache().Del(ctx, isSetKeyArr...)
 }

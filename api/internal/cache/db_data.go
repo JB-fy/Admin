@@ -4,19 +4,18 @@ import (
 	"api/internal/cache/internal"
 	"api/internal/consts"
 	"api/internal/dao"
+	"api/internal/utils/jbredis"
 	"context"
 	"fmt"
 	"time"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/database/gredis"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/redis/go-redis/v9"
 )
 
 var DbData = dbData{
-	redis:             g.Redis(),
 	methodCode:        ``,
 	methodCodeOfArr:   `arr_`,
 	methodCodeOfSet:   `set_`,
@@ -26,7 +25,6 @@ var DbData = dbData{
 }
 
 type dbData struct {
-	redis             *gredis.Redis
 	methodCode        string
 	methodCodeOfArr   string
 	methodCodeOfSet   string
@@ -35,8 +33,8 @@ type dbData struct {
 	methodCodeOfList  string
 }
 
-func (cacheThis *dbData) cache() *gredis.Redis {
-	return cacheThis.redis
+func (cacheThis *dbData) cache() redis.UniversalClient {
+	return jbredis.DB()
 }
 
 func (cacheThis *dbData) key(daoModel *dao.DaoModel, method string, idOrCode any) string {
@@ -70,11 +68,19 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, m
 		if ttl < time.Second {
 			ttl = consts.CACHE_TIME_DEFAULT
 		}
-		err = cacheThis.cache().SetEX(ctx, key, gconv.String(value), gconv.Int64(ttl/time.Second))
+		err = cacheThis.cache().SetEx(ctx, key, gconv.String(value), ttl).Err()
 		return
 	}, func() (value any, notExist bool, err error) {
-		value, err = cacheThis.cache().Get(ctx, key)
-		notExist = value.(*gvar.Var).IsNil()
+		value, err = cacheThis.cache().Get(ctx, key).Result()
+		if err == nil {
+			value = gvar.New(value)
+		} else {
+			value = gvar.New(nil)
+			notExist = err == redis.Nil
+			if notExist {
+				err = nil
+			}
+		}
 		return
 	}, 0, 0, 0)
 	return
@@ -82,7 +88,7 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, m
 
 func (cacheThis *dbData) del(ctx context.Context, daoModel *dao.DaoModel, method string, code any) (row int64, err error) {
 	key := cacheThis.key(daoModel, method, code)
-	row, err = cacheThis.cache().Del(ctx, key)
+	row, err = cacheThis.cache().Del(ctx, key).Result()
 	if err != nil {
 		return
 	}
@@ -95,7 +101,7 @@ func (cacheThis *dbData) delById(ctx context.Context, daoModel *dao.DaoModel, me
 	for index := range idArr {
 		keyArr[index] = cacheThis.key(daoModel, method, idArr[index])
 	}
-	row, err = cacheThis.cache().Del(ctx, keyArr...)
+	row, err = cacheThis.cache().Del(ctx, keyArr...).Result()
 	if err != nil {
 		return
 	}

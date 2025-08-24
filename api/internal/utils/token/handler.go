@@ -6,6 +6,7 @@ import (
 	"api/internal/utils"
 	"api/internal/utils/token/model"
 	"context"
+	"time"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
@@ -48,11 +49,11 @@ func (handlerThis *Handler) Create(loginId string, extData map[string]any) (toke
 	}
 
 	if handlerThis.ActiveTime > 0 {
-		cache.TokenActive.Set(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, handlerThis.ActiveTime)
+		cache.TokenActive.Set(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, time.Duration(handlerThis.ActiveTime)*time.Second)
 	}
 
 	if handlerThis.IsUnique {
-		cache.TokenIsUnique.Set(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, token, handlerThis.token.GetExpireTime())
+		cache.TokenIsUnique.Set(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, token, time.Duration(handlerThis.token.GetExpireTime())*time.Second)
 	}
 	return
 }
@@ -69,7 +70,7 @@ func (handlerThis *Handler) Parse(token string) (tokenInfo model.TokenInfo, err 
 	}
 
 	if handlerThis.ActiveTime > 0 {
-		if isSet, _ := cache.TokenActive.Reset(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, handlerThis.ActiveTime); !isSet {
+		if isSet, _ := cache.TokenActive.Reset(handlerThis.Ctx, handlerThis.SceneId, tokenInfo.LoginId, time.Duration(handlerThis.ActiveTime)*time.Second); !isSet {
 			err = utils.NewErrorCode(handlerThis.Ctx, 39994002, ``)
 			return
 		}
