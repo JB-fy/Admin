@@ -41,6 +41,61 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	}) */
 	/*--------数据库使用示例 结束--------*/
 
+	/*--------数据库cql使用示例 开始--------*/
+	/* // 有BUG（gcqlx）：names无法被填充
+	// err = jbcql.DB().ContextQuery(ctx, `SELECT ?, ? FROM goods_detail`, []string{`key`,`value`}).Exec()
+	// 有BUG（gcqlx）：qb.Fn第二参数无法被填充
+	// err = qb.Update(`goods_detail`).SetFunc(`value`, qb.Fn(`textAsBlob`, `'2222'`)).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).Exec()
+
+	var key string
+	var value string
+	err = qb.Select(`goods_detail`).Columns(`key`, `value`).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).Scan(&key, &value)
+
+	result := g.Map{}
+	err = qb.Select(`goods_detail`).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).MapScan(result)
+
+	_, err = qb.Select(`goods_detail`).Where(qb.EqLit(`key`, `'1'`)).Limit(10).Query(*jbcql.DB()).WithContext(ctx).Iter().SliceMap()
+
+	type KVEntity struct {
+		Key    string
+		Value  []byte
+		Vector [][]byte
+		Dict   map[string][]byte
+	}
+	listStruct := []KVEntity{}
+	err = qb.Select(`goods_detail`).Where(qb.EqLit(`key`, `'1'`)).Limit(10).Query(*jbcql.DB()).WithContext(ctx).SelectRelease(&listStruct)
+
+	err = qb.Insert(`goods_detail`).Columns(`key`, `value`).Query(*jbcql.DB()).WithContext(ctx).BindMap(g.Map{`key`: `1`, `value`: `2`}).Exec()
+
+	err = qb.Update(`goods_detail`).SetLit(`value`, `textAsBlob('2222')`).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).Exec()
+
+	err = qb.Delete(`goods_detail`).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).Exec()
+
+	session := jbcql.DB()
+	batch := session.NewBatch(gocql.UnloggedBatch).WithContext(ctx)
+	batch.Entries = append(batch.Entries, gocql.BatchEntry{
+		Stmt:       "INSERT INTO goods_detail (key, value) VALUES (?, ?)",
+		Args:       []interface{}{`1`, `1`},
+		Idempotent: true,
+	})
+	batch.Entries = append(batch.Entries, gocql.BatchEntry{
+		Stmt:       "UPDATE goods_detail SET value = ? WHERE key = ?",
+		Args:       []interface{}{`2`, `1`},
+		Idempotent: true,
+	})
+	batch.Entries = append(batch.Entries, gocql.BatchEntry{
+		Stmt:       "DELETE FROM goods_detail WHERE key = ?",
+		Args:       []interface{}{`1`},
+		Idempotent: true,
+	})
+	// batch.Entries = append(batch.Entries, gocql.BatchEntry{
+	// 	Stmt:       "SELECT * FROM goods_detail WHERE key = ?", //批量操作不允许SELECT操作
+	// 	Args:       []interface{}{`1`},
+	// 	Idempotent: true,
+	// })
+	session.ExecuteBatch(batch) */
+	/*--------数据库cql使用示例 结束--------*/
+
 	/*--------数据操作示例 开始--------*/
 	// g.Validator().Rules(`required|length:1,10|regex:^[\p{L}\p{M}\p{N}_-]+$`).Messages(`必须|最长10个字|昵称不允许特殊字符`).Data(`aaaa`).Run(ctx) // 单独验证
 
