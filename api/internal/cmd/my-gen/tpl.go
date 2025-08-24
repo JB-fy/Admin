@@ -600,11 +600,19 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 	}
 	if !isAutoIncPrimary {
+		isExistFieldOfJsonText := false //存在大字段时，还是以id字段排序
+		createdField := ``
 		for _, item := range fieldList {
-			if item.FieldTypeName == internal.TypeNameCreated {
-				tpl.Handle.DefSort.Field = item.FieldRaw
-				break
+			if !isExistFieldOfJsonText {
+				isExistFieldOfJsonText = slices.Contains([]internal.MyGenFieldType{internal.TypeJson, internal.TypeText}, item.FieldType)
 			}
+			if item.FieldTypeName == internal.TypeNameCreated {
+				createdField = item.FieldRaw
+				// break
+			}
+		}
+		if !isExistFieldOfJsonText && createdField != `` {
+			tpl.Handle.DefSort.Field = createdField
 		}
 	}
 
