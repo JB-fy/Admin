@@ -27,8 +27,8 @@ func (hook HookLog) ProcessHook(next redis.ProcessHook) redis.ProcessHook {
 	return func(ctx context.Context, cmd redis.Cmder) error {
 		startTime := time.Now()
 		defer func() {
-			hook.Log.Debug(ctx, fmt.Sprintf(`[REDIS] [%d us] [%s] [%d] %s`,
-				time.Since(startTime).Microseconds(),
+			hook.Log.Debug(ctx, fmt.Sprintf(`[REDIS] [%.3f ms] [%s] [%d] %s`,
+				float64(time.Since(startTime).Microseconds())/1000,
 				hook.Group,
 				hook.Config.DB,
 				cmd,
@@ -55,8 +55,8 @@ func (hook HookLog) ProcessPipelineHook(next redis.ProcessPipelineHook) redis.Pr
 					cmd,
 				))
 			}
-			hook.Log.Debug(ctx, fmt.Sprintf(`[REDIS] [BATCH] [%d us] [%s] [%d] %s`,
-				time.Since(startTime).Microseconds(),
+			hook.Log.Debug(ctx, fmt.Sprintf(`[REDIS] [BATCH] [%.3f ms] [%s] [%d] %s`,
+				float64(time.Since(startTime).Microseconds())/1000,
 				hook.Group,
 				hook.Config.DB,
 				`BATCH END`,
