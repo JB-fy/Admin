@@ -91,8 +91,6 @@ github.com/gogf/gf/contrib/drivers/mysql/v2 v2.9.0 h1:1f7EeD0lfPHoXfaJDSL7cxRcSR
 github.com/gogf/gf/contrib/drivers/mysql/v2 v2.9.0/go.mod h1:tToO1PjGkLIR+9DbJ0wrKicYma0H/EUHXOpwel6Dw+0=
 github.com/gogf/gf/contrib/drivers/pgsql/v2 v2.9.0 h1:F/XfLI3TsgFU22AqJ2Df+ZUlF7lzkPo7oB5Cmx6VqOQ=
 github.com/gogf/gf/contrib/drivers/pgsql/v2 v2.9.0/go.mod h1:p0c5ZhIITNrqgOz7+dhlk4eDCIC3Tt0ocUVhRjpUw+I=
-github.com/gogf/gf/contrib/nosql/redis/v2 v2.9.0 h1:EEZqu1PNRSmm+7Cqm9A/8+ObgfbMzhE1ps9Z3LD7HgM=
-github.com/gogf/gf/contrib/nosql/redis/v2 v2.9.0/go.mod h1:LHrxY+2IzNTHVTPG/s5yaz1VmXbj+CQ7Hr5SeVkHiTw=
 github.com/gogf/gf/v2 v2.9.0 h1:semN5Q5qGjDQEv4620VzxcJzJlSD07gmyJ9Sy9zfbHk=
 github.com/gogf/gf/v2 v2.9.0/go.mod h1:sWGQw+pLILtuHmbOxoe0D+0DdaXxbleT57axOLH2vKI=
 github.com/golang-jwt/jwt/v5 v5.0.0 h1:1n1XNM9hk7O9mnQoNBGolZvzebBQ7p93ULHRc28XJUE=

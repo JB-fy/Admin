@@ -15,10 +15,10 @@ require (
 	github.com/gocql/gocql v1.7.0
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.9.0
 	github.com/gogf/gf/contrib/drivers/pgsql/v2 v2.9.0
-	github.com/gogf/gf/contrib/nosql/redis/v2 v2.9.0
 	github.com/gogf/gf/v2 v2.9.0
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/redis/go-redis/v9 v9.7.0
 	github.com/scylladb/gocqlx/v3 v3.0.1
 	github.com/smartwalle/alipay/v3 v3.2.20
 	github.com/wechatpay-apiv3/wechatpay-go v0.2.18
@@ -74,7 +74,6 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
-	github.com/redis/go-redis/v9 v9.7.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/scylladb/go-reflectx v1.0.1 // indirect
 	github.com/smartwalle/ncrypto v1.0.4 // indirect
