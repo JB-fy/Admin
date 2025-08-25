@@ -10,9 +10,9 @@ func Entry(ctx context.Context) {
 	initI18n(ctx)  // 多语言设置
 	initGtime(ctx) // 时区设置
 
-	initDb(ctx) // 数据库设置
+	initRedis(ctx) // REDIS设置
 
-	initRedis(ctx) // redis设置
+	initDb(ctx) // 数据库设置
 
 	// initCqlDb(ctx) // CQL数据库设置
 
