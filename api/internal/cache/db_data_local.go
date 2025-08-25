@@ -214,6 +214,10 @@ func (cacheThis *dbDataLocal) DelList(ctx context.Context, daoModel *dao.DaoMode
 	cacheThis.del(ctx, daoModel, cacheThis.methodCodeOfList, code)
 }
 
+func (cacheThis *dbDataLocal) DelTree(ctx context.Context, daoModel *dao.DaoModel, code any) {
+	cacheThis.del(ctx, daoModel, cacheThis.methodCodeOfTree, code)
+}
+
 func (cacheThis *dbDataLocal) GetOrSetById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, field string) (value *gvar.Var, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, id, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, err = daoModel.Master().FilterPri(id).Value(field)
