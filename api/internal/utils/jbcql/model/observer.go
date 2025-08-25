@@ -15,7 +15,7 @@ type Observer struct {
 }
 
 func (obThis *Observer) ObserveQuery(ctx context.Context, observedQuery gocql.ObservedQuery) {
-	obThis.Log.Debug(ctx, fmt.Sprintf(`[%d ms] [CQL] [%s] [%s] [rows:%d] %s`,
+	obThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [%d ms] [%s] [%s] [rows:%d] %s`,
 		observedQuery.End.UnixMilli()-observedQuery.Start.UnixMilli(),
 		obThis.Config.Group,
 		observedQuery.Keyspace,
@@ -31,7 +31,7 @@ func (obThis *Observer) ObserveBatch(ctx context.Context, observedBatch gocql.Ob
 	obThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [BATCH] [%s] [%s] %s`,
 		obThis.Config.Group,
 		observedBatch.Keyspace,
-		`BEGIN BATCH`,
+		`BATCH START`,
 	))
 	for index, statement := range observedBatch.Statements {
 		obThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [BATCH] [%s] [%s] %s`,
@@ -44,7 +44,7 @@ func (obThis *Observer) ObserveBatch(ctx context.Context, observedBatch gocql.Ob
 		observedBatch.End.UnixMilli()-observedBatch.Start.UnixMilli(),
 		obThis.Config.Group,
 		observedBatch.Keyspace,
-		`APPLY BATCH`,
+		`BATCH END`,
 	))
 
 	if observedBatch.Err != nil {

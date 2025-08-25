@@ -6,6 +6,7 @@ import (
 	"slices"
 	"time"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/redis/go-redis/v9"
 )
@@ -45,6 +46,9 @@ func AddDB(ctx context.Context, group string, configMap map[string]any) {
 		config.ReadTimeout = -1
 	}
 	redisMap[group] = redis.NewUniversalClient(config)
+	if gconv.Bool(configMap[`debug`]) {
+		redisMap[group].AddHook(HookLog{Group: group, Config: config, Log: g.Log(`redis`)})
+	}
 }
 
 func DB(opt ...string) (redis redis.UniversalClient) {
