@@ -11,6 +11,7 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/redis/go-redis/v9"
 )
@@ -22,6 +23,7 @@ var DbData = dbData{
 	methodCodeOfPluck: `pluck_`,
 	methodCodeOfInfo:  `info_`,
 	methodCodeOfList:  `list_`,
+	methodCodeOfTree:  `tree_`,
 }
 
 type dbData struct {
@@ -31,6 +33,7 @@ type dbData struct {
 	methodCodeOfPluck string
 	methodCodeOfInfo  string
 	methodCodeOfList  string
+	methodCodeOfTree  string
 }
 
 func (cacheThis *dbData) cache() redis.UniversalClient {
@@ -43,6 +46,10 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, method string, idOrCode any
 
 func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, method string, code any, dbSelFunc func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error)) (value any, notExist bool, err error) {
 	key := cacheThis.key(daoModel, method, code)
+	var oneTime time.Duration
+	if method == cacheThis.methodCodeOfTree {
+		oneTime = 5 * time.Second
+	}
 	value, notExist, err = internal.GetOrSet.GetOrSet(ctx, key, func() (value any, notExist bool, err error) {
 		value, ttl, err := dbSelFunc(daoModel)
 		if err != nil {
@@ -58,6 +65,8 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, m
 		case gdb.Record:
 			notExist = val.IsEmpty()
 		case gdb.Result:
+			notExist = len(val) == 0
+		case g.List:
 			notExist = len(val) == 0
 		default:
 			notExist = val == nil
@@ -82,7 +91,7 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, m
 			}
 		}
 		return
-	}, 0, 0, 0)
+	}, 0, 0, oneTime)
 	return
 }
 
@@ -169,6 +178,18 @@ func (cacheThis *dbData) GetOrSetList(ctx context.Context, daoModel *dao.DaoMode
 	return
 }
 
+func (cacheThis *dbData) GetOrSetTree(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value g.List, ttl time.Duration, err error)) (value g.List, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfTree, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, ok := valueTmp.(g.List)
+	if !ok {
+		valueTmp.(*gvar.Var).Scan(&value)
+	}
+	return
+}
+
 func (cacheThis *dbData) Del(ctx context.Context, daoModel *dao.DaoModel, code any) (int64, error) {
 	return cacheThis.del(ctx, daoModel, cacheThis.methodCode, code)
 }
@@ -191,6 +212,10 @@ func (cacheThis *dbData) DelInfo(ctx context.Context, daoModel *dao.DaoModel, co
 
 func (cacheThis *dbData) DelList(ctx context.Context, daoModel *dao.DaoModel, code any) (int64, error) {
 	return cacheThis.del(ctx, daoModel, cacheThis.methodCodeOfList, code)
+}
+
+func (cacheThis *dbData) DelTree(ctx context.Context, daoModel *dao.DaoModel, code any) (int64, error) {
+	return cacheThis.del(ctx, daoModel, cacheThis.methodCodeOfTree, code)
 }
 
 func (cacheThis *dbData) GetOrSetById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, field string) (value *gvar.Var, err error) {
