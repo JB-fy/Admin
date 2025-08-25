@@ -7,7 +7,8 @@ import (
 
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	_ "github.com/gogf/gf/contrib/drivers/pgsql/v2"
-	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
+
+	// _ "github.com/gogf/gf/contrib/nosql/redis/v2"	// 不再使用框架的redis（缺少dialer，无法远程连接redis集群）
 
 	"api/internal/cmd"
 	"api/internal/initialize"
