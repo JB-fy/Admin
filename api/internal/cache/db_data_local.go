@@ -11,6 +11,7 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/patrickmn/go-cache"
@@ -34,6 +35,7 @@ var DbDataLocal = dbDataLocal{
 	methodCodeOfPluck: `pluck_`,
 	methodCodeOfInfo:  `info_`,
 	methodCodeOfList:  `list_`,
+	methodCodeOfTree:  `tree_`,
 }
 
 type dbDataLocal struct {
@@ -45,6 +47,7 @@ type dbDataLocal struct {
 	methodCodeOfPluck string
 	methodCodeOfInfo  string
 	methodCodeOfList  string
+	methodCodeOfTree  string
 }
 
 func (cacheThis *dbDataLocal) Flush(ctx context.Context) {
@@ -95,6 +98,8 @@ func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoMod
 		case gdb.Record:
 			notExist = val.IsEmpty()
 		case gdb.Result:
+			notExist = len(val) == 0
+		case g.List:
 			notExist = len(val) == 0
 		default:
 			notExist = val == nil
@@ -173,6 +178,15 @@ func (cacheThis *dbDataLocal) GetOrSetList(ctx context.Context, daoModel *dao.Da
 		return
 	})
 	value, _ = valueTmp.(gdb.Result)
+	return
+}
+
+func (cacheThis *dbDataLocal) GetOrSetTree(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value g.List, ttl time.Duration, err error)) (value g.List, err error) {
+	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfTree, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
+		value, ttl, err = dbSelFunc(daoModel)
+		return
+	})
+	value, _ = valueTmp.(g.List)
 	return
 }
 
