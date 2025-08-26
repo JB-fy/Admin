@@ -44,12 +44,8 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, method string, idOrCode any
 	return fmt.Sprintf(consts.CACHE_DB_DATA, daoModel.DbGroup, daoModel.DbTable, method, idOrCode)
 }
 
-func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, method string, code any, dbSelFunc func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error)) (value any, notExist bool, err error) {
+func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, method string, code any, dbSelFunc func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error), numLock int, numRead int, oneTime time.Duration) (value any, notExist bool, err error) {
 	key := cacheThis.key(daoModel, method, code)
-	var oneTime time.Duration
-	if method == cacheThis.methodCodeOfTree {
-		oneTime = 5 * time.Second
-	}
 	value, notExist, err = internal.GetOrSet.GetOrSet(ctx, key, func() (value any, notExist bool, err error) {
 		value, ttl, err := dbSelFunc(daoModel)
 		if err != nil {
@@ -91,7 +87,7 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, m
 			}
 		}
 		return
-	}, 0, 0, oneTime)
+	}, numLock, numRead, oneTime)
 	return
 }
 
@@ -118,47 +114,47 @@ func (cacheThis *dbData) delById(ctx context.Context, daoModel *dao.DaoModel, me
 	return
 }
 
-func (cacheThis *dbData) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value *gvar.Var, ttl time.Duration, err error)) (value *gvar.Var, err error) {
+func (cacheThis *dbData) GetOrSet(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value *gvar.Var, ttl time.Duration, err error), numLock int, numRead int, oneTime time.Duration) (value *gvar.Var, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
 		return
-	})
+	}, numLock, numRead, oneTime)
 	value, _ = valueTmp.(*gvar.Var)
 	return
 }
 
-func (cacheThis *dbData) GetOrSetArr(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value []*gvar.Var, ttl time.Duration, err error)) (value []*gvar.Var, err error) {
+func (cacheThis *dbData) GetOrSetArr(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value []*gvar.Var, ttl time.Duration, err error), numLock int, numRead int, oneTime time.Duration) (value []*gvar.Var, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfArr, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
 		return
-	})
+	}, numLock, numRead, oneTime)
 	value, _ = valueTmp.([]*gvar.Var)
 	return
 }
 
-func (cacheThis *dbData) GetOrSetSet(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value map[*gvar.Var]struct{}, ttl time.Duration, err error)) (value map[*gvar.Var]struct{}, err error) {
+func (cacheThis *dbData) GetOrSetSet(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value map[*gvar.Var]struct{}, ttl time.Duration, err error), numLock int, numRead int, oneTime time.Duration) (value map[*gvar.Var]struct{}, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfSet, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
 		return
-	})
+	}, numLock, numRead, oneTime)
 	value, _ = valueTmp.(map[*gvar.Var]struct{})
 	return
 }
 
-func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error)) (value gdb.Record, err error) {
+func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error), numLock int, numRead int, oneTime time.Duration) (value gdb.Record, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfPluck, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
 		return
-	})
+	}, numLock, numRead, oneTime)
 	value, _ = valueTmp.(gdb.Record)
 	return
 }
 
-func (cacheThis *dbData) GetOrSetInfo(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error)) (value gdb.Record, err error) {
+func (cacheThis *dbData) GetOrSetInfo(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Record, ttl time.Duration, err error), numLock int, numRead int, oneTime time.Duration) (value gdb.Record, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfInfo, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
 		return
-	})
+	}, numLock, numRead, oneTime)
 	value, ok := valueTmp.(gdb.Record)
 	if !ok {
 		valueTmp.(*gvar.Var).Scan(&value)
@@ -166,11 +162,11 @@ func (cacheThis *dbData) GetOrSetInfo(ctx context.Context, daoModel *dao.DaoMode
 	return
 }
 
-func (cacheThis *dbData) GetOrSetList(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Result, ttl time.Duration, err error)) (value gdb.Result, err error) {
+func (cacheThis *dbData) GetOrSetList(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value gdb.Result, ttl time.Duration, err error), numLock int, numRead int, oneTime time.Duration) (value gdb.Result, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfList, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
 		return
-	})
+	}, numLock, numRead, oneTime)
 	value, ok := valueTmp.(gdb.Result)
 	if !ok {
 		valueTmp.(*gvar.Var).Scan(&value)
@@ -178,11 +174,11 @@ func (cacheThis *dbData) GetOrSetList(ctx context.Context, daoModel *dao.DaoMode
 	return
 }
 
-func (cacheThis *dbData) GetOrSetTree(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value g.List, ttl time.Duration, err error)) (value g.List, err error) {
+func (cacheThis *dbData) GetOrSetTree(ctx context.Context, daoModel *dao.DaoModel, code any, dbSelFunc func(daoModel *dao.DaoModel) (value g.List, ttl time.Duration, err error), numLock int, numRead int, oneTime time.Duration) (value g.List, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfTree, code, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
 		value, ttl, err = dbSelFunc(daoModel)
 		return
-	})
+	}, numLock, numRead, oneTime)
 	value, ok := valueTmp.(g.List)
 	if !ok {
 		valueTmp.(*gvar.Var).Scan(&value)
@@ -223,12 +219,12 @@ func (cacheThis *dbData) GetOrSetById(ctx context.Context, daoModel *dao.DaoMode
 		value, err = daoModel.Master().FilterPri(id).Value(field)
 		ttl = ttlD
 		return
-	})
+	}, 0, 0, 0)
 	value, _ = valueTmp.(*gvar.Var)
 	return
 }
 
-/* func (cacheThis *dbData) GetOrSetArrById(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlD time.Duration, field string) (value []*gvar.Var, err error) {
+func (cacheThis *dbData) GetOrSetArrById(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlD time.Duration, field string) (value []*gvar.Var, err error) {
 	var valueTmp any
 	var notExist bool
 	for index := range idArr {
@@ -236,7 +232,7 @@ func (cacheThis *dbData) GetOrSetById(ctx context.Context, daoModel *dao.DaoMode
 			value, err = daoModel.ResetNew().Master().FilterPri(idArr[index]).Value(field)
 			ttl = ttlD
 			return
-		})
+		}, 0, 0, 0)
 		if err != nil {
 			return
 		}
@@ -257,7 +253,7 @@ func (cacheThis *dbData) GetOrSetSetById(ctx context.Context, daoModel *dao.DaoM
 			value, err = daoModel.ResetNew().Master().FilterPri(idArr[index]).Value(field)
 			ttl = ttlD
 			return
-		})
+		}, 0, 0, 0)
 		if err != nil {
 			return
 		}
@@ -267,7 +263,7 @@ func (cacheThis *dbData) GetOrSetSetById(ctx context.Context, daoModel *dao.DaoM
 		value[valueTmp.(*gvar.Var)] = struct{}{}
 	}
 	return
-} */
+}
 
 func (cacheThis *dbData) GetOrSetPluckById(ctx context.Context, daoModel *dao.DaoModel, idArr []any, ttlD time.Duration, field string) (value gdb.Record, err error) {
 	var valueTmp any
@@ -278,7 +274,7 @@ func (cacheThis *dbData) GetOrSetPluckById(ctx context.Context, daoModel *dao.Da
 			value, err = daoModel.ResetNew().Master().FilterPri(idArr[index]).Value(field)
 			ttl = ttlD
 			return
-		})
+		}, 0, 0, 0)
 		if err != nil {
 			return
 		}
@@ -295,7 +291,7 @@ func (cacheThis *dbData) GetOrSetInfoById(ctx context.Context, daoModel *dao.Dao
 		value, err = daoModel.Master().FilterPri(id).Fields(fieldArr...).One()
 		ttl = ttlD
 		return
-	})
+	}, 0, 0, 0)
 	value, ok := valueTmp.(gdb.Record)
 	if !ok {
 		valueTmp.(*gvar.Var).Scan(&value)
@@ -312,7 +308,7 @@ func (cacheThis *dbData) GetOrSetListById(ctx context.Context, daoModel *dao.Dao
 			value, err = daoModel.ResetNew().Master().FilterPri(idArr[index]).Fields(fieldArr...).One()
 			ttl = ttlD
 			return
-		})
+		}, 0, 0, 0)
 		if err != nil {
 			return
 		}
