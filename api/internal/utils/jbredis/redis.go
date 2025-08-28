@@ -18,7 +18,7 @@ func AddDB(ctx context.Context, group string, configMap map[string]any) {
 	gconv.Struct(configMap, config)
 	if dialer := gconv.Strings(configMap[`dialer`]); len(dialer) > 0 {
 		config.Dialer = func(ctx context.Context, network, addr string) (net.Conn, error) {
-			if index := slices.Index(dialer, addr); index > 0 && index < len(config.Addrs) {
+			if index := slices.Index(dialer, addr); index >= 0 && index < len(config.Addrs) {
 				addr = config.Addrs[index]
 			}
 			return net.Dial(network, addr)
