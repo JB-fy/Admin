@@ -97,7 +97,7 @@ docker run -d -p 3306:3306 -v 配置:/etc/mysql/my.cnf -v 数据:/var/lib/mysql 
     # 从库执行
         docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/bitnami/mysql/data -e MYSQL_REPLICATION_MODE=slave -e MYSQL_REPLICATION_USER=repl_user -e MYSQL_REPLICATION_PASSWORD=123456 -e MYSQL_MASTER_HOST=192.168.0.200 -e MYSQL_MASTER_ROOT_PASSWORD=123456 bitnami/mysql:9.3.0
         # 导入原有数据库
-            docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/bitnami/mysql/data -v /home/jb/dev/tool/mysql/9.3.0/bak.sql:/docker-entrypoint-initdb.d/bak.sql bitnami/mysql:9.3.0
+            docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/bitnami/mysql/data -v /home/jb/dev/tool/mysql/9.3.0/备份数据.sql:/docker-entrypoint-initdb.d/备份数据.sql bitnami/mysql:9.3.0
 
 # postgresql
 docker run -d -p 5432:5432 -v 配置:/etc/postgresql -v 数据:/var/lib/postgresql/data -e POSTGRES_USER=用户 -e POSTGRES_PASSWORD=密码 -e POSTGRES_DB=库名 postgres:latest -c config_file=/etc/postgresql
