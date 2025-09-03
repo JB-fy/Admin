@@ -165,14 +165,14 @@ func (daoModelThis *DaoModel) ResetNew() *DaoModel {
 // 该方法只在 更新|删除需要后置处理 时，才使用
 func (daoModelThis *DaoModel) SetIdArr(idOrFilterOpt ...any) *DaoModel {
 	if len(idOrFilterOpt) == 0 {
-		daoModelThis.IdArr, _ = daoModelThis.cloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
+		daoModelThis.IdArr, _ = daoModelThis.cloneModel().Master().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
 		return daoModelThis
 	}
 	daoModelThis.IdArr = nil
 	if filter, ok := idOrFilterOpt[0].(g.Map); ok {
 		daoModelThis.Filters(filter)
 		if len(filter) != 1 {
-			daoModelThis.IdArr, _ = daoModelThis.cloneModel().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
+			daoModelThis.IdArr, _ = daoModelThis.cloneModel().Master().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
 			return daoModelThis
 		}
 		if id, ok := filter[`id`]; ok {
