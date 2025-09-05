@@ -141,11 +141,9 @@ func GetFileBytesByLocal(ctx context.Context, fileUrl string, serverNameOpt ...s
 	return
 }
 
-var getFileClient = g.Client()
-
 // 获取文件内容（远程文件）
 func GetFileBytesByRemote(ctx context.Context, fileUrl string) (fileBytes []byte, err error) {
-	res, err := getFileClient.Get(ctx, fileUrl)
+	res, err := Client.Get(ctx, fileUrl)
 	if err != nil {
 		return
 	}
