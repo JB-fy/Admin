@@ -31,7 +31,7 @@ func (cacheThis *getOrSet) key(key string) string {
 	return fmt.Sprintf(consts.CACHE_IS_SET, key)
 }
 
-func (cacheThis *getOrSet) GetRetryInfo(numLock, numRead uint8, oneTime time.Duration) (uint8, uint8, time.Duration, time.Duration) {
+func (cacheThis *getOrSet) retryInfo(numLock, numRead uint8, oneTime time.Duration) (uint8, uint8, time.Duration, time.Duration) {
 	if numLock == 0 {
 		numLock = 3
 	}
@@ -71,7 +71,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	}
 
 	// 防止不同服务器并发
-	numLock, numRead, oneTime, isSetTtl := cacheThis.GetRetryInfo(numLock, numRead, oneTime)
+	numLock, numRead, oneTime, isSetTtl := cacheThis.retryInfo(numLock, numRead, oneTime)
 	var isSet bool
 	for range numLock {
 		isSet, err = cacheThis.cache().SetNX(ctx, isSetKey, ``, isSetTtl).Result()
@@ -128,4 +128,13 @@ func (cacheThis *getOrSet) Del(ctx context.Context, keyArr ...string) {
 		cacheThis.goCache.Delete(isSetKeyArr[index])
 	}
 	cacheThis.cache().Del(ctx, isSetKeyArr...)
+}
+
+// 错误最大缓存时间
+func (cacheThis *getOrSet) MaxTtlOfErr(numLock, numRead uint8, oneTime time.Duration, defTtl time.Duration) time.Duration {
+	_, _, _, isSetTtl := cacheThis.retryInfo(numLock, numRead, oneTime)
+	if isSetTtl < defTtl {
+		return defTtl
+	}
+	return isSetTtl
 }
