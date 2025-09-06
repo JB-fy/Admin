@@ -31,11 +31,24 @@ func (cacheThis *getOrSet) key(key string) string {
 	return fmt.Sprintf(consts.CACHE_IS_SET, key)
 }
 
+func (cacheThis *getOrSet) GetRetryInfo(numLock, numRead uint8, oneTime time.Duration) (uint8, uint8, time.Duration, time.Duration) {
+	if numLock == 0 {
+		numLock = 3
+	}
+	if numRead == 0 {
+		numRead = 5
+	}
+	if oneTime <= 0 {
+		oneTime = 200 * time.Millisecond
+	}
+	return numLock, numRead, oneTime, time.Duration(numLock*numRead) * oneTime
+}
+
 // 依据以下两个时间设置以下3个参数：valFunc运行速度 + 缓存写入到能读取之间的时间
 // numLock	获取锁的重试次数。作用：当获取锁的服务器因报错，无法做缓存写入时，允许其它服务器重新获取锁，以保证缓存写入成功
 // numRead	读取缓存的重试次数。作用：当未获取锁的服务器获取缓存时数据为空时，可以重试多次
 // oneTime	读取缓存重试间隔时间，单位：毫秒
-func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc func() (value any, notExist bool, err error), getFunc func() (value any, notExist bool, err error), numLock int, numRead int, oneTime time.Duration) (value any, notExist bool, err error) {
+func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc func() (value any, notExist bool, err error), getFunc func() (value any, notExist bool, err error), numLock, numRead uint8, oneTime time.Duration) (value any, notExist bool, err error) {
 	value, notExist, err = getFunc()
 	if !notExist || err != nil {
 		return
@@ -58,31 +71,19 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	}
 
 	// 防止不同服务器并发
-	if numLock <= 0 {
-		numLock = 3
-	}
-	if numRead <= 0 {
-		numRead = 5
-	}
-	if oneTime <= 0 {
-		oneTime = 200 * time.Millisecond
-	}
-	isSetTtlOfLocal := time.Duration(numLock*numRead) * oneTime
-	var isSetVal bool
+	numLock, numRead, oneTime, isSetTtl := cacheThis.GetRetryInfo(numLock, numRead, oneTime)
+	var isSet bool
 	for range numLock {
-		isSetVal, err = cacheThis.cache().SetNX(ctx, isSetKey, ``, isSetTtlOfLocal).Result()
+		isSet, err = cacheThis.cache().SetNX(ctx, isSetKey, ``, isSetTtl).Result()
 		if err != nil {
 			return
 		}
-		if isSetVal {
+		if isSet {
 			defer func() {
 				if rec := recover(); rec != nil { //防止panic导致redis锁长时间没释放，造成频繁执行getFunc()方法
 					err = errors.New(`设置缓存panic错误：` + gconv.String(rec) + `。栈信息：` + string(debug.Stack()))
 					cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 					g.Log().Error(ctx, err.Error())
-				} else if ctxErr := ctx.Err(); ctxErr != nil { //上下文取消或超时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
-					cacheThis.cache().Del(ctx, isSetKey)
-					g.Log().Error(ctx, `上下文取消或超时：`+ctxErr.Error())
 				}
 			}()
 			value, notExist, err = setFunc()
@@ -90,8 +91,8 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 				cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 				return
 			}
-			cacheThis.goCache.Set(isSetKey, struct{}{}, isSetTtlOfLocal)
-			cacheThis.cache().Expire(ctx, isSetKey, isSetTtlOfLocal)
+			cacheThis.goCache.Set(isSetKey, struct{}{}, isSetTtl)
+			cacheThis.cache().Expire(ctx, isSetKey, isSetTtl)
 			return
 		}
 		// 等待读取数据
