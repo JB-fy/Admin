@@ -149,6 +149,10 @@ docker run -d -p 9092:9092 -p 9093:9093 -v 配置:/opt/bitnami/kafka/config/serv
         # 云服务器设置--network host，且主机名不是IP时，会无法识别主机名，需修改/etc/hosts文件追加
             当前服务器IP 服务器主机名(hostname查看)
 
+# minio
+docker run -d -p 9000:9000 -p 9001:9001 -v 数据:/data -e MINIO_ROOT_USER=账号 -e MINIO_ROOT_PASSWORD=密码 minio/minio:latest server --address 节点IP:9000 --console-address 节点IP:9001 /data（集群时列举所有节点：域名1/data 域名2/data ...）
+    # 示例：docker run -d --name minio-alone --network host -v /home/jb/dev/tool/minio/data:/data -e MINIO_ROOT_USER=admin -e MINIO_ROOT_PASSWORD=12345678 minio/minio server --address :9000 --console-address :9001 /data
+
 # gitlab
     # gitlab-ce（不建议用--network host。gitlab只带软件所用端口可能与当前服务器已安装软件冲突）
         docker run -d --name gitlab-ce -p 22:22 -p 80:80 -p 443:443 -v /home/jb/dev/tool/gitlab/ce/17.11.3-ce.0/config:/etc/gitlab -v /home/jb/dev/tool/gitlab/ce/17.11.3-ce.0/logs:/var/log/gitlab -v /home/jb/dev/tool/gitlab/ce/17.11.3-ce.0/data:/var/opt/gitlab -e GITLAB_OMNIBUS_CONFIG="external_url '域名'; gitlab_rails['gitlab_shell_ssh_port'] = 22; postgresql['port'] = 5432; redis['port'] = 6379; nginx['listen_port'] = 80（默认external_url的端口）; nginx['ssl_listen_port'] = 443（默认external_url的端口）;" gitlab/gitlab-ce:17.11.3-ce.0
