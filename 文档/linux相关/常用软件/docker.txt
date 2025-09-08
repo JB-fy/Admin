@@ -151,7 +151,7 @@ docker run -d -p 9092:9092 -p 9093:9093 -v 配置:/opt/bitnami/kafka/config/serv
 
 # minio
 docker run -d -p 9000:9000 -p 9001:9001 -v 数据:/data -e MINIO_ROOT_USER=账号 -e MINIO_ROOT_PASSWORD=密码 minio/minio:latest server --address 节点IP:9000 --console-address 节点IP:9001 /data（集群时列举所有节点：域名1/data 域名2/data ...）
-    # 示例：docker run -d --name minio-alone --network host -v /home/jb/dev/tool/minio/data:/data -e MINIO_ROOT_USER=admin -e MINIO_ROOT_PASSWORD=12345678 minio/minio server --address :9000 --console-address :9001 /data
+    # 示例：docker run -d --name minio-alone --network host -v /home/jb/dev/tool/minio/data:/data -e MINIO_ROOT_USER=admin -e MINIO_ROOT_PASSWORD=12345678 minio/minio:RELEASE.2025-04-22T22-12-26Z server --address :9000 --console-address :9001 /data
 
 # gitlab
     # gitlab-ce（不建议用--network host。gitlab只带软件所用端口可能与当前服务器已安装软件冲突）
