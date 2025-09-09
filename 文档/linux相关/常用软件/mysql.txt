@@ -183,13 +183,13 @@ sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE
 #mysql默认密码
 #password=88888888
 #mysql以socket方式运行的sock文件位置
-socket=/server/webtool/mysql-8.0.19/mysql.sock
+socket=/server/tool/mysql-8.0.19/mysql.sock
 
 [mysqld_safe]
 #进程文件位置
-pid-file=/server/webtool/mysql-8.0.19/run/mysqld.pid
+pid-file=/server/tool/mysql-8.0.19/run/mysqld.pid
 #错误日志位置
-log-error=/server/webtool/mysql-8.0.19/log/mysqld-error.log
+log-error=/server/tool/mysql-8.0.19/log/mysqld-error.log
 
 [mysqld]
 #mysql以什么用户运行
@@ -199,9 +199,9 @@ port=3306
 #服务id（唯一，建议为IP最后一个数字）
 server-id=160
 #mysql的数据目录
-datadir=/server/webtool/mysql-8.0.19/data
+datadir=/server/tool/mysql-8.0.19/data
 #mysql以socket方式运行的sock文件位置
-socket=/server/webtool/mysql-8.0.19/mysql.sock
+socket=/server/tool/mysql-8.0.19/mysql.sock
 #是否支持符号链接，即数据库或表可以存储在my.cnf中指定datadir之外的分区或目录，为0不开启
 #symbolic-links=0
 
@@ -245,13 +245,13 @@ sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE
 #sort_buffer_size=32M
 
 #进程文件位置
-pid-file=/server/webtool/mysql-8.0.19/run/mysqld.pid
+pid-file=/server/tool/mysql-8.0.19/run/mysqld.pid
 #错误日志位置
-log-error=/server/webtool/mysql-8.0.19/log/mysqld-error.log
+log-error=/server/tool/mysql-8.0.19/log/mysqld-error.log
 #是否开启慢查询日志收集
 #slow_query_log=1
 #慢查询日志位置
-#slow_query_log_file=/server/webtool/mysql-8.0.19/log/mysql-slow.log
+#slow_query_log_file=/server/tool/mysql-8.0.19/log/mysql-slow.log
 #是否记录未使用索引的语句
 #log_queries_not_using_indexes=1
 #慢查询也记录那些慢的optimize table，analyze table和alter table语句
@@ -272,7 +272,7 @@ log-error=/server/webtool/mysql-8.0.19/log/mysqld-error.log
 #强制GTID的一致性
 #enforce-gtid-consistency=1
 #log-bin的保存位置，不能指定确定的文件名如mysql-bin.log，只能指定位置和前缀，会生成以前缀为开头的一系列文件
-#log-bin=/server/webtool/mysql-5.7.22/log/mysql-bin
+#log-bin=/server/tool/mysql-5.7.22/log/mysql-bin
 #binlog日志格式，可选值“MIXED”、“ROW”、“STATEMENT”，在5.6版本之前默认为“STATEMENT”，5.6之后默认为“MIXED”；因为“STATEMENT”方式在处理一些“不确定”性的方法时会造成数据不一致问题，我们建议使用“MIXED”或者“ROW”
 #binlog_format=ROW
 #这个参数是对于MySQL系统来说是至关重要的，他不仅影响到Binlog对MySQL所带来的性能损耗，而且还影响到MySQL中数据的完整性。默认sync_binlog=0。也就是不做任何强制性的磁盘刷新指令，这时候的性能是最好的，但是风险也是最大的。因为一旦系统Crash，在binlog_cache中的所有binlog信息都会被丢失。而当设置为“1”的时候，是最安全但是性能损耗最大的设置。因为当设置为1的时候，即使系统Crash，也最多丢失binlog_cache中未完成的一个事务，对实际数据没有任何实质性影响。从以往经验和相关测试来看，对于高并发事务的系统来说，“sync_binlog”设置为0和设置为1的系统写入性能差距可能高达5倍甚至更多。具体值说明如下：sync_binlog=0，当事务提交之后，MySQL不做fsync之类的磁盘同步指令刷新binlog_cache中的信息到磁盘，而让Filesystem自行决定什么时候来做同步，或者cache满了之后才同步到磁盘。sync_binlog=n，当每进行n次事务提交之后，MySQL将进行一次fsync之类的磁盘同步指令来将binlog_cache中的数据强制写入磁盘。
@@ -280,7 +280,7 @@ log-error=/server/webtool/mysql-8.0.19/log/mysqld-error.log
 #同步日志使用的内存大小
 #binlog_cache_size=1M
 #slave保存同步中继日志的位置
-#relay_log=/server/webtool/mysql-8.0.19/log/mysql-relay
+#relay_log=/server/tool/mysql-8.0.19/log/mysql-relay
 #当slave宕机后，假如relay-log损坏了，导致一部分中继日志没有处理，则自动放弃所有未执行的relay-log，并且重新从master上获取日志，这样就保证了relay-log的完整性
 #relay_log_recovery=1
 #不再需要中继日志时，是否自动清空。默认为1
@@ -352,9 +352,9 @@ log-error=/server/webtool/mysql-8.0.19/log/mysqld-error.log
 #innodb_io_capacity=4000
 #innodb_io_capacity_max=8000
 #innodb重做日志保存目录
-#innodb_log_group_home_dir=/server/webtool/mysql-8.0.19/log/redolog/
+#innodb_log_group_home_dir=/server/tool/mysql-8.0.19/log/redolog/
 #innodb回滚日志保存目录
-#innodb_undo_directory=/server/webtool/mysql-8.0.19/log/undolog/
+#innodb_undo_directory=/server/tool/mysql-8.0.19/log/undolog/
 #undo回滚段的数量，至少大于等于35，默认128
 #innodb_undo_logs=128
 #用于设定创建的undo表空间的个数，在mysql_install_db时初始化后，就再也不能被改动了；默认值为0，表示不独立设置undo的tablespace，默认记录到ibdata中；否则，则在undo目录下创建这么多个undo文件，例如假定设置该值为4，那么就会创建命名为undo001~undo004的undo tablespace文件，每个文件的默认大小为10M。修改该值会导致Innodb无法完成初始化，数据库无法启动，但是另两个参数可以修改
@@ -418,7 +418,7 @@ server-id=160
 #强制GTID的一致性
 #enforce-gtid-consistency=1
 #主库设置，指同步日志的文件名,默认在data目录下，也可直接指定一个路径
-#log-bin=/server/webtool/mysql-8.0.19/log/mysql-bin
+#log-bin=/server/tool/mysql-8.0.19/log/mysql-bin
 #binlog日志格式，可选值“MIXED”、“ROW”、“STATEMENT”，在5.6版本之前默认为“STATEMENT”，5.6之后默认为“MIXED”；因为“STATEMENT”方式在处理一些“不确定”性的方法时会造成数据不一致问题，我们建议使用“MIXED”或者“ROW”
 #binlog_format=ROW
 #这个参数是对于MySQL系统来说是至关重要的，他不仅影响到Binlog对MySQL所带来的性能损耗，而且还影响到MySQL中数据的完整性。默认sync_binlog=0。也就是不做任何强制性的磁盘刷新指令，这时候的性能是最好的，但是风险也是最大的。因为一旦系统Crash，在binlog_cache中的所有binlog信息都会被丢失。而当设置为“1”的时候，是最安全但是性能损耗最大的设置。因为当设置为1的时候，即使系统Crash，也最多丢失binlog_cache中未完成的一个事务，对实际数据没有任何实质性影响。从以往经验和相关测试来看，对于高并发事务的系统来说，“sync_binlog”设置为0和设置为1的系统写入性能差距可能高达5倍甚至更多。具体值说明如下：sync_binlog=0，当事务提交之后，MySQL不做fsync之类的磁盘同步指令刷新binlog_cache中的信息到磁盘，而让Filesystem自行决定什么时候来做同步，或者cache满了之后才同步到磁盘。sync_binlog=n，当每进行n次事务提交之后，MySQL将进行一次fsync之类的磁盘同步指令来将binlog_cache中的数据强制写入磁盘。
@@ -426,7 +426,7 @@ server-id=160
 #同步日志使用的内存大小
 #binlog_cache_size=1M
 #从库设置，slave保存同步中继日志的位置
-#relay_log=/server/webtool/mysql-8.0.19/log/mysql-relay
+#relay_log=/server/tool/mysql-8.0.19/log/mysql-relay
 #从库设置，当slave宕机后，假如relay-log损坏了，导致一部分中继日志没有处理，则自动放弃所有未执行的relay-log，并且重新从master上获取日志，这样就保证了relay-log的完整性
 #relay_log_recovery=1
 #从库设置，是否自动清空不再需要中继日志时。默认为1

@@ -6,15 +6,15 @@ port=3306
 #服务id（唯一，建议为IP最后一个数字）
 server-id=161
 #mysql的数据目录
-datadir=/server/webtool/mysql-8.0.26/data
+datadir=/server/tool/mysql-8.0.26/data
 #mysql以socket方式运行的sock文件位置
-socket=/server/webtool/mysql-8.0.26/mysql.sock
+socket=/server/tool/mysql-8.0.26/mysql.sock
 #错误日志位置
-log-error=/server/webtool/mysql-8.0.26/log/mysqld-error.log
+log-error=/server/tool/mysql-8.0.26/log/mysqld-error.log
 #进程文件位置
-pid-file=/server/webtool/mysql-8.0.26/run/mysqld.pid
+pid-file=/server/tool/mysql-8.0.26/run/mysqld.pid
 #主库设置，指同步日志的文件名,默认在data目录下，也可直接指定一个路径
-log-bin=/server/webtool/mysql-8.0.26/log/mysql-bin
+log-bin=/server/tool/mysql-8.0.26/log/mysql-bin
 
 #是否支持符号链接，即数据库或表可以存储在my.cnf中指定datadir之外的分区或目录，为0不开启
 #symbolic-links=0
@@ -36,7 +36,7 @@ enforce-gtid-consistency=1
 #同步日志使用的内存大小
 #binlog_cache_size=1M
 #从库设置，slave保存同步中继日志的位置
-relay_log=/server/webtool/mysql-8.0.26/log/mysql-relay
+relay_log=/server/tool/mysql-8.0.26/log/mysql-relay
 #从库设置，当slave宕机后，假如relay-log损坏了，导致一部分中继日志没有处理，则自动放弃所有未执行的relay-log，并且重新从master上获取日志，这样就保证了relay-log的完整性
 relay_log_recovery=1
 #从库设置，是否自动清空不再需要中继日志时。默认为1

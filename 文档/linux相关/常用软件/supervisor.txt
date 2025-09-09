@@ -26,7 +26,7 @@ files = /server/tool/supervisor/phpswoole/*.conf
 #启动命令
 command=php think swoole
 #执行脚本目录
-directory=/server/web/sy1/
+directory=/server/app/sy1/
 #守护进程启动时是否同时启动
 autorestart=true
 #启动多少秒后状态判定
