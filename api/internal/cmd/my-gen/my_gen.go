@@ -153,7 +153,13 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 		internal.Command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneId, `npm`, `run`, `format`) // 前端代码格式化
 	}
 
-	logMyGenCommand(option, append(append(tpl.Handle.ExtendTableCmdLog, tpl.Handle.MiddleTableCmdLog...), tpl.Handle.OtherRelTableCmdLog...)) // 记录myGen命令
+	// 记录myGen命令
+	var tableCmdLog []string
+	tableCmdLog = append(tableCmdLog, tpl.Handle.RelIdTableCmdLog...)
+	tableCmdLog = append(tableCmdLog, tpl.Handle.ExtendTableCmdLog...)
+	tableCmdLog = append(tableCmdLog, tpl.Handle.MiddleTableCmdLog...)
+	tableCmdLog = append(tableCmdLog, tpl.Handle.OtherRelTableCmdLog...)
+	logMyGenCommand(option, tableCmdLog)
 }
 
 // 创建命令选项

@@ -80,6 +80,7 @@ type myGenTpl struct {
 		MiddleTableOneList  []handleExtendMiddle   //中间表（一对一）：表命名：主表名_rel_to_xxxx 或 xxxx_rel_of_主表名，同模块时，后面部分可省略独有前缀，并存在至少2个与关联表（主键 或 表名去掉前缀 + ID）同名的id后缀字段。主表的关联字段设为：非递增主键 或 唯一索引
 		MiddleTableManyList []handleExtendMiddle   //中间表（一对多）：表命名：主表名_rel_to_xxxx 或 xxxx_rel_of_主表名，同模块时，后面部分可省略独有前缀，并存在至少2个与关联表（主键 或 表名去掉前缀 + ID）同名的id后缀字段。所有表的关联字段设为：联合主键 或 联合唯一索引
 		OtherRelTableList   []handleOtherRel       //其它关联表（不含扩展表和中间表）：存在与主表主键（主键 或 表名去掉前缀 + ID）同名的id后缀字段。作用：logic层delete方法生成验证代码；dao层HookDelete方法生成关联删除代码
+		RelIdTableCmdLog    []string               //id后缀字段关联表Cmd记录
 		ExtendTableCmdLog   []string               //扩展表Cmd记录
 		MiddleTableCmdLog   []string               //中间表Cmd记录
 		OtherRelTableCmdLog []string               //其它关联表Cmd记录
@@ -880,22 +881,22 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	}
 	scanInfo = append(scanInfo, color.BlueString(`> 请输入正确的表序号？默认(1)：`))
 	indexStr := gcmd.Scan(scanInfo...)
-isRelEnd:
 	for {
-		index := gconv.Int(indexStr)
-		if indexStr == `` {
-			index = 1
+		index := 1
+		if indexStr != `` {
+			index = gconv.Int(indexStr)
 		}
 		if index == 0 {
-			break isRelEnd
+			tpl.Handle.RelIdTableCmdLog = append(tpl.Handle.RelIdTableCmdLog, fmt.Sprintf(`%s:%s:%s`, `id后缀字段关联表`, field.FieldRaw, `都不匹配`))
+			return
 		} else if index > 0 && index <= len(mayBeTableArr) {
 			relTpl = getTableTplFunc(mayBeTableArr[index-1])
+			tpl.Handle.RelIdTableCmdLog = append(tpl.Handle.RelIdTableCmdLog, fmt.Sprintf(`%s:%s:%s`, `id后缀字段关联表`, field.FieldRaw, relTpl.Table))
 			return
 		}
 		indexStr = gcmd.Scan(color.BlueString(`> 输入错误，请重新输入？默认(1)：`))
 	}
 	/*--------确定关联表 结束--------*/
-	return
 }
 
 // 创建扩展表和中间表模板参数
@@ -1235,7 +1236,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 				}
 				otherRelTableList = append(otherRelTableList, handleOtherRelObj)
 			}
-			otherRelTableCmdLog = append(otherRelTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `关联表`, otherRelTpl.Table, field.FieldRaw, isOtherRel))
+			otherRelTableCmdLog = append(otherRelTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `其它关联表`, otherRelTpl.Table, field.FieldRaw, isOtherRel))
 			// break //可能有多个字段关联同一个表
 		}
 	}
