@@ -618,7 +618,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 
 	//id后缀字段
 	for k, v := range tpl.Handle.RelIdMap {
-		if v.tpl.Table == `` {
+		if v.tpl == nil {
 			continue
 		}
 		for _, item := range fieldList {
