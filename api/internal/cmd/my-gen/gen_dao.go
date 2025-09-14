@@ -882,7 +882,7 @@ func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		daoField.filterParse.Method = internal.ReturnTypeName
-		if relIdObj.tpl.Table != `` {
+		if relIdObj.tpl != nil {
 			daoPathRel := relIdObj.tpl.TableCaseCamel
 			daoTableRel := `table` + relIdObj.tpl.TableCaseCamel
 			if relIdObj.tpl.ModuleDirCaseKebab != tpl.ModuleDirCaseKebab {
@@ -1112,7 +1112,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 			daoField.filterParse.Method = internal.ReturnTypeName
-			if relIdObj.tpl.Table != `` {
+			if relIdObj.tpl != nil {
 				daoPathRel := relIdObj.tpl.TableCaseCamel
 				daoTableRel := `table` + relIdObj.tpl.TableCaseCamel
 				if relIdObj.tpl.ModuleDirCaseKebab != tplEM.tplOfTop.ModuleDirCaseKebab {

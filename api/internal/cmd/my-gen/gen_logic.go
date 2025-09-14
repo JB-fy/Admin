@@ -221,7 +221,7 @@ func getLogicField(tpl *myGenTpl, v myGenField) (logicField myGenLogicField) {
 	switch v.FieldTypeName {
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` {
+		if relIdObj.tpl != nil {
 			logicField.importDao = append(logicField.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 			logicField.i18nField = myGenI18nField{
 				key: `name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel),
@@ -266,7 +266,7 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 		switch v.FieldTypeName {
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-			if relIdObj.tpl.Table != `` {
+			if relIdObj.tpl != nil {
 				logic.importDao = append(logic.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 				i18nField := myGenI18nField{
 					key: `name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel),
@@ -300,7 +300,7 @@ func getLogicExtendMiddleMany(tplEM handleExtendMiddle) (logic myGenLogic) {
 			switch v.FieldTypeName {
 			case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 				relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-				if relIdObj.tpl.Table != `` {
+				if relIdObj.tpl != nil {
 					logic.importDao = append(logic.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 					i18nField := myGenI18nField{
 						key: `name.` + gstr.CaseCamelLower(relIdObj.tpl.ModuleDirCaseCamel) + `.` + gstr.CaseCamelLower(relIdObj.tpl.TableCaseCamel),

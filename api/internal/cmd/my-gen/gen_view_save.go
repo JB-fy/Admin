@@ -455,7 +455,7 @@ func getViewSaveField(tpl *myGenTpl, v myGenField, dataFieldPath string, i18nPat
 
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` {
+		if relIdObj.tpl != nil {
 			apiUrl := relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 			if relIdObj.tpl.Handle.Pid.Pid != `` {
 				viewSaveField.formContent.DataTypeName = `<my-cascader v-model="saveForm.data.` + dataFieldPath + `" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree'` + tpl.Handle.Pid.Tpl.PidDefValOfView + ` }" :props="{ emitPath: false }" />`
@@ -658,7 +658,7 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
                     <!-- <el-select-v2 v-model="saveForm.data.` + tplEM.FieldVar + `" :options="tm('` + i18nPath + `.status.` + i18nFieldPath + `')" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :multiple="true" :collapse-tags="true" :collapse-tags-tooltip="true" style="width: ` + gconv.String(170+(v.FieldShowLenMax-3)*14) + `px" /> -->`
 		case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 			relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-			if relIdObj.tpl.Table != `` {
+			if relIdObj.tpl != nil {
 				isReturn = true
 				apiUrl := relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 				viewSaveField.formContent.Method = internal.ReturnTypeName

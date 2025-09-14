@@ -537,7 +537,7 @@ func getViewListField(option myGenOption, tpl *myGenTpl, v myGenField, i18nPath 
             }`
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
+		if relIdObj.tpl != nil && !relIdObj.IsRedundName {
 			viewListField.dataKey.Method = internal.ReturnTypeName
 			viewListField.dataKey.DataTypeName = `'` + relIdObj.tpl.Handle.LabelList[0] + relIdObj.Suffix + `'`
 		}

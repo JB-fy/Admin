@@ -550,7 +550,7 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterType.Method = internal.ReturnType
 
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` {
+		if relIdObj.tpl != nil {
 			if !apiField.isRequired && slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, v.FieldType) && relIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
 				for index, rule := range apiField.saveRule.DataType {
 					if rule == `between:`+v.FieldLimitInt.Min+`,`+v.FieldLimitInt.Max {

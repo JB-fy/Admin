@@ -438,7 +438,7 @@ func getControllerField(tpl *myGenTpl, v myGenField) (controller myGenController
 	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
+		if relIdObj.tpl != nil && !relIdObj.IsRedundName {
 			controller.importDao = append(controller.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 			daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
 			fieldTmp := daoPathRel + `.Columns().` + gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])

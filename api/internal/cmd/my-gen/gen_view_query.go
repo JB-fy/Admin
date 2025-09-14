@@ -234,7 +234,7 @@ func getViewQueryField(tpl *myGenTpl, v myGenField, i18nPath string, i18nFieldPa
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		viewQueryField.form.Method = internal.ReturnTypeName
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` {
+		if relIdObj.tpl != nil {
 			apiUrl := relIdObj.tpl.ModuleDirCaseKebab + `/` + relIdObj.tpl.TableCaseKebab
 			if relIdObj.tpl.Handle.Pid.Pid != `` {
 				viewQueryField.form.DataTypeName = `<my-cascader v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/` + apiUrl + `/tree'` + tpl.Handle.Pid.Tpl.PidDefValOfView + ` }" :props="{ emitPath: false }" />`

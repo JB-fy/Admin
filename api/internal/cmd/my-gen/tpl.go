@@ -294,7 +294,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				}
 				tpl.Handle.RelIdMap[fieldTmp.FieldRaw] = handleRelIdObj
 
-				if handleRelIdObj.tpl.Table != `` && slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, fieldTmp.FieldType) && handleRelIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
+				if handleRelIdObj.tpl != nil && slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, fieldTmp.FieldType) && handleRelIdObj.tpl.KeyList[0].FieldList[0].IsAutoInc {
 					fieldTmp.FieldLimitInt.Min = `1`
 				}
 			}

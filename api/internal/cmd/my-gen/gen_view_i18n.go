@@ -146,7 +146,7 @@ func getViewI18nField(tpl *myGenTpl, v myGenField) (viewI18nField myGenViewI18nF
 	case internal.TypeNameColorSuffix: // color后缀；	类型：varchar；
 	case internal.TypeNameIdSuffix: // id后缀；	类型：int等类型或varchar或char；
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
-		if relIdObj.tpl.Table != `` && !relIdObj.IsRedundName {
+		if relIdObj.tpl != nil && !relIdObj.IsRedundName {
 			viewI18nField.name.Method = internal.ReturnTypeName
 			viewI18nField.name.DataTypeName = `'` + relIdObj.FieldName + `'`
 		}
