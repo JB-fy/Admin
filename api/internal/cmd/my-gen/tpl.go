@@ -1054,7 +1054,6 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context) {
 			break
 		}
 	}
-	return
 }
 
 // 获取中间表
@@ -1162,7 +1161,6 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context) {
 			break
 		}
 	}
-	return
 }
 
 // 其它关联表（不含扩展表和中间表）
@@ -1239,5 +1237,4 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 			// break //可能有多个字段关联同一个表
 		}
 	}
-	return
 }
