@@ -322,9 +322,10 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				}
 			}
 			if !isStr {
-				if statusStr == `0否1是` || statusStr == `1是0否` {
+				switch statusStr {
+				case `0否1是`, `1是0否`:
 					fieldTmp.StatusWhetherI18n = `common.status.whether`
-				} else if statusStr == `1否0是` || statusStr == `0是1否` {
+				case `1否0是`, `0是1否`:
 					fieldTmp.StatusWhetherI18n = `common.status.whetherConv`
 				}
 			}
