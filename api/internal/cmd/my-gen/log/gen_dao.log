@@ -2,5 +2,5 @@
     扩展表(一对多):pay_order_rel:order_id:true
 ./main myGen -dbGroup=default -dbTable=platform_server -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
 ./main myGen -dbGroup=default -dbTable=platform_config -removePrefixCommon= -removePrefixAlone=platform_ -isApi=0 -isView=0
-    关联表:org_config:config_key:false
+    其它关联表:org_config:config_key:false
 ./main myGen -dbGroup=default -dbTable=org_config -removePrefixCommon= -removePrefixAlone=org_ -isApi=0 -isView=0
