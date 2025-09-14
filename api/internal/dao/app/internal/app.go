@@ -29,7 +29,7 @@ type AppColumns struct {
 	IsStop    string // 停用：0否 1是
 	AppId     string // APPID
 	AppName   string // 名称
-	AppConfig string // 配置。JSON格式，需要时设置
+	AppConfig string // 配置。  JSON格式，需要时设置
 	Remark    string // 备注
 }
 
