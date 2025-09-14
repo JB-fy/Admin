@@ -81,7 +81,7 @@ func (apiThis *myGenApi) Unique() {
 }
 
 // api生成
-func genApi(option myGenOption, tpl myGenTpl) {
+func genApi(option myGenOption, tpl *myGenTpl) {
 	api := getApiIdAndLabel(tpl)
 	for _, v := range tpl.FieldListOfDefault {
 		api.Add(getApiField(tpl, v), v, internal.TableTypeDefault)
@@ -227,7 +227,7 @@ type ` + tpl.TableCaseCamel + `TreeRes struct {
 	utils.FilePutFormat(saveFile, []byte(tplApi)...)
 }
 
-func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
+func getApiIdAndLabel(tpl *myGenTpl) (api myGenApi) {
 	fieldStyleOfIdArr := internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)
 	fieldStyleOfExcId := internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id`)
 	fieldStyleOfExcIdArr := internal.GetStrByFieldStyle(tpl.FieldStyle, `exc_id_arr`)
@@ -293,7 +293,7 @@ func getApiIdAndLabel(tpl myGenTpl) (api myGenApi) {
 	return
 }
 
-func getApiField(tpl myGenTpl, v myGenField) (apiField myGenApiField) {
+func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 	if !v.IsNull && (gvar.New(v.Default).IsNil() || v.IsUnique) {
 		apiField.isRequired = true
 	}

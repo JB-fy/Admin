@@ -39,7 +39,7 @@ func (controllerThis *myGenController) Unique() {
 }
 
 // controller生成
-func genController(option myGenOption, tpl myGenTpl) {
+func genController(option myGenOption, tpl *myGenTpl) {
 	controller := getControllerIdAndLabel(tpl)
 	for _, v := range tpl.FieldList {
 		controller.Merge(getControllerField(tpl, v))
@@ -378,7 +378,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	utils.FilePutFormat(saveFile, []byte(tplController)...)
 }
 
-func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
+func getControllerIdAndLabel(tpl *myGenTpl) (controller myGenController) {
 	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
 		controller.list = append(controller.list, "`id`")
 		controller.info = append(controller.info, "`id`")
@@ -396,7 +396,7 @@ func getControllerIdAndLabel(tpl myGenTpl) (controller myGenController) {
 	return
 }
 
-func getControllerField(tpl myGenTpl, v myGenField) (controller myGenController) {
+func getControllerField(tpl *myGenTpl, v myGenField) (controller myGenController) {
 	/*--------根据字段主键类型处理 开始--------*/
 	switch v.FieldTypePrimary {
 	case internal.TypePrimary: // 独立主键

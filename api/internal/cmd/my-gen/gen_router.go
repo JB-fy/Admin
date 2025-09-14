@@ -8,7 +8,7 @@ import (
 )
 
 // 后端路由生成
-func genRouter(option myGenOption, tpl myGenTpl) {
+func genRouter(option myGenOption, tpl *myGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/router/` + option.SceneId + `.go`
 	tplRouter := gfile.GetContents(saveFile)
 

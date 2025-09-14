@@ -6,7 +6,7 @@ import (
 )
 
 // 视图模板Index生成
-func genViewIndex(option myGenOption, tpl myGenTpl) {
+func genViewIndex(option myGenOption, tpl *myGenTpl) {
 	tplView := `<script setup lang="tsx">
 import List from './List.vue'
 import Query from './Query.vue'`

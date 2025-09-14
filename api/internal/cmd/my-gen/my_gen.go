@@ -157,7 +157,6 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 	var tableCmdLog []string
 	tableCmdLog = append(tableCmdLog, tpl.Handle.RelIdTableCmdLog...)
 	tableCmdLog = append(tableCmdLog, tpl.Handle.ExtendTableCmdLog...)
-	tableCmdLog = append(tableCmdLog, tpl.Handle.MiddleTableCmdLog...)
 	tableCmdLog = append(tableCmdLog, tpl.Handle.OtherRelTableCmdLog...)
 	logMyGenCommand(option, tableCmdLog)
 }

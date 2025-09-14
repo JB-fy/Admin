@@ -139,7 +139,7 @@ func (viewSaveThis *myGenViewSave) CreateForm() (form []string) {
 }
 
 // 视图模板Save生成
-func genViewSave(option myGenOption, tpl myGenTpl) {
+func genViewSave(option myGenOption, tpl *myGenTpl) {
 	if !(option.IsCreate || option.IsUpdate) {
 		return
 	}
@@ -252,7 +252,7 @@ const saveDrawer = reactive({
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewSaveField(tpl myGenTpl, v myGenField, dataFieldPath string, i18nPath string, i18nFieldPath string) (viewSaveField myGenViewSaveField) {
+func getViewSaveField(tpl *myGenTpl, v myGenField, dataFieldPath string, i18nPath string, i18nFieldPath string) (viewSaveField myGenViewSaveField) {
 	if !v.IsNull && (gvar.New(v.Default).IsNil() || v.IsUnique) {
 		viewSaveField.isRequired = true
 	}

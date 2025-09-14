@@ -82,7 +82,6 @@ type myGenTpl struct {
 		OtherRelTableList   []handleOtherRel       //其它关联表（不含扩展表和中间表）：存在与主表主键（主键 或 表名去掉前缀 + ID）同名的id后缀字段。作用：logic层delete方法生成验证代码；dao层HookDelete方法生成关联删除代码
 		RelIdTableCmdLog    []string               //id后缀字段关联表Cmd记录
 		ExtendTableCmdLog   []string               //扩展表Cmd记录
-		MiddleTableCmdLog   []string               //中间表Cmd记录
 		OtherRelTableCmdLog []string               //其它关联表Cmd记录
 	}
 }
@@ -117,7 +116,7 @@ type handlePassword struct {
 }
 
 type handleRelId struct {
-	tpl             myGenTpl
+	tpl             *myGenTpl
 	FieldName       string //字段名称
 	IsRedundName    bool   //是否冗余过关联表名称字段
 	Suffix          string //关联表字段后缀（原始，大驼峰或蛇形）。字段含[_of_]时，_of_及之后的部分。示例：userIdOfSend对应OfSend；user_id_of_send对应_of_send
@@ -126,8 +125,8 @@ type handleRelId struct {
 }
 
 type handleExtendMiddle struct {
-	tplOfTop                 myGenTpl
-	tpl                      myGenTpl
+	tplOfTop                 *myGenTpl
+	tpl                      *myGenTpl
 	TableType                internal.MyGenTableType //表类型。按该字段区分哪种功能表
 	RelId                    string                  //关联字段（tplOfTop中的字段名）
 	FieldVar                 string                  //字段变量名
@@ -143,15 +142,15 @@ type handleExtendMiddle struct {
 }
 
 type handleOtherRel struct {
-	tplOfTop myGenTpl
-	tpl      myGenTpl
+	tplOfTop *myGenTpl
+	tpl      *myGenTpl
 	RelId    string //关联字段（tpl中的字段名）
 	daoPath  string
 }
 
 // 创建模板参数
-func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isFromOtherRel bool) (tpl myGenTpl) {
-	tpl = myGenTpl{
+func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isFromOtherRel bool) (tpl *myGenTpl) {
+	tpl = &myGenTpl{
 		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
 		RemovePrefixAlone:  removePrefixAlone,
@@ -279,7 +278,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
 
 				handleRelIdObj := handleRelId{
-					tpl:       tpl.getRelIdTpl(ctx, tpl, fieldTmp),
+					tpl:       tpl.getRelIdTpl(ctx, fieldTmp),
 					FieldName: fieldTmp.FieldName,
 				}
 				if gstr.ToUpper(gstr.SubStr(handleRelIdObj.FieldName, -2)) == `ID` {
@@ -632,9 +631,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	}
 
 	if isTop {
-		tpl.Handle.ExtendTableOneList, tpl.Handle.ExtendTableManyList, tpl.Handle.ExtendTableCmdLog = tpl.getExtendTable(ctx, tpl) //扩展表
-		tpl.Handle.MiddleTableOneList, tpl.Handle.MiddleTableManyList, tpl.Handle.MiddleTableCmdLog = tpl.getMiddleTable(ctx, tpl) //中间表
-		tpl.Handle.OtherRelTableList, tpl.Handle.OtherRelTableCmdLog = tpl.getOtherRel(ctx, tpl)                                   //其它关联当前表主键的表（不含当前表的扩展表和中间表）
+		tpl.getExtendTable(ctx) //扩展表
+		tpl.getMiddleTable(ctx) //中间表
+		tpl.getOtherRel(ctx)    //其它关联当前表主键的表（不含当前表的扩展表和中间表）
 	}
 	/*--------需特殊处理的字段解析 结束--------*/
 
@@ -712,27 +711,27 @@ func (myGenTplThis *myGenTpl) IsFindField(field myGenField, find any) (isFind bo
 }
 
 // 判断字段是否与表主键一致
-func (myGenTplThis *myGenTpl) IsSamePrimary(tpl myGenTpl, isAutoInc bool, fieldTypeRaw, field string) bool {
-	if isAutoInc || tpl.Handle.Id.List[0].FieldTypeRaw != fieldTypeRaw {
+func (myGenTplThis *myGenTpl) IsSamePrimary(isAutoInc bool, fieldTypeRaw, field string) bool {
+	if isAutoInc || myGenTplThis.Handle.Id.List[0].FieldTypeRaw != fieldTypeRaw {
 		return false
 	}
-	primaryKeyArr := []string{tpl.Handle.Id.List[0].FieldCaseSnake}
+	primaryKeyArr := []string{myGenTplThis.Handle.Id.List[0].FieldCaseSnake}
 	if primaryKeyArr[0] == `id` {
-		primaryKeyArr = append(primaryKeyArr, gstr.TrimLeftStr(gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1), tpl.RemovePrefixAlone, 1)+`_id`)
+		primaryKeyArr = append(primaryKeyArr, gstr.TrimLeftStr(gstr.TrimLeftStr(myGenTplThis.Table, myGenTplThis.RemovePrefixCommon, 1), myGenTplThis.RemovePrefixAlone, 1)+`_id`)
 	}
 	return slices.Contains(primaryKeyArr, gstr.CaseSnake(field))
 }
 
 // 获取id后缀字段关联的表信息
-func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, field myGenField) (relTpl myGenTpl) {
+func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, field myGenField) (relTpl *myGenTpl) {
 	tableSuffix := gstr.TrimRightStr(field.FieldCaseSnakeRemove, `_id`, 1)
 
-	removePrefixAloneTmp := tpl.RemovePrefixAlone //moduleDir
-	if removePrefixAloneTmp == `` {               //同模块当主表是user,good等无下划线时，找同模块关联表时，表前缀为：当前主表 + `_`
-		removePrefixAloneTmp = gstr.TrimLeftStr(tpl.Table, tpl.RemovePrefixCommon, 1) + `_`
+	removePrefixAloneTmp := myGenTplThis.RemovePrefixAlone //moduleDir
+	if removePrefixAloneTmp == `` {                        //同模块当主表是user,good等无下划线时，找同模块关联表时，表前缀为：当前主表 + `_`
+		removePrefixAloneTmp = gstr.TrimLeftStr(myGenTplThis.Table, myGenTplThis.RemovePrefixCommon, 1) + `_`
 	}
 	isSamePrimaryFunc := func(table string) bool {
-		tableKeyList := tpl.DbHandler.GetKeyList(ctx, tpl.Group, table)
+		tableKeyList := myGenTplThis.DbHandler.GetKeyList(ctx, myGenTplThis.Group, table)
 		for _, v := range tableKeyList {
 			if v.IsPrimary && len(v.FieldList) == 1 && v.FieldList[0].FieldTypeRaw == field.FieldTypeRaw && slices.Contains([]string{`id`, field.FieldCaseSnakeRemove}, gstr.CaseSnake(v.FieldList[0].FieldRaw)) {
 				return true
@@ -740,15 +739,15 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		}
 		return false
 	}
-	getTableTplFunc := func(table string) (relTpl myGenTpl) {
+	getTableTplFunc := func(table string) (relTpl *myGenTpl) {
 		removePrefixCommon := ``
 		removePrefixAlone := ``
 		if table != `` {
-			if gstr.Pos(table, tpl.RemovePrefixCommon) == 0 {
-				removePrefixCommon = tpl.RemovePrefixCommon
+			if gstr.Pos(table, myGenTplThis.RemovePrefixCommon) == 0 {
+				removePrefixCommon = myGenTplThis.RemovePrefixCommon
 			}
-			if gstr.Pos(table, tpl.RemovePrefix) == 0 {
-				removePrefixAlone = tpl.RemovePrefixAlone
+			if gstr.Pos(table, myGenTplThis.RemovePrefix) == 0 {
+				removePrefixAlone = myGenTplThis.RemovePrefixAlone
 			}
 			if removePrefixAlone == `` {
 				// 当去掉公共前缀后，还存在分隔符`_`时，第一个分隔符之前的部分设置为removePrefixAlone
@@ -758,7 +757,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 				}
 			}
 
-			relTpl = createTpl(ctx, tpl.Group, table, removePrefixCommon, removePrefixAlone, false, false)
+			relTpl = createTpl(ctx, myGenTplThis.Group, table, removePrefixCommon, removePrefixAlone, false, false)
 			relTpl.gfGenDao(false) //dao文件生成
 		}
 		return
@@ -775,23 +774,23 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	}
 	mayBeObj := mayBe{}
 	mayBeObjS := mayBe{} //复数命名表
-	for _, v := range tpl.TableArr {
-		if v == tpl.Table { //自身跳过
+	for _, v := range myGenTplThis.TableArr {
+		if v == myGenTplThis.Table { //自身跳过
 			continue
 		}
 		if gstr.Pos(v, `_rel_to_`) != -1 || gstr.Pos(v, `_rel_of_`) != -1 { //中间表跳过
 			continue
 		}
-		if v == tpl.RemovePrefixCommon+removePrefixAloneTmp+tableSuffix { //关联表在同模块目录下，且表名一致
+		if v == myGenTplThis.RemovePrefixCommon+removePrefixAloneTmp+tableSuffix { //关联表在同模块目录下，且表名一致
 			if isSamePrimaryFunc(v) {
 				mayBeObj.table1 = v
 				break
 			}
-		} else if gstr.Pos(v, tpl.RemovePrefixCommon+removePrefixAloneTmp) == 0 && len(v) == gstr.PosR(v, `_`+tableSuffix)+len(`_`+tableSuffix) { //关联表在同模块目录下，但表后缀一致
+		} else if gstr.Pos(v, myGenTplThis.RemovePrefixCommon+removePrefixAloneTmp) == 0 && len(v) == gstr.PosR(v, `_`+tableSuffix)+len(`_`+tableSuffix) { //关联表在同模块目录下，但表后缀一致
 			if isSamePrimaryFunc(v) {
 				mayBeObj.table2 = append(mayBeObj.table2, v)
 			}
-		} else if mayBeObj.table3 == `` && v == tpl.RemovePrefixCommon+tableSuffix { //公共前缀+表名完全一致
+		} else if mayBeObj.table3 == `` && v == myGenTplThis.RemovePrefixCommon+tableSuffix { //公共前缀+表名完全一致
 			if isSamePrimaryFunc(v) {
 				mayBeObj.table3 = v
 			}
@@ -806,15 +805,15 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		}
 		// 复数命名
 		tableSuffixS := tableSuffix + `s`
-		if mayBeObjS.table1 == `` && v == tpl.RemovePrefixCommon+removePrefixAloneTmp+tableSuffixS { //关联表在同模块目录下，且表名一致
+		if mayBeObjS.table1 == `` && v == myGenTplThis.RemovePrefixCommon+removePrefixAloneTmp+tableSuffixS { //关联表在同模块目录下，且表名一致
 			if isSamePrimaryFunc(v) {
 				mayBeObjS.table1 = v
 			}
-		} else if gstr.Pos(v, tpl.RemovePrefixCommon+removePrefixAloneTmp) == 0 && len(v) == gstr.PosR(v, `_`+tableSuffixS)+len(`_`+tableSuffixS) { //关联表在同模块目录下，但表后缀一致
+		} else if gstr.Pos(v, myGenTplThis.RemovePrefixCommon+removePrefixAloneTmp) == 0 && len(v) == gstr.PosR(v, `_`+tableSuffixS)+len(`_`+tableSuffixS) { //关联表在同模块目录下，但表后缀一致
 			if isSamePrimaryFunc(v) {
 				mayBeObjS.table2 = append(mayBeObjS.table2, v)
 			}
-		} else if mayBeObjS.table3 == `` && v == tpl.RemovePrefixCommon+tableSuffixS { //公共前缀+表名完全一致
+		} else if mayBeObjS.table3 == `` && v == myGenTplThis.RemovePrefixCommon+tableSuffixS { //公共前缀+表名完全一致
 			if isSamePrimaryFunc(v) {
 				mayBeObjS.table3 = v
 			}
@@ -865,9 +864,9 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 	}
 	//当中间表内的id后缀字段匹配不到同模块的表时，增加以下判断
 	for _, relStr := range []string{`_rel_of_`, `_rel_to_`} {
-		if gstr.Pos(tpl.Table, relStr) != -1 {
+		if gstr.Pos(myGenTplThis.Table, relStr) != -1 {
 			for _, v := range mayBeTableArr {
-				if gstr.Pos(tpl.Table, relStr+v) != -1 { //后面关联表和当前表一样时，无需再确认其它表
+				if gstr.Pos(myGenTplThis.Table, relStr+v) != -1 { //后面关联表和当前表一样时，无需再确认其它表
 					relTpl = getTableTplFunc(v)
 					return
 				}
@@ -875,7 +874,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 		}
 	}
 
-	scanInfo := append([]any{}, color.HiYellowString(`表(`+tpl.Table+`)的id后缀字段(`+field.FieldRaw+`)匹配到多个表：`+"\n"), color.HiYellowString(`  0：都不匹配`+"\n"))
+	scanInfo := append([]any{}, color.HiYellowString(`表(`+myGenTplThis.Table+`)的id后缀字段(`+field.FieldRaw+`)匹配到多个表：`+"\n"), color.HiYellowString(`  0：都不匹配`+"\n"))
 	for index, mayBeTable := range mayBeTableArr {
 		scanInfo = append(scanInfo, color.HiYellowString(`  `+gconv.String(index+1)+`：`+mayBeTable+"\n"))
 	}
@@ -887,11 +886,11 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 			index = gconv.Int(indexStr)
 		}
 		if index == 0 {
-			tpl.Handle.RelIdTableCmdLog = append(tpl.Handle.RelIdTableCmdLog, fmt.Sprintf(`%s:%s:%s`, `id后缀字段关联表`, field.FieldRaw, `都不匹配`))
+			myGenTplThis.Handle.RelIdTableCmdLog = append(myGenTplThis.Handle.RelIdTableCmdLog, fmt.Sprintf(`%s:%s:%s`, `id后缀字段关联表`, field.FieldRaw, `都不匹配`))
 			return
 		} else if index > 0 && index <= len(mayBeTableArr) {
 			relTpl = getTableTplFunc(mayBeTableArr[index-1])
-			tpl.Handle.RelIdTableCmdLog = append(tpl.Handle.RelIdTableCmdLog, fmt.Sprintf(`%s:%s:%s`, `id后缀字段关联表`, field.FieldRaw, relTpl.Table))
+			myGenTplThis.Handle.RelIdTableCmdLog = append(myGenTplThis.Handle.RelIdTableCmdLog, fmt.Sprintf(`%s:%s:%s`, `id后缀字段关联表`, field.FieldRaw, relTpl.Table))
 			return
 		}
 		indexStr = gcmd.Scan(color.BlueString(`> 输入错误，请重新输入？默认(1)：`))
@@ -900,20 +899,20 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, tpl myGenTpl, fie
 }
 
 // 创建扩展表和中间表模板参数
-func (myGenTplThis *myGenTpl) createExtendMiddleTpl(tplOfTop myGenTpl, extendMiddleTpl myGenTpl, relId string) (handleExtendMiddleObj handleExtendMiddle) {
+func (myGenTplThis *myGenTpl) createExtendMiddleTpl(extendMiddleTpl *myGenTpl, relId string) (handleExtendMiddleObj handleExtendMiddle) {
 	extendMiddleTpl.gfGenDao(false) //dao文件生成
 
 	handleExtendMiddleObj = handleExtendMiddle{
-		tplOfTop:    tplOfTop,
+		tplOfTop:    myGenTplThis,
 		tpl:         extendMiddleTpl,
 		RelId:       relId,
-		FieldVar:    internal.GetStrByFieldStyle(tplOfTop.FieldStyle, extendMiddleTpl.TableCaseCamel),
+		FieldVar:    internal.GetStrByFieldStyle(myGenTplThis.FieldStyle, extendMiddleTpl.TableCaseCamel),
 		daoPath:     extendMiddleTpl.TableCaseCamel,
 		daoTable:    extendMiddleTpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`,
 		daoTableVar: `table` + extendMiddleTpl.TableCaseCamel,
 	}
-	if extendMiddleTpl.ModuleDirCaseKebab != tplOfTop.ModuleDirCaseKebab {
-		handleExtendMiddleObj.FieldVar = internal.GetStrByFieldStyle(tplOfTop.FieldStyle, extendMiddleTpl.ModuleDirCaseCamel+extendMiddleTpl.TableCaseCamel)
+	if extendMiddleTpl.ModuleDirCaseKebab != myGenTplThis.ModuleDirCaseKebab {
+		handleExtendMiddleObj.FieldVar = internal.GetStrByFieldStyle(myGenTplThis.FieldStyle, extendMiddleTpl.ModuleDirCaseCamel+extendMiddleTpl.TableCaseCamel)
 		handleExtendMiddleObj.daoPath = `dao` + extendMiddleTpl.ModuleDirCaseCamel + `.` + extendMiddleTpl.TableCaseCamel
 		handleExtendMiddleObj.daoTable = `dao` + extendMiddleTpl.ModuleDirCaseCamel + `.` + extendMiddleTpl.TableCaseCamel + `.ParseDbTable(m.GetCtx())`
 		if extendMiddleTpl.ModuleDirCaseCamel != extendMiddleTpl.TableCaseCamel {
@@ -949,35 +948,35 @@ func (myGenTplThis *myGenTpl) createExtendMiddleTpl(tplOfTop myGenTpl, extendMid
 }
 
 // 获取扩展表
-func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) (extendTableOneList []handleExtendMiddle, extendTableManyList []handleExtendMiddle, extendTableCmdLog []string) {
-	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取扩展表
+func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context) {
+	if len(myGenTplThis.Handle.Id.List) > 1 || !myGenTplThis.Handle.Id.IsPrimary { //联合主键或无主键时，不获取扩展表
 		return
 	}
 
-	removePrefixCommon := tpl.RemovePrefixCommon
-	removePrefixAlone := tpl.RemovePrefixAlone
+	removePrefixCommon := myGenTplThis.RemovePrefixCommon
+	removePrefixAlone := myGenTplThis.RemovePrefixAlone
 	if removePrefixAlone == `` {
-		removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
+		removePrefixAlone = gstr.TrimLeftStr(myGenTplThis.Table, removePrefixCommon, 1) + `_`
 	}
-	for _, v := range tpl.TableArr {
-		if v == tpl.Table { //自身跳过
+	for _, v := range myGenTplThis.TableArr {
+		if v == myGenTplThis.Table { //自身跳过
 			continue
 		}
 		if gstr.Pos(v, `_rel_to_`) != -1 || gstr.Pos(v, `_rel_of_`) != -1 { //中间表跳过
 			continue
 		}
-		if gstr.Pos(v, tpl.Table+`_`) != 0 { // 不符合扩展表命名（主表名_xxxx）的跳过
+		if gstr.Pos(v, myGenTplThis.Table+`_`) != 0 { // 不符合扩展表命名（主表名_xxxx）的跳过
 			continue
 		}
-		extendTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false, false)
+		extendTpl := createTpl(ctx, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, key := range extendTpl.KeyList {
 			if len(key.FieldList) != 1 {
 				continue
 			}
-			if !myGenTplThis.IsSamePrimary(tpl, key.FieldList[0].IsAutoInc, key.FieldList[0].FieldTypeRaw, key.FieldList[0].FieldRaw) {
+			if !myGenTplThis.IsSamePrimary(key.FieldList[0].IsAutoInc, key.FieldList[0].FieldTypeRaw, key.FieldList[0].FieldRaw) {
 				continue
 			}
-			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, extendTpl, key.FieldList[0].FieldRaw)
+			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(extendTpl, key.FieldList[0].FieldRaw)
 			if len(handleExtendMiddleObj.FieldList) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}
@@ -1022,9 +1021,9 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 					}
 				}
 				if isExtendOne {
-					extendTableOneList = append(extendTableOneList, handleExtendMiddleObj)
+					myGenTplThis.Handle.ExtendTableOneList = append(myGenTplThis.Handle.ExtendTableOneList, handleExtendMiddleObj)
 				}
-				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对一)`, extendTpl.Table, key.FieldList[0].FieldRaw, isExtendOne))
+				myGenTplThis.Handle.ExtendTableCmdLog = append(myGenTplThis.Handle.ExtendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对一)`, extendTpl.Table, key.FieldList[0].FieldRaw, isExtendOne))
 			case internal.TableTypeExtendMany:
 				isExtendMany := true
 				fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
@@ -1048,9 +1047,9 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 					} else {
 						handleExtendMiddleObj.FieldVar = internal.GetStrByFieldStyle(handleExtendMiddleObj.tplOfTop.FieldStyle, gstr.TrimRightStr(gstr.TrimLeftStr(gstr.CaseCamelLower(handleExtendMiddleObj.FieldVar), `relTo`, 1), `RelOf`, 1), ``, `list`)
 					}
-					extendTableManyList = append(extendTableManyList, handleExtendMiddleObj)
+					myGenTplThis.Handle.ExtendTableManyList = append(myGenTplThis.Handle.ExtendTableManyList, handleExtendMiddleObj)
 				}
-				extendTableCmdLog = append(extendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对多)`, extendTpl.Table, key.FieldList[0].FieldRaw, isExtendMany))
+				myGenTplThis.Handle.ExtendTableCmdLog = append(myGenTplThis.Handle.ExtendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对多)`, extendTpl.Table, key.FieldList[0].FieldRaw, isExtendMany))
 			}
 			break
 		}
@@ -1059,45 +1058,45 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context, tpl myGenTpl) 
 }
 
 // 获取中间表
-func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) (middleTableOneList []handleExtendMiddle, middleTableManyList []handleExtendMiddle, middleTableCmdLog []string) {
-	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取中间表
+func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context) {
+	if len(myGenTplThis.Handle.Id.List) > 1 || !myGenTplThis.Handle.Id.IsPrimary { //联合主键或无主键时，不获取中间表
 		return
 	}
 
 	removePrefixCommon := ``
 	removePrefixAlone := ``
-	for _, v := range tpl.TableArr {
-		if v == tpl.Table { //自身跳过
+	for _, v := range myGenTplThis.TableArr {
+		if v == myGenTplThis.Table { //自身跳过
 			continue
 		}
 		if gstr.Pos(v, `_rel_to_`) == -1 && gstr.Pos(v, `_rel_of_`) == -1 { //不是中间表跳过
 			continue
 		}
 		if gstr.Pos(v, `_rel_to_`) != -1 {
-			if gstr.Pos(v, tpl.Table+`_rel_to_`) != 0 { //不符合中间表_rel_to_命名的跳过
+			if gstr.Pos(v, myGenTplThis.Table+`_rel_to_`) != 0 { //不符合中间表_rel_to_命名的跳过
 				continue
 			}
-			removePrefixCommon = tpl.RemovePrefixCommon
-			removePrefixAlone = tpl.RemovePrefixAlone
+			removePrefixCommon = myGenTplThis.RemovePrefixCommon
+			removePrefixAlone = myGenTplThis.RemovePrefixAlone
 			if removePrefixAlone == `` {
-				removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
+				removePrefixAlone = gstr.TrimLeftStr(myGenTplThis.Table, removePrefixCommon, 1) + `_`
 			}
 		} else {
-			if (tpl.RemovePrefix != `` && gstr.Pos(v, tpl.RemovePrefix) == 0) || (tpl.RemovePrefix == `` && gstr.Pos(v, tpl.Table) == 0) { //不符合中间表_rel_of_命名的跳过（同模块）
-				if len(v) != gstr.Pos(v, `_rel_of_`+tpl.Table)+len(`_rel_of_`+tpl.Table) || len(v) != gstr.Pos(v, `_rel_of_`+gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1))+len(`_rel_of_`+gstr.Replace(tpl.Table, tpl.RemovePrefix, ``, 1)) {
+			if (myGenTplThis.RemovePrefix != `` && gstr.Pos(v, myGenTplThis.RemovePrefix) == 0) || (myGenTplThis.RemovePrefix == `` && gstr.Pos(v, myGenTplThis.Table) == 0) { //不符合中间表_rel_of_命名的跳过（同模块）
+				if len(v) != gstr.Pos(v, `_rel_of_`+myGenTplThis.Table)+len(`_rel_of_`+myGenTplThis.Table) || len(v) != gstr.Pos(v, `_rel_of_`+gstr.Replace(myGenTplThis.Table, myGenTplThis.RemovePrefix, ``, 1))+len(`_rel_of_`+gstr.Replace(myGenTplThis.Table, myGenTplThis.RemovePrefix, ``, 1)) {
 					continue
 				}
-				removePrefixCommon = tpl.RemovePrefixCommon
-				removePrefixAlone = tpl.RemovePrefixAlone
+				removePrefixCommon = myGenTplThis.RemovePrefixCommon
+				removePrefixAlone = myGenTplThis.RemovePrefixAlone
 				if removePrefixAlone == `` {
-					removePrefixAlone = gstr.TrimLeftStr(tpl.Table, removePrefixCommon, 1) + `_`
+					removePrefixAlone = gstr.TrimLeftStr(myGenTplThis.Table, removePrefixCommon, 1) + `_`
 				}
 			} else { //不符合中间表_rel_of_命名的跳过（不同模块）
-				if len(v) != gstr.Pos(v, `_rel_of_`+tpl.Table)+len(`_rel_of_`+tpl.Table) {
+				if len(v) != gstr.Pos(v, `_rel_of_`+myGenTplThis.Table)+len(`_rel_of_`+myGenTplThis.Table) {
 					continue
 				}
-				removePrefixCommon = tpl.RemovePrefixCommon
-				if gstr.Pos(v, tpl.RemovePrefixCommon) != 0 {
+				removePrefixCommon = myGenTplThis.RemovePrefixCommon
+				if gstr.Pos(v, myGenTplThis.RemovePrefixCommon) != 0 {
 					removePrefixCommon = ``
 				}
 				// 第一个分隔符之前的部分设置为removePrefixAlone
@@ -1106,14 +1105,14 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			}
 		}
 
-		middleTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false, false)
+		middleTpl := createTpl(ctx, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, key := range middleTpl.KeyList {
 			if !key.IsUnique { // 必须唯一
 				continue
 			}
 			keyField := ``
 			for _, keyFieldTmp := range key.FieldList {
-				if myGenTplThis.IsSamePrimary(tpl, keyFieldTmp.IsAutoInc, keyFieldTmp.FieldTypeRaw, keyFieldTmp.FieldRaw) {
+				if myGenTplThis.IsSamePrimary(keyFieldTmp.IsAutoInc, keyFieldTmp.FieldTypeRaw, keyFieldTmp.FieldRaw) {
 					keyField = keyFieldTmp.FieldRaw
 					break
 				}
@@ -1121,7 +1120,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 			if keyField == `` {
 				continue
 			}
-			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(tpl, middleTpl, keyField)
+			handleExtendMiddleObj := myGenTplThis.createExtendMiddleTpl(middleTpl, keyField)
 			if len(handleExtendMiddleObj.FieldList) == 0 { //没有要处理的字段，估计表有问题，不处理
 				continue
 			}
@@ -1151,14 +1150,14 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 
 			switch handleExtendMiddleObj.TableType {
 			case internal.TableTypeMiddleOne:
-				middleTableOneList = append(middleTableOneList, handleExtendMiddleObj)
+				myGenTplThis.Handle.MiddleTableOneList = append(myGenTplThis.Handle.MiddleTableOneList, handleExtendMiddleObj)
 			case internal.TableTypeMiddleMany:
 				if len(handleExtendMiddleObj.FieldList) == 1 {
 					handleExtendMiddleObj.FieldVar = internal.GetStrByFieldStyle(handleExtendMiddleObj.tplOfTop.FieldStyle, handleExtendMiddleObj.FieldList[0].FieldRaw, ``, `arr`)
 				} else {
 					handleExtendMiddleObj.FieldVar = internal.GetStrByFieldStyle(handleExtendMiddleObj.tplOfTop.FieldStyle, gstr.TrimRightStr(gstr.TrimLeftStr(gstr.CaseCamelLower(handleExtendMiddleObj.FieldVar), `relTo`, 1), `RelOf`, 1), ``, `list`)
 				}
-				middleTableManyList = append(middleTableManyList, handleExtendMiddleObj)
+				myGenTplThis.Handle.MiddleTableManyList = append(myGenTplThis.Handle.MiddleTableManyList, handleExtendMiddleObj)
 			}
 			break
 		}
@@ -1167,32 +1166,32 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context, tpl myGenTpl) 
 }
 
 // 其它关联表（不含扩展表和中间表）
-func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (otherRelTableList []handleOtherRel, otherRelTableCmdLog []string) {
-	if len(tpl.Handle.Id.List) > 1 || !tpl.Handle.Id.IsPrimary { //联合主键或无主键时，不获取其它关联表
+func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
+	if len(myGenTplThis.Handle.Id.List) > 1 || !myGenTplThis.Handle.Id.IsPrimary { //联合主键或无主键时，不获取其它关联表
 		return
 	}
 	extendMiddleTableArr := []string{}
-	for _, v := range tpl.Handle.ExtendTableOneList {
+	for _, v := range myGenTplThis.Handle.ExtendTableOneList {
 		extendMiddleTableArr = append(extendMiddleTableArr, v.tpl.Table)
 	}
-	for _, v := range tpl.Handle.ExtendTableManyList {
+	for _, v := range myGenTplThis.Handle.ExtendTableManyList {
 		extendMiddleTableArr = append(extendMiddleTableArr, v.tpl.Table)
 	}
-	for _, v := range tpl.Handle.MiddleTableOneList {
+	for _, v := range myGenTplThis.Handle.MiddleTableOneList {
 		extendMiddleTableArr = append(extendMiddleTableArr, v.tpl.Table)
 	}
-	for _, v := range tpl.Handle.MiddleTableManyList {
+	for _, v := range myGenTplThis.Handle.MiddleTableManyList {
 		extendMiddleTableArr = append(extendMiddleTableArr, v.tpl.Table)
 	}
 
-	extendMiddleTableArr = append(extendMiddleTableArr, tpl.Table) //追加自身
-	for _, v := range tpl.TableArr {
+	extendMiddleTableArr = append(extendMiddleTableArr, myGenTplThis.Table) //追加自身
+	for _, v := range myGenTplThis.TableArr {
 		if slices.Contains(extendMiddleTableArr, v) {
 			continue
 		}
 
-		removePrefixCommon := tpl.RemovePrefixCommon
-		if gstr.Pos(v, tpl.RemovePrefixCommon) != 0 {
+		removePrefixCommon := myGenTplThis.RemovePrefixCommon
+		if gstr.Pos(v, myGenTplThis.RemovePrefixCommon) != 0 {
 			// continue //不是相同公共前缀跳过
 			removePrefixCommon = ``
 		}
@@ -1203,9 +1202,9 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 			continue
 		} */
 
-		otherRelTpl := createTpl(ctx, tpl.Group, v, removePrefixCommon, removePrefixAlone, false, true)
+		otherRelTpl := createTpl(ctx, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, true)
 		for _, field := range otherRelTpl.FieldList {
-			if !myGenTplThis.IsSamePrimary(tpl, field.IsAutoInc, field.FieldTypeRaw, field.FieldCaseSnakeRemove) {
+			if !myGenTplThis.IsSamePrimary(field.IsAutoInc, field.FieldTypeRaw, field.FieldCaseSnakeRemove) {
 				continue
 			}
 			isOtherRel := true
@@ -1226,7 +1225,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 			}
 			if isOtherRel {
 				handleOtherRelObj := handleOtherRel{
-					tplOfTop: tpl,
+					tplOfTop: myGenTplThis,
 					tpl:      otherRelTpl,
 					RelId:    field.FieldRaw,
 					daoPath:  otherRelTpl.TableCaseCamel,
@@ -1234,9 +1233,9 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context, tpl myGenTpl) (ot
 				if handleOtherRelObj.tpl.ModuleDirCaseKebab != handleOtherRelObj.tplOfTop.ModuleDirCaseKebab {
 					handleOtherRelObj.daoPath = `dao` + handleOtherRelObj.tpl.ModuleDirCaseCamel + `.` + handleOtherRelObj.tpl.TableCaseCamel
 				}
-				otherRelTableList = append(otherRelTableList, handleOtherRelObj)
+				myGenTplThis.Handle.OtherRelTableList = append(myGenTplThis.Handle.OtherRelTableList, handleOtherRelObj)
 			}
-			otherRelTableCmdLog = append(otherRelTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `其它关联表`, otherRelTpl.Table, field.FieldRaw, isOtherRel))
+			myGenTplThis.Handle.OtherRelTableCmdLog = append(myGenTplThis.Handle.OtherRelTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `其它关联表`, otherRelTpl.Table, field.FieldRaw, isOtherRel))
 			// break //可能有多个字段关联同一个表
 		}
 	}

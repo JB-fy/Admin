@@ -47,7 +47,7 @@ func (viewI18nThis *myGenViewI18n) Unique() {
 }
 
 // 视图模板I18n生成
-func genViewI18n(option myGenOption, tpl myGenTpl) {
+func genViewI18n(option myGenOption, tpl *myGenTpl) {
 	viewI18n := myGenViewI18n{}
 	for _, v := range tpl.FieldListOfDefault {
 		viewI18n.Add(getViewI18nField(tpl, v), v.FieldRaw)
@@ -89,7 +89,7 @@ func genViewI18n(option myGenOption, tpl myGenTpl) {
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewI18nField(tpl myGenTpl, v myGenField) (viewI18nField myGenViewI18nField) {
+func getViewI18nField(tpl *myGenTpl, v myGenField) (viewI18nField myGenViewI18nField) {
 	viewI18nField.name.Method = internal.ReturnType
 	viewI18nField.name.DataType = `'` + v.FieldName + `'`
 

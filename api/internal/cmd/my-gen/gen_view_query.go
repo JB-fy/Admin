@@ -48,7 +48,7 @@ func (viewQueryThis *myGenViewQuery) Unique() {
 }
 
 // 视图模板Query生成
-func genViewQuery(option myGenOption, tpl myGenTpl) {
+func genViewQuery(option myGenOption, tpl *myGenTpl) {
 	viewQuery := getViewQueryIdAndLabel(tpl)
 	for _, v := range tpl.FieldListOfDefault {
 		viewQuery.Add(getViewQueryField(tpl, v, tpl.I18nPath, v.FieldRaw))
@@ -114,7 +114,7 @@ const queryForm = reactive({
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewQueryIdAndLabel(tpl myGenTpl) (viewQuery myGenViewQuery) {
+func getViewQueryIdAndLabel(tpl *myGenTpl) (viewQuery myGenViewQuery) {
 	if len(tpl.Handle.Id.List) == 1 {
 		switch tpl.Handle.Id.List[0].FieldType {
 		case internal.TypeInt, internal.TypeIntU:
@@ -134,7 +134,7 @@ func getViewQueryIdAndLabel(tpl myGenTpl) (viewQuery myGenViewQuery) {
 	return
 }
 
-func getViewQueryField(tpl myGenTpl, v myGenField, i18nPath string, i18nFieldPath string) (viewQueryField myGenViewQueryField) {
+func getViewQueryField(tpl *myGenTpl, v myGenField, i18nPath string, i18nFieldPath string) (viewQueryField myGenViewQueryField) {
 	viewQueryField.formProp.Method = internal.ReturnType
 	viewQueryField.formProp.DataType = v.FieldRaw
 

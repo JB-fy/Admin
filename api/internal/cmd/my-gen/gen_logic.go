@@ -50,7 +50,7 @@ func (logicThis *myGenLogic) Unique() {
 }
 
 // logic生成
-func genLogic(option myGenOption, tpl myGenTpl) (i18n myGenI18n) {
+func genLogic(option myGenOption, tpl *myGenTpl) (i18n myGenI18n) {
 	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.Replace(tpl.ModuleDirCaseKebab, `/`, `-`) + `/` + tpl.TableCaseSnake + `.go`
 	if !option.IsResetLogic && gfile.IsFile(saveFile) {
 		return
@@ -215,7 +215,7 @@ func (logicThis *s` + tpl.LogicStructName + `) Delete(ctx context.Context, filte
 	return
 }
 
-func getLogicField(tpl myGenTpl, v myGenField) (logicField myGenLogicField) {
+func getLogicField(tpl *myGenTpl, v myGenField) (logicField myGenLogicField) {
 	daoPath := `dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel
 
 	switch v.FieldTypeName {

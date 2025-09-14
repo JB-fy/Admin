@@ -8,7 +8,7 @@ import (
 )
 
 // 自动生成操作权限
-func genAction(ctx context.Context, option myGenOption, tpl myGenTpl) {
+func genAction(ctx context.Context, option myGenOption, tpl *myGenTpl) {
 	if !option.IsAuthAction {
 		return
 	}

@@ -72,7 +72,7 @@ func (viewListThis *myGenViewList) Unique() {
 }
 
 // 视图模板List生成
-func genViewList(option myGenOption, tpl myGenTpl) {
+func genViewList(option myGenOption, tpl *myGenTpl) {
 	viewList := myGenViewList{
 		rowHeight: 50,
 		idType:    `number`,
@@ -386,7 +386,7 @@ defineExpose({ getList })
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewListField(option myGenOption, tpl myGenTpl, v myGenField, i18nPath string) (viewListField myGenViewListField) {
+func getViewListField(option myGenOption, tpl *myGenTpl, v myGenField, i18nPath string) (viewListField myGenViewListField) {
 	viewListField.dataKey.Method = internal.ReturnType
 	viewListField.dataKey.DataType = `'` + v.FieldRaw + `'`
 	viewListField.title.Method = internal.ReturnType

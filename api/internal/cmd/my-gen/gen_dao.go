@@ -92,7 +92,7 @@ func (daoThis *myGenDao) Unique() {
 }
 
 // dao生成
-func genDao(tpl myGenTpl) {
+func genDao(tpl *myGenTpl) {
 	tpl.gfGenDao(true) //dao文件生成
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	tplDao := gfile.GetContents(saveFile)
@@ -353,7 +353,7 @@ func genDao(tpl myGenTpl) {
 	utils.FilePutFormat(saveFile, []byte(tplDao)...)
 }
 
-func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
+func getDaoIdAndLabel(tpl *myGenTpl) (dao myGenDao) {
 	if len(tpl.Handle.Id.List) == 1 {
 		dao.idParse = `daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + tpl.Handle.Id.List[0].FieldCaseCamel
 		dao.filterParse = append(dao.filterParse, `case `+"`id`, `"+internal.GetStrByFieldStyle(tpl.FieldStyle, `id_arr`)+"`"+`:
@@ -455,7 +455,7 @@ func getDaoIdAndLabel(tpl myGenTpl) (dao myGenDao) {
 	return
 }
 
-func getDaoField(tpl myGenTpl, v myGenField) (daoField myGenDaoField) {
+func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 	daoPath := `daoThis`
 	daoTable := `daoModel.DbTable`
 
