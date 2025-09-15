@@ -7,6 +7,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"io"
 	"os"
 	"os/exec"
@@ -116,17 +117,13 @@ func FilePutFormat(filePath string, src ...byte) (err error) {
 	return gfile.PutBytes(filePath, contentFormat)
 }
 
-// 逐行读取文件内容。框架gfile.ReadLines()方法在行数据超过默认的缓冲区大小（一般4KB）时，scanner.Scan()这行代码会返回false中断执行
-func FileReadLine(filePath string, callback func(line []byte) error) (err error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return
-	}
-	defer file.Close()
+// 文件逐行读取。框架gfile.ReadLines()方法在行数据超过默认的缓冲区大小（一般4KB）时，scanner.Scan()这行代码会返回false中断执行
+func FileReadLine(file io.Reader, callback func(line []byte) (bool, error)) (err error) {
 	reader := bufio.NewReader(file)
 	var line []byte
 	var isPrefix bool
 	var fullLine []byte
+	var isBreak bool
 	for {
 		line, isPrefix, err = reader.ReadLine()
 		if err != nil && err != bufio.ErrBufferFull {
@@ -139,11 +136,31 @@ func FileReadLine(filePath string, callback func(line []byte) error) (err error)
 		if isPrefix {
 			continue
 		}
-		if err = callback(fullLine); err != nil {
+		if isBreak, err = callback(fullLine); isBreak || err != nil {
 			return
 		}
 		fullLine = fullLine[:0]
 	}
+}
+
+// 本地文件逐行读取
+func FileReadLineByLocal(filePath string, callback func(line []byte) (bool, error)) (err error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	return FileReadLine(file, callback)
+}
+
+// 远程文件逐行读取
+func FileReadLineByRemote(ctx context.Context, fileUrl string, callback func(line []byte) (bool, error)) (err error) {
+	res, err := HttpClient().Get(ctx, fileUrl)
+	if err != nil {
+		return
+	}
+	defer res.Close()
+	return FileReadLine(res.Body, callback)
 }
 
 // 十进制转其它进制
