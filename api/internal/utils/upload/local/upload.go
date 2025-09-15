@@ -20,7 +20,6 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/genv"
-	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"
@@ -88,14 +87,11 @@ func (uploadThis *Upload) Upload(ctx context.Context, r *ghttp.Request) (notifyI
 		return
 	}
 
-	// isRand := true
-	if key != `` {
-		// isRand = false
+	isRand := key == ``
+	if !isRand {
 		file.Filename = gstr.Replace(key, dir, ``)
-	} else {
-		file.Filename = dir + gconv.String(time.Now().UnixMilli()) + `_` + grand.Digits(8) + gfile.Ext(file.Filename)
 	}
-	filename, err := file.Save(uploadThis.FileSaveDir + dir /* , isRand */)
+	filename, err := file.Save(uploadThis.FileSaveDir+dir, isRand)
 	if err != nil {
 		return
 	}
