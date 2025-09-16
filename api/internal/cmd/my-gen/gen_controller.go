@@ -416,6 +416,7 @@ func getControllerField(tpl *myGenTpl, v myGenField) (controller myGenController
 	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		controller.list = append(controller.list, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+"`")
 		if tpl.Handle.Pid.IsLeaf != `` {
+			// controller.list = append(controller.list, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf))
 			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf))
 		} else {
 			controller.list = append(controller.list, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_leaf`)+"`")
