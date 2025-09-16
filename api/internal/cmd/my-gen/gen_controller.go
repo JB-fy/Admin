@@ -40,7 +40,12 @@ func (controllerThis *myGenController) Unique() {
 
 // controller生成
 func genController(option myGenOption, tpl *myGenTpl) {
-	controller := getControllerIdAndLabel(tpl)
+	controller := myGenController{}
+	controller.noAuth = append(controller.noAuth, "`id`", "`label`")
+	/* if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
+		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
+	}
+	controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])) */
 	for _, v := range tpl.FieldList {
 		controller.Merge(getControllerField(tpl, v))
 	}
@@ -67,28 +72,33 @@ func genController(option myGenOption, tpl *myGenTpl) {
 	defaultFieldObj := defaultField{}
 	if option.IsList {
 		defaultFieldObj.part1 = append(defaultFieldObj.part1, `defaultFieldOfList []string`)
-		defaultFieldObj.part2 = append(defaultFieldObj.part2, `defaultFieldOfList := []string{`+gstr.Join(controller.list, `, `)+`}`)
-		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfList: append(field, defaultFieldOfList...),`)
-		defaultFieldObj.part4 = append(defaultFieldObj.part4, `defaultFieldOfList`)
+		defaultFieldObj.part2 = append(defaultFieldObj.part2, `appendFieldOfList := []string{`+gstr.Join(controller.list, `, `)+`}`)
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfList: append(field, appendFieldOfList...),`)
+		defaultFieldObj.part4 = append(defaultFieldObj.part4, `appendFieldOfList`)
 	}
 	if option.IsInfo {
 		defaultFieldObj.part1 = append(defaultFieldObj.part1, `defaultFieldOfInfo []string`)
-		defaultFieldObj.part2 = append(defaultFieldObj.part2, `defaultFieldOfInfo := []string{`+gstr.Join(controller.info, `, `)+`}`)
-		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfInfo: append(field, defaultFieldOfInfo...),`)
-		defaultFieldObj.part4 = append(defaultFieldObj.part4, `defaultFieldOfInfo`)
+		defaultFieldObj.part2 = append(defaultFieldObj.part2, `appendFieldOfInfo := []string{`+gstr.Join(controller.info, `, `)+`}`)
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfInfo: append(field, appendFieldOfInfo...),`)
+		defaultFieldObj.part4 = append(defaultFieldObj.part4, `appendFieldOfInfo`)
 	}
 	if option.IsList && tpl.Handle.Pid.Pid != `` {
 		defaultFieldObj.part1 = append(defaultFieldObj.part1, `defaultFieldOfTree []string`)
-		defaultFieldObj.part2 = append(defaultFieldObj.part2, `defaultFieldOfTree := []string{`+gstr.Join(controller.tree, `, `)+`}`)
-		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfTree: append(field, defaultFieldOfTree...),`)
-		defaultFieldObj.part4 = append(defaultFieldObj.part4, `defaultFieldOfTree`)
+		defaultFieldObj.part2 = append(defaultFieldObj.part2, `appendFieldOfTree := []string{`+gstr.Join(controller.tree, `, `)+`}`)
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfTree: append(field, appendFieldOfTree...),`)
+		defaultFieldObj.part4 = append(defaultFieldObj.part4, `appendFieldOfTree`)
 	}
 	if option.IsList || option.IsInfo {
 		defaultFieldObj.part1 = append(defaultFieldObj.part1, `allowField         []string`)
 		if len(controller.diff) > 0 {
 			defaultFieldObj.part2 = append([]string{`field = gset.NewStrSetFrom(field).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`}, defaultFieldObj.part2...)
 		}
-		defaultFieldObj.part2 = append([]string{`field := dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr()`}, defaultFieldObj.part2...)
+		part2 := []string{}
+		if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
+			part2 = append(part2, "`id`")
+		}
+		part2 = append(part2, "`label`")
+		defaultFieldObj.part2 = append([]string{`field := append(dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr(), ` + gstr.Join(part2, `, `) + `)`}, defaultFieldObj.part2...)
 		part3Str := `allowField:         append(field, `
 		if len(defaultFieldObj.part4) == 1 {
 			part3Str += defaultFieldObj.part4[0]
@@ -378,24 +388,6 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	utils.FilePutFormat(saveFile, []byte(tplController)...)
 }
 
-func getControllerIdAndLabel(tpl *myGenTpl) (controller myGenController) {
-	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
-		controller.list = append(controller.list, "`id`")
-		controller.info = append(controller.info, "`id`")
-		controller.tree = append(controller.tree, "`id`")
-	}
-	controller.list = append(controller.list, "`label`")
-	controller.info = append(controller.info, "`label`")
-	controller.tree = append(controller.tree, "`label`")
-
-	controller.noAuth = append(controller.noAuth, "`id`", "`label`")
-	/* if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
-		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
-	}
-	controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])) */
-	return
-}
-
 func getControllerField(tpl *myGenTpl, v myGenField) (controller myGenController) {
 	/*--------根据字段主键类型处理 开始--------*/
 	switch v.FieldTypePrimary {
@@ -415,12 +407,12 @@ func getControllerField(tpl *myGenTpl, v myGenField) (controller myGenController
 	case internal.TypeNameCreated: // 创建时间字段
 	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		controller.list = append(controller.list, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+"`")
-		if tpl.Handle.Pid.IsLeaf != `` {
-			// controller.list = append(controller.list, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf))
-			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf))
-		} else {
+		if tpl.Handle.Pid.IsLeaf == `` {
 			controller.list = append(controller.list, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_leaf`)+"`")
 			controller.noAuth = append(controller.noAuth, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_leaf`)+"`")
+		} else {
+			// controller.list = append(controller.list, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf))
+			controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf))
 		}
 	case internal.TypeNameIdPath, internal.TypeNameNamePath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；	// name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 	case internal.TypeNameLevel, internal.TypeNameIsLeaf: // level，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；	// is_leaf|isLeaf，且pid，id_path|idPath同时存在时（才）有效；	类型：int等类型；

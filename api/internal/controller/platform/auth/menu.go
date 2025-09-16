@@ -21,15 +21,15 @@ type Menu struct {
 }
 
 func NewMenu() *Menu {
-	field := daoAuth.Menu.ColumnArr()
-	defaultFieldOfList := []string{`id`, `label`, daoAuth.Scene.Columns().SceneName, `p_menu_name`, daoAuth.Menu.Columns().IsLeaf}
-	defaultFieldOfInfo := []string{`id`, `label`}
-	defaultFieldOfTree := []string{`id`, `label`}
+	field := append(daoAuth.Menu.ColumnArr(), `id`, `label`)
+	appendFieldOfList := []string{daoAuth.Scene.Columns().SceneName, `p_menu_name`}
+	appendFieldOfInfo := []string{}
+	appendFieldOfTree := []string{}
 	return &Menu{
-		defaultFieldOfList: append(field, defaultFieldOfList...),
-		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
-		defaultFieldOfTree: append(field, defaultFieldOfTree...),
-		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Merge(gset.NewStrSetFrom(defaultFieldOfTree)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		defaultFieldOfTree: append(field, appendFieldOfTree...),
+		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Merge(gset.NewStrSetFrom(appendFieldOfTree)).Slice()...),
 		noAuthField:        []string{`id`, `label`, daoAuth.Menu.Columns().IsLeaf},
 	}
 }
