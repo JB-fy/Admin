@@ -386,12 +386,19 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 		// apiField.filterType.Method = internal.ReturnType
 		apiField.filterType.DataType = `*gtime.Time`
 		apiField.createType.Method = internal.ReturnType
-		apiField.createType.DataType = `*gtime.Time`
+		apiField.createType.DataType = `*string`
 		apiField.updateType.Method = internal.ReturnType
-		apiField.updateType.DataType = `*gtime.Time`
+		apiField.updateType.DataType = `*string`
 		apiField.resType.Method = internal.ReturnType
 		apiField.resType.DataType = `*gtime.Time`
 
+		if !v.IsNull {
+			apiField.createType.DataType = `*gtime.Time`
+			apiField.updateType.DataType = `*gtime.Time`
+			if v.FieldType == internal.TypeDatetime {
+				apiField.isRequired = true
+			}
+		}
 		apiField.filterRule.Method = internal.ReturnType
 		apiField.filterRule.DataType = append(apiField.filterRule.DataType, `date-format:Y-m-d H:i:s`)
 		apiField.saveRule.Method = internal.ReturnType
@@ -400,12 +407,17 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterType.Method = internal.ReturnType
 		apiField.filterType.DataType = `*gtime.Time`
 		apiField.createType.Method = internal.ReturnType
-		apiField.createType.DataType = `*gtime.Time`
+		apiField.createType.DataType = `*string`
 		apiField.updateType.Method = internal.ReturnType
-		apiField.updateType.DataType = `*gtime.Time`
+		apiField.updateType.DataType = `*string`
 		apiField.resType.Method = internal.ReturnType
 		apiField.resType.DataType = `*string`
 
+		if !v.IsNull {
+			apiField.createType.DataType = `*gtime.Time`
+			apiField.updateType.DataType = `*gtime.Time`
+			apiField.isRequired = true
+		}
 		apiField.filterRule.Method = internal.ReturnType
 		apiField.filterRule.DataType = append(apiField.filterRule.DataType, `date-format:Y-m-d`)
 		apiField.saveRule.Method = internal.ReturnType
@@ -686,19 +698,19 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 		/* // 注释掉的类型当作字符串处理
 		case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
 			apiField.createType.Method = internal.ReturnType
-			apiField.createType.DataType = `*[]gtime.Time`
+			apiField.createType.DataType = `*[]*gtime.Time`
 			apiField.updateType.Method = internal.ReturnType
-			apiField.updateType.DataType = `*[]gtime.Time`
+			apiField.updateType.DataType = `*[]*gtime.Time`
 			apiField.resType.Method = internal.ReturnType
-			apiField.resType.DataType = `*[]gtime.Time`
+			apiField.resType.DataType = `*[]*gtime.Time`
 
 			apiField.saveRule.Method = internal.ReturnType
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `date-format:Y-m-d H:i:s`)
 		case internal.TypeDate: // `date类型`
 			apiField.createType.Method = internal.ReturnType
-			apiField.createType.DataType = `*[]gtime.Time`
+			apiField.createType.DataType = `*[]*gtime.Time`
 			apiField.updateType.Method = internal.ReturnType
-			apiField.updateType.DataType = `*[]gtime.Time`
+			apiField.updateType.DataType = `*[]*gtime.Time`
 			apiField.resType.Method = internal.ReturnType
 			apiField.resType.DataType = `[]string`
 

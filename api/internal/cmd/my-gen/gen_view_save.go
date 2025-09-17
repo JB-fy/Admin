@@ -334,16 +334,32 @@ func getViewSaveField(tpl *myGenTpl, v myGenField, dataFieldPath string, i18nPat
                     ` + viewSaveField.formContent.DataType
 		}
 	case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
+		if v.IsNull {
+			viewSaveField.paramHandle.Method = internal.ReturnType
+			viewSaveField.paramHandle.DataType = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = '')`
+		} else if v.FieldType == internal.TypeDatetime {
+			viewSaveField.isRequired = true
+		}
 		viewSaveField.rule.Method = internal.ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnType
 		viewSaveField.formContent.DataType = `<el-date-picker v-model="saveForm.data.` + dataFieldPath + `" type="datetime" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />`
 	case internal.TypeDate: // `date类型`
+		if v.IsNull {
+			viewSaveField.paramHandle.Method = internal.ReturnType
+			viewSaveField.paramHandle.DataType = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = '')`
+		} else {
+			viewSaveField.isRequired = true
+		}
 		viewSaveField.rule.Method = internal.ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnType
 		viewSaveField.formContent.DataType = `<el-date-picker v-model="saveForm.data.` + dataFieldPath + `" type="date" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />`
 	case internal.TypeTime: // `time类型`
+		if v.IsNull {
+			viewSaveField.paramHandle.Method = internal.ReturnType
+			viewSaveField.paramHandle.DataType = `param.` + dataFieldPath + ` === undefined && (param.` + dataFieldPath + ` = '')`
+		}
 		viewSaveField.rule.Method = internal.ReturnType
 		viewSaveField.rule.DataType = append(viewSaveField.rule.DataType, `{ type: 'string', trigger: 'change', message: t('validation.select') },`)
 		viewSaveField.formContent.Method = internal.ReturnType
