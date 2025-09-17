@@ -103,14 +103,7 @@ func genController(option myGenOption, tpl *myGenTpl) {
 		if len(defaultFieldObj.part4) == 1 {
 			part3Str += defaultFieldObj.part4[0]
 		} else {
-			for k, v := range defaultFieldObj.part4 {
-				if k == 0 {
-					part3Str += `gset.NewStrSetFrom(` + v + `)`
-				} else {
-					part3Str += `.Merge(gset.NewStrSetFrom(` + v + `))`
-				}
-			}
-			part3Str += `.Slice()`
+			part3Str += `gset.NewStrSetFrom(slices.Concat(` + gstr.Join(defaultFieldObj.part4, `, `) + `)).Slice()`
 		}
 		part3Str += `...),`
 		defaultFieldObj.part3 = append(defaultFieldObj.part3, part3Str)

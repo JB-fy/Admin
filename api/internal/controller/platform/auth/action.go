@@ -7,6 +7,7 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
+	"slices"
 
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -26,7 +27,7 @@ func NewAction() *Action {
 	return &Action{
 		defaultFieldOfList: append(field, appendFieldOfList...),
 		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Slice()...),
+		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

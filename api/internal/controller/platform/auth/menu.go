@@ -7,6 +7,7 @@ import (
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
+	"slices"
 
 	"github.com/gogf/gf/v2/container/gset"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -29,7 +30,7 @@ func NewMenu() *Menu {
 		defaultFieldOfList: append(field, appendFieldOfList...),
 		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
 		defaultFieldOfTree: append(field, appendFieldOfTree...),
-		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Merge(gset.NewStrSetFrom(appendFieldOfTree)).Slice()...),
+		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo, appendFieldOfTree)).Slice()...),
 		noAuthField:        []string{`id`, `label`, daoAuth.Menu.Columns().IsLeaf},
 	}
 }
