@@ -8,6 +8,7 @@ import (
 	"api/internal/cache"
 	daoIndex "api/internal/dao"
 	daoAuth "api/internal/dao/auth"
+	"api/internal/dao/org/allow"
 	"api/internal/dao/org/internal"
 	"context"
 	"database/sql"
@@ -22,6 +23,10 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
+
+func init() {
+	allow.RegisterAdmin(&Admin)
+}
 
 // adminDao is the data access object for the table org_admin.
 // You can define custom methods on it to extend its functionality as needed.
