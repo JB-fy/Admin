@@ -20,13 +20,13 @@ type Org struct {
 }
 
 func NewOrg() *Org {
-	field := daoOrg.Org.ColumnArr()
-	defaultFieldOfList := []string{`id`, `label`}
-	defaultFieldOfInfo := []string{`id`, `label`}
+	field := append(daoOrg.Org.ColumnArr(), `id`, `label`)
+	appendFieldOfList := []string{}
+	appendFieldOfInfo := []string{}
 	return &Org{
-		defaultFieldOfList: append(field, defaultFieldOfList...),
-		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

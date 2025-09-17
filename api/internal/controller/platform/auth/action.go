@@ -20,13 +20,13 @@ type Action struct {
 }
 
 func NewAction() *Action {
-	field := daoAuth.Action.ColumnArr()
-	defaultFieldOfList := []string{`id`, `label`}
-	defaultFieldOfInfo := []string{`id`, `label`, `scene_id_arr`}
+	field := append(daoAuth.Action.ColumnArr(), `id`, `label`)
+	appendFieldOfList := []string{}
+	appendFieldOfInfo := []string{`scene_id_arr`}
 	return &Action{
-		defaultFieldOfList: append(field, defaultFieldOfList...),
-		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

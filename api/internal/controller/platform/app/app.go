@@ -20,13 +20,13 @@ type App struct {
 }
 
 func NewApp() *App {
-	field := daoApp.App.ColumnArr()
-	defaultFieldOfList := []string{`id`, `label`}
-	defaultFieldOfInfo := []string{`id`, `label`}
+	field := append(daoApp.App.ColumnArr(), `id`, `label`)
+	appendFieldOfList := []string{}
+	appendFieldOfInfo := []string{}
 	return &App{
-		defaultFieldOfList: append(field, defaultFieldOfList...),
-		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

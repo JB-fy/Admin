@@ -20,13 +20,13 @@ type Role struct {
 }
 
 func NewRole() *Role {
-	field := daoAuth.Role.ColumnArr()
-	defaultFieldOfList := []string{`id`, `label`, daoAuth.Scene.Columns().SceneName, `rel_name`}
-	defaultFieldOfInfo := []string{`id`, `label`, `action_id_arr`, `menu_id_arr`}
+	field := append(daoAuth.Role.ColumnArr(), `id`, `label`)
+	appendFieldOfList := []string{daoAuth.Scene.Columns().SceneName, `rel_name`}
+	appendFieldOfInfo := []string{`action_id_arr`, `menu_id_arr`}
 	return &Role{
-		defaultFieldOfList: append(field, defaultFieldOfList...),
-		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

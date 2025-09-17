@@ -15,6 +15,6 @@ type App struct {
 	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
 	AppId     string      `json:"appId"     orm:"app_id"     ` // APPID
 	AppName   string      `json:"appName"   orm:"app_name"   ` // 名称
-	AppConfig string      `json:"appConfig" orm:"app_config" ` // 配置。  JSON格式，需要时设置
+	AppConfig string      `json:"appConfig" orm:"app_config" ` // 配置。JSON格式，需要时设置
 	Remark    string      `json:"remark"    orm:"remark"     ` // 备注
 }

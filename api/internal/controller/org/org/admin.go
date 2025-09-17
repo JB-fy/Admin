@@ -20,13 +20,13 @@ type Admin struct {
 }
 
 func NewAdmin() *Admin {
-	field := daoOrg.Admin.ColumnArr()
-	defaultFieldOfList := []string{`id`, `label` /* , daoOrg.Org.Columns().OrgName */}
-	defaultFieldOfInfo := []string{`id`, `label`, `role_id_arr`}
+	field := append(daoOrg.Admin.ColumnArr(), `id`, `label`)
+	appendFieldOfList := []string{ /* daoOrg.Org.Columns().OrgName */ }
+	appendFieldOfInfo := []string{`role_id_arr`}
 	return &Admin{
-		defaultFieldOfList: append(field, defaultFieldOfList...),
-		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

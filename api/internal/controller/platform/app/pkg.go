@@ -20,13 +20,13 @@ type Pkg struct {
 }
 
 func NewPkg() *Pkg {
-	field := daoApp.Pkg.ColumnArr()
-	defaultFieldOfList := []string{`id`, `label`, daoApp.App.Columns().AppName}
-	defaultFieldOfInfo := []string{`id`, `label`}
+	field := append(daoApp.Pkg.ColumnArr(), `id`, `label`)
+	appendFieldOfList := []string{daoApp.App.Columns().AppName}
+	appendFieldOfInfo := []string{}
 	return &Pkg{
-		defaultFieldOfList: append(field, defaultFieldOfList...),
-		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

@@ -17,6 +17,6 @@ type App struct {
 	IsStop    interface{} // 停用：0否 1是
 	AppId     interface{} // APPID
 	AppName   interface{} // 名称
-	AppConfig interface{} // 配置。  JSON格式，需要时设置
+	AppConfig interface{} // 配置。JSON格式，需要时设置
 	Remark    interface{} // 备注
 }

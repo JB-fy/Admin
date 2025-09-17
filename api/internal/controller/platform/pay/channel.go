@@ -20,13 +20,13 @@ type Channel struct {
 }
 
 func NewChannel() *Channel {
-	field := daoPay.Channel.ColumnArr()
-	defaultFieldOfList := []string{`id`, `label`, daoPay.Scene.Columns().SceneName, daoPay.Pay.Columns().PayName}
-	defaultFieldOfInfo := []string{`id`, `label`}
+	field := append(daoPay.Channel.ColumnArr(), `id`, `label`)
+	appendFieldOfList := []string{daoPay.Scene.Columns().SceneName, daoPay.Pay.Columns().PayName}
+	appendFieldOfInfo := []string{}
 	return &Channel{
-		defaultFieldOfList: append(field, defaultFieldOfList...),
-		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

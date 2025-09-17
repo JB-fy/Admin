@@ -20,13 +20,13 @@ type Users struct {
 }
 
 func NewUsers() *Users {
-	field := daoUsers.Users.ColumnArr()
-	defaultFieldOfList := []string{`id`, `label`, daoUsers.Privacy.Columns().IdCardNo, daoUsers.Privacy.Columns().IdCardName, daoUsers.Privacy.Columns().IdCardGender, daoUsers.Privacy.Columns().IdCardBirthday, daoUsers.Privacy.Columns().IdCardAddress}
-	defaultFieldOfInfo := []string{`id`, `label`, daoUsers.Privacy.Columns().IdCardNo, daoUsers.Privacy.Columns().IdCardName, daoUsers.Privacy.Columns().IdCardGender, daoUsers.Privacy.Columns().IdCardBirthday, daoUsers.Privacy.Columns().IdCardAddress}
+	field := append(daoUsers.Users.ColumnArr(), `id`, `label`)
+	appendFieldOfList := []string{daoUsers.Privacy.Columns().IdCardNo, daoUsers.Privacy.Columns().IdCardName, daoUsers.Privacy.Columns().IdCardGender, daoUsers.Privacy.Columns().IdCardBirthday, daoUsers.Privacy.Columns().IdCardAddress}
+	appendFieldOfInfo := []string{daoUsers.Privacy.Columns().IdCardNo, daoUsers.Privacy.Columns().IdCardName, daoUsers.Privacy.Columns().IdCardGender, daoUsers.Privacy.Columns().IdCardBirthday, daoUsers.Privacy.Columns().IdCardAddress}
 	return &Users{
-		defaultFieldOfList: append(field, defaultFieldOfList...),
-		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(defaultFieldOfList).Merge(gset.NewStrSetFrom(defaultFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(appendFieldOfList).Merge(gset.NewStrSetFrom(appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }
