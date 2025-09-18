@@ -21,7 +21,7 @@ type AdminInfo struct {
 	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	// OrgName   *string     `json:"org_name,omitempty" dc:"机构"`
+	OrgName   *string     `json:"org_name,omitempty" dc:"机构"`
 }
 
 type AdminFilter struct {
@@ -33,14 +33,14 @@ type AdminFilter struct {
 	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	AdminId        *uint       `json:"admin_id,omitempty" v:"between:1,4294967295" dc:"管理员ID"`
-	// OrgId          *uint       `json:"org_id,omitempty" v:"between:1,4294967295" dc:"机构ID"`
-	Nickname string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
-	Phone    string `json:"phone,omitempty" v:"max-length:30|phone" dc:"手机"`
-	Email    string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	Account  string `json:"account,omitempty" v:"max-length:30|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
-	IsSuper  *uint  `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
-	RoleId   *uint  `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
-	IsStop   *uint  `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	OrgId          *uint       `json:"org_id,omitempty" v:"between:1,4294967295" dc:"机构ID"`
+	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
+	Phone          string      `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
+	Email          string      `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
+	Account        string      `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	IsSuper        *uint       `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
+	RoleId         *uint       `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
+	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------列表 开始--------*/
@@ -76,7 +76,7 @@ type AdminInfoRes struct {
 /*--------新增 开始--------*/
 type AdminCreateReq struct {
 	g.Meta `path:"/admin/create" method:"post" tags:"机构后台/权限管理/管理员" sm:"新增"`
-	// OrgId    *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
+	// OrgId     *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
 	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Phone    *string `json:"phone,omitempty" v:"required-without-all:Email,Account|max-length:20|phone" dc:"手机"`

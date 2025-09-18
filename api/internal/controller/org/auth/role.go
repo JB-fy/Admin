@@ -49,10 +49,10 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 		field = controllerThis.defaultFieldOfList
 	}
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -89,10 +89,10 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	}
 	filter := map[string]any{`id`: req.Id}
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -121,10 +121,10 @@ func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateR
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	data[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	data[daoAuth.Role.Columns().RelId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	data[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -152,10 +152,10 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 		return
 	}
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -174,10 +174,10 @@ func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteR
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
-	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/

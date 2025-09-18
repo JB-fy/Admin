@@ -18,7 +18,7 @@ const saveForm = reactive({
     loading: false,
     data: {
         ...saveCommon.data,
-        // org_id: saveCommon.data.org_id ? saveCommon.data.org_id : undefined,
+        org_id: saveCommon.data.org_id ? saveCommon.data.org_id : undefined,
         phone: saveCommon.data.phone ? (saveCommon.data.phone.indexOf(':') === -1 ? saveCommon.data.phone : saveCommon.data.phone.split(':')[1]) : undefined,
         email: saveCommon.data.email ? (saveCommon.data.email.indexOf(':') === -1 ? saveCommon.data.email : saveCommon.data.email.split(':')[1]) : undefined,
         account: saveCommon.data.account ? (saveCommon.data.account.indexOf(':') === -1 ? saveCommon.data.account : saveCommon.data.account.split(':')[1]) : undefined,
@@ -75,7 +75,7 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            // param.org_id === undefined && (param.org_id = 0)
+            param.org_id === undefined && (param.org_id = 0)
             param.password ? (param.password = md5(param.password)) : delete param.password
             try {
                 if (param?.id) {

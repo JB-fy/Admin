@@ -127,6 +127,7 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreate
 	}
 	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
 
+	// loginInfo := utils.GetCtxLoginInfo(ctx)
 	data[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	data[daoOrg.Admin.Columns().IsSuper] = 0 //不允许创建机构超级管理员
 	/**--------参数处理 结束--------**/
@@ -167,6 +168,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdate
 		return
 	}
 
+	// loginInfo := utils.GetCtxLoginInfo(ctx)
 	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	filter[daoOrg.Admin.Columns().IsSuper] = 0 //不允许修改机构超级管理员
 	/**--------参数处理 结束--------**/

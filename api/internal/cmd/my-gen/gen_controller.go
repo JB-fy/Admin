@@ -44,6 +44,9 @@ func (controllerThis *myGenController) Unique() {
 // controller生成
 func genController(option myGenOption, tpl *myGenTpl) {
 	controller := myGenController{}
+	if option.LoginDaoStr != `` {
+		controller.importDao = append(controller.importDao, option.LoginDaoStr)
+	}
 	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
 		controller.common = append(controller.common, "`id`")
 	}
@@ -115,6 +118,23 @@ func genController(option myGenOption, tpl *myGenTpl) {
 		defaultFieldObj.part3 = append(defaultFieldObj.part3, `noAuthField:        []string{`+gstr.Join(controller.noAuth, `, `)+`},`)
 	}
 
+	loginFilterStr := ``
+	loginDataStr := ``
+	if option.LoginRelId != `` {
+		loginFilterStr = `
+
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	filter[dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(option.LoginRelId) + `] = loginInfo[` + option.LoginIdStr + `]`
+		loginDataStr = `
+
+	loginInfo := utils.GetCtxLoginInfo(ctx)
+	data[dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(option.LoginRelId) + `] = loginInfo[` + option.LoginIdStr + `]`
+	}
+	if option.IsStopFilter {
+		loginFilterStr += `
+	filter[dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(`is_stop`) + `] = 0`
+	}
+
 	tplController := `package ` + tpl.GetModuleName(`controller`) + `
 
 import (
@@ -171,7 +191,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 	}
 	if len(field) == 0 {
 		field = controllerThis.defaultFieldOfList
-	}
+	}` + loginFilterStr + `
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -221,7 +241,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 	if len(field) == 0 {
 		field = controllerThis.defaultFieldOfInfo
 	}
-	filter := map[string]any{` + "`id`" + `: req.Id}
+	filter := map[string]any{` + "`id`" + `: req.Id}` + loginFilterStr + `
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -255,7 +275,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 // 新增
 func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `CreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})` + loginDataStr + `
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -290,7 +310,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 	`) + `if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ` + "``" + `)
 		return
-	}
+	}` + loginFilterStr + `
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -315,7 +335,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 // 删除
 func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `DeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})` + loginFilterStr + `
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -352,7 +372,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Tree(ctx context.Context, req 
 	if len(field) == 0 {
 		field = controllerThis.defaultFieldOfTree
 	}
-	field = append(field, ` + "`tree`" + `)
+	field = append(field, ` + "`tree`" + `)` + loginFilterStr + `
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {

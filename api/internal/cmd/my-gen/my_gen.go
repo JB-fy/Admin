@@ -85,6 +85,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -114,6 +115,10 @@ type myGenOption struct {
 	IsResetLogic bool       `json:"isResetLogic"`
 	IsAuthAction bool       `json:"isAuthAction"` //是否判断操作权限，如是，则同时会生成操作权限
 	CommonName   string     `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
+	LoginRelId   string     `json:"loginRelId"`   //登录关联ID，用于防止用户操作非自身数据
+	LoginIdStr   string     `json:"loginIdStr"`   //登录ID字符串，用于防止用户操作非自身数据
+	LoginDaoStr  string     `json:"loginDaoStr"`  //登录导入dao字符串
+	IsStopFilter bool       `json:"isStopFilter"` //是否停用过滤
 	IsView       bool       `json:"isView"`       //是否生成前端视图文件
 	SceneId      string     `json:"sceneId"`      //场景ID，必须在数据库表auth_scene已存在。示例：platform
 	IsList       bool       `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
@@ -203,6 +208,8 @@ func createOption(ctx context.Context, parser *gcmd.Parser) (option myGenOption)
 		}
 		option.DbTable = gcmd.Scan(color.RedString(`    db表不存在，请重新输入：`))
 	}
+	dbHandler := internal.NewMyGenDbHandler(ctx, g.DB(option.DbGroup).GetConfig().Type)
+	fieldList := dbHandler.GetFieldList(ctx, option.DbGroup, option.DbTable)
 	// 要删除的共有前缀
 	if _, ok := optionMap[`removePrefixCommon`]; !ok {
 		option.RemovePrefixCommon = gcmd.Scan(color.BlueString(`> 请输入要删除的共有前缀，默认(空)：`))
@@ -293,6 +300,66 @@ isApiEnd:
 				break
 			}
 			option.CommonName = gcmd.Scan(color.BlueString(`> 请输入公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用：`))
+		}
+		// 登录关联ID，用于防止用户操作非自身数据
+		if _, ok := optionMap[`loginRelId`]; !ok {
+			option.LoginRelId = gcmd.Scan(color.BlueString(`> 请输入登录关联ID，用于防止用户操作非自身数据，默认(空)：`))
+		}
+	loginRelIdEnd:
+		for {
+			if option.LoginRelId == `` {
+				break
+			} else {
+				for _, v := range fieldList {
+					if option.LoginRelId == v.FieldRaw {
+						break loginRelIdEnd
+					}
+				}
+			}
+			option.LoginRelId = gcmd.Scan(color.RedString(`    登录关联ID不存在，请重新输入，默认(空)：`))
+		}
+		if option.LoginRelId != `` {
+			// 登录ID字符串，用于防止用户操作非自身数据
+			for {
+				if option.LoginIdStr != `` {
+					break
+				}
+				option.LoginIdStr = gcmd.Scan(color.BlueString(`> 请输入登录ID字符串：`))
+			}
+			// 登录导入dao字符串
+			if _, ok := optionMap[`loginDaoStr`]; !ok {
+				option.LoginDaoStr = gcmd.Scan(color.BlueString(`> 请输入登录导入dao字符串，默认(空)：`))
+			}
+		} else {
+			option.LoginIdStr = ``
+			option.LoginDaoStr = ``
+		}
+		// 是否停用过滤
+		isStopExist := false
+		for _, v := range fieldList {
+			if gstr.CaseCamel(`is_stop`) == gstr.CaseCamel(v.FieldRaw) {
+				isStopExist = true
+				break
+			}
+		}
+		if isStopExist {
+			isStopFilter, ok := optionMap[`isStopFilter`]
+			if !ok {
+				isStopFilter = gcmd.Scan(color.BlueString(`> 是否停用过滤，默认(no)：`))
+			}
+		isStopFilterEnd:
+			for {
+				switch isStopFilter {
+				case `1`, `yes`:
+					option.IsStopFilter = true
+					break isStopFilterEnd
+				case ``, `0`, `no`:
+					option.IsStopFilter = false
+					break isStopFilterEnd
+				default:
+					isStopFilter = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否停用过滤，默认(no)：`))
+				}
+			}
 		}
 	}
 	// 是否生成前端视图文件
@@ -460,7 +527,11 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 		myGenCommandArr = append(myGenCommandArr,
 			`-isResetLogic=`+gconv.String(gconv.Uint(option.IsResetLogic)),
 			`-isAuthAction=`+gconv.String(gconv.Uint(option.IsAuthAction)),
-			`-commonName=`+option.CommonName)
+			`-commonName=`+option.CommonName,
+			`-loginRelId=`+option.LoginRelId,
+			`-loginIdStr="`+option.LoginIdStr+`"`,
+			`-loginDaoStr="`+strings.ReplaceAll(option.LoginDaoStr, `"`, `\"`)+`"`,
+			`-isStopFilter=`+gconv.String(gconv.Uint(option.IsStopFilter)))
 	}
 	myGenCommandArr = append(myGenCommandArr, `-isView=`+gconv.String(gconv.Uint(option.IsView)))
 	if option.IsApi || option.IsView {

@@ -279,8 +279,7 @@ func (daoThis *usersDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 			switch k {
 			case daoThis.Columns().Birthday:
 				if gconv.String(v) == `` {
-					daoModel.SaveData[k] = nil
-					continue
+					v = nil
 				}
 				daoModel.SaveData[k] = v
 			case daoThis.Columns().Phone:
@@ -351,9 +350,10 @@ func (daoThis *usersDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 					updateData, _ := v.(map[string]any)
 					for _, id := range daoModel.IdArr {
 						updateData[Privacy.Columns().UserId] = id
-						if row, _ := Privacy.CtxDaoModel(ctx).Filter(Privacy.Columns().UserId, id).HookUpdate(updateData).UpdateAndGetAffected(); row == 0 { //更新失败，有可能记录不存在，这时做插入操作
+						Privacy.CtxDaoModel(ctx).HookInsert(updateData).OnConflict(Privacy.Columns().UserId).Save() // Save()只能触发HookInsert()，但因扩展表（一对一）或中间表（一对一）可能没有自增ID，HookInsert()一般无实际作用！要触发HookUpdate()时使用下方代码，同时注释该行
+						/* if row, _ := Privacy.CtxDaoModel(ctx).Filter(Privacy.Columns().UserId, id).HookUpdate(updateData).UpdateAndGetAffected(); row == 0 { //更新失败，有可能记录不存在，这时做插入操作
 							Privacy.CtxDaoModel(ctx).HookInsert(updateData).Insert()
-						}
+						} */
 					}
 				}
 			}

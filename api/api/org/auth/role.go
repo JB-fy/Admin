@@ -7,18 +7,18 @@ import (
 
 // 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
 type RoleInfo struct {
-	Id       *uint   `json:"id,omitempty" dc:"ID"`
-	Label    *string `json:"label,omitempty" dc:"标签。常用于前端组件"`
-	RoleId   *uint   `json:"role_id,omitempty" dc:"角色ID"`
-	RoleName *string `json:"role_name,omitempty" dc:"名称"`
-	// SceneId     *string     `json:"scene_id,omitempty" dc:"场景ID"`
-	// RelId       *uint       `json:"rel_id,omitempty" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
+	Id          *uint       `json:"id,omitempty" dc:"ID"`
+	Label       *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
+	RoleId      *uint       `json:"role_id,omitempty" dc:"角色ID"`
+	RoleName    *string     `json:"role_name,omitempty" dc:"名称"`
+	SceneId     *string     `json:"scene_id,omitempty" dc:"场景ID"`
+	RelId       *uint       `json:"rel_id,omitempty" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
 	ActionIdArr []string    `json:"action_id_arr,omitempty" dc:"操作ID"`
 	MenuIdArr   []uint      `json:"menu_id_arr,omitempty" dc:"菜单ID"`
 	IsStop      *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt   *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt   *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	// SceneName   *string     `json:"scene_name,omitempty" dc:"场景"`
+	SceneName   *string     `json:"scene_name,omitempty" dc:"场景"`
 }
 
 type RoleFilter struct {
@@ -31,11 +31,11 @@ type RoleFilter struct {
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	RoleId         *uint       `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
 	RoleName       string      `json:"role_name,omitempty" v:"max-length:30" dc:"名称"`
-	// SceneId        string      `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
-	// RelId          *uint       `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
-	ActionId string `json:"action_id,omitempty" v:"max-length:30" dc:"操作ID"`
-	MenuId   *uint  `json:"menu_id,omitempty" v:"between:1,4294967295" dc:"菜单ID"`
-	IsStop   *uint  `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	SceneId        string      `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
+	RelId          *uint       `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
+	ActionId       string      `json:"action_id,omitempty" v:"max-length:30" dc:"操作ID"`
+	MenuId         *uint       `json:"menu_id,omitempty" v:"between:1,4294967295" dc:"菜单ID"`
+	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
 /*--------列表 开始--------*/
