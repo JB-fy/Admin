@@ -509,7 +509,15 @@ func (daoModelThis *DaoModel) Limit(limit ...int) *DaoModel {
 	return daoModelThis
 }
 
-func (daoModelThis *DaoModel) InsertAndGetAffected(data ...any) (affected int64, err error) {
+func (daoModelThis *DaoModel) SaveAndGetAffected(data ...any) (int64, error) {
+	result, err := daoModelThis.Save(data...)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+func (daoModelThis *DaoModel) InsertAndGetAffected(data ...any) (int64, error) {
 	result, err := daoModelThis.Insert(data...)
 	if err != nil {
 		return 0, err
