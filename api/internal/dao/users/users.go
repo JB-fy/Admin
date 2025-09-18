@@ -195,6 +195,11 @@ func (daoThis *usersDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range insert {
 			switch k {
+			case daoThis.Columns().Birthday:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().Phone:
 				if gconv.String(v) == `` {
 					v = nil
@@ -228,7 +233,7 @@ func (daoThis *usersDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 				if !ok {
 					insertData = map[string]any{}
 				}
-				daoModel.SaveData[k] = v
+				insertData[k] = v
 				daoModel.AfterInsert[`privacy`] = insertData
 			default:
 				if daoThis.Contains(k) {
@@ -272,6 +277,12 @@ func (daoThis *usersDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range update {
 			switch k {
+			case daoThis.Columns().Birthday:
+				if gconv.String(v) == `` {
+					daoModel.SaveData[k] = nil
+					continue
+				}
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().Phone:
 				if gconv.String(v) == `` {
 					v = nil
@@ -302,7 +313,7 @@ func (daoThis *usersDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 				if !ok {
 					updateData = map[string]any{}
 				}
-				daoModel.SaveData[k] = v
+				updateData[k] = v
 				daoModel.AfterUpdate[`privacy`] = updateData
 			default:
 				if daoThis.Contains(k) {
@@ -418,12 +429,10 @@ func (daoThis *usersDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel)
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().UserId, 1))
 			case daoThis.Columns().Birthday:
 				m = m.Order(daoModel.DbTable + `.` + v)
-				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 			case Privacy.Columns().IdCardBirthday:
 				tablePrivacy := Privacy.ParseDbTable(m.GetCtx())
 				m = m.Order(tablePrivacy + `.` + v)
-				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 				m = m.Handler(daoThis.ParseJoin(tablePrivacy, daoModel))
 			default:

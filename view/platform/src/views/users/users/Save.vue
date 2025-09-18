@@ -54,7 +54,9 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
+            param.birthday === undefined && (param.birthday = '')
             param.password ? (param.password = md5(param.password)) : delete param.password
+            param.id_card_birthday === undefined && (param.id_card_birthday = '')
             try {
                 if (param?.id) {
                     await request(t('config.VITE_HTTP_API_PREFIX') + '/users/users/update', param, true)

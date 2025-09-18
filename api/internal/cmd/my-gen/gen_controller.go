@@ -11,6 +11,7 @@ import (
 
 type myGenController struct {
 	importDao []string
+	common    []string
 	list      []string
 	info      []string
 	tree      []string
@@ -21,6 +22,7 @@ type myGenController struct {
 
 func (controllerThis *myGenController) Merge(controllerOther myGenController) {
 	controllerThis.importDao = append(controllerThis.importDao, controllerOther.importDao...)
+	controllerThis.common = append(controllerThis.common, controllerOther.common...)
 	controllerThis.list = append(controllerThis.list, controllerOther.list...)
 	controllerThis.info = append(controllerThis.info, controllerOther.info...)
 	controllerThis.tree = append(controllerThis.tree, controllerOther.tree...)
@@ -31,6 +33,7 @@ func (controllerThis *myGenController) Merge(controllerOther myGenController) {
 
 func (controllerThis *myGenController) Unique() {
 	controllerThis.importDao = garray.NewStrArrayFrom(controllerThis.importDao).Unique().Slice()
+	// controllerThis.common = garray.NewStrArrayFrom(controllerThis.common).Unique().Slice()
 	// controllerThis.list = garray.NewStrArrayFrom(controllerThis.list).Unique().Slice()
 	// controllerThis.info = garray.NewStrArrayFrom(controllerThis.info).Unique().Slice()
 	// controllerThis.tree = garray.NewStrArrayFrom(controllerThis.tree).Unique().Slice()
@@ -41,6 +44,10 @@ func (controllerThis *myGenController) Unique() {
 // controller生成
 func genController(option myGenOption, tpl *myGenTpl) {
 	controller := myGenController{}
+	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
+		controller.common = append(controller.common, "`id`")
+	}
+	controller.common = append(controller.common, "`label`")
 	controller.noAuth = append(controller.noAuth, "`id`", "`label`")
 	/* if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
 		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
@@ -93,12 +100,7 @@ func genController(option myGenOption, tpl *myGenTpl) {
 		if len(controller.diff) > 0 {
 			defaultFieldObj.part2 = append([]string{`field = gset.NewStrSetFrom(field).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`}, defaultFieldObj.part2...)
 		}
-		part2 := []string{}
-		if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
-			part2 = append(part2, "`id`")
-		}
-		part2 = append(part2, "`label`")
-		defaultFieldObj.part2 = append([]string{`field := append(dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr(), ` + gstr.Join(part2, `, `) + `)`}, defaultFieldObj.part2...)
+		defaultFieldObj.part2 = append([]string{`field := append(dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr(), ` + gstr.Join(controller.common, `, `) + `)`}, defaultFieldObj.part2...)
 		part3Str := `allowField:         append(field, `
 		if len(defaultFieldObj.part4) == 1 {
 			part3Str += defaultFieldObj.part4[0]
@@ -455,9 +457,7 @@ func getControllerExtendMiddleOne(tplEM handleExtendMiddle) (controller myGenCon
 			case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			default:
 				field := daoPath + `.Columns().` + v.FieldCaseCamel
-				controller.list = append(controller.list, field)
-				controller.info = append(controller.info, field)
-				controller.tree = append(controller.tree, field)
+				controller.common = append(controller.common, field)
 			}
 		}
 	}

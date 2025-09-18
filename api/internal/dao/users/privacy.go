@@ -191,6 +191,11 @@ func (daoThis *privacyDao) ParseInsert(insert map[string]any, daoModel *daoIndex
 				daoModel.SaveData[daoThis.Columns().Salt] = salt
 				password = gmd5.MustEncrypt(password + salt)
 				daoModel.SaveData[k] = password
+			case daoThis.Columns().IdCardBirthday:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				daoModel.SaveData[k] = v
 			default:
 				if daoThis.Contains(k) {
 					daoModel.SaveData[k] = v
@@ -242,6 +247,12 @@ func (daoThis *privacyDao) ParseUpdate(update map[string]any, daoModel *daoIndex
 				daoModel.SaveData[daoThis.Columns().Salt] = salt
 				password = gmd5.MustEncrypt(password + salt)
 				daoModel.SaveData[k] = password
+			case daoThis.Columns().IdCardBirthday:
+				if gconv.String(v) == `` {
+					daoModel.SaveData[k] = nil
+					continue
+				}
+				daoModel.SaveData[k] = v
 			default:
 				if daoThis.Contains(k) {
 					daoModel.SaveData[k] = v
