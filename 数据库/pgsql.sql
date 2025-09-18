@@ -12,7 +12,7 @@
  Target Server Version : 170005 (170005)
  File Encoding         : 65001
 
- Date: 12/06/2025 10:44:49
+ Date: 19/09/2025 05:15:13
 */
 
 
@@ -191,6 +191,7 @@ COMMENT ON COLUMN "public"."app"."app_id" IS 'APPID';
 COMMENT ON COLUMN "public"."app"."app_name" IS '名称';
 COMMENT ON COLUMN "public"."app"."app_config" IS '配置。JSON格式，需要时设置';
 COMMENT ON COLUMN "public"."app"."remark" IS '备注';
+COMMENT ON TABLE "public"."app" IS 'APP表';
 
 -- ----------------------------
 -- Records of app
@@ -231,6 +232,7 @@ COMMENT ON COLUMN "public"."app_pkg"."ver_intro" IS '版本介绍';
 COMMENT ON COLUMN "public"."app_pkg"."extra_config" IS '额外配置。JSON格式，需要时设置';
 COMMENT ON COLUMN "public"."app_pkg"."remark" IS '备注';
 COMMENT ON COLUMN "public"."app_pkg"."is_force_prev" IS '强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关';
+COMMENT ON TABLE "public"."app_pkg" IS 'APP安装包表';
 
 -- ----------------------------
 -- Records of app_pkg
@@ -700,9 +702,9 @@ CREATE TABLE "public"."org_admin" (
   "is_super" int2 NOT NULL DEFAULT 0,
   "nickname" varchar(30) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
   "avatar" varchar(200) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "phone" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
+  "phone" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
   "email" varchar(60) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
-  "account" varchar(30) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying
+  "account" varchar(20) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying
 )
 ;
 COMMENT ON COLUMN "public"."org_admin"."created_at" IS '创建时间';
@@ -739,7 +741,7 @@ COMMENT ON COLUMN "public"."org_admin_privacy"."updated_at" IS '更新时间';
 COMMENT ON COLUMN "public"."org_admin_privacy"."admin_id" IS '管理员ID';
 COMMENT ON COLUMN "public"."org_admin_privacy"."password" IS '密码。md5保存';
 COMMENT ON COLUMN "public"."org_admin_privacy"."salt" IS '密码盐';
-COMMENT ON TABLE "public"."org_admin_privacy" IS '机构管理员表';
+COMMENT ON TABLE "public"."org_admin_privacy" IS '机构管理员隐私表';
 
 -- ----------------------------
 -- Records of org_admin_privacy
@@ -982,7 +984,7 @@ COMMENT ON COLUMN "public"."platform_admin_privacy"."updated_at" IS '更新时�
 COMMENT ON COLUMN "public"."platform_admin_privacy"."admin_id" IS '管理员ID';
 COMMENT ON COLUMN "public"."platform_admin_privacy"."password" IS '密码。md5保存';
 COMMENT ON COLUMN "public"."platform_admin_privacy"."salt" IS '密码盐';
-COMMENT ON TABLE "public"."platform_admin_privacy" IS '平台管理员表';
+COMMENT ON TABLE "public"."platform_admin_privacy" IS '平台管理员隐私表';
 
 -- ----------------------------
 -- Records of platform_admin_privacy
