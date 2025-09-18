@@ -11,7 +11,7 @@ type AppInfo struct {
 	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	AppId     *string     `json:"app_id,omitempty" dc:"APPID"`
 	AppName   *string     `json:"app_name,omitempty" dc:"名称"`
-	AppConfig *string     `json:"app_config,omitempty" dc:"配置。  JSON格式，需要时设置"`
+	AppConfig *string     `json:"app_config,omitempty" dc:"配置。JSON格式，需要时设置"`
 	Remark    *string     `json:"remark,omitempty" dc:"备注"`
 	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
@@ -36,7 +36,7 @@ type AppListReq struct {
 	g.Meta `path:"/app/list" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"列表"`
 	Filter AppFilter `json:"filter" dc:"过滤条件"`
 	Field  []string  `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string    `json:"sort" default:"created_at DESC" dc:"排序"`
+	Sort   string    `json:"sort" default:"id DESC" dc:"排序"`
 	Page   int       `json:"page" v:"min:1" default:"1" dc:"页码"`
 	Limit  int       `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
@@ -66,7 +66,7 @@ type AppCreateReq struct {
 	g.Meta    `path:"/app/create" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"新增"`
 	AppId     *string `json:"app_id,omitempty" v:"required|max-length:15" dc:"APPID"`
 	AppName   *string `json:"app_name,omitempty" v:"required|max-length:30" dc:"名称"`
-	AppConfig *string `json:"app_config,omitempty" v:"json" dc:"配置。  JSON格式，需要时设置"`
+	AppConfig *string `json:"app_config,omitempty" v:"json" dc:"配置。JSON格式，需要时设置"`
 	Remark    *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
@@ -79,7 +79,7 @@ type AppUpdateReq struct {
 	Id        string   `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|length:1,15" dc:"ID"`
 	IdArr     []string `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|length:1,15" dc:"ID数组"`
 	AppName   *string  `json:"app_name,omitempty" filter:"-" data:"app_name,omitempty" v:"max-length:30" dc:"名称"`
-	AppConfig *string  `json:"app_config,omitempty" filter:"-" data:"app_config,omitempty" v:"json" dc:"配置。  JSON格式，需要时设置"`
+	AppConfig *string  `json:"app_config,omitempty" filter:"-" data:"app_config,omitempty" v:"json" dc:"配置。JSON格式，需要时设置"`
 	Remark    *string  `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsStop    *uint    `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }

@@ -423,8 +423,7 @@ func (daoThis *menuDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Da
 				}
 			case daoThis.Columns().ExtraData:
 				if gconv.String(v) == `` {
-					daoModel.SaveData[k] = nil
-					continue
+					v = nil
 				}
 				daoModel.SaveData[k] = v
 			default:

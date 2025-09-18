@@ -51,7 +51,7 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            param.scene_id === undefined && (param.scene_id = 0)
+            param.scene_id === undefined && (param.scene_id = '')
             param.pid === undefined && (param.pid = 0)
             try {
                 if (param?.id) {

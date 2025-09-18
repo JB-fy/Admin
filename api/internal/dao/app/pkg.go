@@ -266,8 +266,7 @@ func (daoThis *pkgDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Dao
 			switch k {
 			case daoThis.Columns().ExtraConfig:
 				if gconv.String(v) == `` {
-					daoModel.SaveData[k] = nil
-					continue
+					v = nil
 				}
 				daoModel.SaveData[k] = v
 			default:
@@ -368,7 +367,6 @@ func (daoThis *pkgDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) g
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().PkgId, 1))
 			case daoThis.Columns().VerNo:
 				m = m.Order(daoModel.DbTable + `.` + v)
-				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().PkgId)
 			default:
 				if daoThis.Contains(k) {

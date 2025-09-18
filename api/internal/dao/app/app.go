@@ -230,8 +230,7 @@ func (daoThis *appDao) ParseUpdate(update map[string]any, daoModel *daoIndex.Dao
 				daoModel.SaveData[daoThis.Columns().AppId] = v
 			case daoThis.Columns().AppConfig:
 				if gconv.String(v) == `` {
-					daoModel.SaveData[k] = nil
-					continue
+					v = nil
 				}
 				daoModel.SaveData[k] = v
 			default:

@@ -88,7 +88,7 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            param.app_id === undefined && (param.app_id = 0)
+            param.app_id === undefined && (param.app_id = '')
             let extraConfig = param.extra_config ? JSON.parse(param.extra_config) : {}
             extraConfig = { ...extraConfig, ...param['extra_config_' + param.pkg_type] }
             param.extra_config = Object.keys(extraConfig).length > 0 ? JSON.stringify(extraConfig) : ''

@@ -194,6 +194,11 @@ func (daoThis *orderDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range insert {
 			switch k {
+			case daoThis.Columns().PayTime:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				daoModel.SaveData[k] = v
 			case `order_rel_list`:
 				daoModel.AfterInsert[k] = v
 			default:
@@ -243,6 +248,11 @@ func (daoThis *orderDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range update {
 			switch k {
+			case daoThis.Columns().PayTime:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				daoModel.SaveData[k] = v
 			case `order_rel_list`:
 				daoModel.AfterUpdate[k] = v
 			default:

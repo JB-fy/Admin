@@ -10,7 +10,7 @@ const saveForm = reactive({
     data: {
         ...saveCommon.data,
         scene_id: saveCommon.data.scene_id ? saveCommon.data.scene_id : undefined,
-        // rel_id: saveCommon.data.rel_id ? saveCommon.data.rel_id : undefined,
+        rel_id: saveCommon.data.rel_id ? saveCommon.data.rel_id : undefined,
     } as { [propName: string]: any },
     rules: {
         role_name: [
@@ -38,8 +38,8 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            param.scene_id === undefined && (param.scene_id = 0)
-            // param.rel_id === undefined && (param.rel_id = 0)
+            param.scene_id === undefined && (param.scene_id = '')
+            param.rel_id === undefined && (param.rel_id = 0)
             if (param.menu_id_arr === undefined) {
                 param.menu_id_arr = []
             } else {
