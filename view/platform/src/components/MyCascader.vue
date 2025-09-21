@@ -164,7 +164,7 @@ defineExpose({
         :collapse-tags-tooltip="true"
         @visible-change="cascader.visibleChange"
         v-bind="$attrs"
-        :options="[]"
+        :options="undefined"
         :props="cascader.props"
     >
         <template v-if="slots.default" #default="{ node, data }">
