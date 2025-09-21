@@ -85,7 +85,6 @@ import (
 	"context"
 	"fmt"
 	"slices"
-	"strings"
 
 	"github.com/fatih/color"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -117,7 +116,6 @@ type myGenOption struct {
 	CommonName   string     `json:"commonName"`   //公共名称，将同时在swagger文档Tag标签，权限菜单和权限操作中使用。示例：用户，权限管理/测试
 	LoginRelId   string     `json:"loginRelId"`   //登录关联ID，用于防止用户操作非自身数据
 	LoginIdStr   string     `json:"loginIdStr"`   //登录ID字符串，用于防止用户操作非自身数据
-	LoginDaoStr  string     `json:"loginDaoStr"`  //登录导入dao字符串
 	FilterIsStop bool       `json:"filterIsStop"` //是否停用过滤
 	IsView       bool       `json:"isView"`       //是否生成前端视图文件
 	SceneId      string     `json:"sceneId"`      //场景ID，必须在数据库表auth_scene已存在。示例：platform
@@ -326,13 +324,8 @@ isApiEnd:
 				}
 				option.LoginIdStr = gcmd.Scan(color.BlueString(`> 请输入登录ID字符串：`))
 			}
-			// 登录导入dao字符串
-			if _, ok := optionMap[`loginDaoStr`]; !ok {
-				option.LoginDaoStr = gcmd.Scan(color.BlueString(`> 请输入登录导入dao字符串，默认(空)：`))
-			}
 		} else {
 			option.LoginIdStr = ``
-			option.LoginDaoStr = ``
 		}
 		// 是否停用过滤
 		isStopExist := false
@@ -530,7 +523,6 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 			`-commonName=`+option.CommonName,
 			`-loginRelId=`+option.LoginRelId,
 			`-loginIdStr="`+option.LoginIdStr+`"`,
-			`-loginDaoStr="`+strings.ReplaceAll(option.LoginDaoStr, `"`, `\"`)+`"`,
 			`-filterIsStop=`+gconv.String(gconv.Uint(option.FilterIsStop)))
 	}
 	myGenCommandArr = append(myGenCommandArr, `-isView=`+gconv.String(gconv.Uint(option.IsView)))

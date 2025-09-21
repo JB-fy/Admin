@@ -3,6 +3,7 @@ package my_gen
 import (
 	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
+	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
@@ -44,8 +45,18 @@ func (controllerThis *myGenController) Unique() {
 // controller生成
 func genController(option myGenOption, tpl *myGenTpl) {
 	controller := myGenController{}
-	if option.LoginDaoStr != `` {
-		controller.importDao = append(controller.importDao, option.LoginDaoStr)
+	controller.importDao = append(controller.importDao, `dao`+tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tpl.ModuleDirCaseKebab+`"`)
+	if option.LoginIdStr != `` {
+		daoName := strings.Split(option.LoginIdStr, `.`)[0]
+		if strings.Index(daoName, `dao`) == 0 {
+			moduleDirCaseKebab := gstr.CaseKebab(strings.Replace(daoName, `dao`, ``, 1))
+			if moduleDirCaseKebabArr := strings.Split(moduleDirCaseKebab, `_`); len(moduleDirCaseKebabArr) > 1 { //判断非default分组
+				if gfile.IsDir(gfile.SelfDir() + `/internal/dao/` + moduleDirCaseKebabArr[0]) {
+					moduleDirCaseKebab = moduleDirCaseKebabArr[0] + `/` + strings.Join(moduleDirCaseKebabArr[1:], `_`)
+				}
+			}
+			controller.importDao = append(controller.importDao, daoName+` "api/internal/dao/`+moduleDirCaseKebab+`"`)
+		}
 	}
 	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
 		controller.common = append(controller.common, "`id`")
@@ -139,8 +150,7 @@ func genController(option myGenOption, tpl *myGenTpl) {
 
 import (
 	"api/api"
-	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `"
-	dao` + tpl.ModuleDirCaseCamel + ` "api/internal/dao/` + tpl.ModuleDirCaseKebab + `"` + gstr.Join(append([]string{``}, controller.importDao...), `
+	api` + tpl.ModuleDirCaseCamel + ` "api/api/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `"` + gstr.Join(append([]string{``}, controller.importDao...), `
 	`) + `
 	"api/internal/service"
 	"api/internal/utils"

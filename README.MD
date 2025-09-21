@@ -132,15 +132,15 @@ npm run format
 		```
 		2. 平台后台生成示例，更多请参考[api/internal/cmd/my-gen/log/platform.log](./api/internal/cmd/my-gen/log/platform.log)
 		```bash
-		./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+		./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
 		```
 		3. 机构后台生成示例，更多请参考[api/internal/cmd/my-gen/log/org.log](./api/internal/cmd/my-gen/log/org.log)
 		```bash
-		./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -loginRelId=rel_id -loginIdStr="daoOrg.Admin.Columns().OrgId" -loginDaoStr="daoOrg \"api/internal/dao/org\"" -filterIsStop=0 -isView=1 -sceneId=org -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+		./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -loginRelId=rel_id -loginIdStr="daoOrg.Admin.Columns().OrgId" -filterIsStop=0 -isView=1 -sceneId=org -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
 		```
 		4. APP生成示例，更多请参考[api/internal/cmd/my-gen/log/app.log](./api/internal/cmd/my-gen/log/app.log)
 		```bash
-		./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=用户 -filterIsStop=1 -isView=0 -sceneId=app -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0
+		./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=0 -commonName=用户 -loginRelId= -loginIdStr="" -filterIsStop=1 -isView=0 -sceneId=app -isList=1 -isCount=0 -isInfo=1 -isCreate=0 -isUpdate=0 -isDelete=0
 		```
 
 # 常见错误处理
