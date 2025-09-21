@@ -3,6 +3,7 @@ package my_gen
 import (
 	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
+	"fmt"
 	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -47,15 +48,19 @@ func genController(option myGenOption, tpl *myGenTpl) {
 	controller := myGenController{}
 	controller.importDao = append(controller.importDao, `dao`+tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tpl.ModuleDirCaseKebab+`"`)
 	if option.LoginIdStr != `` {
-		daoName := strings.Split(option.LoginIdStr, `.`)[0]
-		if strings.Index(daoName, `dao`) == 0 {
-			moduleDirCaseKebab := gstr.CaseKebab(strings.Replace(daoName, `dao`, ``, 1))
-			if moduleDirCaseKebabArr := strings.Split(moduleDirCaseKebab, `_`); len(moduleDirCaseKebabArr) > 1 { //判断非default分组
-				if gfile.IsDir(gfile.SelfDir() + `/internal/dao/` + moduleDirCaseKebabArr[0]) {
-					moduleDirCaseKebab = moduleDirCaseKebabArr[0] + `/` + strings.Join(moduleDirCaseKebabArr[1:], `_`)
+		loginIdStrArr := strings.Split(option.LoginIdStr, `.`)
+		if len(loginIdStrArr) == 4 && strings.Index(loginIdStrArr[0], `dao`) == 0 {
+			moduleDirCaseKebab := gstr.CaseKebab(strings.Replace(loginIdStrArr[0], `dao`, ``, 1))
+			daoDirFormat := gfile.SelfDir() + `/internal/dao/%s`
+			// daoFileFormat := daoDirFormat + `/` + gstr.CaseKebab(loginIdStrArr[1]) + `.go`
+			if gfile.IsDir(fmt.Sprintf(daoDirFormat, moduleDirCaseKebab)) /* && gfile.IsFile(fmt.Sprintf(daoFileFormat, loginIdStrArr[0])) */ {
+				controller.importDao = append(controller.importDao, loginIdStrArr[0]+` "api/internal/dao/`+moduleDirCaseKebab+`"`)
+			} else if moduleDirCaseKebabArr := strings.Split(moduleDirCaseKebab, `_`); len(moduleDirCaseKebabArr) > 1 { //非default分组
+				moduleDirCaseKebab = moduleDirCaseKebabArr[0] + `/` + strings.Join(moduleDirCaseKebabArr[1:], `_`)
+				if gfile.IsDir(fmt.Sprintf(daoDirFormat, moduleDirCaseKebab)) /* && gfile.IsFile(fmt.Sprintf(daoFileFormat, moduleDirCaseKebab)) */ {
+					controller.importDao = append(controller.importDao, loginIdStrArr[0]+` "api/internal/dao/`+moduleDirCaseKebab+`"`)
 				}
 			}
-			controller.importDao = append(controller.importDao, daoName+` "api/internal/dao/`+moduleDirCaseKebab+`"`)
 		}
 	}
 	if len(tpl.Handle.Id.List) > 1 || tpl.Handle.Id.List[0].FieldRaw != `id` {
