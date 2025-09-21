@@ -118,7 +118,7 @@ type myGenOption struct {
 	LoginRelId   string     `json:"loginRelId"`   //登录关联ID，用于防止用户操作非自身数据
 	LoginIdStr   string     `json:"loginIdStr"`   //登录ID字符串，用于防止用户操作非自身数据
 	LoginDaoStr  string     `json:"loginDaoStr"`  //登录导入dao字符串
-	IsStopFilter bool       `json:"isStopFilter"` //是否停用过滤
+	FilterIsStop bool       `json:"filterIsStop"` //是否停用过滤
 	IsView       bool       `json:"isView"`       //是否生成前端视图文件
 	SceneId      string     `json:"sceneId"`      //场景ID，必须在数据库表auth_scene已存在。示例：platform
 	IsList       bool       `json:"isList" `      //是否生成列表接口(0和no为false，1和yes为true)
@@ -343,21 +343,21 @@ isApiEnd:
 			}
 		}
 		if isStopExist {
-			isStopFilter, ok := optionMap[`isStopFilter`]
+			filterIsStop, ok := optionMap[`filterIsStop`]
 			if !ok {
-				isStopFilter = gcmd.Scan(color.BlueString(`> 是否停用过滤，默认(no)：`))
+				filterIsStop = gcmd.Scan(color.BlueString(`> 是否停用过滤，默认(no)：`))
 			}
-		isStopFilterEnd:
+		filterIsStopEnd:
 			for {
-				switch isStopFilter {
+				switch filterIsStop {
 				case `1`, `yes`:
-					option.IsStopFilter = true
-					break isStopFilterEnd
+					option.FilterIsStop = true
+					break filterIsStopEnd
 				case ``, `0`, `no`:
-					option.IsStopFilter = false
-					break isStopFilterEnd
+					option.FilterIsStop = false
+					break filterIsStopEnd
 				default:
-					isStopFilter = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否停用过滤，默认(no)：`))
+					filterIsStop = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否停用过滤，默认(no)：`))
 				}
 			}
 		}
@@ -531,7 +531,7 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 			`-loginRelId=`+option.LoginRelId,
 			`-loginIdStr="`+option.LoginIdStr+`"`,
 			`-loginDaoStr="`+strings.ReplaceAll(option.LoginDaoStr, `"`, `\"`)+`"`,
-			`-isStopFilter=`+gconv.String(gconv.Uint(option.IsStopFilter)))
+			`-filterIsStop=`+gconv.String(gconv.Uint(option.FilterIsStop)))
 	}
 	myGenCommandArr = append(myGenCommandArr, `-isView=`+gconv.String(gconv.Uint(option.IsView)))
 	if option.IsApi || option.IsView {

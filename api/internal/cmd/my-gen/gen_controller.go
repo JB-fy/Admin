@@ -130,7 +130,7 @@ func genController(option myGenOption, tpl *myGenTpl) {
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	data[dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(option.LoginRelId) + `] = loginInfo[` + option.LoginIdStr + `]`
 	}
-	if option.IsStopFilter {
+	if option.FilterIsStop {
 		loginFilterStr += `
 	filter[dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(`is_stop`) + `] = 0`
 	}

@@ -1,35 +1,35 @@
-./main myGen -dbGroup=default -dbTable=auth_scene -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/场景 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=auth_scene -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/场景 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:auth_action_rel_to_scene:scene_id:true
     其它关联表:auth_menu:scene_id:true
     其它关联表:auth_role:scene_id:true
-./main myGen -dbGroup=default -dbTable=auth_action -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/操作 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=auth_action -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/操作 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:auth_role_rel_to_action:action_id:true
-./main myGen -dbGroup=default -dbTable=auth_menu -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/菜单 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=auth_menu -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/菜单 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:auth_role_rel_to_menu:menu_id:true
-./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:auth_role_rel_of_org_admin:role_id:true
     其它关联表:auth_role_rel_of_platform_admin:role_id:true
-./main myGen -dbGroup=default -dbTable=platform_admin -removePrefixCommon= -removePrefixAlone=platform_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/平台管理员 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=platform_admin -removePrefixCommon= -removePrefixAlone=platform_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/平台管理员 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     扩展表(一对一):platform_admin_privacy:admin_id:true
     其它关联表:auth_role_rel_of_org_admin:admin_id:false
     其它关联表:org_admin_privacy:admin_id:false
-./main myGen -dbGroup=default -dbTable=upload -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/上传配置 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-./main myGen -dbGroup=default -dbTable=pay -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/支付管理/支付配置 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=upload -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/上传配置 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=pay -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/支付管理/支付配置 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:pay_channel:pay_id:true
     其它关联表:pay_order:pay_id:false
-./main myGen -dbGroup=default -dbTable=pay_scene -removePrefixCommon= -removePrefixAlone=pay_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/支付管理/支付场景 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=pay_scene -removePrefixCommon= -removePrefixAlone=pay_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/支付管理/支付场景 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:pay_channel:scene_id:true
-./main myGen -dbGroup=default -dbTable=pay_channel -removePrefixCommon= -removePrefixAlone=pay_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/支付管理/支付通道 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=pay_channel -removePrefixCommon= -removePrefixAlone=pay_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/支付管理/支付通道 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:pay_order:channel_id:false
-./main myGen -dbGroup=default -dbTable=app -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/APP管理/APP -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=app -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/APP管理/APP -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:app_pkg:app_id:true
-./main myGen -dbGroup=default -dbTable=app_pkg -removePrefixCommon= -removePrefixAlone=app_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/APP管理/安装包 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=用户管理/用户 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=0 -isUpdate=1 -isDelete=0
+./main myGen -dbGroup=default -dbTable=app_pkg -removePrefixCommon= -removePrefixAlone=app_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/APP管理/安装包 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=用户管理/用户 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=0 -isUpdate=1 -isDelete=0
     扩展表(一对一):users_privacy:user_id:true
-./main myGen -dbGroup=default -dbTable=org -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=机构管理/机构 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=org -removePrefixCommon= -removePrefixAlone= -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=机构管理/机构 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:org_admin:org_id:true
     其它关联表:org_config:org_id:true
-./main myGen -dbGroup=default -dbTable=org_admin -removePrefixCommon= -removePrefixAlone=org_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/机构管理员 -loginRelId= -loginIdStr="" -loginDaoStr="" -isStopFilter=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+./main myGen -dbGroup=default -dbTable=org_admin -removePrefixCommon= -removePrefixAlone=org_ -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/机构管理员 -loginRelId= -loginIdStr="" -loginDaoStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     扩展表(一对一):org_admin_privacy:admin_id:true
     其它关联表:auth_role_rel_of_platform_admin:admin_id:false
     其它关联表:platform_admin_privacy:admin_id:false
