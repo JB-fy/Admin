@@ -884,9 +884,9 @@ func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenDaoField{}
 	case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-		daoField.filterParse.Method = internal.ReturnTypeName
+		/* daoField.filterParse.Method = internal.ReturnTypeName
 		daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
-				m = m.WhereLike(`+daoTable+`+`+"`.`"+`+k, `+"`%`"+`+gconv.String(v)+`+"`%`"+`)`)
+				m = m.WhereLike(`+daoTable+`+`+"`.`"+`+k, `+"`%`"+`+gconv.String(v)+`+"`%`"+`)`) */
 	case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
 	case internal.TypeNameAccountSuffix: // account后缀；	类型：varchar；
 	case internal.TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
@@ -1113,11 +1113,11 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			continue
 		case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-			daoField.filterParse.Method = internal.ReturnTypeName
+			/* daoField.filterParse.Method = internal.ReturnTypeName
 			daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, `case `+tplEM.daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				m = m.WhereLike(`+tplEM.daoTableVar+`+`+"`.`"+`+k, `+"`%`"+`+gconv.String(v)+`+"`%`"+`)
-				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
+				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`) */
 		case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
 		case internal.TypeNameAccountSuffix: // account后缀；	类型：varchar；
 		case internal.TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
@@ -1347,11 +1347,11 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 		case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 			continue
 		case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-			daoField.filterParse.Method = internal.ReturnTypeName
+			/* daoField.filterParse.Method = internal.ReturnTypeName
 			daoField.filterParse.DataTypeName = append(daoField.filterParse.DataTypeName, `case `+tplEM.daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				m = m.WhereLike(`+tplEM.daoTableVar+`+`+"`.`"+`+k, `+"`%`"+`+gconv.String(v)+`+"`%`"+`)
-				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
+				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`) */
 		case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
 		case internal.TypeNameAccountSuffix: // account后缀；	类型：varchar；
 		case internal.TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
