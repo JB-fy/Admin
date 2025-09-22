@@ -132,9 +132,11 @@ func getViewQueryIdAndLabel(tpl *myGenTpl) (viewQuery myGenViewQuery) {
         </el-form-item>`)
 	}
 
-	viewQuery.form = append(viewQuery.form, `<el-form-item prop="label">
+	if len(tpl.Handle.LabelList) > 1 || !(tpl.Handle.LabelList[0].IsUnique || gconv.Uint(tpl.Handle.LabelList[0].FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) {
+		viewQuery.form = append(viewQuery.form, `<el-form-item prop="label">
 			<el-input v-model="queryCommon.data.label" :placeholder="t('common.name.label')" maxlength="30" :clearable="true" />
 		</el-form-item>`)
+	}
 	return
 }
 
@@ -158,7 +160,7 @@ func getViewQueryField(tpl *myGenTpl, v myGenField, i18nPath string, i18nFieldPa
 		// viewQueryField.form.Method = internal.ReturnType
 		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :precision="` + gconv.String(v.FieldLimitFloat.Precision) + `" :controls="false" />`
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
-		if (v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) && !(len(tpl.Handle.LabelList) == 1 && tpl.Handle.LabelList[0].FieldRaw == v.FieldRaw) {
+		if v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 			attrOfAdd := ``
 			if v.FieldType == internal.TypeChar {
 				attrOfAdd = ` minlength="` + v.FieldLimitStr + `"`

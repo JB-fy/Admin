@@ -344,7 +344,7 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `max:`+v.FieldLimitFloat.Max)
 		}
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
-		if (v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) && !(len(tpl.Handle.LabelList) == 1 && tpl.Handle.LabelList[0].FieldRaw == v.FieldRaw) {
+		if v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 			apiField.filterType.Method = internal.ReturnType
 			apiField.filterType.DataType = `string`
 		}
