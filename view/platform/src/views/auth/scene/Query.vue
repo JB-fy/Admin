@@ -25,7 +25,7 @@ const queryForm = reactive({
 <template>
     <el-form class="query-form" :ref="(el: any) => queryForm.ref = el" :model="queryCommon.data" :inline="true" @keyup.enter="queryForm.submit">
         <el-form-item prop="id">
-            <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :maxlength="15" :clearable="true" />
+            <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" maxlength="15" :clearable="true" />
         </el-form-item>
         <el-form-item prop="scene_name">
             <el-input v-model="queryCommon.data.scene_name" :placeholder="t('auth.scene.name.scene_name')" maxlength="30" :clearable="true" />

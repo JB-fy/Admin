@@ -123,7 +123,7 @@ func getViewQueryIdAndLabel(tpl *myGenTpl) (viewQuery myGenViewQuery) {
         </el-form-item>`)
 		default:
 			viewQuery.form = append(viewQuery.form, `<el-form-item prop="id">
-            <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :maxlength="`+tpl.Handle.Id.List[0].FieldLimitStr+`" :clearable="true" />
+            <el-input v-model="queryCommon.data.id" :placeholder="t('common.name.id')" maxlength="`+tpl.Handle.Id.List[0].FieldLimitStr+`" :clearable="true" />
         </el-form-item>`)
 		}
 	} else {
