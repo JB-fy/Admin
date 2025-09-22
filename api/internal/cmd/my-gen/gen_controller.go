@@ -71,7 +71,7 @@ func genController(option myGenOption, tpl *myGenTpl) {
 	/* if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.List[0].FieldRaw != `id` {
 		controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+tpl.Handle.Id.List[0].FieldCaseCamel)
 	}
-	controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.LabelList[0])) */
+	controller.noAuth = append(controller.noAuth, `dao`+tpl.ModuleDirCaseCamel+`.`+tpl.TableCaseCamel+`.Columns().`+gstr.CaseCamel(tpl.Handle.Label.List[0])) */
 	for _, v := range tpl.FieldList {
 		controller.Merge(getControllerField(tpl, v))
 	}
@@ -436,7 +436,7 @@ func getControllerField(tpl *myGenTpl, v myGenField) (controller myGenController
 	case internal.TypeNameUpdated: // 更新时间字段
 	case internal.TypeNameCreated: // 创建时间字段
 	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
-		controller.list = append(controller.list, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0].FieldRaw, `p`)+"`")
+		controller.list = append(controller.list, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.Label.List[0].FieldRaw, `p`)+"`")
 		if tpl.Handle.Pid.IsLeaf == `` {
 			controller.list = append(controller.list, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_leaf`)+"`")
 			controller.noAuth = append(controller.noAuth, "`"+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_leaf`)+"`")
@@ -463,7 +463,7 @@ func getControllerField(tpl *myGenTpl, v myGenField) (controller myGenController
 		if relIdObj.tpl != nil && !relIdObj.IsRedundName {
 			controller.importDao = append(controller.importDao, `dao`+relIdObj.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+relIdObj.tpl.ModuleDirCaseKebab+`"`)
 			daoPathRel := `dao` + relIdObj.tpl.ModuleDirCaseCamel + `.` + relIdObj.tpl.TableCaseCamel
-			fieldTmp := daoPathRel + `.Columns().` + relIdObj.tpl.Handle.LabelList[0].FieldCaseCamel
+			fieldTmp := daoPathRel + `.Columns().` + relIdObj.tpl.Handle.Label.List[0].FieldCaseCamel
 			if relIdObj.Suffix != `` {
 				fieldTmp += "+`" + relIdObj.Suffix + "`"
 			}

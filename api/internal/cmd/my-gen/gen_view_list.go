@@ -454,7 +454,7 @@ func getViewListField(option myGenOption, tpl *myGenTpl, v myGenField, i18nPath 
 		viewListField.title.DataTypeName = `t('common.name.createdAt')`
 	case internal.TypeNamePid: // pid，且与主键类型相同时（才）有效；	类型：int等类型或varchar或char；
 		viewListField.dataKey.Method = internal.ReturnTypeName
-		viewListField.dataKey.DataTypeName = `'` + internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0].FieldRaw, `p`) + `'`
+		viewListField.dataKey.DataTypeName = `'` + internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.Label.List[0].FieldRaw, `p`) + `'`
 	case internal.TypeNameIdPath, internal.TypeNameNamePath: // id_path|idPath，且pid同时存在时（才）有效；	类型：varchar或text；	// name_path|namePath，且pid，id_path|idPath同时存在时（才）有效；	类型：varchar或text；
 		viewListField.hidden.Method = internal.ReturnTypeName
 		viewListField.hidden.DataTypeName = `true`
@@ -539,7 +539,7 @@ func getViewListField(option myGenOption, tpl *myGenTpl, v myGenField, i18nPath 
 		relIdObj := tpl.Handle.RelIdMap[v.FieldRaw]
 		if relIdObj.tpl != nil && !relIdObj.IsRedundName {
 			viewListField.dataKey.Method = internal.ReturnTypeName
-			viewListField.dataKey.DataTypeName = `'` + relIdObj.tpl.Handle.LabelList[0].FieldRaw + relIdObj.Suffix + `'`
+			viewListField.dataKey.DataTypeName = `'` + relIdObj.tpl.Handle.Label.List[0].FieldRaw + relIdObj.Suffix + `'`
 		}
 	case internal.TypeNameStatusSuffix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）
 		viewListField.isI18nTm = true

@@ -55,7 +55,10 @@ type myGenTpl struct {
 				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname >
 				上面字段都没有时，默认为排除internal.ConfigIdAndLabelExcField过后的第二个字段
 		*/
-		LabelList   []myGenField
+		Label struct {
+			List      []myGenField
+			IsDefault bool //是否默认。即走到最后一步
+		}
 		PasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
 		Pid         struct {                  //pid和id_path|idPath同时存在时，需特殊处理
 			IsCoexist bool     //pid和id_path|idPath同时存在
@@ -554,13 +557,13 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	for _, v := range labelList {
 		for _, item := range fieldList {
 			if v == item.FieldCaseCamel && slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, item.FieldType) {
-				tpl.Handle.LabelList = append(tpl.Handle.LabelList, item)
+				tpl.Handle.Label.List = append(tpl.Handle.Label.List, item)
 				break
 			}
 		}
 	}
 
-	if len(tpl.Handle.Id.List) == 0 || len(tpl.Handle.LabelList) == 0 {
+	if len(tpl.Handle.Id.List) == 0 || len(tpl.Handle.Label.List) == 0 {
 		idAndLabelfieldList := []myGenField{}
 		for _, v := range fieldList {
 			isFind := false
@@ -582,11 +585,12 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				tpl.Handle.Id.List = append(tpl.Handle.Id.List, fieldList[0])
 			}
 		}
-		if len(tpl.Handle.LabelList) == 0 {
+		if len(tpl.Handle.Label.List) == 0 {
+			tpl.Handle.Label.IsDefault = true
 			if len(idAndLabelfieldList) > 1 {
-				tpl.Handle.LabelList = append(tpl.Handle.LabelList, idAndLabelfieldList[1])
+				tpl.Handle.Label.List = append(tpl.Handle.Label.List, idAndLabelfieldList[1])
 			} else {
-				tpl.Handle.LabelList = append(tpl.Handle.LabelList, fieldList[1])
+				tpl.Handle.Label.List = append(tpl.Handle.Label.List, fieldList[1])
 			}
 		}
 	}
@@ -623,7 +627,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			continue
 		}
 		for _, item := range fieldList {
-			if item.FieldRaw == v.tpl.Handle.LabelList[0].FieldRaw+v.Suffix {
+			if item.FieldRaw == v.tpl.Handle.Label.List[0].FieldRaw+v.Suffix {
 				v.IsRedundName = true
 				tpl.Handle.RelIdMap[k] = v
 				break
