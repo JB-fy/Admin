@@ -27,6 +27,9 @@ const queryForm = reactive({
         <el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :precision="0" :controls="false" />
         </el-form-item>
+        <el-form-item prop="label">
+            <el-input v-model="queryCommon.data.label" :placeholder="t('common.name.label')" maxlength="30" :clearable="true" />
+        </el-form-item>
         <el-form-item prop="app_id">
             <my-select v-model="queryCommon.data.app_id" :placeholder="t('app.pkg.name.app_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/app/app/list' }" />
         </el-form-item>

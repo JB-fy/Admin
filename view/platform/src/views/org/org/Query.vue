@@ -27,6 +27,9 @@ const queryForm = reactive({
         <el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :precision="0" :controls="false" />
         </el-form-item>
+        <el-form-item prop="label">
+            <el-input v-model="queryCommon.data.label" :placeholder="t('common.name.label')" maxlength="30" :clearable="true" />
+        </el-form-item>
         <el-form-item prop="is_stop">
             <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('org.org.name.is_stop')" :clearable="true" style="width: 86px" />
         </el-form-item>
