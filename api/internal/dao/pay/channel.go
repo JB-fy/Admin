@@ -84,8 +84,6 @@ func (daoThis *channelDao) ParseFilter(filter map[string]any, daoModel *daoIndex
 				}
 			case `label`:
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().ChannelName, `%`+gconv.String(v)+`%`)
-			case daoThis.Columns().ChannelName:
-				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
@@ -325,7 +323,6 @@ func (daoThis *channelDao) ParseOrder(order []string, daoModel *daoIndex.DaoMode
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().ChannelId, 1))
 			case daoThis.Columns().Sort:
 				m = m.Order(daoModel.DbTable + `.` + v)
-				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().ChannelId)
 			default:
 				if daoThis.Contains(k) {

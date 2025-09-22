@@ -82,10 +82,6 @@ func (daoThis *pkgDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Dao
 				}
 			case `label`:
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().PkgName, `%`+gconv.String(v)+`%`)
-			case daoThis.Columns().PkgName:
-				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
-			case daoThis.Columns().VerName:
-				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:

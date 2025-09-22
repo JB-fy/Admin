@@ -83,8 +83,6 @@ func (daoThis *sceneDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 				}
 			case `label`:
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().SceneName, `%`+gconv.String(v)+`%`)
-			case daoThis.Columns().SceneName:
-				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:

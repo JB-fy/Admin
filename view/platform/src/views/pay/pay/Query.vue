@@ -27,8 +27,8 @@ const queryForm = reactive({
         <el-form-item prop="id">
             <el-input-number v-model="queryCommon.data.id" :placeholder="t('common.name.id')" :min="1" :max="4294967295" :precision="0" :controls="false" />
         </el-form-item>
-        <el-form-item prop="pay_name">
-            <el-input v-model="queryCommon.data.pay_name" :placeholder="t('pay.pay.name.pay_name')" maxlength="30" :clearable="true" />
+        <el-form-item prop="label">
+            <el-input v-model="queryCommon.data.label" :placeholder="t('pay.pay.name.pay_name')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="pay_type">
             <el-select-v2 v-model="queryCommon.data.pay_type" :options="tm('pay.pay.status.pay_type')" :placeholder="t('pay.pay.name.pay_type')" :clearable="true" style="width: 100px" />

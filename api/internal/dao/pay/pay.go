@@ -83,8 +83,6 @@ func (daoThis *payDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Dao
 				}
 			case `label`:
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().PayName, `%`+gconv.String(v)+`%`)
-			case daoThis.Columns().PayName:
-				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
