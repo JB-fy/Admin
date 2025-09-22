@@ -344,7 +344,7 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `max:`+v.FieldLimitFloat.Max)
 		}
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
-		if (v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) && !(len(tpl.Handle.LabelList) == 1 && tpl.Handle.LabelList[0] == v.FieldRaw) {
+		if (v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) && !(len(tpl.Handle.LabelList) == 1 && tpl.Handle.LabelList[0].FieldRaw == v.FieldRaw) {
 			apiField.filterType.Method = internal.ReturnType
 			apiField.filterType.DataType = `string`
 		}
@@ -500,7 +500,7 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 		if !slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU}, v.FieldType) {
 			apiField.filterType.DataType = `*string`
 		}
-		apiField.resOfAdd = append(apiField.resOfAdd, internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, tpl.Handle.LabelList[0], `p`)+` *string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0], `p`)+`,omitempty" dc:"父级"`+"`")
+		apiField.resOfAdd = append(apiField.resOfAdd, internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, tpl.Handle.LabelList[0].FieldRaw, `p`)+` *string `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, tpl.Handle.LabelList[0].FieldRaw, `p`)+`,omitempty" dc:"父级"`+"`")
 		if tpl.Handle.Pid.IsLeaf == `` {
 			apiField.resOfAdd = append(apiField.resOfAdd, internal.GetStrByFieldStyle(internal.FieldStyleCaseCamel, `is_leaf`)+` *uint `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `is_leaf`)+`,omitempty" dc:"叶子：0否 1是"`+"`")
 		}
@@ -520,7 +520,7 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenApiField{}
 	case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-		if tpl.Handle.LabelList[0] == v.FieldRaw {
+		if tpl.Handle.LabelList[0].FieldRaw == v.FieldRaw {
 			apiField.isRequired = true
 		}
 	case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
@@ -572,7 +572,7 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 			}
 
 			if !relIdObj.IsRedundName {
-				apiField.resOfAdd = append(apiField.resOfAdd, gstr.CaseCamel(relIdObj.tpl.Handle.LabelList[0])+relIdObj.SuffixCaseCamel+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0]+relIdObj.Suffix+`,omitempty" dc:"`+relIdObj.FieldName+`"`+"`")
+				apiField.resOfAdd = append(apiField.resOfAdd, relIdObj.tpl.Handle.LabelList[0].FieldCaseCamel+relIdObj.SuffixCaseCamel+` *string `+"`"+`json:"`+relIdObj.tpl.Handle.LabelList[0].FieldRaw+relIdObj.Suffix+`,omitempty" dc:"`+relIdObj.FieldName+`"`+"`")
 			}
 		}
 	case internal.TypeNameStatusSuffix, internal.TypeNameIsPrefix: // status,type,scene,method,pos,position,gender,currency等后缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（状态：0待处理 1已处理 2驳回 yes是 no否）	// is_前缀；	类型：int等类型或varchar或char；	注释：多状态之间用[\s,，.。;；]等字符分隔。示例（停用：0否 1是）

@@ -55,7 +55,7 @@ type myGenTpl struct {
 				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname >
 				上面字段都没有时，默认为排除internal.ConfigIdAndLabelExcField过后的第二个字段
 		*/
-		LabelList   []string
+		LabelList   []myGenField
 		PasswordMap map[string]handlePassword //password|passwd,salt同时存在时，需特殊处理
 		Pid         struct {                  //pid和id_path|idPath同时存在时，需特殊处理
 			IsCoexist bool     //pid和id_path|idPath同时存在
@@ -554,7 +554,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	for _, v := range labelList {
 		for _, item := range fieldList {
 			if v == item.FieldCaseCamel && slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, item.FieldType) {
-				tpl.Handle.LabelList = append(tpl.Handle.LabelList, item.FieldRaw)
+				tpl.Handle.LabelList = append(tpl.Handle.LabelList, item)
 				break
 			}
 		}
@@ -584,9 +584,9 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 		}
 		if len(tpl.Handle.LabelList) == 0 {
 			if len(idAndLabelfieldList) > 1 {
-				tpl.Handle.LabelList = append(tpl.Handle.LabelList, idAndLabelfieldList[1].FieldRaw)
+				tpl.Handle.LabelList = append(tpl.Handle.LabelList, idAndLabelfieldList[1])
 			} else {
-				tpl.Handle.LabelList = append(tpl.Handle.LabelList, fieldList[1].FieldRaw)
+				tpl.Handle.LabelList = append(tpl.Handle.LabelList, fieldList[1])
 			}
 		}
 	}
@@ -623,7 +623,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			continue
 		}
 		for _, item := range fieldList {
-			if item.FieldRaw == v.tpl.Handle.LabelList[0]+v.Suffix {
+			if item.FieldRaw == v.tpl.Handle.LabelList[0].FieldRaw+v.Suffix {
 				v.IsRedundName = true
 				tpl.Handle.RelIdMap[k] = v
 				break

@@ -158,7 +158,7 @@ func getViewQueryField(tpl *myGenTpl, v myGenField, i18nPath string, i18nFieldPa
 		// viewQueryField.form.Method = internal.ReturnType
 		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :precision="` + gconv.String(v.FieldLimitFloat.Precision) + `" :controls="false" />`
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
-		if (v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) && !(len(tpl.Handle.LabelList) == 1 && tpl.Handle.LabelList[0] == v.FieldRaw) {
+		if (v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) && !(len(tpl.Handle.LabelList) == 1 && tpl.Handle.LabelList[0].FieldRaw == v.FieldRaw) {
 			attrOfAdd := ``
 			if v.FieldType == internal.TypeChar {
 				attrOfAdd = ` minlength="` + v.FieldLimitStr + `"`
