@@ -30,6 +30,7 @@ export default {
     batchDelete: '批量删除',
     name: {
         id: 'ID',
+        label: '搜索关键词',
         action: '操作',
         updatedAt: '更新时间',
         createdAt: '创建时间',

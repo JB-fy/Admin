@@ -288,7 +288,7 @@ func getApiIdAndLabel(tpl *myGenTpl) (api myGenApi) {
 		api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 	}
 
-	api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"标签。常用于前端组件"`+"`")
+	api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"搜索关键词。常用于前端组件"`+"`")
 	api.res = append(api.res, `Label *string `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`+"`")
 	return
 }
@@ -344,7 +344,7 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 			apiField.saveRule.DataType = append(apiField.saveRule.DataType, `max:`+v.FieldLimitFloat.Max)
 		}
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
-		if v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
+		if (v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) && !(len(tpl.Handle.LabelList) == 1 && tpl.Handle.LabelList[0] == v.FieldRaw) {
 			apiField.filterType.Method = internal.ReturnType
 			apiField.filterType.DataType = `string`
 		}
@@ -520,7 +520,7 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenApiField{}
 	case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-		if gstr.CaseCamel(tpl.Handle.LabelList[0]) == v.FieldCaseCamel {
+		if tpl.Handle.LabelList[0] == v.FieldRaw {
 			apiField.isRequired = true
 		}
 	case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
