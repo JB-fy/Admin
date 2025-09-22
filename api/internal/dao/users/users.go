@@ -90,13 +90,9 @@ func (daoThis *usersDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 				}
 			case `label`:
 				m = m.Where(m.Builder().WhereLike(daoModel.DbTable+`.`+daoThis.Columns().Phone, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Email, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Account, `%`+gconv.String(v)+`%`).WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns().Nickname, `%`+gconv.String(v)+`%`))
-			case Privacy.Columns().IdCardNo, Privacy.Columns().IdCardGender, Privacy.Columns().IdCardBirthday:
+			case Privacy.Columns().IdCardNo, Privacy.Columns().IdCardName, Privacy.Columns().IdCardGender, Privacy.Columns().IdCardBirthday:
 				tablePrivacy := Privacy.ParseDbTable(m.GetCtx())
 				m = m.Where(tablePrivacy+`.`+k, v)
-				m = m.Handler(daoThis.ParseJoin(tablePrivacy, daoModel))
-			case Privacy.Columns().IdCardName:
-				tablePrivacy := Privacy.ParseDbTable(m.GetCtx())
-				m = m.WhereLike(tablePrivacy+`.`+k, `%`+gconv.String(v)+`%`)
 				m = m.Handler(daoThis.ParseJoin(tablePrivacy, daoModel))
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)

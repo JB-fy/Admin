@@ -289,7 +289,8 @@ func getApiIdAndLabel(tpl *myGenTpl) (api myGenApi) {
 	}
 
 	if len(tpl.Handle.Label.List) == 1 && (!tpl.Handle.Label.IsDefault || slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, tpl.Handle.Label.List[0].FieldType)) {
-		api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:`+tpl.Handle.Label.List[0].FieldLimitStr+`" dc:"`+tpl.Handle.Label.List[0].FieldDesc+`。常用于前端组件"`+"`") // 去掉规则：regex:^[\\p{L}\\p{N}_-]+$
+		// api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:`+tpl.Handle.Label.List[0].FieldLimitStr+`" dc:"`+tpl.Handle.Label.List[0].FieldDesc+`。常用于前端组件"`+"`")
+		api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:`+tpl.Handle.Label.List[0].FieldLimitStr+`|regex:^[\\p{L}\\p{N}_-]+$" dc:"搜索关键词。常用于前端组件"`+"`")
 	} else {
 		api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"搜索关键词。常用于前端组件"`+"`")
 	}
