@@ -288,10 +288,10 @@ func getApiIdAndLabel(tpl *myGenTpl) (api myGenApi) {
 		api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 	}
 
-	if len(tpl.Handle.Label.List) > 1 /* || !(tpl.Handle.Label.List[0].IsUnique || gconv.Uint(tpl.Handle.Label.List[0].FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) */ {
-		api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"搜索关键词。常用于前端组件"`+"`")
-	} else if !tpl.Handle.Label.IsDefault || slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, tpl.Handle.Label.List[0].FieldType) {
+	if len(tpl.Handle.Label.List) == 1 && (!tpl.Handle.Label.IsDefault || slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, tpl.Handle.Label.List[0].FieldType)) {
 		api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:`+tpl.Handle.Label.List[0].FieldLimitStr+`" dc:"`+tpl.Handle.Label.List[0].FieldDesc+`。常用于前端组件"`+"`") // 去掉规则：regex:^[\\p{L}\\p{N}_-]+$
+	} else {
+		api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"搜索关键词。常用于前端组件"`+"`")
 	}
 	api.res = append(api.res, `Label *string `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`+"`")
 	return

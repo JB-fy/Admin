@@ -431,7 +431,9 @@ func getDaoIdAndLabel(tpl *myGenTpl) (dao myGenDao) {
 				m = m.Fields(daoThis.ParseId(daoModel) + `+"` AS `"+` + v)`)
 
 	dao.labelParse = `daoModel.DbTable + ` + "`.`" + ` + daoThis.Columns().` + tpl.Handle.Label.List[0].FieldCaseCamel
-	if labelListLen := len(tpl.Handle.Label.List); labelListLen > 1 /* || !(tpl.Handle.Label.List[0].IsUnique || gconv.Uint(tpl.Handle.Label.List[0].FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) */ {
+	filterParseStr := `case ` + "`label`" + `:
+				m = m.WhereLike(daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + tpl.Handle.Label.List[0].FieldCaseCamel + `, ` + "`%`" + `+gconv.String(v)+` + "`%`" + `)`
+	if labelListLen := len(tpl.Handle.Label.List); labelListLen > 1 {
 		labelParseStrArr := []string{`daoModel.DbTable+` + "`.`" + `+daoThis.Columns().` + tpl.Handle.Label.List[labelListLen-1].FieldCaseCamel}
 		parseFilterStr := "WhereOrLike(daoModel.DbTable+`.`+daoThis.Columns()." + tpl.Handle.Label.List[labelListLen-1].FieldCaseCamel + ", `%`+gconv.String(v)+`%`)"
 		for i := labelListLen - 2; i >= 0; i-- {
@@ -444,14 +446,12 @@ func getDaoIdAndLabel(tpl *myGenTpl) (dao myGenDao) {
 		}
 		dao.labelParse = `fmt.Sprintf(` + "`" + `COALESCE( ` + gstr.TrimLeftStr(gstr.Repeat(`, NULLIF( %s, '' )`, labelListLen), `, `, 1) + ` )` + "`" + `, ` + gstr.Join(labelParseStrArr, `, `) + `)`
 
-		dao.filterParse = append(dao.filterParse, `case `+"`label`"+`:
-				m = m.Where(m.Builder().`+parseFilterStr+`)`)
-	} else if !tpl.Handle.Label.IsDefault || slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, tpl.Handle.Label.List[0].FieldType) {
-		dao.filterParse = append(dao.filterParse, `case `+"`label`"+`:
-				m = m.WhereLike(daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tpl.Handle.Label.List[0].FieldCaseCamel+`, `+"`%`"+`+gconv.String(v)+`+"`%`"+`)`)
+		filterParseStr = `case ` + "`label`" + `:
+				m = m.Where(m.Builder().` + parseFilterStr + `)`
 	}
 	dao.fieldParse = append(dao.fieldParse, `case `+"`label`"+`:
 				m = m.Fields(daoThis.ParseLabel(daoModel) + `+"` AS `"+` + v)`)
+	dao.filterParse = append(dao.filterParse, filterParseStr)
 	return
 }
 

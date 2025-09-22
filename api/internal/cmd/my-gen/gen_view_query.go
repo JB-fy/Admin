@@ -132,13 +132,13 @@ func getViewQueryIdAndLabel(tpl *myGenTpl) (viewQuery myGenViewQuery) {
         </el-form-item>`)
 	}
 
-	if len(tpl.Handle.Label.List) > 1 /* || !(tpl.Handle.Label.List[0].IsUnique || gconv.Uint(tpl.Handle.Label.List[0].FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) */ {
-		viewQuery.form = append(viewQuery.form, `<el-form-item prop="label">
-			<el-input v-model="queryCommon.data.label" :placeholder="t('common.name.label')" maxlength="30" :clearable="true" />
-		</el-form-item>`)
-	} else if !tpl.Handle.Label.IsDefault || slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, tpl.Handle.Label.List[0].FieldType) {
+	if len(tpl.Handle.Label.List) == 1 && (!tpl.Handle.Label.IsDefault || slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, tpl.Handle.Label.List[0].FieldType)) {
 		viewQuery.form = append(viewQuery.form, `<el-form-item prop="label">
 			<el-input v-model="queryCommon.data.label" :placeholder="t('`+tpl.I18nPath+`.name.`+tpl.Handle.Label.List[0].FieldRaw+`')" maxlength="`+tpl.Handle.Label.List[0].FieldLimitStr+`" :clearable="true" />
+		</el-form-item>`)
+	} else if len(tpl.Handle.Label.List) > 1 {
+		viewQuery.form = append(viewQuery.form, `<el-form-item prop="label">
+			<el-input v-model="queryCommon.data.label" :placeholder="t('common.name.label')" maxlength="30" :clearable="true" />
 		</el-form-item>`)
 	}
 	return
