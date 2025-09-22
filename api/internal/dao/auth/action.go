@@ -85,8 +85,6 @@ func (daoThis *actionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 				}
 			case `label`:
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().ActionName, `%`+gconv.String(v)+`%`)
-			case daoThis.Columns().ActionName:
-				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case ActionRelToScene.Columns().SceneId:
 				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
 				m = m.Where(tableActionRelToScene+`.`+k, v)

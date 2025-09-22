@@ -85,8 +85,6 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				}
 			case `label`:
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().RoleName, `%`+gconv.String(v)+`%`)
-			case daoThis.Columns().RoleName:
-				m = m.WhereLike(daoModel.DbTable+`.`+k, `%`+gconv.String(v)+`%`)
 			case RoleRelToAction.Columns().ActionId:
 				tableRoleRelToAction := RoleRelToAction.ParseDbTable(m.GetCtx())
 				m = m.Where(tableRoleRelToAction+`.`+k, v)

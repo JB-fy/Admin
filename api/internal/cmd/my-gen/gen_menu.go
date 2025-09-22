@@ -19,8 +19,8 @@ func genMenu(ctx context.Context, option myGenOption, tpl *myGenTpl) {
 	var pid int64 = 0
 	for _, v := range menuNameArr[:len(menuNameArr)-1] {
 		pidVar, _ := daoAuth.Menu.CtxDaoModel(ctx).Filters(g.Map{
-			daoAuth.Menu.Columns().SceneId:          sceneId,
-			daoAuth.Menu.Columns().MenuName + `_eq`: v,
+			daoAuth.Menu.Columns().SceneId:  sceneId,
+			daoAuth.Menu.Columns().MenuName: v,
 		}).Value(daoAuth.Menu.Columns().MenuId)
 		if pidVar.Uint() == 0 {
 			pid, _ = daoAuth.Menu.CtxDaoModel(ctx).HookInsert(g.Map{
