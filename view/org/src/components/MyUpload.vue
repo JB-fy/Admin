@@ -12,6 +12,7 @@
 <!-------- 使用示例 结束-------->
 <script setup lang="tsx">
 import clipboard3 from 'vue-clipboard3'
+import type { UploadRequestHandler, UploadRequestOptions } from 'element-plus'
 
 const { toClipboard } = clipboard3()
 const { t } = useI18n()
@@ -212,6 +213,7 @@ const upload = reactive({
     data: (attrs.data as { [propName: string]: any }) ?? {},
     autoUpload: (attrs.autoUpload ?? true) as boolean,
     signInfo: {} as { [propName: string]: any }, //缓存的签名信息。示例：{ upload_url: "https://xxxxx.com/upload", upload_data: {...}, host: "https://xxxxx.com", dir: "common/20221231/", expire: 1672471578, is_res: 1 }
+    httpRequest: undefined as UploadRequestHandler | undefined,
     initHttp: async () => {
         if (!upload.api.isSignApi) {
             upload.action = getHttpBaseUrl() + upload.api.code
@@ -375,16 +377,29 @@ defineExpose({
                 if (value === undefined || value === null) {
                     return
                 }
-                //数组，对象等复杂参数直接转json发送
-                upload.data[key] = Array.isArray(value) || value instanceof Object ? jsonEncode(value) : value
+                upload.data[key] = Array.isArray(value) || value instanceof Object ? jsonEncode(value) : value  //数组，对象等复杂参数直接转json发送
             })
         }
         if (upload.fileList.length == 0) {
-            //文件非必填时，直接请求
-            await request(upload.api.code, upload.data, isSuccessTip, isErrorHandle, method, headers)
+            await request(upload.api.code, upload.data, isSuccessTip, isErrorHandle, method, headers)   //文件非必填时，直接请求
             return
         }
-        upload.ref.submit()
+        return new Promise((resolve, reject) => {
+            upload.httpRequest = async (option: UploadRequestOptions) => {
+                const formData = new FormData()
+                Object.entries(option.data).forEach(([key, value]) => (Array.isArray(value) && value.length ? formData.append(key, ...value) : formData.append(key, value)))
+                formData.append(option.filename, option.file, option.file.name)
+                try {
+                    const res = await request(upload.api.code, formData, isSuccessTip, isErrorHandle, method, headers)
+                    resolve(res)
+                    return res
+                } catch (error) {
+                    reject(error)
+                    throw error
+                }
+            }
+            upload.ref.submit()
+        })
     },
 })
 </script>
@@ -405,6 +420,7 @@ defineExpose({
             :headers="upload.headers"
             :data="upload.data"
             :auto-upload="upload.autoUpload"
+            :http-request="upload.httpRequest"
         >
             <template #default>
                 <slot v-if="slots.default" name="default"></slot>
@@ -434,6 +450,7 @@ defineExpose({
             :headers="upload.headers"
             :data="upload.data"
             :auto-upload="upload.autoUpload"
+            :http-request="upload.httpRequest"
             list-type="picture-card"
             :drag="true"
             :class="upload.class"
