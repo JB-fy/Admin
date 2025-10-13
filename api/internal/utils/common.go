@@ -117,7 +117,7 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 }
 
 // 保存文件
-func SaveFileBytes(ctx context.Context, savePath string, fileBytes []byte, isHttps bool, serverNameOpt ...string) (fileUrl string, filePath string, err error) {
+func SaveFileBytes(ctx context.Context, savePath string, fileBytes []byte, isHttps bool, isPort bool, serverNameOpt ...string) (fileUrl string, filePath string, err error) {
 	serverPath := `server`
 	if len(serverNameOpt) > 0 && serverNameOpt[0] != `` {
 		serverPath = `server.` + serverNameOpt[0]
@@ -132,11 +132,18 @@ func SaveFileBytes(ctx context.Context, savePath string, fileBytes []byte, isHtt
 	if err != nil {
 		return
 	}
+	scheme := `http`
 	if isHttps {
-		fileUrl = fmt.Sprintf(`https://%s%s/%s`, genv.Get(consts.ENV_SERVER_NETWORK_IP).String(), g.Cfg().MustGet(ctx, serverPath+`.httpsAddr`).String(), savePath)
-	} else {
-		fileUrl = fmt.Sprintf(`http://%s%s/%s`, genv.Get(consts.ENV_SERVER_NETWORK_IP).String(), g.Cfg().MustGet(ctx, serverPath+`.address`).String(), savePath)
+		scheme = `https`
 	}
+	port := ``
+	if isPort {
+		port = g.Cfg().MustGet(ctx, serverPath+`.address`).String()
+		if isHttps {
+			port = g.Cfg().MustGet(ctx, serverPath+`.httpsAddr`).String()
+		}
+	}
+	fileUrl = fmt.Sprintf(`%s://%s%s/%s`, scheme, genv.Get(consts.ENV_SERVER_NETWORK_IP).String(), port, savePath)
 	return
 }
 
