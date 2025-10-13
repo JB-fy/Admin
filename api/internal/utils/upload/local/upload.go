@@ -11,6 +11,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"net/http"
+	"path/filepath"
 	"sort"
 	"time"
 
@@ -45,7 +46,7 @@ func NewUpload(ctx context.Context, config map[string]any) model.Upload {
 		panic(`缺少配置：上传-本地`)
 	}
 	if obj.FileSaveDir == `` {
-		obj.FileSaveDir = `../public/`
+		obj.FileSaveDir = g.Cfg().MustGet(ctx, `server.serverRoot`).String()
 	}
 	return obj
 }
@@ -91,7 +92,7 @@ func (uploadThis *Upload) Upload(ctx context.Context, r *ghttp.Request) (notifyI
 	if !isRand {
 		file.Filename = gstr.Replace(key, dir, ``)
 	}
-	filename, err := file.Save(uploadThis.FileSaveDir+dir, isRand)
+	filename, err := file.Save(filepath.Join(uploadThis.FileSaveDir, dir), isRand)
 	if err != nil {
 		return
 	}
