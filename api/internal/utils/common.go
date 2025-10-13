@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"path/filepath"
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gcode"
@@ -111,6 +112,30 @@ func GetRequestUrl(ctx context.Context, flag int) (url string) {
 			}
 		}
 		url = gstr.Replace(url, r.Host+r.URL.String(), ip+addr)
+	}
+	return
+}
+
+// 保存文件
+func SaveFileBytes(ctx context.Context, savePath string, fileBytes []byte, isHttps bool, serverNameOpt ...string) (fileUrl string, filePath string, err error) {
+	serverPath := `server`
+	if len(serverNameOpt) > 0 && serverNameOpt[0] != `` {
+		serverPath = `server.` + serverNameOpt[0]
+	} else if r := g.RequestFromCtx(ctx); r != nil {
+		if serverName := r.Server.GetName(); serverName != ghttp.DefaultServerName {
+			serverPath = `server.` + serverName
+		}
+	}
+
+	filePath = filepath.Join(gfile.SelfDir(), g.Cfg().MustGet(ctx, serverPath+`.serverRoot`).String(), savePath)
+	err = gfile.PutBytes(filePath, fileBytes)
+	if err != nil {
+		return
+	}
+	if isHttps {
+		fileUrl = fmt.Sprintf(`https://%s%s/%s`, genv.Get(consts.ENV_SERVER_NETWORK_IP).String(), g.Cfg().MustGet(ctx, serverPath+`.httpsAddr`).String(), savePath)
+	} else {
+		fileUrl = fmt.Sprintf(`http://%s%s/%s`, genv.Get(consts.ENV_SERVER_NETWORK_IP).String(), g.Cfg().MustGet(ctx, serverPath+`.address`).String(), savePath)
 	}
 	return
 }
