@@ -1,4 +1,4 @@
-package internal
+package get_or_set
 
 import (
 	"api/internal/consts"
