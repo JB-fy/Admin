@@ -128,7 +128,10 @@ func (cacheThis *dbData) GetOrSetArr(ctx context.Context, daoModel *dao.DaoModel
 		value, ttl, err = dbSelFunc(daoModel)
 		return
 	}, numLock, numRead, oneTime)
-	value, _ = valueTmp.([]*gvar.Var)
+	value, ok := valueTmp.([]*gvar.Var)
+	if !ok {
+		valueTmp.(*gvar.Var).Scan(&value)
+	}
 	return
 }
 
@@ -137,7 +140,10 @@ func (cacheThis *dbData) GetOrSetSet(ctx context.Context, daoModel *dao.DaoModel
 		value, ttl, err = dbSelFunc(daoModel)
 		return
 	}, numLock, numRead, oneTime)
-	value, _ = valueTmp.(map[*gvar.Var]struct{})
+	value, ok := valueTmp.(map[*gvar.Var]struct{})
+	if !ok {
+		valueTmp.(*gvar.Var).Scan(&value)
+	}
 	return
 }
 
@@ -146,7 +152,10 @@ func (cacheThis *dbData) GetOrSetPluck(ctx context.Context, daoModel *dao.DaoMod
 		value, ttl, err = dbSelFunc(daoModel)
 		return
 	}, numLock, numRead, oneTime)
-	value, _ = valueTmp.(gdb.Record)
+	value, ok := valueTmp.(gdb.Record)
+	if !ok {
+		valueTmp.(*gvar.Var).Scan(&value)
+	}
 	return
 }
 
