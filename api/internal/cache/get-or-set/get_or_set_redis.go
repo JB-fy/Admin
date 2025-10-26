@@ -31,6 +31,6 @@ func (cacheThis *getOrSetRedis) GetOrSet(ctx context.Context, key string, setFun
 			err = nil
 		}
 		return
-	}, 0, 0, 0)
+	}, numLock, numRead, oneTime)
 	return
 }
