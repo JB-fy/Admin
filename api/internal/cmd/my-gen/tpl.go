@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/gogf/gf/v2/frame/g"
@@ -540,19 +541,33 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			上面字段都没有时，默认为排除internal.ConfigIdAndLabelExcField过后的第二个字段
 	*/
 	labelList := []string{}
+	labelMap := map[string]struct{}{}
+	label := ``
 	for _, v := range []string{`Name`, `Title`, `Phone`, `Email`, `Account`, `Nickname`} {
-		labelTmp := tpl.TableCaseCamel + v
-		labelList = append(labelList, labelTmp)
+		label = tpl.TableCaseCamel + v
+		labelList = append(labelList, label)
+		labelMap[label] = struct{}{}
 		if len(tpl.Handle.Id.List) == 1 && tpl.Handle.Id.IsPrimary {
 			fieldSplitArr := gstr.Split(tpl.Handle.Id.List[0].FieldCaseSnake, `_`)
 			if fieldSplitArr[len(fieldSplitArr)-1] == `id` {
-				labelTmp1 := gstr.SubStr(tpl.Handle.Id.List[0].FieldCaseCamel, 0, -2) + v
-				if labelTmp1 != labelTmp && labelTmp1 != v {
-					labelList = append(labelList, labelTmp1)
+				label := gstr.SubStr(tpl.Handle.Id.List[0].FieldCaseCamel, 0, -2) + v
+				if _, ok := labelMap[label]; !ok {
+					labelList = append(labelList, label)
+					labelMap[label] = struct{}{}
 				}
 			}
 		}
-		labelList = append(labelList, v)
+		if tableCaseSnakeArr := strings.Split(tpl.TableCaseSnake, `_`); len(tableCaseSnakeArr) > 1 {
+			label = gstr.CaseCamel(tableCaseSnakeArr[len(tableCaseSnakeArr)-1]) + v
+			if _, ok := labelMap[label]; !ok {
+				labelList = append(labelList, label)
+				labelMap[label] = struct{}{}
+			}
+		}
+		if _, ok := labelMap[v]; !ok {
+			labelList = append(labelList, v)
+			labelMap[v] = struct{}{}
+		}
 	}
 	for _, v := range labelList {
 		for _, item := range fieldList {
