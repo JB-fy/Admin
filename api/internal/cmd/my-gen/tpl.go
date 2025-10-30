@@ -48,12 +48,12 @@ type myGenTpl struct {
 		}
 		/*
 			label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
-				表名去掉前缀 + Name > 主键去掉ID + Name > Name >
-				表名去掉前缀 + Title > 主键去掉ID + Title > Title >
-				表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
-				表名去掉前缀 + Email > 主键去掉ID + Email > Email >
-				表名去掉前缀 + Account > 主键去掉ID + Account > Account >
-				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname >
+				表名去掉前缀 + Name > 主键去掉ID + Name > 表名最后单词 + Name > Name >
+				表名去掉前缀 + Title > 主键去掉ID + Title > 表名最后单词 + Title > Title >
+				表名去掉前缀 + Phone > 主键去掉ID + Phone > 表名最后单词 + Phone > Phone >
+				表名去掉前缀 + Email > 主键去掉ID + Email > 表名最后单词 + Email > Email >
+				表名去掉前缀 + Account > 主键去掉ID + Account > 表名最后单词 + Account > Account >
+				表名去掉前缀 + Nickname > 主键去掉ID + Nickname > 表名最后单词 + Nickname > Nickname >
 				上面字段都没有时，默认为排除internal.ConfigIdAndLabelExcField过后的第二个字段
 		*/
 		Label struct {
@@ -532,12 +532,12 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 	}
 	/*
 		label列表。sql查询可设为别名label的字段（常用于前端my-select或my-cascader等组件，或用于关联表查询）。按以下优先级存入：
-			表名去掉前缀 + Name > 主键去掉ID + Name > Name >
-			表名去掉前缀 + Title > 主键去掉ID + Title > Title >
-			表名去掉前缀 + Phone > 主键去掉ID + Phone > Phone >
-			表名去掉前缀 + Email > 主键去掉ID + Email > Email >
-			表名去掉前缀 + Account > 主键去掉ID + Account > Account >
-			表名去掉前缀 + Nickname > 主键去掉ID + Nickname > Nickname >
+			表名去掉前缀 + Name > 主键去掉ID + Name > 表名最后单词 + Name > Name >
+			表名去掉前缀 + Title > 主键去掉ID + Title > 表名最后单词 + Title > Title >
+			表名去掉前缀 + Phone > 主键去掉ID + Phone > 表名最后单词 + Phone > Phone >
+			表名去掉前缀 + Email > 主键去掉ID + Email > 表名最后单词 + Email > Email >
+			表名去掉前缀 + Account > 主键去掉ID + Account > 表名最后单词 + Account > Account >
+			表名去掉前缀 + Nickname > 主键去掉ID + Nickname > 表名最后单词 + Nickname > Nickname >
 			上面字段都没有时，默认为排除internal.ConfigIdAndLabelExcField过后的第二个字段
 	*/
 	labelList := []string{}
