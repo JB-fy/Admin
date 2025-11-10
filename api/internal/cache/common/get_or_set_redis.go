@@ -1,4 +1,4 @@
-package get_or_set
+package common
 
 import (
 	"api/internal/utils/jbredis"

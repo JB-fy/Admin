@@ -1,7 +1,7 @@
 package cache
 
 import (
-	get_or_set "api/internal/cache/get-or-set"
+	"api/internal/cache/common"
 	"api/internal/consts"
 	"api/internal/dao"
 	"api/internal/utils/jbredis"
@@ -46,7 +46,7 @@ func (cacheThis *dbData) key(daoModel *dao.DaoModel, method string, idOrCode any
 
 func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, method string, code any, dbSelFunc func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error), numLock, numRead uint8, oneTime time.Duration) (value any, notExist bool, err error) {
 	key := cacheThis.key(daoModel, method, code)
-	value, notExist, err = get_or_set.GetOrSet.GetOrSet(ctx, key, func() (value any, notExist bool, err error) {
+	value, notExist, err = common.GetOrSet.GetOrSet(ctx, key, func() (value any, notExist bool, err error) {
 		value, ttl, err := dbSelFunc(daoModel)
 		if err != nil {
 			return
@@ -97,7 +97,7 @@ func (cacheThis *dbData) del(ctx context.Context, daoModel *dao.DaoModel, method
 	if err != nil {
 		return
 	}
-	get_or_set.GetOrSet.Del(ctx, key)
+	common.GetOrSet.Del(ctx, key)
 	return
 }
 
@@ -110,7 +110,7 @@ func (cacheThis *dbData) delById(ctx context.Context, daoModel *dao.DaoModel, me
 	if err != nil {
 		return
 	}
-	get_or_set.GetOrSet.Del(ctx, keyArr...)
+	common.GetOrSet.Del(ctx, keyArr...)
 	return
 }
 

@@ -1,7 +1,7 @@
 package cache
 
 import (
-	get_or_set "api/internal/cache/get-or-set"
+	"api/internal/cache/common"
 	"api/internal/consts"
 	"api/internal/dao"
 	"context"
@@ -83,7 +83,7 @@ func (cacheThis *dbDataLocal) key(daoModel *dao.DaoModel, method string, idOrCod
 
 func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoModel, method string, code any, dbSelFunc func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error)) (value any, notExist bool, err error) {
 	key := cacheThis.key(daoModel, method, code)
-	value, notExist, err = get_or_set.GetOrSetLocal.GetOrSetLocal(ctx, key, func() (value any, notExist bool, err error) {
+	value, notExist, err = common.GetOrSetLocal.GetOrSetLocal(ctx, key, func() (value any, notExist bool, err error) {
 		value, ttl, err := dbSelFunc(daoModel)
 		if err != nil {
 			return
