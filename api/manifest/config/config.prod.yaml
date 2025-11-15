@@ -82,12 +82,6 @@ database:
       # dryRun: false # ORM空跑(只读不写)
       timeMaintainDisabled: true # 是否完全关闭时间更新特性，true时CreatedAt/UpdatedAt/DeletedAt都将失效
 
-# redis:
-#   default:
-#     address: "0.0.0.0:6379"
-#     # pass: ""
-#     # db: 0
-
 redisDb: # 参考redis.UniversalOption结构体
   default:
     addrs: "0.0.0.0:6379"
