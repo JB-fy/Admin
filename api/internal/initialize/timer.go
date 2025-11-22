@@ -17,10 +17,10 @@ func initTimer(ctx context.Context) {
 		return
 	}
 
-	myTimerThis := myTimer{}
+	// myTimerThis := myTimer{}
 
-	myTimerThis.CACHE_WX_GZH_ACCESS_TOKEN(ctx) //缓存微信公众号AccessToken（需要时启用，且公众号需设置IP白名单）
-	// gtimer.SetTimeout(ctx, 5*time.Second, myTimerThis.CACHE_WX_GZH_ACCESS_TOKEN)
+	// myTimerThis.CACHE_WX_GZH_ACCESS_TOKEN(ctx) //缓存微信公众号AccessToken（需要时启用，且公众号需设置IP白名单）
+	// gtimer.SetTimeout(ctx, 5*time.Second, myTimerThis.Xxxx)
 }
 
 type myTimer struct{}
