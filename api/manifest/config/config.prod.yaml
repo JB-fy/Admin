@@ -8,9 +8,9 @@ i18n:
 
 logger:
   path: "log/" # 日志文件路径。默认为空，表示关闭，仅输出到终端
-  # level: "prod" # 日志输出级别。默认all
   stdout: false # 日志是否同时输出到终端。默认true
-  # file: "{Y-m-d}.log" # 日志文件格式。默认为"{Y-m-d}.log"
+  file: "log.log" # 日志文件格式。默认为"{Y-m-d}.log"
+  rotateSize: "50M" # 按照日志文件大小对文件进行滚动切分。默认为0，表示关闭滚动切分特性
   http:
     isRecord: true # 是否记录http请求日志
     maxResBufferLength: 10000 # 允许记录的最大响应数据长度。正式环境建议设置小点，或0不记录，原因：列表等接口调用频繁且响应数据大，如记录到日志中，很容易把服务器硬盘撑满
