@@ -23,7 +23,7 @@ func (cacheThis *isRun) key(key string) string {
 	return fmt.Sprintf(consts.CACHE_IS_RUN, key)
 }
 
-func (cacheThis *isRun) IsRunNotRunFunc(ctx context.Context, key string, ttl time.Duration, checkRunResultFuncOpt ...func() (isResult bool, err error)) (isRun bool, runEndFunc func(), err error) {
+func (cacheThis *isRun) IsRunNotRunFunc(ctx context.Context, key string, ttl time.Duration, checkRunResultFuncOpt ...func() (isRun bool, err error)) (isRun bool, runEndFunc func(), err error) {
 	if ttl == 0 {
 		ttl = 10 * time.Second
 	} else if ttl < cacheThis.addSecond { //不能小于addSecond
@@ -35,9 +35,8 @@ func (cacheThis *isRun) IsRunNotRunFunc(ctx context.Context, key string, ttl tim
 		if row > 0 {
 			return
 		}
-		var isResult bool
-		isResult, err = checkRunResultFuncOpt[0]()
-		if isResult || err != nil {
+		isRun, err = checkRunResultFuncOpt[0]()
+		if isRun || err != nil {
 			return
 		}
 	}
