@@ -23,7 +23,7 @@ func (cacheThis *isRun) key(key string) string {
 	return fmt.Sprintf(consts.CACHE_IS_RUN, key)
 }
 
-func (cacheThis *isRun) IsRunNotRunFunc(ctx context.Context, key string, ttl time.Duration, checkRunResultFuncOpt ...func() (isResult bool, err error)) (isRun, isResult bool, runEndFunc func(), err error) {
+func (cacheThis *isRun) IsRunNotRunFunc(ctx context.Context, key string, ttl time.Duration, checkRunResultFuncOpt ...func(ctx context.Context) (isResult bool, err error)) (isRun, isResult bool, runEndFunc func(), err error) {
 	if ttl == 0 {
 		ttl = 10 * time.Second
 	} else if ttl < cacheThis.addSecond { //不能小于addSecond
@@ -35,7 +35,7 @@ func (cacheThis *isRun) IsRunNotRunFunc(ctx context.Context, key string, ttl tim
 		if row > 0 {
 			return
 		}
-		isResult, err = checkRunResultFuncOpt[0]()
+		isResult, err = checkRunResultFuncOpt[0](ctx)
 		if isResult || err != nil {
 			return
 		}
@@ -55,13 +55,20 @@ func (cacheThis *isRun) IsRunNotRunFunc(ctx context.Context, key string, ttl tim
 	return
 }
 
-func (cacheThis *isRun) IsRun(ctx context.Context, key string, ttl time.Duration, runFunc func() (err error), checkRunResultFuncOpt ...func() (isResult bool, err error)) (isRun, isResult bool, err error) {
+func (cacheThis *isRun) IsRun(ctx context.Context, key string, ttl time.Duration, isRunGo bool, runFunc func(ctx context.Context) (err error), checkRunResultFuncOpt ...func(ctx context.Context) (isResult bool, err error)) (isRun, isResult bool, err error) {
 	isRun, isResult, runEndFunc, err := cacheThis.IsRunNotRunFunc(ctx, key, ttl, checkRunResultFuncOpt...)
 	if !isRun || isResult || err != nil {
 		return
 	}
-	err = runFunc()
-	runEndFunc()
+	if isRunGo {
+		go func() {
+			defer func() { runEndFunc() }()
+			runFunc(ctx)
+		}()
+		return
+	}
+	defer func() { runEndFunc() }()
+	err = runFunc(ctx)
 	return
 }
 
