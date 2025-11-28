@@ -1,8 +1,6 @@
 package model
 
 import (
-	"time"
-
 	"github.com/IBM/sarama"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/xdg-go/scram"
@@ -55,15 +53,20 @@ func CreateConsumerConfig(config *Config, consumerInfo *ConsumerInfo) (saramaCon
 	saramaConfig = createSaramaConfig(config)
 	saramaConfig.Consumer.Return.Errors = true
 	saramaConfig.Consumer.Group.Rebalance.GroupStrategies = []sarama.BalanceStrategy{sarama.NewBalanceStrategySticky() /* , sarama.NewBalanceStrategyRoundRobin(), sarama.NewBalanceStrategyRange() */}
-	saramaConfig.Consumer.Group.Rebalance.Retry.Backoff = 5 * time.Second
-	// saramaConfig.Consumer.Group.Rebalance.Timeout = 60 * time.Second
-	saramaConfig.Consumer.Group.Session.Timeout = 30 * time.Second
-	saramaConfig.Consumer.Group.Heartbeat.Interval = 5 * time.Second
-	// saramaConfig.Consumer.MaxWaitTime = 250 * time.Millisecond       // 多久拉取一次消息
-	saramaConfig.Consumer.MaxProcessingTime = 10 * time.Second // 单次消息处理的最大时间。当MaxProcessingTime * ChannelBufferSize 时间内未能处理消息，会触发Rebalance导致消费者断开服务中断
-	// saramaConfig.ChannelBufferSize = 256                             // 缓冲区数量
 	if consumerInfo.AutoCommit != nil {
 		saramaConfig.Consumer.Offsets.AutoCommit.Enable = *consumerInfo.AutoCommit
+	}
+	switch consumerInfo.GroupId {
+	case ``:
+		switch consumerInfo.TopicArr[0] {
+		case `xxxx`:
+			// saramaConfig.Consumer.MaxWaitTime = 250 * time.Millisecond // 多久拉取一次消息
+			// saramaConfig.Consumer.MaxProcessingTime = 10 * time.Second // 单次消息处理的最大时间
+		}
+	case `xxxx`:
+		// saramaConfig.Consumer.MaxWaitTime = 250 * time.Millisecond // 多久拉取一次消息
+		// saramaConfig.Consumer.Group.Session.Timeout = 30 * time.Second
+		// saramaConfig.Consumer.Group.Heartbeat.Interval = 10 * time.Second
 	}
 	return
 }
