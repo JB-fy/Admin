@@ -65,8 +65,8 @@ func CreateConsumerConfig(config *Config, consumerInfo *ConsumerInfo) (saramaCon
 		}
 	case `xxxx`:
 		// saramaConfig.Consumer.MaxWaitTime = 250 * time.Millisecond // 多久拉取一次消息
-		// saramaConfig.Consumer.Group.Session.Timeout = 30 * time.Second
-		// saramaConfig.Consumer.Group.Heartbeat.Interval = 10 * time.Second
+		// saramaConfig.Consumer.Group.Session.Timeout = 10 * time.Second
+		// saramaConfig.Consumer.Group.Heartbeat.Interval = 3 * time.Second
 	}
 	return
 }
