@@ -77,6 +77,9 @@ timedatectl set-timezone Asia/Shanghai	//时区设置为亚洲上海
 		建议将私钥设置到gitlab后台：Admin > 设置 > CI/CD > 变量 中，后续直接在.gitlab-ci.yml文件中引用
 	方式2：
 		直接在gitlab-runner所在服务器中执行ssh-keygen生成密钥
+
+上面设置成功后，如果还不能免密登录，修改远程服务器文件/etc/ssh/sshd_config中的PubkeyAuthentication值改为yes
+	vi /etc/ssh/sshd_config
 /**--------ssh免密登录 结束--------**/
 
 
