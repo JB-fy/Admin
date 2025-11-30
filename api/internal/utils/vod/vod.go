@@ -11,11 +11,11 @@ import (
 
 var (
 	vodMap     = map[string]model.Vod{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	vodMu      sync.Mutex
-	vodTypeDef = `vod_of_aliyun`
+	vodMuMap   sync.Map
 	vodFuncMap = map[string]model.VodFunc{
 		`vod_of_aliyun`: aliyun.NewVod,
 	}
+	vodTypeDef = `vod_of_aliyun`
 )
 
 func NewVod(ctx context.Context, vodType string, config map[string]any) (vod model.Vod) {
@@ -24,8 +24,13 @@ func NewVod(ctx context.Context, vodType string, config map[string]any) (vod mod
 	if vod, ok = vodMap[vodKey]; ok { //先读一次（不加锁）
 		return
 	}
-	vodMu.Lock()
-	defer vodMu.Unlock()
+	muTmp, _ := vodMuMap.LoadOrStore(vodKey, &sync.Mutex{})
+	mu := muTmp.(*sync.Mutex)
+	mu.Lock()
+	defer func() {
+		mu.Unlock()
+		vodMuMap.Delete(vodKey)
+	}()
 	if vod, ok = vodMap[vodKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}

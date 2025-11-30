@@ -12,11 +12,11 @@ import (
 
 var (
 	signMap     = map[string]model.Sign{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	signMu      sync.Mutex
-	signTypeDef uint8 = 0
-	signFuncMap       = map[uint8]model.SignFunc{
+	signMuMap   sync.Map
+	signFuncMap = map[uint8]model.SignFunc{
 		0: common.NewSign,
 	}
+	signTypeDef uint8 = 0
 )
 
 func NewSign(ctx context.Context, signType uint8, config map[string]any) (sign model.Sign) {
@@ -25,8 +25,13 @@ func NewSign(ctx context.Context, signType uint8, config map[string]any) (sign m
 	if sign, ok = signMap[signKey]; ok { //先读一次（不加锁）
 		return
 	}
-	signMu.Lock()
-	defer signMu.Unlock()
+	muTmp, _ := signMuMap.LoadOrStore(signKey, &sync.Mutex{})
+	mu := muTmp.(*sync.Mutex)
+	mu.Lock()
+	defer func() {
+		mu.Unlock()
+		signMuMap.Delete(signKey)
+	}()
 	if sign, ok = signMap[signKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}

@@ -13,11 +13,11 @@ import (
 var (
 	// tokenMap     sync.Map
 	tokenMap     = map[string]model.Token{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	tokenMu      sync.Mutex
-	tokenTypeDef uint = 0
-	tokenFuncMap      = map[uint]model.TokenFunc{
+	tokenMuMap   sync.Map
+	tokenFuncMap = map[uint]model.TokenFunc{
 		0: jwt.NewToken,
 	}
+	tokenTypeDef uint = 0
 )
 
 func NewToken(ctx context.Context, tokenType uint, config map[string]any) (token model.Token) {
@@ -32,8 +32,13 @@ func NewToken(ctx context.Context, tokenType uint, config map[string]any) (token
 	if token, ok = tokenMap[tokenKey]; ok { //先读一次（不加锁）
 		return
 	}
-	tokenMu.Lock()
-	defer tokenMu.Unlock()
+	muTmp, _ := tokenMuMap.LoadOrStore(tokenKey, &sync.Mutex{})
+	mu := muTmp.(*sync.Mutex)
+	mu.Lock()
+	defer func() {
+		mu.Unlock()
+		tokenMuMap.Delete(tokenKey)
+	}()
 	if token, ok = tokenMap[tokenKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}

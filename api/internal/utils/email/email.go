@@ -11,7 +11,7 @@ import (
 
 var (
 	emailMap     = map[string]model.Email{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	emailMu      sync.Mutex
+	emailMuMap   sync.Map
 	emailTypeDef = `email_of_common`
 	emailFuncMap = map[string]model.EmailFunc{
 		`email_of_common`: common.NewEmail,
@@ -24,8 +24,13 @@ func NewEmail(ctx context.Context, emailType string, config map[string]any) (ema
 	if email, ok = emailMap[emailKey]; ok { //先读一次（不加锁）
 		return
 	}
-	emailMu.Lock()
-	defer emailMu.Unlock()
+	muTmp, _ := emailMuMap.LoadOrStore(emailKey, &sync.Mutex{})
+	mu := muTmp.(*sync.Mutex)
+	mu.Lock()
+	defer func() {
+		mu.Unlock()
+		emailMuMap.Delete(emailKey)
+	}()
 	if email, ok = emailMap[emailKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}

@@ -11,11 +11,11 @@ import (
 
 var (
 	smsMap     = map[string]model.Sms{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	smsMu      sync.Mutex
-	smsTypeDef = `sms_of_aliyun`
+	smsMuMap   sync.Map
 	smsFuncMap = map[string]model.SmsFunc{
 		`sms_of_aliyun`: aliyun.NewSms,
 	}
+	smsTypeDef = `sms_of_aliyun`
 )
 
 func NewSms(ctx context.Context, smsType string, config map[string]any) (sms model.Sms) {
@@ -24,8 +24,13 @@ func NewSms(ctx context.Context, smsType string, config map[string]any) (sms mod
 	if sms, ok = smsMap[smsKey]; ok { //先读一次（不加锁）
 		return
 	}
-	smsMu.Lock()
-	defer smsMu.Unlock()
+	muTmp, _ := smsMuMap.LoadOrStore(smsKey, &sync.Mutex{})
+	mu := muTmp.(*sync.Mutex)
+	mu.Lock()
+	defer func() {
+		mu.Unlock()
+		smsMuMap.Delete(smsKey)
+	}()
 	if sms, ok = smsMap[smsKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}

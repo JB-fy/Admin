@@ -13,12 +13,12 @@ import (
 
 var (
 	uploadMap     = map[string]model.Upload{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	uploadMu      sync.Mutex
-	uploadTypeDef uint = 0
-	uploadFuncMap      = map[uint]model.UploadFunc{
+	uploadMuMap   sync.Map
+	uploadFuncMap = map[uint]model.UploadFunc{
 		0: local.NewUpload,
 		1: aliyun_oss.NewUpload,
 	}
+	uploadTypeDef uint = 0
 )
 
 func NewUpload(ctx context.Context, uploadType uint, config map[string]any) (upload model.Upload) {
@@ -27,8 +27,13 @@ func NewUpload(ctx context.Context, uploadType uint, config map[string]any) (upl
 	if upload, ok = uploadMap[uploadKey]; ok { //先读一次（不加锁）
 		return
 	}
-	uploadMu.Lock()
-	defer uploadMu.Unlock()
+	muTmp, _ := uploadMuMap.LoadOrStore(uploadKey, &sync.Mutex{})
+	mu := muTmp.(*sync.Mutex)
+	mu.Lock()
+	defer func() {
+		mu.Unlock()
+		uploadMuMap.Delete(uploadKey)
+	}()
 	if upload, ok = uploadMap[uploadKey]; ok { // 再读一次（加锁），防止重复初始化
 		return
 	}
