@@ -77,7 +77,7 @@ func StringsBuilderPoolPut(builder *strings.Builder) {
 func GetServerNetworkIp() string {
 	for _, v := range []string{`ifconfig.me`, `https://ipinfo.io/ip`, `https://checkip.amazonaws.com`, `https://icanhazip.com`, `https://api.ipify.org`} {
 		cmd := exec.Command(`/bin/bash`, `-c`, `curl -s --max-time 3 `+v)
-		output, _ := cmd.CombinedOutput()
+		output, _ := cmd.Output()
 		if ip := string(output); ip != `` {
 			return ip
 		}
@@ -88,7 +88,7 @@ func GetServerNetworkIp() string {
 // 获取服务器内网ip
 func GetServerLocalIp() string {
 	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I | awk '{printf "%s", $1}'`)
-	output, _ := cmd.CombinedOutput()
+	output, _ := cmd.Output()
 	if ip := string(output); ip != `` {
 		return ip
 	}
