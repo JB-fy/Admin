@@ -34,10 +34,16 @@ type ImgOption struct {
 
 func ImgHandle(imgBytesOfRaw []byte, imgOption ImgOption) (imgBytes []byte, err error) {
 	imgBytes = imgBytesOfRaw
-	if (imgOption.Width == 0 || imgOption.Height == 0) && len(imgOption.EncodeFormatArr) == 0 {
-		return
+	var imgType string
+	if imgOption.Width == 0 || imgOption.Height == 0 {
+		if len(imgOption.EncodeFormatArr) == 0 {
+			return
+		}
+		imgType = http.DetectContentType(imgBytes[:min(512, len(imgBytes))])
+		if !slices.Contains(imgOption.EncodeFormatArr, imgType) {
+			return
+		}
 	}
-	imgType := http.DetectContentType(imgBytes[:min(512, len(imgBytes))])
 	imgObj, err := ImgDecode(imgBytes)
 	if err != nil {
 		return

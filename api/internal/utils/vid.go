@@ -90,8 +90,16 @@ type VidOption struct {
 
 func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err error) {
 	vidBytes = vidBytesOfRaw
-	vidType := http.DetectContentType(vidBytes[:min(512, len(vidBytes))])
-	vidType = strings.TrimSpace(strings.Split(vidType, `;`)[0])
+	var vidType string
+	if (vidOption.Width == 0 || vidOption.Height == 0) && vidOption.MinDuration == 0 && vidOption.MaxDuration == 0 {
+		if len(vidOption.EncodeFormatArr) == 0 {
+			return
+		}
+		vidType = strings.TrimSpace(strings.Split(http.DetectContentType(vidBytes[:min(512, len(vidBytes))]), `;`)[0])
+		if !slices.Contains(vidOption.EncodeFormatArr, vidType) {
+			return
+		}
+	}
 	ffmpegFormat, ok := mimeToFFmpeg[vidType]
 	if !ok {
 		err = errors.New(`未识别的视频类型`)
