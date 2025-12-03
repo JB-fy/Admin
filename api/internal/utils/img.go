@@ -48,15 +48,21 @@ func ImgHandle(imgBytesOfRaw []byte, imgOption ImgOption) (imgBytes []byte, err 
 	if err != nil {
 		return
 	}
-	if imgOption.Width > 0 && imgOption.Height > 0 && !(imgObj.Bounds().Dx() == imgOption.Width && imgObj.Bounds().Dy() == imgOption.Height) {
-		imgObj = imaging.Fill(imgObj, imgOption.Width, imgOption.Height, imaging.Center, imaging.NearestNeighbor)
-	}
+	isHandle := false
 	format, errTmp := imaging.FormatFromExtension(strings.Replace(imgType, `image/`, ``, 1))
 	if errTmp != nil { //errors.Is(errTmp, imaging.ErrUnsupportedFormat)
 		format = imaging.JPEG //imaging不支持的格式如（webp格式），默认转jpeg格式
 	}
+	if imgOption.Width > 0 && imgOption.Height > 0 && !(imgObj.Bounds().Dx() == imgOption.Width && imgObj.Bounds().Dy() == imgOption.Height) {
+		isHandle = true
+		imgObj = imaging.Fill(imgObj, imgOption.Width, imgOption.Height, imaging.Center, imaging.NearestNeighbor)
+	}
 	if len(imgOption.EncodeFormatArr) > 0 && slices.Contains(imgOption.EncodeFormatArr, imgType) {
+		isHandle = true
 		format = imgOption.TargerFormat
+	}
+	if !isHandle {
+		return
 	}
 	// buf.Bytes()返回的字节后续还要使用。无法用连接池
 	// buf := BytesBufferPoolGet()
