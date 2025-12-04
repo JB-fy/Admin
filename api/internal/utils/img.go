@@ -52,12 +52,13 @@ func ImgHandle(imgBytesOfRaw []byte, imgOption ImgOption) (imgBytes []byte, err 
 				return
 			}
 		}
-	} else {
-		imgType = http.DetectContentType(imgBytes[:min(512, len(imgBytes))])
 	}
 	imgObj, err := ImgDecode(imgBytes)
 	if err != nil {
 		return
+	}
+	if imgType == `` {
+		imgType = http.DetectContentType(imgBytes[:min(512, len(imgBytes))])
 	}
 	isHandle := false
 	format, errTmp := imaging.FormatFromExtension(strings.Replace(imgType, `image/`, ``, 1))

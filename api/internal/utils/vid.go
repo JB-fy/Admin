@@ -106,7 +106,8 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 				return
 			}
 		}
-	} else {
+	}
+	if vidType == `` {
 		vidType = strings.TrimSpace(strings.Split(http.DetectContentType(vidBytes[:min(512, len(vidBytes))]), `;`)[0])
 	}
 	ffmpegFormat, ok := mimeToFFmpeg[vidType]
