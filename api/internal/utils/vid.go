@@ -82,10 +82,12 @@ var mimeToFFmpeg = map[string]string{
 type VidOption struct {
 	Width           int      `json:"width"`
 	Height          int      `json:"height"`
+	RatioArr        []string `json:"ratio_arr"`    //宽高比：1:1, 3:4。比例正确时，不修改宽高
 	MinDuration     float64  `json:"min_duration"` //注意：转换目标格式是webm时，不支持填充时长
 	MaxDuration     float64  `json:"max_duration"`
 	EncodeFormatArr []string `json:"encode_format_arr"` //需要转换的格式：video/mp4, video/web
 	TargerFormat    string   `json:"targer_format"`     //当EncodeFormatArr不为空，且需要格式转换时才有用，用于指定转换后的目标格式，默认：mp4
+	IsError         bool     `json:"is_error"`          //报错：0否 1是
 }
 
 func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err error) {
@@ -98,6 +100,11 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 		vidType = strings.TrimSpace(strings.Split(http.DetectContentType(vidBytes[:min(512, len(vidBytes))]), `;`)[0])
 		if !slices.Contains(vidOption.EncodeFormatArr, vidType) {
 			return
+		} else {
+			if vidOption.IsError {
+				err = fmt.Errorf(`视频格式不支持：%s`, vidType)
+				return
+			}
 		}
 	}
 	ffmpegFormat, ok := mimeToFFmpeg[vidType]
@@ -114,16 +121,36 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 	var argsOfAf []string
 	var argsOfT []string
 	targerFormat := ffmpegFormat
-	if vidOption.Width > 0 && vidOption.Height > 0 && !(vidMeta.Width == vidOption.Width && vidMeta.Height == vidOption.Height) {
-		isHandle = true
-		argsOfVf = append(argsOfVf,
-			fmt.Sprintf(`scale=%d:%d:force_original_aspect_ratio=decrease`, vidOption.Width, vidOption.Height),
-			fmt.Sprintf(`pad=%d:%d:(ow-iw)/2:(oh-ih)/2`, vidOption.Width, vidOption.Height),
-		)
+	if vidOption.Width > 0 && vidOption.Height > 0 {
+		if len(vidOption.RatioArr) == 0 {
+			if !(vidMeta.Width == vidOption.Width && vidMeta.Height == vidOption.Height) {
+				if vidOption.IsError {
+					err = fmt.Errorf(`视频宽高不符合要求：宽%d,高%d`, vidOption.Width, vidOption.Height)
+					return
+				}
+				isHandle = true
+			}
+		} else if !slices.Contains(vidOption.RatioArr, GetRatio(vidMeta.Width, vidMeta.Height)) {
+			if vidOption.IsError {
+				err = fmt.Errorf(`视频宽高比不符合要求：%s`, gconv.String(vidOption.RatioArr))
+				return
+			}
+			isHandle = true
+		}
+		if isHandle {
+			argsOfVf = append(argsOfVf,
+				fmt.Sprintf(`scale=%d:%d:force_original_aspect_ratio=decrease`, vidOption.Width, vidOption.Height),
+				fmt.Sprintf(`pad=%d:%d:(ow-iw)/2:(oh-ih)/2`, vidOption.Width, vidOption.Height),
+			)
+		}
 	}
 	if vidOption.MinDuration > 0 && vidMeta.Duration < vidOption.MinDuration {
+		if vidOption.IsError {
+			err = fmt.Errorf(`视频时长不能低于%.3f秒`, vidOption.MinDuration)
+			return
+		}
 		if vidOption.MaxDuration > 0 && vidOption.MinDuration > vidOption.MaxDuration {
-			err = errors.New(`最小时长不能大于最大时长`)
+			err = fmt.Errorf(`最小时长%.3f不能大于最大时长%.3f`, vidOption.MinDuration, vidOption.MaxDuration)
 			return
 		}
 		isHandle = true
@@ -132,6 +159,10 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 		argsOfAf = append(argsOfAf, fmt.Sprintf(`apad=pad_dur=%.3f`, padDur))
 	}
 	if vidOption.MaxDuration > 0 && vidMeta.Duration > vidOption.MaxDuration {
+		if vidOption.IsError {
+			err = fmt.Errorf(`视频时长不能高于%.3f秒`, vidOption.MaxDuration)
+			return
+		}
 		isHandle = true
 		argsOfT = append(argsOfT, strconv.FormatFloat(vidOption.MaxDuration, 'f', -1, 64))
 	}

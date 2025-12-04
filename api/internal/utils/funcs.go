@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -208,6 +209,27 @@ func BaseToDecimal(numStr string, base int) (decimal int /* , err error */) {
 		decimal = decimal*base + remainder
 	}
 	return
+}
+
+type MyInteger interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
+}
+
+// 获取公约数
+func GetCommonDivisor[T MyInteger](a, b T) T {
+	for b != 0 {
+		a, b = b, a%b
+	}
+	return a
+}
+
+// 获取比例
+func GetRatio[T MyInteger](a, b T) string {
+	if a == 0 || b == 0 {
+		return `0:0`
+	}
+	g := GetCommonDivisor(a, b)
+	return fmt.Sprintf(`%d:%d`, a/g, b/g)
 }
 
 // 从结构体中获取对应字段的值
