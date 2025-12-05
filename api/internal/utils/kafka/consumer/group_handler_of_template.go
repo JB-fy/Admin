@@ -24,7 +24,7 @@ func (handlerThis *GroupHandlerOfTemplate) Setup(session sarama.ConsumerGroupSes
 
 func (handlerThis *GroupHandlerOfTemplate) Cleanup(session sarama.ConsumerGroupSession) (err error) {
 	g.Log(`kafka`).Info(handlerThis.Ctx, fmt.Sprintf(`消费者(分组:%s，组ID:%s，主题:%s)关闭`, handlerThis.Config.Group, handlerThis.ConsumerInfo.GroupId, gconv.String(handlerThis.ConsumerInfo.TopicArr)))
-	// time.Sleep(8 * time.Second /* + time.Duration(8-time.Now().Second()%8)*time.Second */)
+	// time.Sleep(3 * time.Second /* + time.Duration(3-time.Now().Second()%3)*time.Second */)
 	// syscall.Kill(syscall.Getpid(), syscall.SIGTERM) //消费者组中断时，直接关闭进程，触发服务重启
 	return
 }
