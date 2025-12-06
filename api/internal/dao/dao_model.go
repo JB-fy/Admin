@@ -2,12 +2,12 @@ package dao
 
 import (
 	"context"
+	"strings"
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -171,30 +171,32 @@ func (daoModelThis *DaoModel) SetIdArr(idOrFilterOpt ...any) *DaoModel {
 	daoModelThis.IdArr = nil
 	if filter, ok := idOrFilterOpt[0].(g.Map); ok {
 		daoModelThis.Filters(filter)
-		if len(filter) != 1 {
-			daoModelThis.IdArr, _ = daoModelThis.cloneModel().Master().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
-			return daoModelThis
-		}
-		if id, ok := filter[`id`]; ok {
-			daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
-		} else if idArr, ok := filter[`id_arr`]; ok {
-			for _, id := range gconv.SliceAny(idArr) {
+		if len(filter) == 1 {
+			if id, ok := filter[`id`]; ok {
 				daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
-			}
-		} else if idArr, ok := filter[`idArr`]; ok {
-			for _, id := range gconv.SliceAny(idArr) {
-				daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
-			}
-		} else {
-			idField := daoModelThis.dao.ParseId(daoModelThis)
-			if id, ok := filter[idField]; ok {
-				daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
-			} else if gstr.Pos(idField, daoModelThis.DbTable+`.`) == 0 {
-				idField = gstr.Replace(idField, daoModelThis.DbTable+`.`, ``, 1)
-				if id, ok := filter[idField]; ok {
+			} else if idArr, ok := filter[`id_arr`]; ok {
+				for _, id := range gconv.SliceAny(idArr) {
 					daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
 				}
+			} else if idArr, ok := filter[`idArr`]; ok {
+				for _, id := range gconv.SliceAny(idArr) {
+					daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+				}
+			} else {
+				idField := daoModelThis.dao.ParseId(daoModelThis)
+				if id, ok := filter[idField]; ok {
+					daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+				} else if strings.Index(idField, daoModelThis.DbTable+`.`) == 0 {
+					idField = strings.Replace(idField, daoModelThis.DbTable+`.`, ``, 1)
+					if id, ok := filter[idField]; ok {
+						daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+					}
+				}
 			}
+		}
+		if len(daoModelThis.IdArr) == 0 {
+			daoModelThis.IdArr, _ = daoModelThis.cloneModel().Master().Distinct().Array(daoModelThis.dao.ParseId(daoModelThis))
+			return daoModelThis
 		}
 	} else {
 		daoModelThis.FilterPri(idOrFilterOpt[0])
