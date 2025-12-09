@@ -111,14 +111,12 @@ const select = reactive({
             })
         },
     },
-    visibleChange: (val: boolean) => {
-        if (val) {
-            //每次打开都重新加载
-            delete select.api.param.filter[select.api.searchField]
-            select.api.param.page = 1
-            select.api.isEnd = false
-            select.api.addOptions()
-        }
+    focus: (_: FocusEvent) => {
+        //每次打开都重新加载
+        delete select.api.param.filter[select.api.searchField]
+        select.api.param.page = 1
+        select.api.isEnd = false
+        select.api.addOptions()
     },
     remoteMethod: (label: string) => {
         if (label) {
@@ -126,7 +124,7 @@ const select = reactive({
         } else if (select.api.searchField in select.api.param.filter) {
             delete select.api.param.filter[select.api.searchField]
         } else {
-            // 点击组件，会同时触发remoteMethod和visibleChange事件。故当点击组件时，不执行下方操作，防止多次变动select.options
+            // 点击组件，会同时触发remoteMethod和focus事件。故当点击组件时，不执行下方操作，防止多次变动select.options
             return
         }
         select.api.param.page = 1
@@ -210,7 +208,7 @@ defineExpose({
         :collapse-tags-tooltip="true"
         :remote="true"
         :remote-method="select.remoteMethod"
-        @visible-change="select.visibleChange"
+        @focus="select.focus"
         v-bind="$attrs"
         :options="select.options"
         :loading="select.loading"

@@ -377,11 +377,11 @@ defineExpose({
                 if (value === undefined || value === null) {
                     return
                 }
-                upload.data[key] = Array.isArray(value) || value instanceof Object ? jsonEncode(value) : value  //数组，对象等复杂参数直接转json发送
+                upload.data[key] = Array.isArray(value) || value instanceof Object ? jsonEncode(value) : value //数组，对象等复杂参数直接转json发送
             })
         }
         if (upload.fileList.length == 0) {
-            await request(upload.api.code, upload.data, isSuccessTip, isErrorHandle, method, headers)   //文件非必填时，直接请求
+            await request(upload.api.code, upload.data, isSuccessTip, isErrorHandle, method, headers) //文件非必填时，直接请求
             return
         }
         return new Promise((resolve, reject) => {
