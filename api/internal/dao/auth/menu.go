@@ -554,6 +554,12 @@ func (daoThis *menuDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) 
 			case daoThis.Columns().Sort:
 				m = m.Order(daoModel.DbTable + `.` + v)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
+			case daoThis.Columns().UpdatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
+			case daoThis.Columns().CreatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().MenuId)
 			default:
 				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)

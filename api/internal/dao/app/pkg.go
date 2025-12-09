@@ -364,6 +364,12 @@ func (daoThis *pkgDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel) g
 			case daoThis.Columns().VerNo:
 				m = m.Order(daoModel.DbTable + `.` + v)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().PkgId)
+			case daoThis.Columns().UpdatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().PkgId)
+			case daoThis.Columns().CreatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().PkgId)
 			default:
 				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)

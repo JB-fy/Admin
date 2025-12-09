@@ -323,6 +323,12 @@ func (daoThis *uploadDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel
 			switch k {
 			case `id`:
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().UploadId, 1))
+			case daoThis.Columns().UpdatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UploadId)
+			case daoThis.Columns().CreatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UploadId)
 			default:
 				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)

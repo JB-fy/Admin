@@ -350,6 +350,14 @@ func (daoThis *privacyDao) ParseOrder(order []string, daoModel *daoIndex.DaoMode
 				m = m.Order(daoModel.DbTable + `.` + v)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
+			case daoThis.Columns().UpdatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
+			case daoThis.Columns().CreatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 			default:
 				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)

@@ -431,6 +431,12 @@ func (daoThis *usersDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel)
 				m = m.Order(tablePrivacy + `.` + v)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 				m = m.Handler(daoThis.ParseJoin(tablePrivacy, daoModel))
+			case daoThis.Columns().UpdatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
+			case daoThis.Columns().CreatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().UserId)
 			default:
 				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
