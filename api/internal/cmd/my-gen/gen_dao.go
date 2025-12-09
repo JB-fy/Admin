@@ -3,7 +3,6 @@ package my_gen
 import (
 	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
-	"slices"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
@@ -515,13 +514,11 @@ func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 				}
 				daoModel.SaveData[k] = v`)
 		}
-		if slices.Contains([]internal.MyGenFieldType{internal.TypeDate /* , internal.TypeTime */}, v.FieldType) {
-			daoField.filterParse.Method = internal.ReturnType
-			daoField.orderParse.Method = internal.ReturnType
-			daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
+		daoField.filterParse.Method = internal.ReturnType
+		daoField.orderParse.Method = internal.ReturnType
+		daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				m = m.Order(`+daoTable+` + `+"`.`"+` + v)
 				`+getAddOrder(tpl.Handle.Id.List, tpl.Handle.DefSort.Field, tpl.Handle.DefSort.Order))
-		}
 	default:
 		daoField.filterParse.Method = internal.ReturnType
 	}
@@ -1067,16 +1064,16 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			}
 		case internal.TypeText: // `text类型`
 		case internal.TypeJson: // `json类型`
-		case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
-		case internal.TypeDate: // `date类型`
-			daoField.filterParse.Method = internal.ReturnType
+		case internal.TypeDatetime, internal.TypeTimestamp, internal.TypeDate, internal.TypeTime: // `datetime类型`	// `timestamp类型`	// `date类型`	// `time类型`
+			if v.FieldType == internal.TypeDate {
+				daoField.filterParse.Method = internal.ReturnType
+			}
 			daoField.orderParse.Method = internal.ReturnType
 			daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+tplEM.daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				m = m.Order(`+tplEM.daoTableVar+` + `+"`.`"+` + v)
 				`+getAddOrder(tplEM.tplOfTop.Handle.Id.List, tplEM.tplOfTop.Handle.DefSort.Field, tplEM.tplOfTop.Handle.DefSort.Order)+`
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
-		case internal.TypeTime: // `time类型`
 		default:
 			daoField.filterParse.Method = internal.ReturnType
 		}
@@ -1301,16 +1298,16 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 			}
 		case internal.TypeText: // `text类型`
 		case internal.TypeJson: // `json类型`
-		case internal.TypeDatetime, internal.TypeTimestamp: // `datetime类型`	// `timestamp类型`
-		case internal.TypeDate: // `date类型`
-			daoField.filterParse.Method = internal.ReturnType
+		case internal.TypeDatetime, internal.TypeTimestamp, internal.TypeDate, internal.TypeTime: // `datetime类型`	// `timestamp类型`	// `date类型`	// `time类型`
+			if v.FieldType == internal.TypeDate {
+				daoField.filterParse.Method = internal.ReturnType
+			}
 			daoField.orderParse.Method = internal.ReturnType
 			daoField.orderParse.DataType = append(daoField.orderParse.DataType, `case `+tplEM.daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				`+tplEM.daoTableVar+` := `+tplEM.daoPath+`.ParseDbTable(m.GetCtx())
 				m = m.Order(`+tplEM.daoTableVar+` + `+"`.`"+` + v)
 				`+getAddOrder(tplEM.tplOfTop.Handle.Id.List, tplEM.tplOfTop.Handle.DefSort.Field, tplEM.tplOfTop.Handle.DefSort.Order)+`
 				m = m.Handler(daoThis.ParseJoin(`+tplEM.daoTableVar+`, daoModel))`)
-		case internal.TypeTime: // `time类型`
 		default:
 			daoField.filterParse.Method = internal.ReturnType
 		}
