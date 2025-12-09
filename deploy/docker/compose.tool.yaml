@@ -59,6 +59,11 @@ services:
     container_name: mysql-node
     restart: unless-stopped
     network_mode: host
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: 8g
     volumes:
       - /etc/localtime:/etc/localtime:ro
       # - /server/tool/mysql/9.3.0/conf/my.cnf:/opt/bitnami/mysql/conf/my.cnf

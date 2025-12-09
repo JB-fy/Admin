@@ -234,6 +234,11 @@ services:
     container_name: mysql-node
     restart: unless-stopped
     network_mode: host
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: 8g
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /home/jb/dev/tool/mysql/9.3.0:/bitnami/mysql # mkdir -p /home/jb/dev/tool/mysql/9.3.0 && chmod -R 777 /home/jb/dev/tool/mysql/9.3.0
