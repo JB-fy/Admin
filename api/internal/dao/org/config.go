@@ -343,6 +343,14 @@ func (daoThis *configDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel
 				if remain != `` {
 					m = m.Order(remain)
 				}
+			case daoThis.Columns().UpdatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().OrgId)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().ConfigKey)
+			case daoThis.Columns().CreatedAt:
+				m = m.Order(daoModel.DbTable + `.` + v)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().OrgId)
+				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().ConfigKey)
 			default:
 				if daoThis.Contains(k) {
 					m = m.Order(daoModel.DbTable + `.` + v)
