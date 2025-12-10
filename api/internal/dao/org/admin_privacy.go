@@ -338,11 +338,9 @@ func (daoThis *adminPrivacyDao) ParseOrder(order []string, daoModel *daoIndex.Da
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().AdminId, 1))
 			case daoThis.Columns().UpdatedAt:
 				m = m.Order(daoModel.DbTable + `.` + v)
-				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().AdminId)
 			case daoThis.Columns().CreatedAt:
 				m = m.Order(daoModel.DbTable + `.` + v)
-				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().AdminId)
 			default:
 				if daoThis.Contains(k) {

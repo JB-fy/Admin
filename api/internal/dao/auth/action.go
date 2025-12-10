@@ -390,11 +390,9 @@ func (daoThis *actionDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().ActionId, 1))
 			case daoThis.Columns().UpdatedAt:
 				m = m.Order(daoModel.DbTable + `.` + v)
-				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().ActionId)
 			case daoThis.Columns().CreatedAt:
 				m = m.Order(daoModel.DbTable + `.` + v)
-				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().CreatedAt)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().ActionId)
 			default:
 				if daoThis.Contains(k) {
