@@ -14,6 +14,6 @@ type ActionRelToScene struct {
 	g.Meta    `orm:"table:auth_action_rel_to_scene, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
-	ActionId  interface{} // 操作ID
-	SceneId   interface{} // 场景ID
+	ActionId  any         // 操作ID
+	SceneId   any         // 场景ID
 }

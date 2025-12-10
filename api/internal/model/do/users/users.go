@@ -14,16 +14,16 @@ type Users struct {
 	g.Meta    `orm:"table:users, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
-	IsStop    interface{} // 停用：0否 1是
-	UserId    interface{} // 用户ID
-	Nickname  interface{} // 昵称
-	Avatar    interface{} // 头像
-	Gender    interface{} // 性别：0未设置 1男 2女
+	IsStop    any         // 停用：0否 1是
+	UserId    any         // 用户ID
+	Nickname  any         // 昵称
+	Avatar    any         // 头像
+	Gender    any         // 性别：0未设置 1男 2女
 	Birthday  *gtime.Time // 生日
-	Address   interface{} // 地址
-	Phone     interface{} // 手机
-	Email     interface{} // 邮箱
-	Account   interface{} // 账号
-	WxOpenid  interface{} // 微信openid
-	WxUnionid interface{} // 微信unionid
+	Address   any         // 地址
+	Phone     any         // 手机
+	Email     any         // 邮箱
+	Account   any         // 账号
+	WxOpenid  any         // 微信openid
+	WxUnionid any         // 微信unionid
 }

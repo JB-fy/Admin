@@ -14,13 +14,13 @@ type Admin struct {
 	g.Meta    `orm:"table:org_admin, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
-	IsStop    interface{} // 停用：0否 1是
-	AdminId   interface{} // 管理员ID
-	OrgId     interface{} // 机构ID
-	IsSuper   interface{} // 超管：0否 1是
-	Nickname  interface{} // 昵称
-	Avatar    interface{} // 头像
-	Phone     interface{} // 手机
-	Email     interface{} // 邮箱
-	Account   interface{} // 账号
+	IsStop    any         // 停用：0否 1是
+	AdminId   any         // 管理员ID
+	OrgId     any         // 机构ID
+	IsSuper   any         // 超管：0否 1是
+	Nickname  any         // 昵称
+	Avatar    any         // 头像
+	Phone     any         // 手机
+	Email     any         // 邮箱
+	Account   any         // 账号
 }

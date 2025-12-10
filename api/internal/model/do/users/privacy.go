@@ -14,12 +14,12 @@ type Privacy struct {
 	g.Meta         `orm:"table:users_privacy, do:true"`
 	CreatedAt      *gtime.Time // 创建时间
 	UpdatedAt      *gtime.Time // 更新时间
-	UserId         interface{} // 用户ID
-	Password       interface{} // 密码。md5保存
-	Salt           interface{} // 密码盐
-	IdCardNo       interface{} // 身份证号码
-	IdCardName     interface{} // 身份证姓名
-	IdCardGender   interface{} // 身份证性别：0未设置 1男 2女
+	UserId         any         // 用户ID
+	Password       any         // 密码。md5保存
+	Salt           any         // 密码盐
+	IdCardNo       any         // 身份证号码
+	IdCardName     any         // 身份证姓名
+	IdCardGender   any         // 身份证性别：0未设置 1男 2女
 	IdCardBirthday *gtime.Time // 身份证生日
-	IdCardAddress  interface{} // 身份证地址
+	IdCardAddress  any         // 身份证地址
 }

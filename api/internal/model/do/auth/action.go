@@ -14,8 +14,8 @@ type Action struct {
 	g.Meta     `orm:"table:auth_action, do:true"`
 	CreatedAt  *gtime.Time // 创建时间
 	UpdatedAt  *gtime.Time // 更新时间
-	IsStop     interface{} // 停用：0否 1是
-	ActionId   interface{} // 操作ID
-	ActionName interface{} // 名称
-	Remark     interface{} // 备注
+	IsStop     any         // 停用：0否 1是
+	ActionId   any         // 操作ID
+	ActionName any         // 名称
+	Remark     any         // 备注
 }

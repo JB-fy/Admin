@@ -14,9 +14,9 @@ type App struct {
 	g.Meta    `orm:"table:app, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
-	IsStop    interface{} // 停用：0否 1是
-	AppId     interface{} // APPID
-	AppName   interface{} // 名称
-	AppConfig interface{} // 配置。JSON格式，需要时设置
-	Remark    interface{} // 备注
+	IsStop    any         // 停用：0否 1是
+	AppId     any         // APPID
+	AppName   any         // 名称
+	AppConfig any         // 配置。JSON格式，需要时设置
+	Remark    any         // 备注
 }

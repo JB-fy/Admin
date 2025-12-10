@@ -14,7 +14,7 @@ type Org struct {
 	g.Meta    `orm:"table:org, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
-	IsStop    interface{} // 停用：0否 1是
-	OrgId     interface{} // 机构ID
-	OrgName   interface{} // 机构名称
+	IsStop    any         // 停用：0否 1是
+	OrgId     any         // 机构ID
+	OrgName   any         // 机构名称
 }

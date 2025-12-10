@@ -14,6 +14,6 @@ type RoleRelOfOrgAdmin struct {
 	g.Meta    `orm:"table:auth_role_rel_of_org_admin, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
-	AdminId   interface{} // 管理员ID
-	RoleId    interface{} // 角色ID
+	AdminId   any         // 管理员ID
+	RoleId    any         // 角色ID
 }

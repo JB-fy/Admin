@@ -14,7 +14,7 @@ type AdminPrivacy struct {
 	g.Meta    `orm:"table:platform_admin_privacy, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
-	AdminId   interface{} // 管理员ID
-	Password  interface{} // 密码。md5保存
-	Salt      interface{} // 密码盐
+	AdminId   any         // 管理员ID
+	Password  any         // 密码。md5保存
+	Salt      any         // 密码盐
 }

@@ -14,6 +14,6 @@ type RoleRelToMenu struct {
 	g.Meta    `orm:"table:auth_role_rel_to_menu, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
-	RoleId    interface{} // 角色ID
-	MenuId    interface{} // 菜单ID
+	RoleId    any         // 角色ID
+	MenuId    any         // 菜单ID
 }

@@ -14,13 +14,13 @@ type Channel struct {
 	g.Meta      `orm:"table:pay_channel, do:true"`
 	CreatedAt   *gtime.Time // 创建时间
 	UpdatedAt   *gtime.Time // 更新时间
-	IsStop      interface{} // 停用：0否 1是
-	ChannelId   interface{} // 通道ID
-	ChannelName interface{} // 名称
-	ChannelIcon interface{} // 图标
-	SceneId     interface{} // 场景ID
-	PayId       interface{} // 支付ID
-	PayMethod   interface{} // 支付方法：0APP支付 1H5支付 2扫码支付 3小程序支付
-	Sort        interface{} // 排序值。从大到小排序
-	TotalAmount interface{} // 总额
+	IsStop      any         // 停用：0否 1是
+	ChannelId   any         // 通道ID
+	ChannelName any         // 名称
+	ChannelIcon any         // 图标
+	SceneId     any         // 场景ID
+	PayId       any         // 支付ID
+	PayMethod   any         // 支付方法：0APP支付 1H5支付 2扫码支付 3小程序支付
+	Sort        any         // 排序值。从大到小排序
+	TotalAmount any         // 总额
 }

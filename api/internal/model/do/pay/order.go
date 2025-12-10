@@ -14,16 +14,16 @@ type Order struct {
 	g.Meta         `orm:"table:pay_order, do:true"`
 	CreatedAt      *gtime.Time // 创建时间
 	UpdatedAt      *gtime.Time // 更新时间
-	OrderId        interface{} // 订单ID
-	OrderNo        interface{} // 订单号
-	RelOrderType   interface{} // 关联订单类型：0默认
-	RelOrderUserId interface{} // 关联订单用户ID
-	PayId          interface{} // 支付ID
-	ChannelId      interface{} // 通道ID
-	PayType        interface{} // 类型：0支付宝 1微信
-	Amount         interface{} // 实付金额
-	PayStatus      interface{} // 状态：0未付款 1已付款
+	OrderId        any         // 订单ID
+	OrderNo        any         // 订单号
+	RelOrderType   any         // 关联订单类型：0默认
+	RelOrderUserId any         // 关联订单用户ID
+	PayId          any         // 支付ID
+	ChannelId      any         // 通道ID
+	PayType        any         // 类型：0支付宝 1微信
+	Amount         any         // 实付金额
+	PayStatus      any         // 状态：0未付款 1已付款
 	PayTime        *gtime.Time // 支付时间
-	PayRate        interface{} // 费率
-	ThirdOrderNo   interface{} // 第三方订单号
+	PayRate        any         // 费率
+	ThirdOrderNo   any         // 第三方订单号
 }

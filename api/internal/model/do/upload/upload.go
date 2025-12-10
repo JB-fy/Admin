@@ -14,9 +14,9 @@ type Upload struct {
 	g.Meta       `orm:"table:upload, do:true"`
 	CreatedAt    *gtime.Time // 创建时间
 	UpdatedAt    *gtime.Time // 更新时间
-	UploadId     interface{} // 上传ID
-	UploadType   interface{} // 类型：0本地 1阿里云OSS
-	UploadConfig interface{} // 配置。JSON格式，根据类型设置
-	IsDefault    interface{} // 默认：0否 1是
-	Remark       interface{} // 备注
+	UploadId     any         // 上传ID
+	UploadType   any         // 类型：0本地 1阿里云OSS
+	UploadConfig any         // 配置。JSON格式，根据类型设置
+	IsDefault    any         // 默认：0否 1是
+	Remark       any         // 备注
 }
