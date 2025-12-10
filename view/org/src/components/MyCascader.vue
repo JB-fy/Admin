@@ -119,16 +119,14 @@ const cascader = reactive({
         },
         addOptions: () => cascader.api.getOptions().then((options) => (cascader.options = [...((attrs.options as any[]) ?? []), ...(options ?? [])])),
     },
-    visibleChange: (val: boolean) => {
-        if (val) {
-            //每次打开都重新加载
-            if (cascader.props.lazy) {
-                //重新触发下动态加载事件
-                cascader.props.lazy = false
-                cascader.props.lazy = true
-            } else {
-                cascader.api.addOptions()
-            }
+    focus: (_: FocusEvent) => {
+        //每次打开都重新加载
+        if (cascader.props.lazy) {
+            //重新触发下动态加载事件
+            cascader.props.lazy = false
+            cascader.props.lazy = true
+        } else {
+            cascader.api.addOptions()
         }
     },
 })
@@ -162,7 +160,7 @@ defineExpose({
         :clearable="true"
         :collapse-tags="true"
         :collapse-tags-tooltip="true"
-        @visible-change="cascader.visibleChange"
+        @focus="cascader.focus"
         v-bind="$attrs"
         :options="undefined"
         :props="cascader.props"
@@ -182,7 +180,7 @@ defineExpose({
         :filterable="true"
         :collapse-tags="true"
         :collapse-tags-tooltip="true"
-        @visible-change="cascader.visibleChange"
+        @focus="cascader.focus"
         v-bind="$attrs"
         :options="cascader.options"
         :props="cascader.props"
