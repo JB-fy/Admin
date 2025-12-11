@@ -189,7 +189,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	var adminId int64
 	orgAdminDaoModel := daoOrg.Admin.CtxDaoModel(ctx)
 	err = orgAdminDaoModel.Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
-		adminId, err = orgAdminDaoModel.CloneNew().TX(tx).HookInsert(data).InsertAndGetId()
+		adminId, err = orgAdminDaoModel.ResetNew().TX(tx).HookInsert(data).InsertAndGetId()
 		if err != nil {
 			return
 		}
@@ -197,7 +197,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		if err != nil {
 			return
 		}
-		_, err = orgAdminDaoModel.CloneNew().TX(tx).SetIdArr(adminId).HookUpdateOne(daoOrg.Admin.Columns().OrgId, orgId).Update() //更新管理员所属机构ID
+		_, err = orgAdminDaoModel.ResetNew().TX(tx).SetIdArr(adminId).HookUpdateOne(daoOrg.Admin.Columns().OrgId, orgId).Update() //更新管理员所属机构ID
 		return
 	})
 	if err != nil {

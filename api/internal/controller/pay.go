@@ -181,7 +181,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 	// 订单回调处理
 	payOrderDaoModel := daoPay.Order.CtxDaoModel(ctx)
 	err = payOrderDaoModel.Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
-		row, _ := payOrderDaoModel.CloneNew().TX(tx).Filters(g.Map{
+		row, _ := payOrderDaoModel.ResetNew().TX(tx).Filters(g.Map{
 			daoPay.Order.Columns().OrderId:   orderInfo[daoPay.Order.Columns().OrderId],
 			daoPay.Order.Columns().PayStatus: 0, //防并发
 		}).Data(g.Map{
@@ -196,11 +196,11 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 		}
 
 		/**--------处理关联订单 开始--------**/
-		relOrderIdArr, _ := daoPay.OrderRel.CtxDaoModel(ctx).TX(tx).Filter(daoPay.OrderRel.Columns().OrderId, orderInfo[daoPay.Order.Columns().OrderId]).ArrayUint(daoPay.OrderRel.Columns().RelOrderId)
+		relOrderIdArr, _ := daoPay.OrderRel.CtxDaoModel(ctx).Filter(daoPay.OrderRel.Columns().OrderId, orderInfo[daoPay.Order.Columns().OrderId]).ArrayUint(daoPay.OrderRel.Columns().RelOrderId)
 		switch orderInfo[daoPay.OrderRel.Columns().RelOrderType].Uint() { // 根据订单类型确定对应的订单表，再做处理
 		case 0:
 			gutil.Dump(relOrderIdArr)
-			/* relOrderList, _ := daoXxxx.Order.CtxDaoModel(ctx).TX(tx).Filter(daoXxxx.Order.Columns().OrderId, relOrderIdArr).All()
+			/* relOrderList, _ := daoXxxx.Order.CtxDaoModel(ctx).Filter(daoXxxx.Order.Columns().OrderId, relOrderIdArr).All()
 			for _, relOrder := range relOrderList {
 			} */
 		default:

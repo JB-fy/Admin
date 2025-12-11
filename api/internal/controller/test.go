@@ -2,8 +2,6 @@ package controller
 
 import (
 	"api/api"
-
-	// daoAuth "api/internal/dao/auth"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -32,11 +30,11 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	/* // 数据库事务
 	xxxxTxxxDaoModel := daoXxxx.Txxx.CtxDaoModel(ctx)
 	err = xxxxTxxxDaoModel.Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
-		list, err := daoXxxx.Txxx.CtxDaoModel(ctx).TX(tx).Filter(`filterKey`, `xxxx`).Field(`xxxx`).LockUpdate().All()                   //查询
-		id, err := xxxxTxxxDaoModel.CloneNew().TX(tx).HookInsert(g.Map{`dataKey`: `xxxx`}).InsertAndGetId()                              //新增
-		row, err := xxxxTxxxDaoModel.CloneNew().TX(tx).SetIdArr(g.Map{`id`: id}).HookUpdateOne(`dataKey`, `xxxx`).UpdateAndGetAffected() //修改
-		row, err := xxxxTxxxDaoModel.CloneNew().TX(tx).SetIdArr(g.Map{`filterKey`: `xxxx`}).HookDelete().DeleteAndGetAffected()          //删除
-		// _, err = tx.Model(xxxxTxxxDaoModel.DbTable).Data(g.Map{`dataKey`: `xxxx`}).Update()                                              //不建议用
+		list, err := daoXxxx.Txxx.CtxDaoModel(ctx).Filter(`filterKey`, `xxxx`).Field(`xxxx`).LockUpdate().All()                            //查询
+		id, err := xxxxTxxxDaoModel.ResetNew().TX(tx).HookInsert(g.Map{`dataKey`: `xxxx`}).InsertAndGetId()                                //新增
+		row, err := xxxxTxxxDaoModel.ResetNew().Ctx(ctx).SetIdArr(g.Map{`id`: id}).HookUpdateOne(`dataKey`, `xxxx`).UpdateAndGetAffected() //修改
+		row, err := xxxxTxxxDaoModel.ResetNew().TX(tx).SetIdArr(g.Map{`filterKey`: `xxxx`}).HookDelete().DeleteAndGetAffected()            //删除
+		// _, err = tx.Model(xxxxTxxxDaoModel.DbTable).Data(g.Map{`dataKey`: `xxxx`}).Update()                                                //不建议用
 		return
 	}) */
 	/*--------数据库使用示例 结束--------*/
