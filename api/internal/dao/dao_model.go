@@ -318,6 +318,12 @@ func (daoModelThis *DaoModel) Join(joinTable string) *DaoModel {
 /*--------简化对dao方法的调用 结束--------*/
 
 /*--------简化对model方法的调用，并封装部分常用方法 开始--------*/
+func (daoModelThis *DaoModel) Ctx(ctx context.Context) *DaoModel {
+	daoModelThis.ctx = ctx
+	daoModelThis.Model = daoModelThis.Model.Ctx(ctx)
+	return daoModelThis
+}
+
 func (daoModelThis *DaoModel) TX(tx gdb.TX) *DaoModel {
 	daoModelThis.Model = daoModelThis.Model.TX(tx)
 	return daoModelThis
