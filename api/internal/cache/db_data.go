@@ -49,6 +49,7 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, m
 	value, notExist, err = common.GetOrSet.GetOrSet(ctx, key, func() (value any, notExist bool, err error) {
 		// 查询时如果刚好有更新或删除时，可能出现先删除缓存再保存旧数据的情况
 		// 解决方法：开启事务，且dbSelFunc方法返回的与value有关的数据，都必须使用LockUpdate()上锁做查询
+		isCache := false
 		err = daoModel.Master().Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
 			var ttl time.Duration
 			value, ttl, err = dbSelFunc(daoModel.Ctx(ctx).LockUpdate()) //先上锁，防止dbSelFunc方法内忘记上锁。注意：在dbSelFunc方法内使用ResetNew()等方法时，此时的锁将失效
@@ -78,8 +79,17 @@ func (cacheThis *dbData) getOrSet(ctx context.Context, daoModel *dao.DaoModel, m
 				ttl = consts.CACHE_TIME_DEFAULT
 			}
 			err = cacheThis.cache().SetEx(ctx, key, gconv.String(value), ttl).Err()
+			isCache = true
 			return
 		})
+		if isCache && err != nil {
+			g.Log().Error(ctx, `数据库事物报错：`+err.Error())
+			_, errTmp := cacheThis.cache().Del(ctx, key).Result()
+			if errTmp != nil {
+				return
+			}
+			common.GetOrSet.Del(ctx, key)
+		}
 		return
 	}, func() (value any, notExist bool, err error) {
 		value, err = cacheThis.cache().Get(ctx, key).Result()
