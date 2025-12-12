@@ -1018,7 +1018,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 	updateHookBeforeStr := `for _, id := range daoModel.IdArr {
 						updateData[` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `] = id
 						` + tplEM.daoPath + `.CtxDaoModel(ctx).HookInsert(updateData).OnConflict(` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `).Save() // Save()只能触发HookInsert()，但因扩展表（一对一）或中间表（一对一）可能没有自增ID，HookInsert()一般无实际作用！要触发HookUpdate()时使用下方代码，同时注释该行
-						/* if row, _ := ` + tplEM.daoPath + `.CtxDaoModel(ctx).Filter(` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `, id).HookUpdate(updateData).UpdateAndGetAffected(); row == 0 { //更新失败，有可能记录不存在，这时做插入操作
+						/* if row, _ := ` + tplEM.daoPath + `.CtxDaoModel(ctx).SetIdArr(id).HookUpdate(updateData).UpdateAndGetAffected(); row == 0 { //更新失败，有可能记录不存在，这时做插入操作
 							` + tplEM.daoPath + `.CtxDaoModel(ctx).HookInsert(updateData).Insert()
 						} */
 					}`
