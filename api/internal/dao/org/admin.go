@@ -361,7 +361,7 @@ func (daoThis *adminDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				switch k {
 				case `xxxx`:
 					for _, id := range daoModel.IdArr {
-						daoModel.CloneNew().FilterPri(id).HookUpdateOne(k, v).Update()
+						daoModel.CloneNew().SetIdArr(id).HookUpdateOne(k, v).Update()
 					}
 				}
 			} */
