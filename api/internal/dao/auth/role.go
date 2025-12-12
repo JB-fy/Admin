@@ -388,11 +388,11 @@ func (daoThis *roleDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				return
 			}
 
-			RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, daoModel.IdArr).Delete()
-			RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, daoModel.IdArr).Delete()
-			/* // 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
-			RoleRelOfOrgAdmin.CtxDaoModel(ctx).Filter(RoleRelOfOrgAdmin.Columns().RoleId, daoModel.IdArr).Delete()
-			RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(RoleRelOfPlatformAdmin.Columns().RoleId, daoModel.IdArr).Delete() */
+			RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()
+			RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()
+			// 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
+			// RoleRelOfOrgAdmin.CtxDaoModel(ctx).Filter(RoleRelOfOrgAdmin.Columns().RoleId, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()
+			// RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(RoleRelOfPlatformAdmin.Columns().RoleId, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()
 			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
 		},

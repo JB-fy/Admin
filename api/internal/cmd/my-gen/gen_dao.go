@@ -3,6 +3,7 @@ package my_gen
 import (
 	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
+	"fmt"
 	"slices"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -307,8 +308,8 @@ func genDao(tpl *myGenTpl) {
 		}
 		if len(dao.deleteHookOtherRel) > 0 {
 			deleteHookPointReplace = gstr.Replace(deleteHookPointReplace, `
-			return`, gstr.Join(append([]string{``, `/* // 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释`}, dao.deleteHookOtherRel...), `
-			`)+` */
+			return`, gstr.Join(append([]string{``, `// 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释`}, dao.deleteHookOtherRel...), `
+			`)+`
 			return`, 1)
 		}
 		tplDao = gstr.Replace(tplDao, deleteHookPoint, deleteHookPointReplace, 1)
@@ -1008,6 +1009,12 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 					`+insertHookStr)
 	}
 
+	updateFilterFormat := `SetIdArr(%s)`
+	deleteFilterFormat := `SetIdArr(%s)`
+	if !(len(tplEM.tpl.Handle.Id.List) == 1 && tplEM.tpl.Handle.Id.List[0].FieldRaw == tplEM.RelId) {
+		updateFilterFormat = `Filter(` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `, %s) /* SetIdArr(). */ `
+		deleteFilterFormat = `Filter(` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `, %s). /* SetIdArr().HookDelete(). */ `
+	}
 	dao.updateParse = append(dao.updateParse, `case `+gstr.Join(tplEM.FieldColumnArr, `, `)+`:
 				updateData, ok := daoModel.AfterUpdate[`+"`"+tplEM.FieldVar+"`"+`].(map[string]any)
 				if !ok {
@@ -1018,9 +1025,9 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 	updateHookBeforeStr := `for _, id := range daoModel.IdArr {
 						updateData[` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `] = id
 						` + tplEM.daoPath + `.CtxDaoModel(ctx).HookInsert(updateData).OnConflict(` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `).Save() // Save()只能触发HookInsert()，但因扩展表（一对一）或中间表（一对一）可能没有自增ID，HookInsert()一般无实际作用！要触发HookUpdate()时使用下方代码，同时注释该行
-						/* if row, _ := ` + tplEM.daoPath + `.CtxDaoModel(ctx).SetIdArr(id).HookUpdate(updateData).UpdateAndGetAffected(); row == 0 { //更新失败，有可能记录不存在，这时做插入操作
-							` + tplEM.daoPath + `.CtxDaoModel(ctx).HookInsert(updateData).Insert()
-						} */
+						// if row, _ := ` + tplEM.daoPath + `.CtxDaoModel(ctx).` + fmt.Sprintf(updateFilterFormat, `id`) + `HookUpdate(updateData).UpdateAndGetAffected(); row == 0 { //更新失败，有可能记录不存在，这时做插入操作
+						// 	` + tplEM.daoPath + `.CtxDaoModel(ctx).HookInsert(updateData).Insert()
+						// }
 					}`
 	switch tplEM.TableType {
 	case internal.TableTypeExtendOne:
@@ -1034,19 +1041,23 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 			updateHookBeforeIdSuffixArr = append(updateHookBeforeIdSuffixArr, gstr.CaseCamelLower(v.FieldRaw)+`, ok`+v.FieldCaseCamel+` := updateData[`+tplEM.FieldColumnArrOfIdSuffix[k]+`]`)
 			updateHookBeforeIdSuffixIfArr = append(updateHookBeforeIdSuffixIfArr, `(ok`+v.FieldCaseCamel+` && gconv.Uint(`+gstr.CaseCamelLower(v.FieldRaw)+`) == 0)`)
 		}
+		updateHookBeforeDeleteStr := tplEM.daoPath + `.CtxDaoModel(ctx).` + fmt.Sprintf(deleteFilterFormat, `daoModel.IdArr`) + `Delete()`
+		if !(len(tplEM.tpl.Handle.Id.List) == 1 && tplEM.tpl.Handle.Id.List[0].FieldRaw == tplEM.RelId) {
+			updateHookBeforeDeleteStr = `for _, id := range daoModel.IdArr {
+							` + tplEM.daoPath + `.CtxDaoModel(ctx).` + fmt.Sprintf(deleteFilterFormat, `id`) + `Delete()
+						}`
+		}
 		dao.updateHookBefore = append(dao.updateHookBefore, `case `+"`"+tplEM.FieldVar+"`"+`:
 					updateData, _ := v.(map[string]any)
 					`+gstr.Join(append(updateHookBeforeIdSuffixArr, ``), `
 					`)+`if `+gstr.Join(updateHookBeforeIdSuffixIfArr, ` && `)+` { //多ID时，全部ID存在且等于0就删除。可根据自己业务修改
-						for _, id := range daoModel.IdArr {
-							`+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, id).Delete()
-						}
+						`+updateHookBeforeDeleteStr+`
 						continue
 					}
 					`+updateHookBeforeStr)
 	}
 
-	dao.deleteHookAfter = append(dao.deleteHookAfter, tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, daoModel.IdArr).Delete()`)
+	dao.deleteHookAfter = append(dao.deleteHookAfter, tplEM.daoPath+`.CtxDaoModel(ctx).`+fmt.Sprintf(deleteFilterFormat, `daoModel.IdArr`)+`Delete()`)
 
 	dao.joinParse = append(dao.joinParse, `case `+tplEM.daoPath+`.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`)`)
@@ -1280,7 +1291,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 		}
 	}
 
-	dao.deleteHookAfter = append(dao.deleteHookAfter, tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, daoModel.IdArr).Delete()`)
+	dao.deleteHookAfter = append(dao.deleteHookAfter, tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()`)
 
 	dao.joinParse = append(dao.joinParse, `case `+tplEM.daoPath+`.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`+"`.`"+`+`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`+`+"` = `"+`+daoModel.DbTable+`+"`.`"+`+daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`)`)
@@ -1414,7 +1425,7 @@ func getDaoOtherRel(tplOR handleOtherRel) (dao myGenDao) {
 	if tplOR.tpl.ModuleDirCaseKebab != tplOR.tplOfTop.ModuleDirCaseKebab {
 		dao.importDao = append(dao.importDao, `dao`+tplOR.tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tplOR.tpl.ModuleDirCaseKebab+`"`)
 	}
-	dao.deleteHookOtherRel = append(dao.deleteHookOtherRel, tplOR.daoPath+`.CtxDaoModel(ctx).Filter(`+tplOR.daoPath+`.Columns().`+gstr.CaseCamel(tplOR.RelId)+`, daoModel.IdArr).Delete()`)
+	dao.deleteHookOtherRel = append(dao.deleteHookOtherRel, `// `+tplOR.daoPath+`.CtxDaoModel(ctx).Filter(`+tplOR.daoPath+`.Columns().`+gstr.CaseCamel(tplOR.RelId)+`, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()`)
 	return
 }
 

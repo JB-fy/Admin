@@ -284,9 +284,9 @@ func (daoThis *orgDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 				return
 			}
 
-			/* // 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
-			Admin.CtxDaoModel(ctx).Filter(Admin.Columns().OrgId, daoModel.IdArr).Delete() */
-			Config.CtxDaoModel(ctx).Filter(Config.Columns().OrgId, daoModel.IdArr).Delete()
+			// 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
+			// Admin.CtxDaoModel(ctx).Filter(Admin.Columns().OrgId, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()
+			Config.CtxDaoModel(ctx).Filter(Config.Columns().OrgId, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()
 			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
 		},
