@@ -210,12 +210,12 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 		/**--------处理关联订单 结束--------**/
 
 		// 累积支付数据
-		daoPay.Pay.CtxDaoModel(ctx).FilterPri(orderInfo[daoPay.Order.Columns().PayId]).HookUpdate(g.Map{
+		daoPay.Pay.CtxDaoModel(ctx).SetIdArr(orderInfo[daoPay.Order.Columns().PayId]).HookUpdate(g.Map{
 			daoPay.Pay.Columns().TotalAmount: gdb.Raw(daoPay.Pay.Columns().TotalAmount + ` + ` + orderInfo[daoPay.Order.Columns().Amount].String()),
 			daoPay.Pay.Columns().Balance:     gdb.Raw(daoPay.Pay.Columns().Balance + ` + ` + gconv.String(orderInfo[daoPay.Order.Columns().Amount].Float64()*(1-orderInfo[daoPay.Order.Columns().PayRate].Float64()))), //以订单选择支付通道时的费率为准
 			// daoPay.Pay.Columns().Balance:     gdb.Raw(daoPay.Pay.Columns().Balance + ` + ` + gconv.String(orderInfo[daoPay.Order.Columns().Amount].Float64()*(1-payInfo[daoPay.Pay.Columns().PayRate].Float64()))), //以订单回调时的费率为准
 		}).Update()
-		daoPay.Channel.CtxDaoModel(ctx).FilterPri(orderInfo[daoPay.Order.Columns().ChannelId]).HookUpdateOne(daoPay.Channel.Columns().TotalAmount, gdb.Raw(daoPay.Channel.Columns().TotalAmount+` + `+orderInfo[daoPay.Order.Columns().Amount].String())).Update()
+		daoPay.Channel.CtxDaoModel(ctx).SetIdArr(orderInfo[daoPay.Order.Columns().ChannelId]).HookUpdateOne(daoPay.Channel.Columns().TotalAmount, gdb.Raw(daoPay.Channel.Columns().TotalAmount+` + `+orderInfo[daoPay.Order.Columns().Amount].String())).Update()
 		return
 	})
 	if err != nil {

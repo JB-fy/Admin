@@ -697,7 +697,7 @@ func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 					}`)
 			daoField.insertHook.DataTypeName = append(daoField.insertHook.DataTypeName, `case `+"`"+selfUpdateStr+"`"+`: //更新自身的ID路径和层级。参数：map[string]any{`+"`"+pIdPathStr+"`"+": `父级ID路径`"+`, `+"`"+pNamePathStr+"`"+": `父级名称路径`"+`, `+"`name`: `当前名称`"+`, `+"`"+pLevelStr+"`"+": `父级层级`"+`}
 					val := v.(map[string]any)
-					daoModel.CloneNew().FilterPri(id).HookUpdate(map[string]any{`+gstr.Join(append([]string{``}, insertHookMapKeyArr...), `
+					daoModel.CloneNew().SetIdArr(id).HookUpdate(map[string]any{`+gstr.Join(append([]string{``}, insertHookMapKeyArr...), `
 						`)+`
 					}).Update()`)
 

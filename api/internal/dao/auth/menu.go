@@ -297,13 +297,13 @@ func (daoThis *menuDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 				switch k {
 				case `self_update`: //更新自身的ID路径和层级。参数：map[string]any{`p_id_path`: `父级ID路径`, `p_name_path`: `父级名称路径`, `name`: `当前名称`, `p_level`: `父级层级`}
 					val := v.(map[string]any)
-					daoModel.CloneNew().FilterPri(id).HookUpdate(map[string]any{
+					daoModel.CloneNew().SetIdArr(id).HookUpdate(map[string]any{
 						daoThis.Columns().IdPath:   gconv.String(val[`p_id_path`]) + `-` + gconv.String(id),
 						daoThis.Columns().NamePath: gconv.String(val[`p_name_path`]) + `-` + gconv.String(val[`name`]),
 						daoThis.Columns().Level:    gconv.Uint(val[`p_level`]) + 1,
 					}).Update()
 				case `p_is_leaf`: //更新父级叶子。参数：父级ID
-					daoModel.CloneNew().FilterPri(v).HookUpdateOne(daoThis.Columns().IsLeaf, 0).Update()
+					daoModel.CloneNew().SetIdArr(v).HookUpdateOne(daoThis.Columns().IsLeaf, 0).Update()
 				}
 			}
 			return
