@@ -746,7 +746,7 @@ func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 						daoModel.AfterInsert[`+"`"+pIsLeafStr+"`"+`] = v
 					}`)
 				daoField.insertHook.DataTypeName = append(daoField.insertHook.DataTypeName, `case `+"`"+pIsLeafStr+"`"+`: //更新父级叶子。参数：父级ID
-					daoModel.CloneNew().FilterPri(v).HookUpdateOne(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`, 0).Update()`)
+					daoModel.CloneNew().SetIdArr(v).HookUpdateOne(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`, 0).Update()`)
 
 				afterUpdateStrArr2 = append(afterUpdateStrArr2, `if pInfo[`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`].Uint() == 1 {
 						daoModel.AfterUpdate[`+"`"+pIsLeafStr+"`"+`] = v
@@ -759,11 +759,11 @@ func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 					daoModel.AfterUpdate[`+"`"+pIsLeafCheckStr+"`"+`] = `+pIsLeafCheckStrCaseCamelLower+`
 				}`)
 				daoField.updateHookAfter.DataTypeName = append(daoField.updateHookAfter.DataTypeName, `case `+"`"+pIsLeafStr+"`"+`: //更新父级叶子。参数：父级ID
-					daoModel.CloneNew().FilterPri(v).HookUpdateOne(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`, 0).Update()`)
+					daoModel.CloneNew().SetIdArr(v).HookUpdateOne(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`, 0).Update()`)
 				daoField.updateHookAfter.DataTypeName = append(daoField.updateHookAfter.DataTypeName, `case `+"`"+pIsLeafCheckStr+"`"+`: //更新原父级叶子。参数：[]{父级ID,...}
 					pidArr, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`, v).Distinct().Array(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`)
 					if idArr := gset.NewFrom(v).Diff(gset.NewFrom(gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`s(pidArr))).Slice(); len(idArr) > 0 {
-						daoModel.CloneNew().FilterPri(idArr).HookUpdateOne(`+daoPath+`.Columns().IsLeaf, 1).Update()
+						daoModel.CloneNew().SetIdArr(idArr).HookUpdateOne(`+daoPath+`.Columns().IsLeaf, 1).Update()
 					}`)
 
 				daoField.deleteHookBefore.Method = internal.ReturnTypeName
@@ -777,7 +777,7 @@ func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 				daoField.deleteHookAfter.Method = internal.ReturnTypeName
 				daoField.deleteHookAfter.DataTypeName = append(daoField.deleteHookAfter.DataTypeName, `pidArr, _ := daoModel.CloneNew().Filter(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`, `+pIsLeafCheckStrCaseCamelLower+`).Distinct().Array(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.Pid)+`)
 			if idArr := gset.NewFrom(`+pIsLeafCheckStrCaseCamelLower+`).Diff(gset.NewFrom(gconv.`+tpl.Handle.Pid.Tpl.PidGconvMethod+`s(pidArr))).Slice(); len(idArr) > 0 {
-				daoModel.CloneNew().FilterPri(idArr).HookUpdateOne(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`, 1).Update()
+				daoModel.CloneNew().SetIdArr(idArr).HookUpdateOne(`+daoPath+`.Columns().`+gstr.CaseCamel(tpl.Handle.Pid.IsLeaf)+`, 1).Update()
 			}`)
 			}
 

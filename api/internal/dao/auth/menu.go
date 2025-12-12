@@ -469,11 +469,11 @@ func (daoThis *menuDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 						daoModel.CloneNew().Filter(`p_id_path_of_old`, pIdPathOfOld).HookUpdate(v1).Update()
 					}
 				case `p_is_leaf`: //更新父级叶子。参数：父级ID
-					daoModel.CloneNew().FilterPri(v).HookUpdateOne(daoThis.Columns().IsLeaf, 0).Update()
+					daoModel.CloneNew().SetIdArr(v).HookUpdateOne(daoThis.Columns().IsLeaf, 0).Update()
 				case `p_is_leaf_check`: //更新原父级叶子。参数：[]{父级ID,...}
 					pidArr, _ := daoModel.CloneNew().Filter(daoThis.Columns().Pid, v).Distinct().Array(daoThis.Columns().Pid)
 					if idArr := gset.NewFrom(v).Diff(gset.NewFrom(gconv.Uints(pidArr))).Slice(); len(idArr) > 0 {
-						daoModel.CloneNew().FilterPri(idArr).HookUpdateOne(daoThis.Columns().IsLeaf, 1).Update()
+						daoModel.CloneNew().SetIdArr(idArr).HookUpdateOne(daoThis.Columns().IsLeaf, 1).Update()
 					}
 				}
 			}
@@ -506,7 +506,7 @@ func (daoThis *menuDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler 
 
 			pidArr, _ := daoModel.CloneNew().Filter(daoThis.Columns().Pid, pIsLeafCheck).Distinct().Array(daoThis.Columns().Pid)
 			if idArr := gset.NewFrom(pIsLeafCheck).Diff(gset.NewFrom(gconv.Uints(pidArr))).Slice(); len(idArr) > 0 {
-				daoModel.CloneNew().FilterPri(idArr).HookUpdateOne(daoThis.Columns().IsLeaf, 1).Update()
+				daoModel.CloneNew().SetIdArr(idArr).HookUpdateOne(daoThis.Columns().IsLeaf, 1).Update()
 			}
 			/* // 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
 			RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().MenuId, daoModel.IdArr).Delete() */
