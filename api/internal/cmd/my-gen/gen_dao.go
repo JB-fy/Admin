@@ -468,7 +468,7 @@ func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 		if v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 			daoField.filterParse.Method = internal.ReturnType
 		}
-		if v.IsNull && v.IsUnique {
+		if v.IsNull /* && v.IsUnique */ {
 			daoField.insertParse.Method = internal.ReturnType
 			daoField.insertParse.DataType = append(daoField.insertParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
 				if gconv.String(v) == `+"``"+` {
@@ -483,8 +483,7 @@ func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 				}
 				daoModel.SaveData[k] = v`)
 		}
-	case internal.TypeText: // `text类型`
-	case internal.TypeJson: // `json类型`
+	case internal.TypeText, internal.TypeJson: // `text类型` // `json类型`
 		if v.IsNull {
 			daoField.insertParse.Method = internal.ReturnType
 			daoField.insertParse.DataType = append(daoField.insertParse.DataType, `case `+daoPath+`.Columns().`+v.FieldCaseCamel+`:
