@@ -27,8 +27,12 @@ func (cacheThis *getOrSet) cache() redis.UniversalClient {
 	return jbredis.DB()
 }
 
-func (cacheThis *getOrSet) key(key string) string {
+func (cacheThis *getOrSet) keyOfIsSet(key string) string {
 	return fmt.Sprintf(consts.CACHE_IS_SET, key)
+}
+
+func (cacheThis *getOrSet) keyOfIsDel(key string) string {
+	return fmt.Sprintf(consts.CACHE_IS_DEL, key)
 }
 
 func (cacheThis *getOrSet) retryInfo(numLock, numRead uint8, oneTime time.Duration) (uint8, uint8, time.Duration, time.Duration) {
@@ -62,7 +66,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 		mu.Unlock()
 		cacheThis.muMap.Delete(key)
 	}()
-	isSetKey := cacheThis.key(key)
+	isSetKey := cacheThis.keyOfIsSet(key)
 	if _, isSetOfLocal := cacheThis.goCache.Get(isSetKey); isSetOfLocal { //当有协程（一般是第一个上锁成功的协程）执行setFunc设置缓存 或 发现缓存已存在 后，后续协程即可直接执行getFunc获取缓存
 		value, notExist, err = getFunc()
 		if !notExist || err != nil {
@@ -123,15 +127,51 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	return
 }
 
-// 删除时需同时删除redis竞争锁。建议：调用GetOrSet方法的缓存删除时也使用该方法。在缓存-删除-重设缓存三个步骤连续执行时，在第三步重设缓存会因redis竞争锁未删除报错：尝试多次查询缓存失败
+func (cacheThis *getOrSet) Del(ctx context.Context, key string, delFunc func() bool, oneTime time.Duration) {
+	isSetKey := cacheThis.keyOfIsSet(key)
+	var pttl time.Duration
+	_, expireTime, ok := cacheThis.goCache.GetWithExpiration(isSetKey)
+	if ok {
+		pttl = time.Until(expireTime)
+	} else {
+		pttl, _ = cacheThis.cache().TTL(ctx, isSetKey).Result()
+	}
+	if pttl <= 0 {
+		delFunc()
+		return
+	}
+	// 有并发缓存时（可能正在缓存旧数据），等待缓存成功后再删除缓存
+	isDelKey := cacheThis.keyOfIsDel(key)
+	isDel, err := cacheThis.cache().SetNX(ctx, isDelKey, ``, pttl).Result()
+	if err != nil {
+		return
+	}
+	if isDel {
+		if oneTime == 0 {
+			oneTime = 200 * time.Millisecond
+		}
+		var i time.Duration = 0
+		for i > pttl {
+			time.Sleep(oneTime)
+			if delFunc() {
+				cacheThis.goCache.Delete(isSetKey)
+				cacheThis.cache().Del(ctx, isSetKey)
+				return
+			}
+			i += oneTime
+		}
+	}
+}
+
+/* // 删除时需同时删除redis竞争锁。建议：调用GetOrSet方法的缓存删除时也使用该方法。在缓存-删除-重设缓存三个步骤连续执行时，在第三步重设缓存会因redis竞争锁未删除报错：尝试多次查询缓存失败
 func (cacheThis *getOrSet) Del(ctx context.Context, keyArr ...string) {
 	isSetKeyArr := make([]string, len(keyArr))
 	for index := range keyArr {
-		isSetKeyArr[index] = cacheThis.key(keyArr[index])
+		isSetKeyArr[index] = cacheThis.keyOfIsSet(keyArr[index])
 		cacheThis.goCache.Delete(isSetKeyArr[index])
 	}
 	cacheThis.cache().Del(ctx, isSetKeyArr...)
-}
+} */
 
 // 错误最大缓存时间
 func (cacheThis *getOrSet) MaxTtlOfErr(numLock, numRead uint8, oneTime time.Duration, defTtl time.Duration) time.Duration {

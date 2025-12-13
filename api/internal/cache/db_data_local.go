@@ -84,9 +84,8 @@ func (cacheThis *dbDataLocal) key(daoModel *dao.DaoModel, method string, idOrCod
 func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoModel, method string, code any, dbSelFunc func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error)) (value any, notExist bool, err error) {
 	key := cacheThis.key(daoModel, method, code)
 	value, notExist, err = common.GetOrSetLocal.GetOrSetLocal(ctx, key, func() (value any, notExist bool, err error) {
-		// 查询时如果刚好有更新或删除时，可能出现先删除缓存再保存旧数据的情况
+		/* // 查询时如果刚好有更新或删除时，可能出现先删除缓存再保存旧数据的情况
 		// 解决方法：开启事务，且dbSelFunc方法返回的与value有关的数据，都必须使用LockUpdate()上锁做查询
-		isCache := false
 		err = daoModel.Master().Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
 			var ttl time.Duration
 			value, ttl, err = dbSelFunc(daoModel.Ctx(ctx).LockUpdate()) //先上锁，防止dbSelFunc方法内忘记上锁。注意：在dbSelFunc方法内使用ResetNew()等方法时，此时的锁将失效
@@ -113,13 +112,32 @@ func (cacheThis *dbDataLocal) getOrSet(ctx context.Context, daoModel *dao.DaoMod
 				return
 			}
 			cacheThis.cache(daoModel).Set(key, value, ttl)
-			isCache = true
 			return
-		})
-		if isCache && err != nil {
-			g.Log().Error(ctx, `数据库事物报错：`+err.Error())
-			cacheThis.cache(daoModel).Delete(key)
+		}) */
+		value, ttl, err := dbSelFunc(daoModel)
+		if err != nil {
+			return
 		}
+		switch val := value.(type) {
+		case *gvar.Var:
+			notExist = val.IsNil()
+		case []*gvar.Var:
+			notExist = len(val) == 0
+		case map[*gvar.Var]struct{}:
+			notExist = len(val) == 0
+		case gdb.Record:
+			notExist = val.IsEmpty()
+		case gdb.Result:
+			notExist = len(val) == 0
+		case g.List:
+			notExist = len(val) == 0
+		default:
+			notExist = val == nil
+		}
+		if notExist {
+			return
+		}
+		cacheThis.cache(daoModel).Set(key, value, ttl)
 		return
 	}, func() (value any, notExist bool, err error) {
 		value, notExist = cacheThis.cache(daoModel).Get(key)
@@ -232,7 +250,7 @@ func (cacheThis *dbDataLocal) DelTree(ctx context.Context, daoModel *dao.DaoMode
 
 func (cacheThis *dbDataLocal) GetOrSetById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, field string) (value *gvar.Var, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, id, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-		value, err = daoModel.ResetNew().LockUpdate().FilterPri(id).Value(field)
+		value, err = daoModel.ResetNew().Master(). /* LockUpdate(). */ FilterPri(id).Value(field)
 		ttl = ttlD
 		return
 	})
@@ -246,7 +264,7 @@ func (cacheThis *dbDataLocal) GetOrSetPluckById(ctx context.Context, daoModel *d
 	value = gdb.Record{}
 	for index := range idArr {
 		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCode, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-			value, err = daoModel.ResetNew().LockUpdate().FilterPri(idArr[index]).Value(field)
+			value, err = daoModel.ResetNew().Master(). /* LockUpdate(). */ FilterPri(idArr[index]).Value(field)
 			ttl = ttlD
 			return
 		})
@@ -263,7 +281,7 @@ func (cacheThis *dbDataLocal) GetOrSetPluckById(ctx context.Context, daoModel *d
 
 func (cacheThis *dbDataLocal) GetOrSetInfoById(ctx context.Context, daoModel *dao.DaoModel, id any, ttlD time.Duration, fieldArr ...string) (value gdb.Record, err error) {
 	valueTmp, _, err := cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfInfo, id, func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-		value, err = daoModel.ResetNew().LockUpdate().FilterPri(id).Fields(fieldArr...).One()
+		value, err = daoModel.ResetNew().Master(). /* LockUpdate(). */ FilterPri(id).Fields(fieldArr...).One()
 		ttl = ttlD
 		return
 	})
@@ -276,7 +294,7 @@ func (cacheThis *dbDataLocal) GetOrSetListById(ctx context.Context, daoModel *da
 	var notExist bool
 	for index := range idArr {
 		valueTmp, notExist, err = cacheThis.getOrSet(ctx, daoModel, cacheThis.methodCodeOfInfo, idArr[index], func(daoModel *dao.DaoModel) (value any, ttl time.Duration, err error) {
-			value, err = daoModel.ResetNew().LockUpdate().FilterPri(idArr[index]).Fields(fieldArr...).One()
+			value, err = daoModel.ResetNew().Master(). /* LockUpdate(). */ FilterPri(idArr[index]).Fields(fieldArr...).One()
 			ttl = ttlD
 			return
 		})
