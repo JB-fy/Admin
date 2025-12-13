@@ -151,7 +151,7 @@ func (cacheThis *getOrSet) Del(ctx context.Context, key string, delFunc func() b
 			oneTime = 200 * time.Millisecond
 		}
 		var i time.Duration = 0
-		for i > pttl {
+		for i < pttl {
 			time.Sleep(oneTime)
 			if delFunc() {
 				cacheThis.goCache.Delete(isSetKey)
