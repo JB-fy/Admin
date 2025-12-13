@@ -155,7 +155,7 @@ func (cacheThis *getOrSet) Del(ctx context.Context, key string, delFunc func() b
 			time.Sleep(oneTime)
 			if delFunc() {
 				cacheThis.goCache.Delete(isSetKey)
-				cacheThis.cache().Del(ctx, isSetKey)
+				cacheThis.cache().Del(ctx, isSetKey, isDelKey)
 				return
 			}
 			i += oneTime
