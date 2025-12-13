@@ -1009,10 +1009,10 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 					`+insertHookStr)
 	}
 
-	updateFilterFormat := `SetIdArr(%s)`
-	deleteFilterFormat := `SetIdArr(%s)`
+	updateFilterFormat := `SetIdArr(%s).`
+	deleteFilterFormat := `SetIdArr(%s).`
 	if !(len(tplEM.tpl.Handle.Id.List) == 1 && tplEM.tpl.Handle.Id.List[0].FieldRaw == tplEM.RelId) {
-		updateFilterFormat = `Filter(` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `, %s) /* SetIdArr(). */ `
+		updateFilterFormat = `Filter(` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `, %s). /* SetIdArr(). */ `
 		deleteFilterFormat = `Filter(` + tplEM.daoPath + `.Columns().` + gstr.CaseCamel(tplEM.RelId) + `, %s). /* SetIdArr().HookDelete(). */ `
 	}
 	dao.updateParse = append(dao.updateParse, `case `+gstr.Join(tplEM.FieldColumnArr, `, `)+`:
