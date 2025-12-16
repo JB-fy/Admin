@@ -52,6 +52,15 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	result := g.Map{}
 	err = qb.Select(`goods_detail`).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).MapScan(result)
 
+	// 大批量数据查询和处理
+	iter := qb.Select(`goods_detail`).Where(qb.EqLit(`sub_code`, `''`)).Query(*jbcql.DB()).WithContext(ctx).PageSize(100).Iter()
+	info := map[string]any{}
+	for iter.MapScan(info) {
+		// 处理逻辑
+		info = map[string]any{}	//重置
+	}
+	iter.Close()
+
 	_, err = qb.Select(`goods_detail`).Where(qb.EqLit(`key`, `'1'`)).Limit(10).Query(*jbcql.DB()).WithContext(ctx).Iter().SliceMap()
 
 	type KVEntity struct {
