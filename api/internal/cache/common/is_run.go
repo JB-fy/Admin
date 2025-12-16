@@ -11,9 +11,9 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var IsRun = isRun{addSecond: 5 * time.Second}
+var IsRun = isRun{advSecond: 5 * time.Second}
 
-type isRun struct{ addSecond time.Duration }
+type isRun struct{ advSecond time.Duration }
 
 func (cacheThis *isRun) cache() redis.UniversalClient {
 	return jbredis.DB()
@@ -25,9 +25,9 @@ func (cacheThis *isRun) key(key string) string {
 
 func (cacheThis *isRun) IsRunNotRunFunc(ctx context.Context, key string, ttl time.Duration, checkRunResultFuncOpt ...func(ctx context.Context) (isResult bool, err error)) (isRun, isResult bool, runEndFunc func(), err error) {
 	if ttl == 0 {
-		ttl = 10 * time.Second
-	} else if ttl < cacheThis.addSecond { //不能小于addSecond
-		ttl = ttl + cacheThis.addSecond
+		ttl = 2 * cacheThis.advSecond
+	} else if ttl <= cacheThis.advSecond { //不能小于advSecond
+		ttl = ttl + cacheThis.advSecond
 	}
 	isRunKey := cacheThis.key(key)
 	if len(checkRunResultFuncOpt) > 0 && checkRunResultFuncOpt[0] != nil {
@@ -45,7 +45,7 @@ func (cacheThis *isRun) IsRunNotRunFunc(ctx context.Context, key string, ttl tim
 		return
 	}
 	//保证操作执行完成之前，isRun不会过期
-	timer := gtimer.AddSingleton(ctx, ttl-cacheThis.addSecond, func(ctx context.Context) {
+	timer := gtimer.AddSingleton(ctx, ttl-cacheThis.advSecond, func(ctx context.Context) {
 		cacheThis.cache().Expire(ctx, isRunKey, ttl)
 	})
 	runEndFunc = func() {
