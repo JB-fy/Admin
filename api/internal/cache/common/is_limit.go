@@ -83,13 +83,14 @@ func (cacheThis *isLimit) key(key string) string {
 	return fmt.Sprintf(consts.CACHE_IS_LIMIT, key)
 }
 
-func (cacheThis *isLimit) Incr(ctx context.Context, key string, limitNum uint, ttl time.Duration, isRefreshTTLOpt ...bool) (isLimit bool, err error) {
+func (cacheThis *isLimit) Incr(ctx context.Context, key string, limitNum uint, ttl time.Duration, isRefreshTTLOpt ...bool) (isLimit bool, count int64, err error) {
 	isRefreshTTL := 0
 	if len(isRefreshTTLOpt) > 0 && isRefreshTTLOpt[0] {
 		isRefreshTTL = 1
 	}
 	countTmp, err := jbredis.DB().EvalSha(ctx, cacheThis.incrScripty, []string{cacheThis.key(key)}, []any{limitNum, ttl.Milliseconds(), isRefreshTTL}).Result()
-	isLimit = gconv.Int64(countTmp) == 0
+	count = gconv.Int64(countTmp)
+	isLimit = count == 0
 	return
 }
 
