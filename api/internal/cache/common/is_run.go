@@ -46,7 +46,7 @@ func (cacheThis *isRun) IsRunNotRunFunc(ctx context.Context, key string, ttl tim
 	}
 	//保证操作执行完成之前，isRun不会过期
 	timer := gtimer.AddSingleton(ctx, ttl-cacheThis.advSecond, func(ctx context.Context) {
-		cacheThis.cache().Expire(ctx, isRunKey, ttl)
+		cacheThis.cache().PExpire(ctx, isRunKey, ttl)
 	})
 	runEndFunc = func() {
 		timer.Close()

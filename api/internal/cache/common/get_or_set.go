@@ -99,7 +99,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 				return
 			}
 			cacheThis.goCache.Set(isSetKey, struct{}{}, isSetTtl)
-			cacheThis.cache().Expire(ctx, isSetKey, isSetTtl)
+			cacheThis.cache().PExpire(ctx, isSetKey, isSetTtl)
 			return
 		}
 		// 等待读取数据
@@ -109,7 +109,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 				return
 			}
 			if !notExist /* || err != nil */ {
-				pttl, _ := cacheThis.cache().TTL(ctx, isSetKey).Result()
+				pttl, _ := cacheThis.cache().PTTL(ctx, isSetKey).Result()
 				cacheThis.goCache.Set(isSetKey, struct{}{}, time.Until(time.Now().Add(pttl)))
 				return
 			}
@@ -134,7 +134,7 @@ func (cacheThis *getOrSet) Del(ctx context.Context, key string, delFunc func() b
 	if ok {
 		pttl = time.Until(expireTime)
 	} else {
-		pttl, _ = cacheThis.cache().TTL(ctx, isSetKey).Result()
+		pttl, _ = cacheThis.cache().PTTL(ctx, isSetKey).Result()
 	}
 	if pttl <= 0 {
 		delFunc()
