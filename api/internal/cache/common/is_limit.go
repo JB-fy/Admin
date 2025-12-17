@@ -28,7 +28,7 @@ if tonumber(ARGV[2]) > 0 and (count == 1 or tonumber(ARGV[3]) == 1) then
 	redis.call('PEXPIRE', KEYS[1], ARGV[2])	-- 毫秒
 end
 if count <= tonumber(ARGV[1]) then
-	return 1
+	return count
 else
 	redis.call('DECR', KEYS[1])
     return 0
@@ -95,5 +95,23 @@ func (cacheThis *isLimit) Incr(ctx context.Context, key string, limitNum uint, t
 
 func (cacheThis *isLimit) Decr(ctx context.Context, key string) (err error) {
 	_, err = jbredis.DB().EvalSha(ctx, cacheThis.decrScripty, []string{cacheThis.key(key)}).Result()
+	return
+}
+
+func (cacheThis *isLimit) keyOfNum(key string) string {
+	return fmt.Sprintf(consts.CACHE_IS_LIMIT, key+`:num`)
+}
+
+func (cacheThis *isLimit) GetNum(ctx context.Context, key string, limitNumOfDef uint) (limitNum uint, err error) {
+	limitNumTmp, err := cacheThis.cache().Get(ctx, cacheThis.keyOfNum(key)).Result()
+	limitNum = gconv.Uint(limitNumTmp)
+	if limitNum == 0 {
+		limitNum = limitNumOfDef
+	}
+	return
+}
+
+func (cacheThis *isLimit) SetNum(ctx context.Context, key string, limitNum uint, ttl time.Duration) (err error) {
+	err = cacheThis.cache().SetEx(ctx, cacheThis.keyOfNum(key), limitNum, ttl).Err()
 	return
 }
