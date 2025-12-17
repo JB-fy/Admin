@@ -99,7 +99,7 @@ func (cacheThis *isLimit) Decr(ctx context.Context, key string) (err error) {
 }
 
 func (cacheThis *isLimit) keyOfNum(key string) string {
-	return fmt.Sprintf(consts.CACHE_IS_LIMIT, key+`:num`)
+	return fmt.Sprintf(consts.CACHE_IS_LIMIT, key+`_num`)
 }
 
 func (cacheThis *isLimit) GetNum(ctx context.Context, key string, limitNumOfDef uint) (limitNum uint, err error) {
