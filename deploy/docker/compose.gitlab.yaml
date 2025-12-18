@@ -8,7 +8,9 @@
 #     # root密码查看（只保留24小时），登录后台修改密码
 #       docker exec -it gitlab-ce cat /etc/gitlab/initial_root_password
 #     #  进入gitlab-runner注册Runner（--docker-privileged true非常重要，dind必须，否则无法使用CI/CD）
-#       docker exec -it gitlab-runner gitlab-runner register --non-interactive --url "域名" --registration-token "注册令牌(后台获取)" --executor "docker" --docker-image alpine:latest --docker-privileged true --description "docker-runner"
+#       docker exec -it gitlab-runner gitlab-runner register --non-interactive --url "域名" --registration-token "注册令牌(后台获取)" --executor "docker" --docker-image alpine:latest --docker-privileged true --docker-volumes "/cache;/var/run/docker.sock:/var/run/docker.sock" --description "docker-runner"
+#       # 注册成功后，会生成配置文件config.toml，如果需要直接使用宿主机docker镜像，需修改配置文件中的volumes字段，增加"/var/run/docker.sock:/var/run/docker.sock"
+#         vi /home/jb/dev/tool/gitlab/runner/v18.0.2/config/config.toml
             
 
 services:

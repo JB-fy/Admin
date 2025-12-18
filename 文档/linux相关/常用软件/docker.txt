@@ -166,6 +166,8 @@ docker run -d -p 9000:9000 -v 数据:/data -e RUSTFS_ADDRESS=节点IP:9000 -e RU
         docker run -d --name gitlab-runner --network host -v /home/jb/dev/tool/gitlab/runner/v18.0.2/config:/etc/gitlab-runner -v /var/run/docker.sock:/var/run/docker.sock gitlab/gitlab-runner:v18.0.2
         # 进入gitlab-runner注册Runner（--docker-privileged true非常重要，dind必须，否则无法使用CI/CD）
             docker exec -it gitlab-runner gitlab-runner register --non-interactive --url "域名" --registration-token "注册令牌(后台获取)" --executor "docker" --docker-image alpine --docker-privileged true --description "docker-runner"
+            # 注册成功后，会生成配置文件config.toml，如果需要直接使用宿主机docker镜像，需修改配置文件中的volumes字段，增加"/var/run/docker.sock:/var/run/docker.sock"
+              vi /home/jb/dev/tool/gitlab/runner/v18.0.2/config/config.toml
 /**----------------常用软件 结束----------------**/
 
 
