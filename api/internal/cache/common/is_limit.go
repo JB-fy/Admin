@@ -83,23 +83,28 @@ func (cacheThis *isLimit) key(key string) string {
 	return fmt.Sprintf(consts.CACHE_IS_LIMIT, key)
 }
 
-func (cacheThis *isLimit) Incr(ctx context.Context, key string, limitNum uint, ttl time.Duration, isRefreshTTLOpt ...bool) (isLimit bool, count int64, err error) {
+func (cacheThis *isLimit) Acquire(ctx context.Context, key string, limitNum uint, ttl time.Duration, isRefreshTTLOpt ...bool) (count int64, err error) {
 	isRefreshTTL := 0
 	if len(isRefreshTTLOpt) > 0 && isRefreshTTLOpt[0] {
 		isRefreshTTL = 1
 	}
 	countTmp, err := jbredis.DB().EvalSha(ctx, cacheThis.incrScripty, []string{cacheThis.key(key)}, []any{limitNum, ttl.Milliseconds(), isRefreshTTL}).Result()
+	if err != nil {
+		err = utils.NewErrorCode(ctx, 99999998, err.Error())
+		return
+	}
 	count = gconv.Int64(countTmp)
-	isLimit = count == 0
+	if count == 0 {
+		err = utils.NewErrorCode(ctx, 99999998, ``)
+	}
 	return
 }
 
-func (cacheThis *isLimit) Decr(ctx context.Context, key string) (err error) {
-	_, err = jbredis.DB().EvalSha(ctx, cacheThis.decrScripty, []string{cacheThis.key(key)}).Result()
-	return
+func (cacheThis *isLimit) Release(ctx context.Context, key string) {
+	jbredis.DB().EvalSha(ctx, cacheThis.decrScripty, []string{cacheThis.key(key)}).Result()
 }
 
-func (cacheThis *isLimit) keyOfNum(key string) string {
+/* func (cacheThis *isLimit) keyOfNum(key string) string {
 	return fmt.Sprintf(consts.CACHE_IS_LIMIT, key+`_num`)
 }
 
@@ -115,4 +120,4 @@ func (cacheThis *isLimit) GetNum(ctx context.Context, key string, limitNumOfDef 
 func (cacheThis *isLimit) SetNum(ctx context.Context, key string, limitNum uint, ttl time.Duration) (err error) {
 	err = cacheThis.cache().SetEx(ctx, cacheThis.keyOfNum(key), limitNum, ttl).Err()
 	return
-}
+} */
