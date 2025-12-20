@@ -8,8 +8,6 @@
 #       mkdir -p /server/tool/nginx/1.27.5/config/web
 #       mv /server/app/项目名/deploy/nginx/nginx.conf /server/tool/nginx/1.27.5/config/nginx.conf
 #       mv /server/app/项目名/deploy/nginx/项目名.conf /server/tool/nginx/1.27.5/config/web/项目名.conf
-#     # mysql需要
-#       mkdir -p /server/tool/mysql/9.3.0/data && chmod -R 777 /server/tool/mysql/9.3.0/data
 #     # postgresql需要
 #       mkdir -p /server/tool/postgresql/17.5.0 && chmod -R 777 /server/tool/postgresql/17.5.0
 #     # scylladb需要（注意：数据中心名称 和 物理机标识）
@@ -55,7 +53,7 @@ services:
   #     MYSQL_PASSWORD: 密码
 
   mysql-node:
-    image: bitnami/mysql:9.3.0
+    image: mysql:9.3.0
     container_name: mysql-node
     restart: unless-stopped
     network_mode: host
@@ -64,24 +62,16 @@ services:
         limits:
           cpus: "4"
           memory: 8g
+          memory-swap: 8g # 内存和Swap总量。等于memory时，完全禁用Swap
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      # - /server/tool/mysql/9.3.0/conf/my.cnf:/opt/bitnami/mysql/conf/my.cnf
-      - /server/tool/mysql/9.3.0/data:/bitnami/mysql/data # 宿主机需先创建目录，并赋予写入权限：mkdir -p /server/tool/mysql/9.3.0/data && chmod -R 777 /server/tool/mysql/9.3.0/data
+      - /server/tool/mysql/9.3.0/conf:/etc/mysql/conf.d
+      - /server/tool/mysql/9.3.0/data:/var/lib/mysql
     environment:
-      MYSQL_PORT_NUMBER: 3306
-      MYSQL_ROOT_USER: 账号
       MYSQL_ROOT_PASSWORD: 密码
       MYSQL_DATABASE: 库名
       MYSQL_USER: 账号
       MYSQL_PASSWORD: 密码
-      MYSQL_REPLICATION_MODE: master或slave
-      MYSQL_REPLICATION_USER: 复制用户
-      MYSQL_REPLICATION_PASSWORD: 复制密码
-      MYSQL_MASTER_HOST: 主库IP（从库设置）
-      MYSQL_MASTER_PORT_NUMBER: 主库端口（从库设置）
-      MYSQL_MASTER_ROOT_USER: 主库账号（从库设置）
-      MYSQL_MASTER_ROOT_PASSWORD: 主库密码（从库设置）
 
   # postgresql-alone:
   #   image: postgres:17.4

@@ -84,8 +84,9 @@ docker run -d -p 80:80 -v 配置:/etc/nginx/nginx.conf -v 静态文件:/usr/shar
     # 示例：docker run -d --name nginx-alone --network host -v /home/jb/dev/tool/nginx/1.27.5/config/nginx.conf:/etc/nginx/nginx.conf -v /home/jb/dev/tool/nginx/1.27.5/config/web:/etc/nginx/web -v /home/jb/dev/app:/home/jb/dev/app nginx:1.27.5
 
 # mysql
-docker run -d -p 3306:3306 -v 配置:/etc/mysql/my.cnf -v 数据:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 mysql --defaults-file=/etc/mysql/my.cnf
-    # 示例：docker run -d --name mysql-alone --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql:9.3.0
+docker run -d -p 3306:3306 -v 配置:/etc/mysql/conf.d -v 数据:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 mysql
+    # 示例：docker run -d --name mysql-alone --network host -v /home/jb/dev/tool/mysql/9.3.0/conf:/etc/mysql/conf.d -v /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql:9.3.0
+    # bitnami/mysql镜像已经商业化，不再建议使用
     # 集群示例（使用bitnami/mysql镜像比较简单方便，不用手动写配置文件。如果设置主从复制，还是建议手动设置配置文件，修改binlog_expire_logs_seconds清理日志，防止日志太大，导致硬盘满）：
     docker run -d --name mysql-node --network host -v 配置:/opt/bitnami/mysql/conf/my.cnf -v 数据:/bitnami/mysql/data -v 备份.sql:/docker-entrypoint-initdb.d/备份.sql -e MYSQL_PORT_NUMBER=3306 -e MYSQL_ROOT_USER=用户 -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 -e MYSQL_REPLICATION_MODE=master或slave -e MYSQL_REPLICATION_USER=复制用户 -e MYSQL_REPLICATION_PASSWORD=复制密码 -e MYSQL_MASTER_HOST=主库IP（从库设置） -e MYSQL_MASTER_PORT_NUMBER=主库端口（从库设置） -e MYSQL_MASTER_ROOT_USER=主库账号（从库设置） -e MYSQL_MASTER_ROOT_PASSWORD=主库密码（从库设置） bitnami/mysql:9.3.0
     # 宿主机需先创建目录，并赋予写入权限
@@ -232,7 +233,7 @@ services:
 #       MYSQL_PASSWORD: 密码
 
   mysql-node:
-    image: bitnami/mysql:9.3.0
+    image: mysql:9.3.0
     container_name: mysql-node
     restart: unless-stopped
     network_mode: host
@@ -241,23 +242,17 @@ services:
         limits:
           cpus: "4"
           memory: 8g
+          memory-swap: 8g # 内存和Swap总量。等于memory时，完全禁用Swap
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/jb/dev/tool/mysql/9.3.0:/bitnami/mysql # mkdir -p /home/jb/dev/tool/mysql/9.3.0 && chmod -R 777 /home/jb/dev/tool/mysql/9.3.0
+      - /server/tool/mysql/9.3.0/conf:/etc/mysql/conf.d
+      - /server/tool/mysql/9.3.0/data:/var/lib/mysql
     environment:
-      MYSQL_PORT_NUMBER: 3306
       MYSQL_ROOT_USER: 账号
       MYSQL_ROOT_PASSWORD: 密码
       MYSQL_DATABASE: 库名
       MYSQL_USER: 账号
       MYSQL_PASSWORD: 密码
-      MYSQL_REPLICATION_MODE: master或slave
-      MYSQL_REPLICATION_USER: 复制用户
-      MYSQL_REPLICATION_PASSWORD: 复制密码
-      MYSQL_MASTER_HOST: 主库IP（从库设置）
-      MYSQL_MASTER_PORT_NUMBER: 主库端口（从库设置）
-      MYSQL_MASTER_ROOT_USER: 主库账号（从库设置）
-      MYSQL_MASTER_ROOT_PASSWORD: 主库密码（从库设置）
 
 #   postgresql-alone:
 #     image: postgres:17.4
