@@ -366,7 +366,7 @@ func (daoThis *uploadDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.R
 		info, err = cache.DbDataLocal.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
 	} else {
 		info, err = cache.DbDataLocal.GetOrSetInfo(ctx, daoThis.CtxDaoModel(ctx), `default`, func(daoModel *daoIndex.DaoModel) (value gdb.Record, ttl time.Duration, err error) {
-			value, err = daoModel.ResetNew().LockUpdate().OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
+			value, err = daoModel.ResetNew().Master().OrderDesc(daoThis.Columns().IsDefault).OrderAsc(daoThis.Columns().UploadId).One()
 			return
 		})
 	}
