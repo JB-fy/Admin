@@ -13,15 +13,13 @@ import (
 
 type AppPkg struct {
 	defaultFieldOfInfo []string
-	allowField         []string
 }
 
 func NewAppPkg() *AppPkg {
-	field := daoApp.Pkg.ColumnArr()
-	defaultFieldOfInfo := []string{`id`, `label`, `download_url_to_app`, `download_url_to_h5`}
+	field := slices.Clone(append(daoApp.Pkg.ColumnArr(), `id`, `label`))
+	appendFieldOfInfo := []string{`download_url_to_app`, `download_url_to_h5`}
 	return &AppPkg{
-		defaultFieldOfInfo: slices.Clone(append(field, defaultFieldOfInfo...)),
-		allowField:         slices.Clone(append(field, defaultFieldOfInfo...)),
+		defaultFieldOfInfo: slices.Clone(append(field, appendFieldOfInfo...)),
 	}
 }
 
