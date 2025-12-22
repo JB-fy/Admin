@@ -351,9 +351,9 @@ func (daoThis *actionDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandle
 				return
 			}
 
-			ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().ActionId, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()
+			ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().ActionId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			// 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
-			// RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().ActionId, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()
+			// RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().ActionId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			return
 		},
 	}

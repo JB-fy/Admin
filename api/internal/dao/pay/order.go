@@ -325,7 +325,7 @@ func (daoThis *orderDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 
-			OrderRel.CtxDaoModel(ctx).Filter(OrderRel.Columns().OrderId, daoModel.IdArr). /* SetIdArr().HookDelete(). */ Delete()
+			OrderRel.CtxDaoModel(ctx).Filter(OrderRel.Columns().OrderId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			return
 		},
 	}
