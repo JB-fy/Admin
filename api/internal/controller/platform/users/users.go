@@ -21,13 +21,13 @@ type Users struct {
 }
 
 func NewUsers() *Users {
-	field := slices.Clone(append(daoUsers.Users.ColumnArr(), `id`, `label`, daoUsers.Privacy.Columns().IdCardNo, daoUsers.Privacy.Columns().IdCardName, daoUsers.Privacy.Columns().IdCardGender, daoUsers.Privacy.Columns().IdCardBirthday, daoUsers.Privacy.Columns().IdCardAddress)
+	field := slices.Clone(append(daoUsers.Users.ColumnArr(), `id`, `label`, daoUsers.Privacy.Columns().IdCardNo, daoUsers.Privacy.Columns().IdCardName, daoUsers.Privacy.Columns().IdCardGender, daoUsers.Privacy.Columns().IdCardBirthday, daoUsers.Privacy.Columns().IdCardAddress))
 	appendFieldOfList := []string{}
 	appendFieldOfInfo := []string{}
 	return &Users{
-		defaultFieldOfList: append(field, appendFieldOfList...),
-		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
+		defaultFieldOfList: slices.Clone(append(field, appendFieldOfList...)),
+		defaultFieldOfInfo: slices.Clone(append(field, appendFieldOfInfo...)),
+		allowField:         slices.Clone(append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...)),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

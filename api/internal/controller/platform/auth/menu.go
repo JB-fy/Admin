@@ -27,10 +27,10 @@ func NewMenu() *Menu {
 	appendFieldOfInfo := []string{}
 	appendFieldOfTree := []string{}
 	return &Menu{
-		defaultFieldOfList: append(field, appendFieldOfList...),
-		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
-		defaultFieldOfTree: append(field, appendFieldOfTree...),
-		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo, appendFieldOfTree)).Slice()...),
+		defaultFieldOfList: slices.Clone(append(field, appendFieldOfList...)),
+		defaultFieldOfInfo: slices.Clone(append(field, appendFieldOfInfo...)),
+		defaultFieldOfTree: slices.Clone(append(field, appendFieldOfTree...)),
+		allowField:         slices.Clone(append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo, appendFieldOfTree)).Slice()...)),
 		noAuthField:        []string{`id`, `label`, daoAuth.Menu.Columns().IsLeaf},
 	}
 }

@@ -25,9 +25,9 @@ func NewScene() *Scene {
 	appendFieldOfList := []string{}
 	appendFieldOfInfo := []string{}
 	return &Scene{
-		defaultFieldOfList: append(field, appendFieldOfList...),
-		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
+		defaultFieldOfList: slices.Clone(append(field, appendFieldOfList...)),
+		defaultFieldOfInfo: slices.Clone(append(field, appendFieldOfInfo...)),
+		allowField:         slices.Clone(append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...)),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

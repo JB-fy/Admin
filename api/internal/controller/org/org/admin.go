@@ -25,9 +25,9 @@ func NewAdmin() *Admin {
 	appendFieldOfList := []string{ /* daoOrg.Org.Columns().OrgName */ }
 	appendFieldOfInfo := []string{`role_id_arr`}
 	return &Admin{
-		defaultFieldOfList: append(field, appendFieldOfList...),
-		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
+		defaultFieldOfList: slices.Clone(append(field, appendFieldOfList...)),
+		defaultFieldOfInfo: slices.Clone(append(field, appendFieldOfInfo...)),
+		allowField:         slices.Clone(append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...)),
 		noAuthField:        []string{`id`, `label`},
 	}
 }
