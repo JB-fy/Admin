@@ -21,13 +21,13 @@ type Pay struct {
 }
 
 func NewPay() *Pay {
-	field := append(daoPay.Pay.ColumnArr(), `id`, `label`)
+	field := slices.Clone(append(daoPay.Pay.ColumnArr(), `id`, `label`))
 	appendFieldOfList := []string{}
 	appendFieldOfInfo := []string{}
 	return &Pay{
-		defaultFieldOfList: append(slices.Clone(field), appendFieldOfList...),
-		defaultFieldOfInfo: append(slices.Clone(field), appendFieldOfInfo...),
-		allowField:         append(slices.Clone(field), gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

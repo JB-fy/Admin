@@ -5,7 +5,6 @@ import (
 	daoApp "api/internal/dao/app"
 	"api/internal/utils"
 	"context"
-	"slices"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -20,8 +19,8 @@ func NewAppPkg() *AppPkg {
 	field := daoApp.Pkg.ColumnArr()
 	defaultFieldOfInfo := []string{`id`, `label`, `download_url_to_app`, `download_url_to_h5`}
 	return &AppPkg{
-		defaultFieldOfInfo: append(slices.Clone(field), defaultFieldOfInfo...),
-		allowField:         append(slices.Clone(field), defaultFieldOfInfo...),
+		defaultFieldOfInfo: append(field, defaultFieldOfInfo...),
+		allowField:         append(field, defaultFieldOfInfo...),
 	}
 }
 

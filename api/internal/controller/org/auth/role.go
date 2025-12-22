@@ -22,13 +22,13 @@ type Role struct {
 }
 
 func NewRole() *Role {
-	field := append(daoAuth.Role.ColumnArr(), `id`, `label`)
+	field := slices.Clone(append(daoAuth.Role.ColumnArr(), `id`, `label`))
 	appendFieldOfList := []string{ /* daoAuth.Scene.Columns().SceneName */ }
 	appendFieldOfInfo := []string{`action_id_arr`, `menu_id_arr`}
 	return &Role{
-		defaultFieldOfList: append(slices.Clone(field), appendFieldOfList...),
-		defaultFieldOfInfo: append(slices.Clone(field), appendFieldOfInfo...),
-		allowField:         append(slices.Clone(field), gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

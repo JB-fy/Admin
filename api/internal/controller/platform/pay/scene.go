@@ -21,13 +21,13 @@ type Scene struct {
 }
 
 func NewScene() *Scene {
-	field := append(daoPay.Scene.ColumnArr(), `id`, `label`)
+	field := slices.Clone(append(daoPay.Scene.ColumnArr(), `id`, `label`))
 	appendFieldOfList := []string{}
 	appendFieldOfInfo := []string{}
 	return &Scene{
-		defaultFieldOfList: append(slices.Clone(field), appendFieldOfList...),
-		defaultFieldOfInfo: append(slices.Clone(field), appendFieldOfInfo...),
-		allowField:         append(slices.Clone(field), gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
+		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }

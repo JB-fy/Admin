@@ -22,15 +22,15 @@ type Menu struct {
 }
 
 func NewMenu() *Menu {
-	field := append(daoAuth.Menu.ColumnArr(), `id`, `label`)
+	field := slices.Clone(append(daoAuth.Menu.ColumnArr(), `id`, `label`))
 	appendFieldOfList := []string{daoAuth.Scene.Columns().SceneName, `p_menu_name`}
 	appendFieldOfInfo := []string{}
 	appendFieldOfTree := []string{}
 	return &Menu{
-		defaultFieldOfList: append(slices.Clone(field), appendFieldOfList...),
-		defaultFieldOfInfo: append(slices.Clone(field), appendFieldOfInfo...),
+		defaultFieldOfList: append(field, appendFieldOfList...),
+		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
 		defaultFieldOfTree: append(field, appendFieldOfTree...),
-		allowField:         append(slices.Clone(field), gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo, appendFieldOfTree)).Slice()...),
+		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo, appendFieldOfTree)).Slice()...),
 		noAuthField:        []string{`id`, `label`, daoAuth.Menu.Columns().IsLeaf},
 	}
 }
