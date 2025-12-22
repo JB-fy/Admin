@@ -197,6 +197,7 @@ func getViewQueryField(tpl *myGenTpl, v myGenField, i18nPath string, i18nFieldPa
 		return myGenViewQueryField{}
 	case internal.TypePrimaryMany: // 联合主键
 	case internal.TypePrimaryManyAutoInc: // 联合主键（自增）
+		viewQueryField.form.Method = internal.ReturnType
 	}
 	/*--------根据字段主键类型处理 结束--------*/
 

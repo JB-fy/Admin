@@ -278,7 +278,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 				fieldTmp.FieldTypeName = internal.TypeNameNamePath
 			}
 		} else if slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}, fieldTmp.FieldType) && slices.Contains([]string{`id`}, fieldSuffix) { //id后缀
-			if !isFromOtherRel && !slices.Contains([]internal.MyGenFieldTypePrimary{internal.TypePrimary, internal.TypePrimaryAutoInc}, fieldTmp.FieldTypePrimary) { // 本表id字段不算
+			if !isFromOtherRel && !slices.Contains([]internal.MyGenFieldTypePrimary{internal.TypePrimary, internal.TypePrimaryAutoInc, internal.TypePrimaryManyAutoInc}, fieldTmp.FieldTypePrimary) { // 本表id字段不算
 				fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
 
 				handleRelIdObj := handleRelId{
