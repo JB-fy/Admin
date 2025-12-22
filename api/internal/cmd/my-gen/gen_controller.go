@@ -99,13 +99,13 @@ func genController(option myGenOption, tpl *myGenTpl) {
 	if option.IsList {
 		defaultFieldObj.part1 = append(defaultFieldObj.part1, `defaultFieldOfList []string`)
 		defaultFieldObj.part2 = append(defaultFieldObj.part2, `appendFieldOfList := []string{`+gstr.Join(controller.list, `, `)+`}`)
-		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfList: append(field, appendFieldOfList...),`)
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfList: append(slices.Clone(field), appendFieldOfList...),`)
 		defaultFieldObj.part4 = append(defaultFieldObj.part4, `appendFieldOfList`)
 	}
 	if option.IsInfo {
 		defaultFieldObj.part1 = append(defaultFieldObj.part1, `defaultFieldOfInfo []string`)
 		defaultFieldObj.part2 = append(defaultFieldObj.part2, `appendFieldOfInfo := []string{`+gstr.Join(controller.info, `, `)+`}`)
-		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfInfo: append(field, appendFieldOfInfo...),`)
+		defaultFieldObj.part3 = append(defaultFieldObj.part3, `defaultFieldOfInfo: append(slices.Clone(field), appendFieldOfInfo...),`)
 		defaultFieldObj.part4 = append(defaultFieldObj.part4, `appendFieldOfInfo`)
 	}
 	if option.IsList && tpl.Handle.Pid.Pid != `` {
@@ -120,7 +120,7 @@ func genController(option myGenOption, tpl *myGenTpl) {
 			defaultFieldObj.part2 = append([]string{`field = gset.NewStrSetFrom(field).Diff(gset.NewStrSetFrom([]string{` + gstr.Join(controller.diff, `, `) + `})).Slice() //移除敏感字段`}, defaultFieldObj.part2...)
 		}
 		defaultFieldObj.part2 = append([]string{`field := append(dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.ColumnArr(), ` + gstr.Join(controller.common, `, `) + `)`}, defaultFieldObj.part2...)
-		part3Str := `allowField:         append(field, `
+		part3Str := `allowField:         append(slices.Clone(field), `
 		if len(defaultFieldObj.part4) == 1 {
 			part3Str += defaultFieldObj.part4[0]
 		} else {

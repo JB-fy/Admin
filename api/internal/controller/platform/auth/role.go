@@ -25,9 +25,9 @@ func NewRole() *Role {
 	appendFieldOfList := []string{daoAuth.Scene.Columns().SceneName, `rel_name`}
 	appendFieldOfInfo := []string{`action_id_arr`, `menu_id_arr`}
 	return &Role{
-		defaultFieldOfList: append(field, appendFieldOfList...),
-		defaultFieldOfInfo: append(field, appendFieldOfInfo...),
-		allowField:         append(field, gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
+		defaultFieldOfList: append(slices.Clone(field), appendFieldOfList...),
+		defaultFieldOfInfo: append(slices.Clone(field), appendFieldOfInfo...),
+		allowField:         append(slices.Clone(field), gset.NewStrSetFrom(slices.Concat(appendFieldOfList, appendFieldOfInfo)).Slice()...),
 		noAuthField:        []string{`id`, `label`},
 	}
 }
