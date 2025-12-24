@@ -52,6 +52,8 @@ docker tag 镜像名:旧版本 镜像名:新版本
 docker rmi 镜像名:版本
 # 创建（-p 主机:容器。--network host使用当前主机网络；-v /etc/localtime:/etc/localtime:ro使用当前主机时间时区）
 docker run -d --restart unless-stopped --name 名称 --network container:其它容器名称 --ipc=container:其它容器名称 --pid=container:其它容器名称 -h 容器域名 -p 端口:端口 -v 目录:目录 -e 环境变量 -w 工作目录 镜像名:版本
+# 创建容器执行命令后，马上删除容器（测试用）
+docker run -it --rm 镜像名:版本 命令
 # 启动
 docker start 名称或容器ID
 # 停止
