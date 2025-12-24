@@ -1,4 +1,4 @@
-FROM alpine:3.21.3
+FROM alpine
 ###############################################################################
 # 构建镜像（项目根目录执行）
     # 生成并打包镜像：docker build -t 项目名:版本 -f /server/app/项目名/deploy/docker/Dockerfile . && docker save -o 项目名.tar 项目名:版本
@@ -15,6 +15,8 @@ FROM alpine:3.21.3
 ###############################################################################
 #                                INSTALLATION
 ###############################################################################
+
+# RUN apk --no-cache add ffmpeg
 
 ENV WORKDIR=/server/app/admin
 # ADD public  $WORKDIR/public
