@@ -4,7 +4,6 @@ import (
 	"context"
 	"net"
 	"slices"
-	"time"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -24,27 +23,12 @@ func AddDB(ctx context.Context, group string, configMap map[string]any) {
 			return net.Dial(network, addr)
 		}
 	}
-	if config.MaxIdleConns == 0 {
-		config.MaxIdleConns = 10
-	}
-	if config.MaxActiveConns == 0 {
-		config.MaxActiveConns = 100
-	}
-	if config.ConnMaxLifetime == 0 {
-		config.ConnMaxLifetime = 30 * time.Second
-	}
-	if config.ConnMaxIdleTime == 0 {
-		config.ConnMaxIdleTime = 10 * time.Second
-	}
-	if config.PoolTimeout == 0 {
-		config.PoolTimeout = 10 * time.Second
-	}
-	if config.WriteTimeout == 0 {
+	/* if config.WriteTimeout == 0 {
 		config.WriteTimeout = -1
 	}
 	if config.ReadTimeout == 0 {
 		config.ReadTimeout = -1
-	}
+	} */
 	redisMap[group] = redis.NewUniversalClient(config)
 	if gconv.Bool(configMap[`debug`]) {
 		redisMap[group].AddHook(HookLog{Group: group, Config: config, Log: g.Log(`redis`)})
