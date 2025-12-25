@@ -75,8 +75,8 @@ database:
       # prefix: ""
       charset: "utf8mb4"
       timezone: "Local"
-      maxIdle: "10" # 连接池最大闲置的连接数(默认10)
-      maxOpen: "50" # 连接池最大打开的连接数(默认无限制)。该值 * 服务器数量 < mysql的max_connections
+      # maxIdle: "10" # 连接池最大闲置的连接数(默认10)
+      # maxOpen: "50" # 连接池最大打开的连接数(默认无限制)。该值 * 服务器数量 < mysql的max_connections
       maxLifeTime: "30m" # 连接对象可重复使用的时间长度(默认30秒)。该值 < mysql的wait_timeout和interactive_timeout的最小值
       # debug: true # 开启调试模式。默认为false
       # dryRun: false # ORM空跑(只读不写)
