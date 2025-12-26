@@ -62,7 +62,6 @@ services:
         limits:
           cpus: "4"
           memory: 8g
-          memory-swap: 8g # 内存和Swap总量。等于memory时，完全禁用Swap
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /server/tool/mysql/9.3.0/conf:/etc/mysql/conf.d
