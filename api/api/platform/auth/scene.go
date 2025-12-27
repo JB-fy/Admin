@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -34,11 +36,9 @@ type SceneFilter struct {
 /*--------列表 开始--------*/
 type SceneListReq struct {
 	g.Meta `path:"/scene/list" method:"post" tags:"平台后台/权限管理/场景" sm:"列表"`
+	api.CommonPlatformHeaderReq
+	api.CommonListReq
 	Filter SceneFilter `json:"filter" dc:"过滤条件"`
-	Field  []string    `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string      `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int         `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int         `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type SceneListRes struct {
@@ -51,8 +51,9 @@ type SceneListRes struct {
 /*--------详情 开始--------*/
 type SceneInfoReq struct {
 	g.Meta `path:"/scene/info" method:"post" tags:"平台后台/权限管理/场景" sm:"详情"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Id     string   `json:"id" v:"required|max-length:15" dc:"ID"`
+	api.CommonPlatformHeaderReq
+	api.CommonFieldReq
+	Id string `json:"id" v:"required|max-length:15" dc:"ID"`
 }
 
 type SceneInfoRes struct {
@@ -63,7 +64,8 @@ type SceneInfoRes struct {
 
 /*--------新增 开始--------*/
 type SceneCreateReq struct {
-	g.Meta      `path:"/scene/create" method:"post" tags:"平台后台/权限管理/场景" sm:"新增"`
+	g.Meta `path:"/scene/create" method:"post" tags:"平台后台/权限管理/场景" sm:"新增"`
+	api.CommonPlatformHeaderReq
 	SceneId     *string `json:"scene_id,omitempty" v:"required|max-length:15" dc:"场景ID"`
 	SceneName   *string `json:"scene_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	SceneConfig *string `json:"scene_config,omitempty" v:"json" dc:"配置。JSON格式，根据场景设置"`
@@ -75,7 +77,8 @@ type SceneCreateReq struct {
 
 /*--------修改 开始--------*/
 type SceneUpdateReq struct {
-	g.Meta      `path:"/scene/update" method:"post" tags:"平台后台/权限管理/场景" sm:"修改"`
+	g.Meta `path:"/scene/update" method:"post" tags:"平台后台/权限管理/场景" sm:"修改"`
+	api.CommonPlatformHeaderReq
 	Id          string   `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|length:1,15" dc:"ID"`
 	IdArr       []string `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|length:1,15" dc:"ID数组"`
 	SceneName   *string  `json:"scene_name,omitempty" filter:"-" data:"scene_name,omitempty" v:"max-length:30" dc:"名称"`
@@ -89,8 +92,9 @@ type SceneUpdateReq struct {
 /*--------删除 开始--------*/
 type SceneDeleteReq struct {
 	g.Meta `path:"/scene/del" method:"post" tags:"平台后台/权限管理/场景" sm:"删除"`
-	Id     string   `json:"id,omitempty" v:"required-without:IdArr|length:1,15" dc:"ID"`
-	IdArr  []string `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,15" dc:"ID数组"`
+	api.CommonPlatformHeaderReq
+	Id    string   `json:"id,omitempty" v:"required-without:IdArr|length:1,15" dc:"ID"`
+	IdArr []string `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,15" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

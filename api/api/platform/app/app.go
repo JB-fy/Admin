@@ -1,6 +1,8 @@
 package app
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -34,11 +36,9 @@ type AppFilter struct {
 /*--------列表 开始--------*/
 type AppListReq struct {
 	g.Meta `path:"/app/list" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"列表"`
+	api.CommonPlatformHeaderReq
+	api.CommonListReq
 	Filter AppFilter `json:"filter" dc:"过滤条件"`
-	Field  []string  `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string    `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int       `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int       `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type AppListRes struct {
@@ -51,8 +51,9 @@ type AppListRes struct {
 /*--------详情 开始--------*/
 type AppInfoReq struct {
 	g.Meta `path:"/app/info" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"详情"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Id     string   `json:"id" v:"required|max-length:15" dc:"ID"`
+	api.CommonPlatformHeaderReq
+	api.CommonFieldReq
+	Id string `json:"id" v:"required|max-length:15" dc:"ID"`
 }
 
 type AppInfoRes struct {
@@ -63,7 +64,8 @@ type AppInfoRes struct {
 
 /*--------新增 开始--------*/
 type AppCreateReq struct {
-	g.Meta    `path:"/app/create" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"新增"`
+	g.Meta `path:"/app/create" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"新增"`
+	api.CommonPlatformHeaderReq
 	AppId     *string `json:"app_id,omitempty" v:"required|max-length:15" dc:"APPID"`
 	AppName   *string `json:"app_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	AppConfig *string `json:"app_config,omitempty" v:"json" dc:"配置。JSON格式，需要时设置"`
@@ -75,7 +77,8 @@ type AppCreateReq struct {
 
 /*--------修改 开始--------*/
 type AppUpdateReq struct {
-	g.Meta    `path:"/app/update" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"修改"`
+	g.Meta `path:"/app/update" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"修改"`
+	api.CommonPlatformHeaderReq
 	Id        string   `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|length:1,15" dc:"ID"`
 	IdArr     []string `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|length:1,15" dc:"ID数组"`
 	AppName   *string  `json:"app_name,omitempty" filter:"-" data:"app_name,omitempty" v:"max-length:30" dc:"名称"`
@@ -89,8 +92,9 @@ type AppUpdateReq struct {
 /*--------删除 开始--------*/
 type AppDeleteReq struct {
 	g.Meta `path:"/app/del" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"删除"`
-	Id     string   `json:"id,omitempty" v:"required-without:IdArr|length:1,15" dc:"ID"`
-	IdArr  []string `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,15" dc:"ID数组"`
+	api.CommonPlatformHeaderReq
+	Id    string   `json:"id,omitempty" v:"required-without:IdArr|length:1,15" dc:"ID"`
+	IdArr []string `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,15" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

@@ -7,7 +7,8 @@ import (
 
 /*--------上传本地 开始--------*/
 type UploadUploadReq struct {
-	g.Meta   `path:"/upload" method:"post" tags:"上传" sm:"上传本地"`
+	g.Meta `path:"/upload" method:"post" tags:"上传" sm:"上传本地"`
+	CommonAllTokenHeaderReq
 	UploadId uint              `json:"upload_id" v:"required|between:1,4294967295" dc:"上传ID"`
 	Dir      string            `json:"dir" v:"required" dc:"上传目录"`
 	Expire   string            `json:"expire" v:"required" dc:"过期时间"`
@@ -22,7 +23,8 @@ type UploadUploadReq struct {
 /*--------获取签名（H5直传用） 开始--------*/
 type UploadSignReq struct {
 	g.Meta `path:"/sign" method:"post" tags:"上传" sm:"获取签名（H5直传用）"`
-	Scene  string `json:"scene" v:"" dc:"上传场景"`
+	CommonAllTokenHeaderReq
+	Scene string `json:"scene" v:"" dc:"上传场景"`
 }
 
 type UploadSignRes struct {
@@ -39,7 +41,8 @@ type UploadSignRes struct {
 /*--------获取配置信息（APP直传前调用） 开始--------*/
 type UploadConfigReq struct {
 	g.Meta `path:"/config" method:"post" tags:"上传" sm:"获取配置信息（APP直传前调用）"`
-	Scene  string `json:"scene" v:"" dc:"上传场景"`
+	CommonAllTokenHeaderReq
+	Scene string `json:"scene" v:"" dc:"上传场景"`
 }
 
 type UploadConfigRes struct {
@@ -56,7 +59,8 @@ type UploadConfigRes struct {
 /*--------获取Sts Token（APP直传用） 开始--------*/
 type UploadStsReq struct { //阿里云的APP SDK通过设置地址来获取Sts Token。请求方式必须是GET
 	g.Meta `path:"/sts" method:"get" tags:"上传" sm:"获取Sts Token（APP直传用）"`
-	Scene  string `json:"scene" v:"" dc:"上传场景"`
+	CommonAllTokenHeaderReq
+	Scene string `json:"scene" v:"" dc:"上传场景"`
 }
 
 type UploadStsRes struct {
@@ -72,7 +76,8 @@ type UploadStsRes struct {
 
 /*--------回调 开始--------*/
 type UploadNotifyReq struct {
-	g.Meta   `path:"/notify/:upload_id" method:"get,post" tags:"上传" sm:"回调"`
+	g.Meta `path:"/notify/:upload_id" method:"get,post" tags:"上传" sm:"回调"`
+	CommonHeaderReq
 	UploadId uint `json:"upload_id" v:"required|between:1,4294967295" in:"path" dc:"上传ID"`
 }
 

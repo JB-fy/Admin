@@ -1,6 +1,8 @@
 package org
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -46,11 +48,9 @@ type AdminFilter struct {
 /*--------列表 开始--------*/
 type AdminListReq struct {
 	g.Meta `path:"/admin/list" method:"post" tags:"机构后台/权限管理/管理员" sm:"列表"`
+	api.CommonOrgHeaderReq
+	api.CommonListReq
 	Filter AdminFilter `json:"filter" dc:"过滤条件"`
-	Field  []string    `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string      `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int         `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int         `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type AdminListRes struct {
@@ -63,8 +63,9 @@ type AdminListRes struct {
 /*--------详情 开始--------*/
 type AdminInfoReq struct {
 	g.Meta `path:"/admin/info" method:"post" tags:"机构后台/权限管理/管理员" sm:"详情"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Id     uint     `json:"id" v:"required|between:1,4294967295" dc:"ID"`
+	api.CommonOrgHeaderReq
+	api.CommonFieldReq
+	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 
 type AdminInfoRes struct {
@@ -76,6 +77,7 @@ type AdminInfoRes struct {
 /*--------新增 开始--------*/
 type AdminCreateReq struct {
 	g.Meta `path:"/admin/create" method:"post" tags:"机构后台/权限管理/管理员" sm:"新增"`
+	api.CommonOrgHeaderReq
 	// OrgId     *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
 	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
@@ -93,8 +95,9 @@ type AdminCreateReq struct {
 /*--------修改 开始--------*/
 type AdminUpdateReq struct {
 	g.Meta `path:"/admin/update" method:"post" tags:"机构后台/权限管理/管理员" sm:"修改"`
-	Id     uint   `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr  []uint `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	api.CommonOrgHeaderReq
+	Id    uint   `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	// OrgId     *uint   `json:"org_id,omitempty" filter:"-" data:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
 	Nickname *string `json:"nickname,omitempty" filter:"-" data:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar   *string `json:"avatar,omitempty" filter:"-" data:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
@@ -112,8 +115,9 @@ type AdminUpdateReq struct {
 /*--------删除 开始--------*/
 type AdminDeleteReq struct {
 	g.Meta `path:"/admin/del" method:"post" tags:"机构后台/权限管理/管理员" sm:"删除"`
-	Id     uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr  []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	api.CommonOrgHeaderReq
+	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

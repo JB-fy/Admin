@@ -106,9 +106,25 @@ func genApi(option myGenOption, tpl *myGenTpl) {
 	}
 	api.Unique()
 
+	saveFileOfCommon := gfile.SelfDir() + `/api/common.go`
+	tplApiOfCommon := gfile.GetContents(saveFileOfCommon)
+	commonHeaderStr := `type Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq struct {`
+	if gstr.Pos(tplApiOfCommon, commonHeaderStr) == -1 {
+		// 路由生成（controller未导入）
+		tplApiOfCommon = gstr.Replace(tplApiOfCommon, `type CommonFieldReq struct {`, `type Common`+gstr.CaseCamel(option.SceneId)+`HeaderReq struct {
+	CommonHeaderReq
+	`+gstr.CaseCamel(option.SceneId)+`Token string `+"`"+`json:"`+gstr.CaseCamel(option.SceneId)+`Token,omitempty" v:"" in:"header" d:"" dc:"登录token"`+"`"+`
+}
+
+type CommonFieldReq struct {`, 1)
+		utils.FilePutFormat(saveFileOfCommon, []byte(tplApiOfCommon)...)
+	}
+
 	tplApi := `package ` + tpl.GetModuleName(`api`) + `
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -135,11 +151,14 @@ type ` + tpl.TableCaseCamel + `Filter struct {` + gstr.Join(append([]string{``},
 /*--------列表 开始--------*/
 type ` + tpl.TableCaseCamel + `ListReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/list" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"列表"` + "`" + `
-	Filter ` + tpl.TableCaseCamel + `Filter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
-	Field  []string        ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"` + "`" + `
-	Sort   string          ` + "`" + `json:"sort" default:"` + tpl.Handle.DefSort.Field + ` ` + gstr.ToUpper(tpl.Handle.DefSort.Order) + `" dc:"排序"` + "`" + `
-	Page   int             ` + "`" + `json:"page" v:"min:1" default:"1" dc:"页码"` + "`" + `
-	Limit  int             ` + "`" + `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"` + "`" + `
+	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	api.CommonListReq`
+		if tpl.Handle.DefSort.Field != `id` || gstr.ToUpper(tpl.Handle.DefSort.Order) != `DESC` {
+			tplApi += `
+	Sort   string          ` + "`" + `json:"sort" default:"` + tpl.Handle.DefSort.Field + ` ` + gstr.ToUpper(tpl.Handle.DefSort.Order) + `" dc:"排序"` + "`"
+		}
+		tplApi += `
+    Filter ` + tpl.TableCaseCamel + `Filter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 }
 
 type ` + tpl.TableCaseCamel + `ListRes struct {`
@@ -159,7 +178,8 @@ type ` + tpl.TableCaseCamel + `ListRes struct {`
 		tplApi += `/*--------详情 开始--------*/
 type ` + tpl.TableCaseCamel + `InfoReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/info" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"详情"` + "`" + `
-	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"` + "`" + gstr.Join(append([]string{``}, api.info...), `
+	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	api.CommonFieldReq` + gstr.Join(append([]string{``}, api.info...), `
 	`) + `
 }
 
@@ -174,7 +194,8 @@ type ` + tpl.TableCaseCamel + `InfoRes struct {
 	if option.IsCreate {
 		tplApi += `/*--------新增 开始--------*/
 type ` + tpl.TableCaseCamel + `CreateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"新增"` + "`" + gstr.Join(append([]string{``}, api.create...), `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"新增"` + "`" + `
+	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq` + gstr.Join(append([]string{``}, api.create...), `
 	`) + `
 }
 
@@ -186,7 +207,8 @@ type ` + tpl.TableCaseCamel + `CreateReq struct {
 	if option.IsUpdate {
 		tplApi += `/*--------修改 开始--------*/
 type ` + tpl.TableCaseCamel + `UpdateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"修改"` + "`" + gstr.Join(append([]string{``}, api.update...), `
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"修改"` + "`" + `
+	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq` + gstr.Join(append([]string{``}, api.update...), `
 	`) + `
 }
 
@@ -198,7 +220,8 @@ type ` + tpl.TableCaseCamel + `UpdateReq struct {
 	if option.IsDelete {
 		tplApi += `/*--------删除 开始--------*/
 type ` + tpl.TableCaseCamel + `DeleteReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/del" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"删除"` + "`" + gstr.Join(append([]string{``}, api.delete...), `
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/del" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"删除"` + "`" + `
+	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq` + gstr.Join(append([]string{``}, api.delete...), `
 	`) + `
 }
 
@@ -211,8 +234,9 @@ type ` + tpl.TableCaseCamel + `DeleteReq struct {
 /*--------列表（树状） 开始--------*/
 type ` + tpl.TableCaseCamel + `TreeReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/tree" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
+	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	api.CommonFieldReq
 	Filter ` + tpl.TableCaseCamel + `Filter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
-	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"` + "`" + `
 }
 
 type ` + tpl.TableCaseCamel + `TreeRes struct {

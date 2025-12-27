@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -42,11 +44,9 @@ type RoleFilter struct {
 /*--------列表 开始--------*/
 type RoleListReq struct {
 	g.Meta `path:"/role/list" method:"post" tags:"平台后台/权限管理/角色" sm:"列表"`
+	api.CommonPlatformHeaderReq
+	api.CommonListReq
 	Filter RoleFilter `json:"filter" dc:"过滤条件"`
-	Field  []string   `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string     `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int        `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int        `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type RoleListRes struct {
@@ -59,8 +59,9 @@ type RoleListRes struct {
 /*--------详情 开始--------*/
 type RoleInfoReq struct {
 	g.Meta `path:"/role/info" method:"post" tags:"平台后台/权限管理/角色" sm:"详情"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Id     uint     `json:"id" v:"required|between:1,4294967295" dc:"ID"`
+	api.CommonPlatformHeaderReq
+	api.CommonFieldReq
+	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 
 type RoleInfoRes struct {
@@ -71,7 +72,8 @@ type RoleInfoRes struct {
 
 /*--------新增 开始--------*/
 type RoleCreateReq struct {
-	g.Meta   `path:"/role/create" method:"post" tags:"平台后台/权限管理/角色" sm:"新增"`
+	g.Meta `path:"/role/create" method:"post" tags:"平台后台/权限管理/角色" sm:"新增"`
+	api.CommonPlatformHeaderReq
 	RoleName *string `json:"role_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	SceneId  *string `json:"scene_id,omitempty" v:"required|max-length:15" dc:"场景ID"`
 	// RelId       *uint     `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
@@ -84,7 +86,8 @@ type RoleCreateReq struct {
 
 /*--------修改 开始--------*/
 type RoleUpdateReq struct {
-	g.Meta   `path:"/role/update" method:"post" tags:"平台后台/权限管理/角色" sm:"修改"`
+	g.Meta `path:"/role/update" method:"post" tags:"平台后台/权限管理/角色" sm:"修改"`
+	api.CommonPlatformHeaderReq
 	Id       uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
 	IdArr    []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	RoleName *string `json:"role_name,omitempty" filter:"-" data:"role_name,omitempty" v:"max-length:30" dc:"名称"`
@@ -100,8 +103,9 @@ type RoleUpdateReq struct {
 /*--------删除 开始--------*/
 type RoleDeleteReq struct {
 	g.Meta `path:"/role/del" method:"post" tags:"平台后台/权限管理/角色" sm:"删除"`
-	Id     uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr  []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	api.CommonPlatformHeaderReq
+	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

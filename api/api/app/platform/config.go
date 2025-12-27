@@ -1,12 +1,15 @@
 package platform
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 )
 
 /*--------获取 开始--------*/
 type ConfigGetReq struct {
-	g.Meta       `path:"/config/get" method:"post" tags:"APP/配置" sm:"获取"`
+	g.Meta `path:"/config/get" method:"post" tags:"APP/配置" sm:"获取"`
+	api.CommonAppHeaderReq
 	ConfigKeyArr *[]string `c:"config_key_arr,omitempty" json:"config_key_arr" v:"required|distinct|foreach|in:hot_search,user_agreement,privacy_agreement" dc:"配置项Key列表。传值参考默认返回的字段"`
 }
 

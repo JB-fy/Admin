@@ -1,12 +1,15 @@
 package my
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 )
 
 /*--------个人信息 开始--------*/
 type ProfileInfoReq struct {
 	g.Meta `path:"/profile/info" method:"post" tags:"机构后台/我的" sm:"个人信息"`
+	api.CommonOrgHeaderReq
 }
 
 type ProfileInfoRes struct {
@@ -28,7 +31,8 @@ type ProfileInfo struct {
 
 /*--------修改个人信息 开始--------*/
 type ProfileUpdateReq struct {
-	g.Meta          `path:"/profile/update" method:"post" tags:"机构后台/我的" sm:"修改个人信息"`
+	g.Meta `path:"/profile/update" method:"post" tags:"机构后台/我的" sm:"修改个人信息"`
+	api.CommonOrgHeaderReq
 	Nickname        *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar          *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Phone           *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`

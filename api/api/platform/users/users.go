@@ -1,6 +1,8 @@
 package users
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -57,11 +59,9 @@ type UsersFilter struct {
 /*--------列表 开始--------*/
 type UsersListReq struct {
 	g.Meta `path:"/users/list" method:"post" tags:"平台后台/用户管理/用户" sm:"列表"`
+	api.CommonPlatformHeaderReq
+	api.CommonListReq
 	Filter UsersFilter `json:"filter" dc:"过滤条件"`
-	Field  []string    `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string      `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int         `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int         `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type UsersListRes struct {
@@ -74,8 +74,9 @@ type UsersListRes struct {
 /*--------详情 开始--------*/
 type UsersInfoReq struct {
 	g.Meta `path:"/users/info" method:"post" tags:"平台后台/用户管理/用户" sm:"详情"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Id     uint     `json:"id" v:"required|between:1,4294967295" dc:"ID"`
+	api.CommonPlatformHeaderReq
+	api.CommonFieldReq
+	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 
 type UsersInfoRes struct {
@@ -87,24 +88,25 @@ type UsersInfoRes struct {
 /*--------修改 开始--------*/
 type UsersUpdateReq struct {
 	g.Meta `path:"/users/update" method:"post" tags:"平台后台/用户管理/用户" sm:"修改"`
-	Id     uint   `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr  []uint `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	/* Nickname       *string `json:"nickname,omitempty" filter:"-" data:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
-	Avatar         *string `json:"avatar,omitempty" filter:"-" data:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
-	Gender         *uint   `json:"gender,omitempty" filter:"-" data:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
-	Birthday       *string `json:"birthday,omitempty" filter:"-" data:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
-	Address        *string `json:"address,omitempty" filter:"-" data:"address,omitempty" v:"max-length:120" dc:"地址"`
-	Phone          *string `json:"phone,omitempty" filter:"-" data:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
-	Email          *string `json:"email,omitempty" filter:"-" data:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	Account        *string `json:"account,omitempty" filter:"-" data:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
-	WxOpenid       *string `json:"wx_openid,omitempty" filter:"-" data:"wx_openid,omitempty" v:"max-length:128" dc:"微信openid"`
-	WxUnionid      *string `json:"wx_unionid,omitempty" filter:"-" data:"wx_unionid,omitempty" v:"max-length:64" dc:"微信unionid"`
-	Password       *string `json:"password,omitempty" filter:"-" data:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
-	IdCardNo       *string `json:"id_card_no,omitempty" filter:"-" data:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"`
-	IdCardName     *string `json:"id_card_name,omitempty" filter:"-" data:"id_card_name,omitempty" v:"max-length:30" dc:"身份证姓名"`
-	IdCardGender   *uint   `json:"id_card_gender,omitempty" filter:"-" data:"id_card_gender,omitempty" v:"in:0,1,2" dc:"身份证性别：0未设置 1男 2女"`
-	IdCardBirthday *string `json:"id_card_birthday,omitempty" filter:"-" data:"id_card_birthday,omitempty" v:"date-format:Y-m-d" dc:"身份证生日"`
-	IdCardAddress  *string `json:"id_card_address,omitempty" filter:"-" data:"id_card_address,omitempty" v:"max-length:120" dc:"身份证地址"` */
+	api.CommonPlatformHeaderReq
+	Id    uint   `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	// Nickname       *string `json:"nickname,omitempty" filter:"-" data:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
+	// Avatar         *string `json:"avatar,omitempty" filter:"-" data:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
+	// Gender         *uint   `json:"gender,omitempty" filter:"-" data:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
+	// Birthday       *string `json:"birthday,omitempty" filter:"-" data:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
+	// Address        *string `json:"address,omitempty" filter:"-" data:"address,omitempty" v:"max-length:120" dc:"地址"`
+	// Phone          *string `json:"phone,omitempty" filter:"-" data:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
+	// Email          *string `json:"email,omitempty" filter:"-" data:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
+	// Account        *string `json:"account,omitempty" filter:"-" data:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	// WxOpenid       *string `json:"wx_openid,omitempty" filter:"-" data:"wx_openid,omitempty" v:"max-length:128" dc:"微信openid"`
+	// WxUnionid      *string `json:"wx_unionid,omitempty" filter:"-" data:"wx_unionid,omitempty" v:"max-length:64" dc:"微信unionid"`
+	// Password       *string `json:"password,omitempty" filter:"-" data:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
+	// IdCardNo       *string `json:"id_card_no,omitempty" filter:"-" data:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"`
+	// IdCardName     *string `json:"id_card_name,omitempty" filter:"-" data:"id_card_name,omitempty" v:"max-length:30" dc:"身份证姓名"`
+	// IdCardGender   *uint   `json:"id_card_gender,omitempty" filter:"-" data:"id_card_gender,omitempty" v:"in:0,1,2" dc:"身份证性别：0未设置 1男 2女"`
+	// IdCardBirthday *string `json:"id_card_birthday,omitempty" filter:"-" data:"id_card_birthday,omitempty" v:"date-format:Y-m-d" dc:"身份证生日"`
+	// IdCardAddress  *string `json:"id_card_address,omitempty" filter:"-" data:"id_card_address,omitempty" v:"max-length:120" dc:"身份证地址"`
 	IsStop *uint `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 

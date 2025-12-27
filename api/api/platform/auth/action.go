@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -35,11 +37,10 @@ type ActionFilter struct {
 /*--------列表 开始--------*/
 type ActionListReq struct {
 	g.Meta `path:"/action/list" method:"post" tags:"平台后台/权限管理/操作" sm:"列表"`
-	Filter ActionFilter `json:"filter" dc:"过滤条件"`
-	Field  []string     `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
+	api.CommonPlatformHeaderReq
+	api.CommonListReq
 	Sort   string       `json:"sort" default:"created_at DESC" dc:"排序"`
-	Page   int          `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int          `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
+	Filter ActionFilter `json:"filter" dc:"过滤条件"`
 }
 
 type ActionListRes struct {
@@ -52,8 +53,9 @@ type ActionListRes struct {
 /*--------详情 开始--------*/
 type ActionInfoReq struct {
 	g.Meta `path:"/action/info" method:"post" tags:"平台后台/权限管理/操作" sm:"详情"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Id     string   `json:"id" v:"required|max-length:30" dc:"ID"`
+	api.CommonPlatformHeaderReq
+	api.CommonFieldReq
+	Id string `json:"id" v:"required|max-length:30" dc:"ID"`
 }
 
 type ActionInfoRes struct {
@@ -64,7 +66,8 @@ type ActionInfoRes struct {
 
 /*--------新增 开始--------*/
 type ActionCreateReq struct {
-	g.Meta     `path:"/action/create" method:"post" tags:"平台后台/权限管理/操作" sm:"新增"`
+	g.Meta `path:"/action/create" method:"post" tags:"平台后台/权限管理/操作" sm:"新增"`
+	api.CommonPlatformHeaderReq
 	ActionId   *string   `json:"action_id,omitempty" v:"required|max-length:30" dc:"操作ID"`
 	ActionName *string   `json:"action_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	Remark     *string   `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
@@ -76,7 +79,8 @@ type ActionCreateReq struct {
 
 /*--------修改 开始--------*/
 type ActionUpdateReq struct {
-	g.Meta     `path:"/action/update" method:"post" tags:"平台后台/权限管理/操作" sm:"修改"`
+	g.Meta `path:"/action/update" method:"post" tags:"平台后台/权限管理/操作" sm:"修改"`
+	api.CommonPlatformHeaderReq
 	Id         string    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|length:1,30" dc:"ID"`
 	IdArr      []string  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|length:1,30" dc:"ID数组"`
 	ActionName *string   `json:"action_name,omitempty" filter:"-" data:"action_name,omitempty" v:"max-length:30" dc:"名称"`
@@ -90,8 +94,9 @@ type ActionUpdateReq struct {
 /*--------删除 开始--------*/
 type ActionDeleteReq struct {
 	g.Meta `path:"/action/del" method:"post" tags:"平台后台/权限管理/操作" sm:"删除"`
-	Id     string   `json:"id,omitempty" v:"required-without:IdArr|length:1,30" dc:"ID"`
-	IdArr  []string `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,30" dc:"ID数组"`
+	api.CommonPlatformHeaderReq
+	Id    string   `json:"id,omitempty" v:"required-without:IdArr|length:1,30" dc:"ID"`
+	IdArr []string `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,30" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

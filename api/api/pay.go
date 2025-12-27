@@ -13,7 +13,8 @@ type PayChannelInfo struct {
 
 /*--------列表 开始--------*/
 type PayChannelListReq struct {
-	g.Meta  `path:"/list" method:"post" tags:"支付" sm:"列表"`
+	g.Meta `path:"/list" method:"post" tags:"支付" sm:"列表"`
+	CommonAllTokenHeaderReq
 	SceneId uint `json:"scene_id,omitempty" v:"required|min:1" dc:"支付场景ID"`
 }
 
@@ -25,7 +26,8 @@ type PayChannelListRes struct {
 
 /*--------支付 开始--------*/
 type PayPayReq struct {
-	g.Meta    `path:"/pay" method:"post" tags:"支付" sm:"支付"`
+	g.Meta `path:"/pay" method:"post" tags:"支付" sm:"支付"`
+	CommonAllTokenHeaderReq
 	ChannelId uint   `json:"channel_id" v:"required|between:1,4294967295" dc:"通道ID"`
 	OrderId   uint   `json:"order_id" v:"required-without:OrderNo|between:1,4294967295" dc:"订单ID。订单ID和订单号二选一"`
 	OrderNo   string `json:"order_no" v:"required-without:OrderId|max-length:60" dc:"订单号。订单ID和订单号二选一"`
@@ -40,7 +42,8 @@ type PayPayRes struct {
 /*--------回调 开始--------*/
 type PayNotifyReq struct {
 	g.Meta `path:"/notify/:pay_id" method:"get,post" tags:"支付" sm:"回调"`
-	PayId  uint `json:"pay_id" v:"required|between:1,4294967295" in:"path" dc:"支付ID"`
+	CommonHeaderReq
+	PayId uint `json:"pay_id" v:"required|between:1,4294967295" in:"path" dc:"支付ID"`
 }
 
 /*--------回调 结束--------*/

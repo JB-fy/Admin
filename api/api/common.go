@@ -1,7 +1,43 @@
 package api
 
-type CommonNoDataRes struct {
+type CommonHeaderReq struct {
+	Language string `json:"Language,omitempty" v:"in:zh-cn,en" in:"header" d:"zh-cn" dc:"多语言标识"`
 }
+
+type CommonAllTokenHeaderReq struct { //带有全部登录token的请求头，部分接口
+	CommonHeaderReq
+	PlatformToken string `json:"PlatformToken,omitempty" v:"" in:"header" d:"" dc:"平台后台登录token。部分接口可同时用于多个场景（接口一般以/场景/Xxxx开头）时，需要传对应场景的登录token"`
+	OrgToken      string `json:"OrgToken,omitempty" v:"" in:"header" d:"" dc:"机构后台登录token。部分接口可同时用于多个场景（接口一般以/场景/Xxxx开头）时，需要传对应场景的登录token"`
+	AppToken      string `json:"AppToken,omitempty" v:"" in:"header" d:"" dc:"APP登录token。部分接口可同时用于多个场景（接口一般以/场景/Xxxx开头）时，需要传对应场景的登录token"`
+}
+
+type CommonPlatformHeaderReq struct {
+	CommonHeaderReq
+	PlatformToken string `json:"PlatformToken,omitempty" v:"" in:"header" d:"" dc:"登录token"`
+}
+
+type CommonOrgHeaderReq struct {
+	CommonHeaderReq
+	OrgToken string `json:"OrgToken,omitempty" v:"" in:"header" d:"" dc:"登录token"`
+}
+
+type CommonAppHeaderReq struct {
+	CommonHeaderReq
+	AppToken string `json:"AppToken,omitempty" v:"" in:"header" d:"" dc:"登录token"`
+}
+
+type CommonFieldReq struct {
+	Field []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
+}
+
+type CommonListReq struct {
+	CommonFieldReq
+	Sort  string `json:"sort" default:"id DESC" dc:"排序"`
+	Page  int    `json:"page" v:"min:1" default:"1" dc:"页码"`
+	Limit int    `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
+}
+
+type CommonNoDataRes struct{}
 
 type CommonCreateRes struct {
 	Id any `json:"id" dc:"ID"`
@@ -13,5 +49,5 @@ type CommonSaltRes struct {
 }
 
 type CommonTokenRes struct {
-	Token string `json:"token" dc:"登录授权token"`
+	Token string `json:"token" dc:"登录token"`
 }

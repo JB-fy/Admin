@@ -1,6 +1,8 @@
 package upload
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -34,11 +36,9 @@ type UploadFilter struct {
 /*--------列表 开始--------*/
 type UploadListReq struct {
 	g.Meta `path:"/upload/list" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"列表"`
+	api.CommonPlatformHeaderReq
+	api.CommonListReq
 	Filter UploadFilter `json:"filter" dc:"过滤条件"`
-	Field  []string     `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string       `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int          `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int          `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type UploadListRes struct {
@@ -51,8 +51,9 @@ type UploadListRes struct {
 /*--------详情 开始--------*/
 type UploadInfoReq struct {
 	g.Meta `path:"/upload/info" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"详情"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Id     uint     `json:"id" v:"required|between:1,4294967295" dc:"ID"`
+	api.CommonPlatformHeaderReq
+	api.CommonFieldReq
+	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 
 type UploadInfoRes struct {
@@ -63,7 +64,8 @@ type UploadInfoRes struct {
 
 /*--------新增 开始--------*/
 type UploadCreateReq struct {
-	g.Meta       `path:"/upload/create" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"新增"`
+	g.Meta `path:"/upload/create" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"新增"`
+	api.CommonPlatformHeaderReq
 	UploadType   *uint   `json:"upload_type,omitempty" v:"required|in:0,1" dc:"类型：0本地 1阿里云OSS"`
 	UploadConfig *string `json:"upload_config,omitempty" v:"required|json" dc:"配置。JSON格式，根据类型设置"`
 	Remark       *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
@@ -74,7 +76,8 @@ type UploadCreateReq struct {
 
 /*--------修改 开始--------*/
 type UploadUpdateReq struct {
-	g.Meta       `path:"/upload/update" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"修改"`
+	g.Meta `path:"/upload/update" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"修改"`
+	api.CommonPlatformHeaderReq
 	Id           uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
 	IdArr        []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	UploadType   *uint   `json:"upload_type,omitempty" filter:"-" data:"upload_type,omitempty" v:"in:0,1" dc:"类型：0本地 1阿里云OSS"`
@@ -88,8 +91,9 @@ type UploadUpdateReq struct {
 /*--------删除 开始--------*/
 type UploadDeleteReq struct {
 	g.Meta `path:"/upload/del" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"删除"`
-	Id     uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr  []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	api.CommonPlatformHeaderReq
+	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

@@ -1,6 +1,8 @@
 package app
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -45,11 +47,9 @@ type PkgFilter struct {
 /*--------列表 开始--------*/
 type PkgListReq struct {
 	g.Meta `path:"/pkg/list" method:"post" tags:"平台后台/系统管理/APP管理/安装包" sm:"列表"`
+	api.CommonPlatformHeaderReq
+	api.CommonListReq
 	Filter PkgFilter `json:"filter" dc:"过滤条件"`
-	Field  []string  `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Sort   string    `json:"sort" default:"id DESC" dc:"排序"`
-	Page   int       `json:"page" v:"min:1" default:"1" dc:"页码"`
-	Limit  int       `json:"limit" v:"min:0" default:"10" dc:"每页数量。可传0取全部"`
 }
 
 type PkgListRes struct {
@@ -62,8 +62,9 @@ type PkgListRes struct {
 /*--------详情 开始--------*/
 type PkgInfoReq struct {
 	g.Meta `path:"/pkg/info" method:"post" tags:"平台后台/系统管理/APP管理/安装包" sm:"详情"`
-	Field  []string `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"`
-	Id     uint     `json:"id" v:"required|between:1,4294967295" dc:"ID"`
+	api.CommonPlatformHeaderReq
+	api.CommonFieldReq
+	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 
 type PkgInfoRes struct {
@@ -74,7 +75,8 @@ type PkgInfoRes struct {
 
 /*--------新增 开始--------*/
 type PkgCreateReq struct {
-	g.Meta      `path:"/pkg/create" method:"post" tags:"平台后台/系统管理/APP管理/安装包" sm:"新增"`
+	g.Meta `path:"/pkg/create" method:"post" tags:"平台后台/系统管理/APP管理/安装包" sm:"新增"`
+	api.CommonPlatformHeaderReq
 	AppId       *string `json:"app_id,omitempty" v:"required|max-length:15" dc:"APPID"`
 	PkgType     *uint   `json:"pkg_type,omitempty" v:"required|in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
 	PkgName     *string `json:"pkg_name,omitempty" v:"required|max-length:60" dc:"包名"`
@@ -92,7 +94,8 @@ type PkgCreateReq struct {
 
 /*--------修改 开始--------*/
 type PkgUpdateReq struct {
-	g.Meta      `path:"/pkg/update" method:"post" tags:"平台后台/系统管理/APP管理/安装包" sm:"修改"`
+	g.Meta `path:"/pkg/update" method:"post" tags:"平台后台/系统管理/APP管理/安装包" sm:"修改"`
+	api.CommonPlatformHeaderReq
 	Id          uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
 	IdArr       []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	AppId       *string `json:"app_id,omitempty" filter:"-" data:"app_id,omitempty" v:"max-length:15" dc:"APPID"`
@@ -113,8 +116,9 @@ type PkgUpdateReq struct {
 /*--------删除 开始--------*/
 type PkgDeleteReq struct {
 	g.Meta `path:"/pkg/del" method:"post" tags:"平台后台/系统管理/APP管理/安装包" sm:"删除"`
-	Id     uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr  []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	api.CommonPlatformHeaderReq
+	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
 }
 
 /*--------删除 结束--------*/

@@ -1,6 +1,8 @@
 package my
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -29,6 +31,7 @@ type MenuInfo struct {
 /*--------菜单列表（树状） 开始--------*/
 type MenuTreeReq struct {
 	g.Meta `path:"/menu/tree" method:"post" tags:"机构后台/我的" sm:"菜单列表（树状）"`
+	api.CommonOrgHeaderReq
 }
 
 type MenuTreeRes struct {

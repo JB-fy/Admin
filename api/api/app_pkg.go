@@ -18,7 +18,8 @@ type AppPkgInfo struct {
 
 /*--------获取下载地址 开始--------*/
 type AppPkgInfoReq struct {
-	g.Meta         `path:"/pkg/info" method:"get,post" tags:"APP安装包" sm:"获取下载地址"`
+	g.Meta `path:"/pkg/info" method:"get,post" tags:"APP安装包" sm:"获取下载地址"`
+	CommonHeaderReq
 	AppId          *string `json:"app_id,omitempty" v:"required|max-length:15" dc:"APPID"`
 	PkgType        *uint   `json:"pkg_type,omitempty" v:"required|in:0,1,2" dc:"类型：0安卓 1苹果 2PC"`
 	VerNoOfCurrent *uint   `json:"ver_no_of_current,omitempty" v:"between:0,4294967295" dc:"客户端APP当前版本号。客户端APP判断是否需要更新时使用，不需要更新时返回数据info为空"`

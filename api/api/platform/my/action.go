@@ -1,12 +1,15 @@
 package my
 
 import (
+	"api/api"
+
 	"github.com/gogf/gf/v2/frame/g"
 )
 
 /*--------列表 开始--------*/
 type ActionListReq struct {
 	g.Meta `path:"/action/list" method:"post" tags:"平台后台/我的" sm:"操作列表"`
+	api.CommonPlatformHeaderReq
 }
 
 type ActionListRes struct {
