@@ -67,6 +67,7 @@ services:
       - /server/tool/mysql/9.3.0/conf:/etc/mysql/conf.d
       - /server/tool/mysql/9.3.0/data:/var/lib/mysql
     environment:
+      MALLOC_ARENA_MAX: 2 # glibc内存优化。解决容器内存持续上涨BUG
       MYSQL_ROOT_PASSWORD: 密码
       MYSQL_DATABASE: 库名
       MYSQL_USER: 账号
