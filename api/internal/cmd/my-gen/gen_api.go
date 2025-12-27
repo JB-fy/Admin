@@ -211,8 +211,8 @@ type ` + tpl.TableCaseCamel + `DeleteReq struct {
 /*--------列表（树状） 开始--------*/
 type ` + tpl.TableCaseCamel + `TreeReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/tree" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
-	Field  []string       ` + "`" + `json:"field" v:"foreach|min-length:1"` + "`" + `
 	Filter ` + tpl.TableCaseCamel + `Filter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
+	Field  []string ` + "`" + `json:"field" v:"distinct|foreach|min-length:1" dc:"查询字段，传值参考返回的字段名，默认返回常用字段，如果所需字段较少或需特别字段时，可使用。特别注意：所需字段较少时使用，可大幅减轻数据库压力"` + "`" + `
 }
 
 type ` + tpl.TableCaseCamel + `TreeRes struct {
