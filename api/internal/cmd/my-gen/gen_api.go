@@ -48,7 +48,7 @@ func (apiThis *myGenApi) Add(apiField myGenApiField, field myGenField, tableType
 		if apiField.isRequired && slices.Contains([]internal.MyGenTableType{internal.TableTypeDefault, internal.TableTypeExtendOne, internal.TableTypeMiddleOne}, tableType) {
 			saveRuleArr = append([]string{`required`}, saveRuleArr...)
 		}
-		apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(saveRuleArr, `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
+		apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" filter:"-" data:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(saveRuleArr, `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
 	}
 	if apiField.updateType.GetData() != `` {
 		apiThis.update = append(apiThis.update, field.FieldCaseCamel+` `+apiField.updateType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" filter:"-" data:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.saveRule.GetData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
@@ -279,8 +279,8 @@ func getApiIdAndLabel(tpl *myGenTpl) (api myGenApi) {
 			api.info = append(api.info, `Id `+dataType+" `"+`json:"id" v:"`+gstr.Join(append([]string{`required`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
 			api.update = append(api.update, `Id `+dataType+" `"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"`+gstr.Join(append([]string{`required-without:IdArr`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
 			api.update = append(api.update, `IdArr []`+dataType+" `"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"`+gstr.Join(append([]string{`required-without:Id`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `Id `+dataType+" `"+`json:"id,omitempty" v:"`+gstr.Join(append([]string{`required-without:IdArr`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
-			api.delete = append(api.delete, `IdArr []`+dataType+" `"+`json:"`+fieldStyleOfIdArr+`,omitempty" v:"`+gstr.Join(append([]string{`required-without:Id`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
+			api.delete = append(api.delete, `Id `+dataType+" `"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"`+gstr.Join(append([]string{`required-without:IdArr`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
+			api.delete = append(api.delete, `IdArr []`+dataType+" `"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"`+gstr.Join(append([]string{`required-without:Id`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
 			api.res = append(api.res, `Id *`+dataType+" `"+`json:"id,omitempty" dc:"ID"`+"`")
 		default:
 			api.filterOfFixed = append(api.filterOfFixed,
@@ -292,8 +292,8 @@ func getApiIdAndLabel(tpl *myGenTpl) (api myGenApi) {
 			api.info = append(api.info, `Id string `+"`"+`json:"id" v:"required|max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`")
 			api.update = append(api.update, `Id string `+"`"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`")
 			api.update = append(api.update, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"required-without:Id|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `Id string `+"`"+`json:"id,omitempty" v:"required-without:IdArr|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`")
-			api.delete = append(api.delete, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" v:"required-without:Id|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
+			api.delete = append(api.delete, `Id string `+"`"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`")
+			api.delete = append(api.delete, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"required-without:Id|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
 			api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 		}
 	} else {
@@ -306,8 +306,8 @@ func getApiIdAndLabel(tpl *myGenTpl) (api myGenApi) {
 		api.info = append(api.info, `Id string `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
 		api.update = append(api.update, `Id string `+"`"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|min-length:1" dc:"ID"`+"`")
 		api.update = append(api.update, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"required-without:Id|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
-		api.delete = append(api.delete, `Id string `+"`"+`json:"id,omitempty" v:"required-without:IdArr|min-length:1" dc:"ID"`+"`")
-		api.delete = append(api.delete, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" v:"required-without:Id|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
+		api.delete = append(api.delete, `Id string `+"`"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|min-length:1" dc:"ID"`+"`")
+		api.delete = append(api.delete, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"required-without:Id|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
 		api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 	}
 
@@ -839,7 +839,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 
 		// apiField.saveRule.DataTypeName = append([]string{`distinct`}, apiField.saveRule.GetData()...)
 		if apiField.createType.GetData() != `` {
-			api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.createType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
+			api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.createType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
 		}
 		if apiField.updateType.GetData() != `` {
 			api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.updateType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
@@ -850,10 +850,10 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 	} else {
 		api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.create...), `
 		`)+`
-	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" data:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
+	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
 		api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.update...), `
 		`)+`
-	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
+	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
 		api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.res...), `
 		`)+`
 	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" dc:"列表"`+"`")
