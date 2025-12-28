@@ -98,7 +98,6 @@ type Config struct {
 type ConfigSaveReq struct {
 	g.Meta `path:"/config/save" method:"post" tags:"平台后台/配置中心/平台配置" sm:"保存"`
 	api.CommonPlatformHeaderReq
-
 	HotSearch        *[]string `json:"hot_search,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
 	UserAgreement    *string   `json:"user_agreement,omitempty" v:"" dc:"用户协议"`
 	PrivacyAgreement *string   `json:"privacy_agreement,omitempty" v:"" dc:"隐私协议"`
