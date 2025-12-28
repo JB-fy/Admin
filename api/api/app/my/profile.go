@@ -32,9 +32,7 @@ type ProfileInfo struct {
 /*--------个人信息 结束--------*/
 
 /*--------修改个人信息 开始--------*/
-type ProfileUpdateReq struct {
-	g.Meta `path:"/profile/update" method:"post" tags:"APP/我的" sm:"修改个人信息"`
-	api.CommonAppHeaderReq
+type ProfileUpdateData struct {
 	Nickname               *string     `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar                 *string     `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Gender                 *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
@@ -53,6 +51,12 @@ type ProfileUpdateReq struct {
 	EmailCodeToUnbingEmail *string     `json:"email_code_to_unbing_email,omitempty" v:"size:4" dc:"邮箱验证码。解绑邮箱用"`
 	IdCardNo               *string     `json:"id_card_no,omitempty" v:"required-with:IdCardName|max-length:30" dc:"身份证号码"`
 	IdCardName             *string     `json:"id_card_name,omitempty" v:"required-with:IdCardNo|max-length:30" dc:"身份证姓名"`
+}
+
+type ProfileUpdateReq struct {
+	g.Meta `path:"/profile/update" method:"post" tags:"APP/我的" sm:"修改个人信息"`
+	api.CommonAppHeaderReq
+	ProfileUpdateData
 }
 
 /*--------修改个人信息 结束--------*/

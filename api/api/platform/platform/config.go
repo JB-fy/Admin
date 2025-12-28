@@ -95,9 +95,7 @@ type Config struct {
 /*--------获取 结束--------*/
 
 /*--------保存 开始--------*/
-type ConfigSaveReq struct {
-	g.Meta `path:"/config/save" method:"post" tags:"平台后台/配置中心/平台配置" sm:"保存"`
-	api.CommonPlatformHeaderReq
+type ConfigSaveData struct {
 	HotSearch        *[]string `json:"hot_search,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
 	UserAgreement    *string   `json:"user_agreement,omitempty" v:"" dc:"用户协议"`
 	PrivacyAgreement *string   `json:"privacy_agreement,omitempty" v:"" dc:"隐私协议"`
@@ -170,6 +168,12 @@ type ConfigSaveReq struct {
 		Token          *string `json:"token,omitempty" v:"" dc:"公众号-Token"`
 		EncodingAESKey *string `json:"encoding_aes_key,omitempty" v:"size:43" dc:"公众号-EncodingAESKey"`
 	} `json:"wx_gzh,omitempty" v:"" dc:"微信配置-公众号"`
+}
+
+type ConfigSaveReq struct {
+	g.Meta `path:"/config/save" method:"post" tags:"平台后台/配置中心/平台配置" sm:"保存"`
+	api.CommonPlatformHeaderReq
+	ConfigSaveData
 }
 
 /*--------保存 结束--------*/

@@ -29,9 +29,7 @@ type ProfileInfo struct {
 /*--------个人信息 结束--------*/
 
 /*--------修改个人信息 开始--------*/
-type ProfileUpdateReq struct {
-	g.Meta `path:"/profile/update" method:"post" tags:"平台后台/我的" sm:"修改个人信息"`
-	api.CommonPlatformHeaderReq
+type ProfileUpdateData struct {
 	Nickname        *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar          *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Phone           *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
@@ -45,6 +43,12 @@ type ProfileUpdateReq struct {
 	// EmailCodeToPassword    *string `json:"email_code_to_password,omitempty" v:"size:4" dc:"邮箱验证码。修改密码用，password_to_check,sms_code_to_password,email_code_to_password传一个即可"`
 	EmailCodeToBindEmail *string `json:"email_code_to_bind_email,omitempty" v:"required-with:Email|size:4" dc:"邮箱验证码。绑定邮箱用"`
 	// EmailCodeToUnbingEmail *string `json:"email_code_to_unbing_email,omitempty" v:"size:4" dc:"邮箱验证码。解绑邮箱用"`
+}
+
+type ProfileUpdateReq struct {
+	g.Meta `path:"/profile/update" method:"post" tags:"平台后台/我的" sm:"修改个人信息"`
+	api.CommonPlatformHeaderReq
+	ProfileUpdateData
 }
 
 /*--------修改个人信息 结束--------*/

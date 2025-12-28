@@ -24,10 +24,14 @@ type Config struct {
 /*--------获取 结束--------*/
 
 /*--------保存 开始--------*/
+type ConfigSaveData struct {
+	HotSearch *[]string `json:"hot_search,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
+}
+
 type ConfigSaveReq struct {
 	g.Meta `path:"/config/save" method:"post" tags:"机构后台/配置中心/机构配置" sm:"保存"`
 	api.CommonOrgHeaderReq
-	HotSearch *[]string `json:"hot_search,omitempty" v:"distinct|foreach|min-length:1" dc:"热门搜索"`
+	ConfigSaveData
 }
 
 /*--------保存 结束--------*/

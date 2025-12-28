@@ -32,7 +32,7 @@ func (controllerThis *Profile) Info(ctx context.Context, req *apiMy.ProfileInfoR
 // 修改个人信息
 func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.ProfileUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	var isGetPrivacy bool

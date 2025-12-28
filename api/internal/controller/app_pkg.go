@@ -26,7 +26,7 @@ func NewAppPkg() *AppPkg {
 // 详情
 func (controllerThis *AppPkg) Info(ctx context.Context, req *api.AppPkgInfoReq) (res *api.AppPkgInfoRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	filter := gconv.Map(req.AppPkgInfoFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	filter[daoApp.Pkg.Columns().IsStop] = 0
 
 	field := controllerThis.defaultFieldOfInfo

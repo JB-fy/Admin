@@ -45,7 +45,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			*req.Account = daoOrg.Admin.JoinLoginName(orgId, *req.Account)
 		}
 	}
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.ProfileUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	var isGetPrivacy bool
 	var privacyInfo gdb.Record
