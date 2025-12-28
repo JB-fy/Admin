@@ -52,7 +52,7 @@ type AppListRes struct {
 type AppInfoReq struct {
 	g.Meta `path:"/app/info" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id string `json:"id" v:"required|max-length:15" dc:"ID"`
 }
 

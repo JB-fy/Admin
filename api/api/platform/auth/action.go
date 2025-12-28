@@ -54,7 +54,7 @@ type ActionListRes struct {
 type ActionInfoReq struct {
 	g.Meta `path:"/action/info" method:"post" tags:"平台后台/权限管理/操作" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id string `json:"id" v:"required|max-length:30" dc:"ID"`
 }
 

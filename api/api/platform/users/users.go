@@ -75,7 +75,7 @@ type UsersListRes struct {
 type UsersInfoReq struct {
 	g.Meta `path:"/users/info" method:"post" tags:"平台后台/用户管理/用户" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 

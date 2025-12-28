@@ -60,7 +60,7 @@ type RoleListRes struct {
 type RoleInfoReq struct {
 	g.Meta `path:"/role/info" method:"post" tags:"平台后台/权限管理/角色" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 

@@ -52,7 +52,7 @@ type SceneListRes struct {
 type SceneInfoReq struct {
 	g.Meta `path:"/scene/info" method:"post" tags:"平台后台/权限管理/场景" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id string `json:"id" v:"required|max-length:15" dc:"ID"`
 }
 

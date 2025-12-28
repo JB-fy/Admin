@@ -110,13 +110,12 @@ func genApi(option myGenOption, tpl *myGenTpl) {
 	tplApiOfCommon := gfile.GetContents(saveFileOfCommon)
 	commonHeaderStr := `type Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq struct {`
 	if gstr.Pos(tplApiOfCommon, commonHeaderStr) == -1 {
-		// 路由生成（controller未导入）
-		tplApiOfCommon = gstr.Replace(tplApiOfCommon, `type CommonFieldReq struct {`, `type Common`+gstr.CaseCamel(option.SceneId)+`HeaderReq struct {
+		tplApiOfCommon = gstr.Replace(tplApiOfCommon, `type CommonInfoReq struct {`, `type Common`+gstr.CaseCamel(option.SceneId)+`HeaderReq struct {
 	CommonHeaderReq
 	`+gstr.CaseCamel(option.SceneId)+`Token string `+"`"+`json:"`+gstr.CaseCamel(option.SceneId)+`Token,omitempty" v:"" in:"header" d:"" dc:"登录token"`+"`"+`
 }
 
-type CommonFieldReq struct {`, 1)
+type CommonInfoReq struct {`, 1)
 		utils.FilePutFormat(saveFileOfCommon, []byte(tplApiOfCommon)...)
 	}
 
@@ -179,7 +178,7 @@ type ` + tpl.TableCaseCamel + `ListRes struct {`
 type ` + tpl.TableCaseCamel + `InfoReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/info" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"详情"` + "`" + `
 	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
-	api.CommonFieldReq` + gstr.Join(append([]string{``}, api.info...), `
+	api.CommonInfoReq` + gstr.Join(append([]string{``}, api.info...), `
 	`) + `
 }
 
@@ -235,7 +234,7 @@ type ` + tpl.TableCaseCamel + `DeleteReq struct {
 type ` + tpl.TableCaseCamel + `TreeReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/tree" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
 	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Filter ` + tpl.TableCaseCamel + `Filter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 }
 

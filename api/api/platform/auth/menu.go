@@ -67,7 +67,7 @@ type MenuListRes struct {
 type MenuInfoReq struct {
 	g.Meta `path:"/menu/info" method:"post" tags:"平台后台/权限管理/菜单" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 
@@ -125,7 +125,7 @@ type MenuDeleteReq struct {
 type MenuTreeReq struct {
 	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/权限管理/菜单" sm:"列表（树状）"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Filter MenuFilter `json:"filter" dc:"过滤条件"`
 }
 

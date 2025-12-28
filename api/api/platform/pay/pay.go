@@ -55,7 +55,7 @@ type PayListRes struct {
 type PayInfoReq struct {
 	g.Meta `path:"/pay/info" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付配置" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 

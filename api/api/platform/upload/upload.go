@@ -52,7 +52,7 @@ type UploadListRes struct {
 type UploadInfoReq struct {
 	g.Meta `path:"/upload/info" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 

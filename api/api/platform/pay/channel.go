@@ -61,7 +61,7 @@ type ChannelListRes struct {
 type ChannelInfoReq struct {
 	g.Meta `path:"/channel/info" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付通道" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 

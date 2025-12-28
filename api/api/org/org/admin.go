@@ -64,7 +64,7 @@ type AdminListRes struct {
 type AdminInfoReq struct {
 	g.Meta `path:"/admin/info" method:"post" tags:"机构后台/权限管理/管理员" sm:"详情"`
 	api.CommonOrgHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 

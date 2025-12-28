@@ -49,7 +49,7 @@ type OrgListRes struct {
 type OrgInfoReq struct {
 	g.Meta `path:"/org/info" method:"post" tags:"平台后台/机构管理/机构" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 

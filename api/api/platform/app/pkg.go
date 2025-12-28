@@ -63,7 +63,7 @@ type PkgListRes struct {
 type PkgInfoReq struct {
 	g.Meta `path:"/pkg/info" method:"post" tags:"平台后台/系统管理/APP管理/安装包" sm:"详情"`
 	api.CommonPlatformHeaderReq
-	api.CommonFieldReq
+	api.CommonInfoReq
 	Id uint `json:"id" v:"required|between:1,4294967295" dc:"ID"`
 }
 
