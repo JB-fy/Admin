@@ -125,7 +125,7 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreate
 	if req.Account != nil {
 		*req.Account = daoOrg.Admin.JoinLoginName(orgId, *req.Account)
 	}
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.AdminCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	// loginInfo := utils.GetCtxLoginInfo(ctx)
 	data[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
@@ -161,8 +161,8 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdate
 	if req.Account != nil {
 		*req.Account = daoOrg.Admin.JoinLoginName(orgId, *req.Account)
 	}
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
+	filter := gconv.Map(req.AdminUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.AdminUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
@@ -187,7 +187,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdate
 // 删除
 func (controllerThis *Admin) Delete(ctx context.Context, req *apiOrg.AdminDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	filter := gconv.Map(req.AdminUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	loginInfo := utils.GetCtxLoginInfo(ctx)
 	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]

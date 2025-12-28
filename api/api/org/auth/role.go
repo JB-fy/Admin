@@ -23,7 +23,7 @@ type RoleInfo struct {
 	SceneName   *string     `json:"scene_name,omitempty" dc:"场景"`
 }
 
-type RoleFilter struct {
+type RoleListFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
 	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
@@ -40,12 +40,17 @@ type RoleFilter struct {
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
+type RoleUpdateDeleteFilter struct {
+	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+}
+
 /*--------列表 开始--------*/
 type RoleListReq struct {
 	g.Meta `path:"/role/list" method:"post" tags:"机构后台/权限管理/角色" sm:"列表"`
 	api.CommonOrgHeaderReq
 	api.CommonListReq
-	Filter RoleFilter `json:"filter" dc:"过滤条件"`
+	Filter RoleListFilter `json:"filter" dc:"过滤条件"`
 }
 
 type RoleListRes struct {
@@ -70,9 +75,7 @@ type RoleInfoRes struct {
 /*--------详情 结束--------*/
 
 /*--------新增 开始--------*/
-type RoleCreateReq struct {
-	g.Meta `path:"/role/create" method:"post" tags:"机构后台/权限管理/角色" sm:"新增"`
-	api.CommonOrgHeaderReq
+type RoleCreateData struct {
 	RoleName *string `json:"role_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	// SceneId     *string   `json:"scene_id,omitempty" v:"required|max-length:15" dc:"场景ID"`
 	// RelId       *uint     `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
@@ -81,20 +84,29 @@ type RoleCreateReq struct {
 	IsStop      *uint     `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
+type RoleCreateReq struct {
+	g.Meta `path:"/role/create" method:"post" tags:"机构后台/权限管理/角色" sm:"新增"`
+	api.CommonOrgHeaderReq
+	RoleCreateData
+}
+
 /*--------新增 结束--------*/
 
 /*--------修改 开始--------*/
+type RoleUpdateData struct {
+	RoleName *string `json:"role_name,omitempty" v:"max-length:30" dc:"名称"`
+	// SceneId     *string   `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
+	// RelId       *uint     `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
+	ActionIdArr *[]string `json:"action_id_arr,omitempty" v:"distinct|foreach|max-length:30" dc:"操作ID"`
+	MenuIdArr   *[]uint   `json:"menu_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"菜单ID"`
+	IsStop      *uint     `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+}
+
 type RoleUpdateReq struct {
 	g.Meta `path:"/role/update" method:"post" tags:"机构后台/权限管理/角色" sm:"修改"`
 	api.CommonOrgHeaderReq
-	Id       uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr    []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	RoleName *string `json:"role_name,omitempty" filter:"-" data:"role_name,omitempty" v:"max-length:30" dc:"名称"`
-	// SceneId     *string   `json:"scene_id,omitempty" filter:"-" data:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
-	// RelId       *uint     `json:"rel_id,omitempty" filter:"-" data:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。0表示平台创建，其它值根据scene_id对应不同表"`
-	ActionIdArr *[]string `json:"action_id_arr,omitempty" filter:"-" data:"action_id_arr,omitempty" v:"distinct|foreach|max-length:30" dc:"操作ID"`
-	MenuIdArr   *[]uint   `json:"menu_id_arr,omitempty" filter:"-" data:"menu_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"菜单ID"`
-	IsStop      *uint     `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	RoleUpdateDeleteFilter
+	RoleUpdateData
 }
 
 /*--------修改 结束--------*/
@@ -103,8 +115,7 @@ type RoleUpdateReq struct {
 type RoleDeleteReq struct {
 	g.Meta `path:"/role/del" method:"post" tags:"机构后台/权限管理/角色" sm:"删除"`
 	api.CommonOrgHeaderReq
-	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	RoleUpdateDeleteFilter
 }
 
 /*--------删除 结束--------*/
