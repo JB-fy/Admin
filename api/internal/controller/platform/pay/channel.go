@@ -108,7 +108,7 @@ func (controllerThis *Channel) Info(ctx context.Context, req *apiPay.ChannelInfo
 // 新增
 func (controllerThis *Channel) Create(ctx context.Context, req *apiPay.ChannelCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.ChannelCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -129,8 +129,8 @@ func (controllerThis *Channel) Create(ctx context.Context, req *apiPay.ChannelCr
 // 修改
 func (controllerThis *Channel) Update(ctx context.Context, req *apiPay.ChannelUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
+	filter := gconv.Map(req.ChannelUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.ChannelUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
@@ -151,7 +151,7 @@ func (controllerThis *Channel) Update(ctx context.Context, req *apiPay.ChannelUp
 // 删除
 func (controllerThis *Channel) Delete(ctx context.Context, req *apiPay.ChannelDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	filter := gconv.Map(req.ChannelUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/

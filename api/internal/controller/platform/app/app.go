@@ -108,7 +108,7 @@ func (controllerThis *App) Info(ctx context.Context, req *apiApp.AppInfoReq) (re
 // 新增
 func (controllerThis *App) Create(ctx context.Context, req *apiApp.AppCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.AppCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -129,8 +129,8 @@ func (controllerThis *App) Create(ctx context.Context, req *apiApp.AppCreateReq)
 // 修改
 func (controllerThis *App) Update(ctx context.Context, req *apiApp.AppUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
+	filter := gconv.Map(req.AppUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.AppUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
@@ -151,7 +151,7 @@ func (controllerThis *App) Update(ctx context.Context, req *apiApp.AppUpdateReq)
 // 删除
 func (controllerThis *App) Delete(ctx context.Context, req *apiApp.AppDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	filter := gconv.Map(req.AppUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/

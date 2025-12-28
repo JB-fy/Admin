@@ -19,7 +19,7 @@ type SceneInfo struct {
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
-type SceneFilter struct {
+type SceneListFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
 	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
@@ -32,12 +32,17 @@ type SceneFilter struct {
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
+type SceneUpdateDeleteFilter struct {
+	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+}
+
 /*--------列表 开始--------*/
 type SceneListReq struct {
 	g.Meta `path:"/scene/list" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付场景" sm:"列表"`
 	api.CommonPlatformHeaderReq
 	api.CommonListReq
-	Filter SceneFilter `json:"filter" dc:"过滤条件"`
+	Filter SceneListFilter `json:"filter" dc:"过滤条件"`
 }
 
 type SceneListRes struct {
@@ -62,25 +67,32 @@ type SceneInfoRes struct {
 /*--------详情 结束--------*/
 
 /*--------新增 开始--------*/
-type SceneCreateReq struct {
-	g.Meta `path:"/scene/create" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付场景" sm:"新增"`
-	api.CommonPlatformHeaderReq
+type SceneCreateData struct {
 	SceneName *string `json:"scene_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	Remark    *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
+type SceneCreateReq struct {
+	g.Meta `path:"/scene/create" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付场景" sm:"新增"`
+	api.CommonPlatformHeaderReq
+	SceneCreateData
+}
+
 /*--------新增 结束--------*/
 
 /*--------修改 开始--------*/
+type SceneUpdateData struct {
+	SceneName *string `json:"scene_name,omitempty" v:"max-length:30" dc:"名称"`
+	Remark    *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
+	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+}
+
 type SceneUpdateReq struct {
 	g.Meta `path:"/scene/update" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付场景" sm:"修改"`
 	api.CommonPlatformHeaderReq
-	Id        uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr     []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	SceneName *string `json:"scene_name,omitempty" filter:"-" data:"scene_name,omitempty" v:"max-length:30" dc:"名称"`
-	Remark    *string `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	IsStop    *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	SceneUpdateDeleteFilter
+	SceneUpdateData
 }
 
 /*--------修改 结束--------*/
@@ -89,8 +101,7 @@ type SceneUpdateReq struct {
 type SceneDeleteReq struct {
 	g.Meta `path:"/scene/del" method:"post" tags:"平台后台/系统管理/配置中心/支付管理/支付场景" sm:"删除"`
 	api.CommonPlatformHeaderReq
-	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	SceneUpdateDeleteFilter
 }
 
 /*--------删除 结束--------*/

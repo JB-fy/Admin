@@ -18,7 +18,7 @@ type OrgInfo struct {
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
-type OrgFilter struct {
+type OrgListFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
 	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
@@ -30,12 +30,17 @@ type OrgFilter struct {
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
+type OrgUpdateDeleteFilter struct {
+	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+}
+
 /*--------列表 开始--------*/
 type OrgListReq struct {
 	g.Meta `path:"/org/list" method:"post" tags:"平台后台/机构管理/机构" sm:"列表"`
 	api.CommonPlatformHeaderReq
 	api.CommonListReq
-	Filter OrgFilter `json:"filter" dc:"过滤条件"`
+	Filter OrgListFilter `json:"filter" dc:"过滤条件"`
 }
 
 type OrgListRes struct {
@@ -60,23 +65,30 @@ type OrgInfoRes struct {
 /*--------详情 结束--------*/
 
 /*--------新增 开始--------*/
+type OrgCreateData struct {
+	OrgName *string `json:"org_name,omitempty" v:"required|max-length:60" dc:"机构名称"`
+	IsStop  *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+}
+
 type OrgCreateReq struct {
 	g.Meta `path:"/org/create" method:"post" tags:"平台后台/机构管理/机构" sm:"新增"`
 	api.CommonPlatformHeaderReq
-	OrgName *string `json:"org_name,omitempty" v:"required|max-length:60" dc:"机构名称"`
-	IsStop  *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	OrgCreateData
 }
 
 /*--------新增 结束--------*/
 
 /*--------修改 开始--------*/
+type OrgUpdateData struct {
+	OrgName *string `json:"org_name,omitempty" v:"max-length:60" dc:"机构名称"`
+	IsStop  *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+}
+
 type OrgUpdateReq struct {
 	g.Meta `path:"/org/update" method:"post" tags:"平台后台/机构管理/机构" sm:"修改"`
 	api.CommonPlatformHeaderReq
-	Id      uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr   []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	OrgName *string `json:"org_name,omitempty" filter:"-" data:"org_name,omitempty" v:"max-length:60" dc:"机构名称"`
-	IsStop  *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	OrgUpdateDeleteFilter
+	OrgUpdateData
 }
 
 /*--------修改 结束--------*/
@@ -85,8 +97,7 @@ type OrgUpdateReq struct {
 type OrgDeleteReq struct {
 	g.Meta `path:"/org/del" method:"post" tags:"平台后台/机构管理/机构" sm:"删除"`
 	api.CommonPlatformHeaderReq
-	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	OrgUpdateDeleteFilter
 }
 
 /*--------删除 结束--------*/

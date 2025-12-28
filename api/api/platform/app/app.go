@@ -20,7 +20,7 @@ type AppInfo struct {
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
-type AppFilter struct {
+type AppListFilter struct {
 	Id             string      `json:"id,omitempty" v:"max-length:15" dc:"ID"`
 	IdArr          []string    `json:"id_arr,omitempty" v:"distinct|foreach|length:1,15" dc:"ID数组"`
 	ExcId          string      `json:"exc_id,omitempty" v:"max-length:15" dc:"排除ID"`
@@ -33,12 +33,17 @@ type AppFilter struct {
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
+type AppUpdateDeleteFilter struct {
+	Id    string   `json:"id,omitempty" v:"required-without:IdArr|length:1,15" dc:"ID"`
+	IdArr []string `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,15" dc:"ID数组"`
+}
+
 /*--------列表 开始--------*/
 type AppListReq struct {
 	g.Meta `path:"/app/list" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"列表"`
 	api.CommonPlatformHeaderReq
 	api.CommonListReq
-	Filter AppFilter `json:"filter" dc:"过滤条件"`
+	Filter AppListFilter `json:"filter" dc:"过滤条件"`
 }
 
 type AppListRes struct {
@@ -63,9 +68,7 @@ type AppInfoRes struct {
 /*--------详情 结束--------*/
 
 /*--------新增 开始--------*/
-type AppCreateReq struct {
-	g.Meta `path:"/app/create" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"新增"`
-	api.CommonPlatformHeaderReq
+type AppCreateData struct {
 	AppId     *string `json:"app_id,omitempty" v:"required|max-length:15" dc:"APPID"`
 	AppName   *string `json:"app_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	AppConfig *string `json:"app_config,omitempty" v:"json" dc:"配置。JSON格式，需要时设置"`
@@ -73,18 +76,27 @@ type AppCreateReq struct {
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
+type AppCreateReq struct {
+	g.Meta `path:"/app/create" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"新增"`
+	api.CommonPlatformHeaderReq
+	AppCreateData
+}
+
 /*--------新增 结束--------*/
 
 /*--------修改 开始--------*/
+type AppUpdateData struct {
+	AppName   *string `json:"app_name,omitempty" v:"max-length:30" dc:"名称"`
+	AppConfig *string `json:"app_config,omitempty" v:"json" dc:"配置。JSON格式，需要时设置"`
+	Remark    *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
+	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+}
+
 type AppUpdateReq struct {
 	g.Meta `path:"/app/update" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"修改"`
 	api.CommonPlatformHeaderReq
-	Id        string   `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|length:1,15" dc:"ID"`
-	IdArr     []string `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|length:1,15" dc:"ID数组"`
-	AppName   *string  `json:"app_name,omitempty" filter:"-" data:"app_name,omitempty" v:"max-length:30" dc:"名称"`
-	AppConfig *string  `json:"app_config,omitempty" filter:"-" data:"app_config,omitempty" v:"json" dc:"配置。JSON格式，需要时设置"`
-	Remark    *string  `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	IsStop    *uint    `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	AppUpdateDeleteFilter
+	AppUpdateData
 }
 
 /*--------修改 结束--------*/
@@ -93,8 +105,7 @@ type AppUpdateReq struct {
 type AppDeleteReq struct {
 	g.Meta `path:"/app/del" method:"post" tags:"平台后台/系统管理/APP管理/APP" sm:"删除"`
 	api.CommonPlatformHeaderReq
-	Id    string   `json:"id,omitempty" v:"required-without:IdArr|length:1,15" dc:"ID"`
-	IdArr []string `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|length:1,15" dc:"ID数组"`
+	AppUpdateDeleteFilter
 }
 
 /*--------删除 结束--------*/

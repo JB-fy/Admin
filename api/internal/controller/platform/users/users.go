@@ -108,8 +108,8 @@ func (controllerThis *Users) Info(ctx context.Context, req *apiUsers.UsersInfoRe
 // 修改
 func (controllerThis *Users) Update(ctx context.Context, req *apiUsers.UsersUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
+	filter := gconv.Map(req.UsersUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.UsersUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return

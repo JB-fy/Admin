@@ -31,7 +31,7 @@ type MenuInfo struct {
 	Children  []MenuInfo  `json:"children" dc:"子级列表"`
 }
 
-type MenuFilter struct {
+type MenuListFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
 	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
@@ -48,12 +48,17 @@ type MenuFilter struct {
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
+type MenuUpdateDeleteFilter struct {
+	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+}
+
 /*--------列表 开始--------*/
 type MenuListReq struct {
 	g.Meta `path:"/menu/list" method:"post" tags:"平台后台/权限管理/菜单" sm:"列表"`
 	api.CommonPlatformHeaderReq
 	api.CommonListReq
-	Filter MenuFilter `json:"filter" dc:"过滤条件"`
+	Filter MenuListFilter `json:"filter" dc:"过滤条件"`
 }
 
 type MenuListRes struct {
@@ -78,9 +83,7 @@ type MenuInfoRes struct {
 /*--------详情 结束--------*/
 
 /*--------新增 开始--------*/
-type MenuCreateReq struct {
-	g.Meta `path:"/menu/create" method:"post" tags:"平台后台/权限管理/菜单" sm:"新增"`
-	api.CommonPlatformHeaderReq
+type MenuCreateData struct {
 	MenuName  *string `json:"menu_name,omitempty" v:"required|max-length:30" dc:"名称"`
 	SceneId   *string `json:"scene_id,omitempty" v:"required|max-length:15" dc:"场景ID"`
 	Pid       *uint   `json:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
@@ -91,22 +94,31 @@ type MenuCreateReq struct {
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
+type MenuCreateReq struct {
+	g.Meta `path:"/menu/create" method:"post" tags:"平台后台/权限管理/菜单" sm:"新增"`
+	api.CommonPlatformHeaderReq
+	MenuCreateData
+}
+
 /*--------新增 结束--------*/
 
 /*--------修改 开始--------*/
+type MenuUpdateData struct {
+	MenuName  *string `json:"menu_name,omitempty" v:"max-length:30" dc:"名称"`
+	SceneId   *string `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
+	Pid       *uint   `json:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
+	MenuIcon  *string `json:"menu_icon,omitempty" v:"max-length:200" dc:"图标"`
+	MenuUrl   *string `json:"menu_url,omitempty" v:"max-length:120" dc:"链接"`
+	ExtraData *string `json:"extra_data,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
+	Sort      *uint   `json:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序"`
+	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+}
+
 type MenuUpdateReq struct {
 	g.Meta `path:"/menu/update" method:"post" tags:"平台后台/权限管理/菜单" sm:"修改"`
 	api.CommonPlatformHeaderReq
-	Id        uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr     []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	MenuName  *string `json:"menu_name,omitempty" filter:"-" data:"menu_name,omitempty" v:"max-length:30" dc:"名称"`
-	SceneId   *string `json:"scene_id,omitempty" filter:"-" data:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
-	Pid       *uint   `json:"pid,omitempty" filter:"-" data:"pid,omitempty" v:"between:0,4294967295" dc:"父ID"`
-	MenuIcon  *string `json:"menu_icon,omitempty" filter:"-" data:"menu_icon,omitempty" v:"max-length:200" dc:"图标"`
-	MenuUrl   *string `json:"menu_url,omitempty" filter:"-" data:"menu_url,omitempty" v:"max-length:120" dc:"链接"`
-	ExtraData *string `json:"extra_data,omitempty" filter:"-" data:"extra_data,omitempty" v:"json" dc:"额外数据。JSON格式：{\"i18n（国际化设置）\": {\"title\": {\"语言标识\":\"标题\",...}}"`
-	Sort      *uint   `json:"sort,omitempty" filter:"-" data:"sort,omitempty" v:"between:0,255" dc:"排序值。从大到小排序"`
-	IsStop    *uint   `json:"is_stop,omitempty" filter:"-" data:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
+	MenuUpdateDeleteFilter
+	MenuUpdateData
 }
 
 /*--------修改 结束--------*/
@@ -115,8 +127,7 @@ type MenuUpdateReq struct {
 type MenuDeleteReq struct {
 	g.Meta `path:"/menu/del" method:"post" tags:"平台后台/权限管理/菜单" sm:"删除"`
 	api.CommonPlatformHeaderReq
-	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	MenuUpdateDeleteFilter
 }
 
 /*--------删除 结束--------*/
@@ -126,7 +137,7 @@ type MenuTreeReq struct {
 	g.Meta `path:"/menu/tree" method:"post" tags:"平台后台/权限管理/菜单" sm:"列表（树状）"`
 	api.CommonPlatformHeaderReq
 	api.CommonInfoReq
-	Filter MenuFilter `json:"filter" dc:"过滤条件"`
+	Filter MenuListFilter `json:"filter" dc:"过滤条件"`
 }
 
 type MenuTreeRes struct {

@@ -20,7 +20,7 @@ type UploadInfo struct {
 	CreatedAt    *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
-type UploadFilter struct {
+type UploadListFilter struct {
 	Id             *uint       `json:"id,omitempty" v:"between:1,4294967295" dc:"ID"`
 	IdArr          []uint      `json:"id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"ID数组"`
 	ExcId          *uint       `json:"exc_id,omitempty" v:"between:1,4294967295" dc:"排除ID"`
@@ -33,12 +33,17 @@ type UploadFilter struct {
 	IsDefault      *uint       `json:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
 }
 
+type UploadUpdateDeleteFilter struct {
+	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
+	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+}
+
 /*--------列表 开始--------*/
 type UploadListReq struct {
 	g.Meta `path:"/upload/list" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"列表"`
 	api.CommonPlatformHeaderReq
 	api.CommonListReq
-	Filter UploadFilter `json:"filter" dc:"过滤条件"`
+	Filter UploadListFilter `json:"filter" dc:"过滤条件"`
 }
 
 type UploadListRes struct {
@@ -63,27 +68,34 @@ type UploadInfoRes struct {
 /*--------详情 结束--------*/
 
 /*--------新增 开始--------*/
-type UploadCreateReq struct {
-	g.Meta `path:"/upload/create" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"新增"`
-	api.CommonPlatformHeaderReq
+type UploadCreateData struct {
 	UploadType   *uint   `json:"upload_type,omitempty" v:"required|in:0,1" dc:"类型：0本地 1阿里云OSS"`
 	UploadConfig *string `json:"upload_config,omitempty" v:"required|json" dc:"配置。JSON格式，根据类型设置"`
 	Remark       *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
 	IsDefault    *uint   `json:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
 }
 
+type UploadCreateReq struct {
+	g.Meta `path:"/upload/create" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"新增"`
+	api.CommonPlatformHeaderReq
+	UploadCreateData
+}
+
 /*--------新增 结束--------*/
 
 /*--------修改 开始--------*/
+type UploadUpdateData struct {
+	UploadType   *uint   `json:"upload_type,omitempty" v:"in:0,1" dc:"类型：0本地 1阿里云OSS"`
+	UploadConfig *string `json:"upload_config,omitempty" v:"json" dc:"配置。JSON格式，根据类型设置"`
+	Remark       *string `json:"remark,omitempty" v:"max-length:120" dc:"备注"`
+	IsDefault    *uint   `json:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
+}
+
 type UploadUpdateReq struct {
 	g.Meta `path:"/upload/update" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"修改"`
 	api.CommonPlatformHeaderReq
-	Id           uint    `json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr        []uint  `json:"id_arr,omitempty" filter:"id_arr,omitempty" data:"-" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
-	UploadType   *uint   `json:"upload_type,omitempty" filter:"-" data:"upload_type,omitempty" v:"in:0,1" dc:"类型：0本地 1阿里云OSS"`
-	UploadConfig *string `json:"upload_config,omitempty" filter:"-" data:"upload_config,omitempty" v:"json" dc:"配置。JSON格式，根据类型设置"`
-	Remark       *string `json:"remark,omitempty" filter:"-" data:"remark,omitempty" v:"max-length:120" dc:"备注"`
-	IsDefault    *uint   `json:"is_default,omitempty" filter:"-" data:"is_default,omitempty" v:"in:0,1" dc:"默认：0否 1是"`
+	UploadUpdateDeleteFilter
+	UploadUpdateData
 }
 
 /*--------修改 结束--------*/
@@ -92,8 +104,7 @@ type UploadUpdateReq struct {
 type UploadDeleteReq struct {
 	g.Meta `path:"/upload/del" method:"post" tags:"平台后台/系统管理/配置中心/上传配置" sm:"删除"`
 	api.CommonPlatformHeaderReq
-	Id    uint   `json:"id,omitempty" v:"required-without:IdArr|between:1,4294967295" dc:"ID"`
-	IdArr []uint `json:"id_arr,omitempty" v:"required-without:Id|distinct|foreach|between:1,4294967295" dc:"ID数组"`
+	UploadUpdateDeleteFilter
 }
 
 /*--------删除 结束--------*/

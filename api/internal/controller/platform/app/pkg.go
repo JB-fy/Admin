@@ -108,7 +108,7 @@ func (controllerThis *Pkg) Info(ctx context.Context, req *apiApp.PkgInfoReq) (re
 // 新增
 func (controllerThis *Pkg) Create(ctx context.Context, req *apiApp.PkgCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.PkgCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -129,8 +129,8 @@ func (controllerThis *Pkg) Create(ctx context.Context, req *apiApp.PkgCreateReq)
 // 修改
 func (controllerThis *Pkg) Update(ctx context.Context, req *apiApp.PkgUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`filter`}})
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{`data`}})
+	filter := gconv.Map(req.PkgUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.PkgUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ``)
 		return
@@ -151,7 +151,7 @@ func (controllerThis *Pkg) Update(ctx context.Context, req *apiApp.PkgUpdateReq)
 // 删除
 func (controllerThis *Pkg) Delete(ctx context.Context, req *apiApp.PkgDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true})
+	filter := gconv.Map(req.PkgUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
