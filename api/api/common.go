@@ -1,29 +1,29 @@
 package api
 
 type CommonHeaderReq struct {
-	Language string `json:"-" v:"in:zh-cn,en" in:"header" d:"zh-cn" dc:"多语言标识"`
+	Language string `json:"Language,omitempty" v:"in:zh-cn,en" in:"header" d:"zh-cn" dc:"多语言标识"`
 }
 
 type CommonAllTokenHeaderReq struct {
 	CommonHeaderReq
-	PlatformToken string `json:"-" v:"" in:"header" d:"" dc:"平台后台登录token。有些接口（以对应场景开头：/场景/Xxxx）同时用于多个场景时，可能需要传对应场景的登录token"`
-	OrgToken      string `json:"-" v:"" in:"header" d:"" dc:"机构后台登录token。有些接口（以对应场景开头：/场景/Xxxx）同时用于多个场景时，可能需要传对应场景的登录token"`
-	AppToken      string `json:"-" v:"" in:"header" d:"" dc:"APP登录token。有些接口（以对应场景开头：/场景/Xxxx）同时用于多个场景时，可能需要传对应场景的登录token"`
+	PlatformToken string `json:"PlatformToken,omitempty" v:"" in:"header" d:"" dc:"平台后台登录token。有些接口（以对应场景开头：/场景/Xxxx）同时用于多个场景时，可能需要传对应场景的登录token"`
+	OrgToken      string `json:"OrgToken,omitempty" v:"" in:"header" d:"" dc:"机构后台登录token。有些接口（以对应场景开头：/场景/Xxxx）同时用于多个场景时，可能需要传对应场景的登录token"`
+	AppToken      string `json:"AppToken,omitempty" v:"" in:"header" d:"" dc:"APP登录token。有些接口（以对应场景开头：/场景/Xxxx）同时用于多个场景时，可能需要传对应场景的登录token"`
 }
 
 type CommonPlatformHeaderReq struct {
 	CommonHeaderReq
-	PlatformToken string `json:"-" v:"" in:"header" d:"" dc:"登录token"`
+	PlatformToken string `json:"PlatformToken,omitempty" v:"" in:"header" d:"" dc:"登录token"`
 }
 
 type CommonOrgHeaderReq struct {
 	CommonHeaderReq
-	OrgToken string `json:"-" v:"" in:"header" d:"" dc:"登录token"`
+	OrgToken string `json:"OrgToken,omitempty" v:"" in:"header" d:"" dc:"登录token"`
 }
 
 type CommonAppHeaderReq struct {
 	CommonHeaderReq
-	AppToken string `json:"-" v:"" in:"header" d:"" dc:"登录token"`
+	AppToken string `json:"AppToken,omitempty" v:"" in:"header" d:"" dc:"登录token"`
 }
 
 type CommonInfoReq struct {

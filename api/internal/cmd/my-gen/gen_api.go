@@ -13,19 +13,19 @@ import (
 )
 
 type myGenApi struct {
-	filterOfFixed []string
-	resOfAdd      []string
-	filter        []string
-	info          []string
-	create        []string
-	update        []string
-	delete        []string
-	res           []string
+	res                []string
+	resOfAdd           []string
+	listFilterOfFixed  []string
+	listFilter         []string
+	updateDeleteFilter []string
+	info               []string
+	create             []string
+	update             []string
 }
 
 type myGenApiField struct {
-	filterOfFixed []string
-	resOfAdd      []string
+	resOfAdd          []string
+	listFilterOfFixed []string
 
 	filterType internal.MyGenDataStrHandler
 	createType internal.MyGenDataStrHandler
@@ -38,20 +38,20 @@ type myGenApiField struct {
 }
 
 func (apiThis *myGenApi) Add(apiField myGenApiField, field myGenField, tableType internal.MyGenTableType) {
-	apiThis.filterOfFixed = append(apiThis.filterOfFixed, apiField.filterOfFixed...)
 	apiThis.resOfAdd = append(apiThis.resOfAdd, apiField.resOfAdd...)
+	apiThis.listFilterOfFixed = append(apiThis.listFilterOfFixed, apiField.listFilterOfFixed...)
 	if apiField.filterType.GetData() != `` {
-		apiThis.filter = append(apiThis.filter, field.FieldCaseCamel+` `+apiField.filterType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.filterRule.GetData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
+		apiThis.listFilter = append(apiThis.listFilter, field.FieldCaseCamel+` `+apiField.filterType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.filterRule.GetData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
 	}
 	if apiField.createType.GetData() != `` {
 		saveRuleArr := apiField.saveRule.GetData()
 		if apiField.isRequired && slices.Contains([]internal.MyGenTableType{internal.TableTypeDefault, internal.TableTypeExtendOne, internal.TableTypeMiddleOne}, tableType) {
 			saveRuleArr = append([]string{`required`}, saveRuleArr...)
 		}
-		apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" filter:"-" data:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(saveRuleArr, `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
+		apiThis.create = append(apiThis.create, field.FieldCaseCamel+` `+apiField.createType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(saveRuleArr, `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
 	}
 	if apiField.updateType.GetData() != `` {
-		apiThis.update = append(apiThis.update, field.FieldCaseCamel+` `+apiField.updateType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" filter:"-" data:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.saveRule.GetData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
+		apiThis.update = append(apiThis.update, field.FieldCaseCamel+` `+apiField.updateType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" v:"`+gstr.Join(apiField.saveRule.GetData(), `|`)+`" dc:"`+field.FieldDesc+`"`+"`")
 	}
 	if apiField.resType.GetData() != `` {
 		apiThis.res = append(apiThis.res, field.FieldCaseCamel+` `+apiField.resType.GetData()+` `+"`"+`json:"`+field.FieldRaw+`,omitempty" dc:"`+field.FieldDesc+`"`+"`")
@@ -59,25 +59,25 @@ func (apiThis *myGenApi) Add(apiField myGenApiField, field myGenField, tableType
 }
 
 func (apiThis *myGenApi) Merge(apiOther myGenApi) {
-	apiThis.filterOfFixed = append(apiThis.filterOfFixed, apiOther.filterOfFixed...)
-	apiThis.filter = append(apiThis.filter, apiOther.filter...)
+	apiThis.res = append(apiThis.res, apiOther.res...)
+	apiThis.resOfAdd = append(apiThis.resOfAdd, apiOther.resOfAdd...)
+	apiThis.listFilterOfFixed = append(apiThis.listFilterOfFixed, apiOther.listFilterOfFixed...)
+	apiThis.listFilter = append(apiThis.listFilter, apiOther.listFilter...)
+	apiThis.updateDeleteFilter = append(apiThis.updateDeleteFilter, apiOther.updateDeleteFilter...)
 	apiThis.info = append(apiThis.info, apiOther.info...)
 	apiThis.create = append(apiThis.create, apiOther.create...)
 	apiThis.update = append(apiThis.update, apiOther.update...)
-	apiThis.delete = append(apiThis.delete, apiOther.delete...)
-	apiThis.res = append(apiThis.res, apiOther.res...)
-	apiThis.resOfAdd = append(apiThis.resOfAdd, apiOther.resOfAdd...)
 }
 
 func (apiThis *myGenApi) Unique() {
-	// apiThis.filterOfFixed = garray.NewStrArrayFrom(apiThis.filterOfFixed).Unique().Slice()
-	// apiThis.filter = garray.NewStrArrayFrom(apiThis.filter).Unique().Slice()
+	// apiThis.res = garray.NewStrArrayFrom(apiThis.res).Unique().Slice()
+	// apiThis.resOfAdd = garray.NewStrArrayFrom(apiThis.resOfAdd).Unique().Slice()
+	// apiThis.listFilterOfFixed = garray.NewStrArrayFrom(apiThis.listFilterOfFixed).Unique().Slice()
+	// apiThis.listFilter = garray.NewStrArrayFrom(apiThis.listFilter).Unique().Slice()
+	// apiThis.updateDeleteFilter = garray.NewStrArrayFrom(apiThis.updateDeleteFilter).Unique().Slice()
 	// apiThis.info = garray.NewStrArrayFrom(apiThis.info).Unique().Slice()
 	// apiThis.create = garray.NewStrArrayFrom(apiThis.create).Unique().Slice()
 	// apiThis.update = garray.NewStrArrayFrom(apiThis.update).Unique().Slice()
-	// apiThis.delete = garray.NewStrArrayFrom(apiThis.delete).Unique().Slice()
-	// apiThis.res = garray.NewStrArrayFrom(apiThis.res).Unique().Slice()
-	// apiThis.resOfAdd = garray.NewStrArrayFrom(apiThis.resOfAdd).Unique().Slice()
 }
 
 // api生成
@@ -142,12 +142,22 @@ type ` + tpl.TableCaseCamel + `Info struct {` + gstr.Join(append([]string{``}, a
 `
 	if option.IsList {
 		tplApi += `
-type ` + tpl.TableCaseCamel + `Filter struct {` + gstr.Join(append([]string{``}, api.filterOfFixed...), `
-	`) + gstr.Join(append([]string{``}, api.filter...), `
+type ` + tpl.TableCaseCamel + `ListFilter struct {` + gstr.Join(append([]string{``}, api.listFilterOfFixed...), `
+	`) + gstr.Join(append([]string{``}, api.listFilter...), `
 	`) + `
 }
 
-/*--------列表 开始--------*/
+`
+	}
+	if option.IsUpdate || option.IsDelete {
+		tplApi += `type ` + tpl.TableCaseCamel + `UpdateDeleteFilter struct {` + gstr.Join(append([]string{``}, api.updateDeleteFilter...), `
+	`) + `
+}
+
+`
+	}
+	if option.IsList {
+		tplApi += `/*--------列表 开始--------*/
 type ` + tpl.TableCaseCamel + `ListReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/list" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"列表"` + "`" + `
 	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
@@ -157,7 +167,7 @@ type ` + tpl.TableCaseCamel + `ListReq struct {
 	Sort   string          ` + "`" + `json:"sort" default:"` + tpl.Handle.DefSort.Field + ` ` + gstr.ToUpper(tpl.Handle.DefSort.Order) + `" dc:"排序"` + "`"
 		}
 		tplApi += `
-    Filter ` + tpl.TableCaseCamel + `Filter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
+    Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 }
 
 type ` + tpl.TableCaseCamel + `ListRes struct {`
@@ -192,10 +202,14 @@ type ` + tpl.TableCaseCamel + `InfoRes struct {
 	}
 	if option.IsCreate {
 		tplApi += `/*--------新增 开始--------*/
+type ` + tpl.TableCaseCamel + `CreateData struct {` + gstr.Join(append([]string{``}, api.create...), `
+	`) + `
+}
+
 type ` + tpl.TableCaseCamel + `CreateReq struct {
 	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"新增"` + "`" + `
-	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq` + gstr.Join(append([]string{``}, api.create...), `
-	`) + `
+	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	` + tpl.TableCaseCamel + `CreateData
 }
 
 /*--------新增 结束--------*/
@@ -205,10 +219,15 @@ type ` + tpl.TableCaseCamel + `CreateReq struct {
 
 	if option.IsUpdate {
 		tplApi += `/*--------修改 开始--------*/
+type ` + tpl.TableCaseCamel + `UpdateData struct {` + gstr.Join(append([]string{``}, api.update...), `
+	`) + `
+}
+
 type ` + tpl.TableCaseCamel + `UpdateReq struct {
 	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"修改"` + "`" + `
-	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq` + gstr.Join(append([]string{``}, api.update...), `
-	`) + `
+	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	` + tpl.TableCaseCamel + `UpdateDeleteFilter
+	` + tpl.TableCaseCamel + `UpdateData
 }
 
 /*--------修改 结束--------*/
@@ -220,8 +239,8 @@ type ` + tpl.TableCaseCamel + `UpdateReq struct {
 		tplApi += `/*--------删除 开始--------*/
 type ` + tpl.TableCaseCamel + `DeleteReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/del" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"删除"` + "`" + `
-	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq` + gstr.Join(append([]string{``}, api.delete...), `
-	`) + `
+	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	` + tpl.TableCaseCamel + `UpdateDeleteFilter
 }
 
 /*--------删除 结束--------*/
@@ -235,7 +254,7 @@ type ` + tpl.TableCaseCamel + `TreeReq struct {
 	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/tree" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
 	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
 	api.CommonInfoReq
-	Filter ` + tpl.TableCaseCamel + `Filter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
+	Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 }
 
 type ` + tpl.TableCaseCamel + `TreeRes struct {
@@ -270,52 +289,46 @@ func getApiIdAndLabel(tpl *myGenTpl) (api myGenApi) {
 				ruleOfId = append(ruleOfId, `between:`+tpl.Handle.Id.List[0].FieldLimitInt.Min+`,`+tpl.Handle.Id.List[0].FieldLimitInt.Max)
 				ruleOfIdArr = append(ruleOfIdArr, `foreach`, `between:`+tpl.Handle.Id.List[0].FieldLimitInt.Min+`,`+tpl.Handle.Id.List[0].FieldLimitInt.Max)
 			}
-			api.filterOfFixed = append(api.filterOfFixed,
+			api.listFilterOfFixed = append(api.listFilterOfFixed,
 				`Id *`+dataType+" `"+`json:"id,omitempty" v:"`+gstr.Join(ruleOfId, `|`)+`" dc:"ID"`+"`",
 				`IdArr []`+dataType+" `"+`json:"`+fieldStyleOfIdArr+`,omitempty" v:"`+gstr.Join(ruleOfIdArr, `|`)+`" dc:"ID数组"`+"`",
 				`ExcId *`+dataType+" `"+`json:"`+fieldStyleOfExcId+`,omitempty" v:"`+gstr.Join(ruleOfId, `|`)+`" dc:"排除ID"`+"`",
 				`ExcIdArr []`+dataType+" `"+`json:"`+fieldStyleOfExcIdArr+`,omitempty" v:"`+gstr.Join(ruleOfIdArr, `|`)+`" dc:"排除ID数组"`+"`",
 			)
 			api.info = append(api.info, `Id `+dataType+" `"+`json:"id" v:"`+gstr.Join(append([]string{`required`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
-			api.update = append(api.update, `Id `+dataType+" `"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"`+gstr.Join(append([]string{`required-without:IdArr`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
-			api.update = append(api.update, `IdArr []`+dataType+" `"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"`+gstr.Join(append([]string{`required-without:Id`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `Id `+dataType+" `"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"`+gstr.Join(append([]string{`required-without:IdArr`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
-			api.delete = append(api.delete, `IdArr []`+dataType+" `"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"`+gstr.Join(append([]string{`required-without:Id`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
+			api.updateDeleteFilter = append(api.updateDeleteFilter, `Id `+dataType+" `"+`json:"id,omitempty" v:"`+gstr.Join(append([]string{`required-without:IdArr`}, ruleOfId...), `|`)+`" dc:"ID"`+"`")
+			api.updateDeleteFilter = append(api.updateDeleteFilter, `IdArr []`+dataType+" `"+`json:"`+fieldStyleOfIdArr+`,omitempty" v:"`+gstr.Join(append([]string{`required-without:Id`}, ruleOfIdArr...), `|`)+`" dc:"ID数组"`+"`")
 			api.res = append(api.res, `Id *`+dataType+" `"+`json:"id,omitempty" dc:"ID"`+"`")
 		default:
-			api.filterOfFixed = append(api.filterOfFixed,
+			api.listFilterOfFixed = append(api.listFilterOfFixed,
 				`Id string `+"`"+`json:"id,omitempty" v:"max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`",
 				`IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" v:"distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`",
 				`ExcId string `+"`"+`json:"`+fieldStyleOfExcId+`,omitempty" v:"max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"排除ID"`+"`",
 				`ExcIdArr []string `+"`"+`json:"`+fieldStyleOfExcIdArr+`,omitempty" v:"distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"排除ID数组"`+"`",
 			)
 			api.info = append(api.info, `Id string `+"`"+`json:"id" v:"required|max-length:`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`")
-			api.update = append(api.update, `Id string `+"`"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`")
-			api.update = append(api.update, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"required-without:Id|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
-			api.delete = append(api.delete, `Id string `+"`"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`")
-			api.delete = append(api.delete, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"required-without:Id|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
+			api.updateDeleteFilter = append(api.updateDeleteFilter, `Id string `+"`"+`json:"id,omitempty" v:"required-without:IdArr|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID"`+"`")
+			api.updateDeleteFilter = append(api.updateDeleteFilter, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" v:"required-without:Id|distinct|foreach|length:1,`+tpl.Handle.Id.List[0].FieldLimitStr+`" dc:"ID数组"`+"`")
 			api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 		}
 	} else {
-		api.filterOfFixed = append(api.filterOfFixed,
+		api.listFilterOfFixed = append(api.listFilterOfFixed,
 			`Id string `+"`"+`json:"id,omitempty" v:"" dc:"ID"`+"`",
 			`IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" v:"distinct|foreach|min-length:1" dc:"ID数组"`+"`",
 			`ExcId string `+"`"+`json:"`+fieldStyleOfExcId+`,omitempty" v:"" dc:"排除ID"`+"`",
 			`ExcIdArr []string `+"`"+`json:"`+fieldStyleOfExcIdArr+`,omitempty" v:"distinct|foreach|min-length:1" dc:"排除ID数组"`+"`",
 		)
 		api.info = append(api.info, `Id string `+"`"+`json:"id" v:"required" dc:"ID"`+"`")
-		api.update = append(api.update, `Id string `+"`"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|min-length:1" dc:"ID"`+"`")
-		api.update = append(api.update, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"required-without:Id|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
-		api.delete = append(api.delete, `Id string `+"`"+`json:"id,omitempty" filter:"id,omitempty" data:"-" v:"required-without:IdArr|min-length:1" dc:"ID"`+"`")
-		api.delete = append(api.delete, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" filter:"`+fieldStyleOfIdArr+`,omitempty" data:"-" v:"required-without:Id|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
+		api.updateDeleteFilter = append(api.updateDeleteFilter, `Id string `+"`"+`json:"id,omitempty" v:"required-without:IdArr|min-length:1" dc:"ID"`+"`")
+		api.updateDeleteFilter = append(api.updateDeleteFilter, `IdArr []string `+"`"+`json:"`+fieldStyleOfIdArr+`,omitempty" v:"required-without:Id|distinct|foreach|min-length:1" dc:"ID数组"`+"`")
 		api.res = append(api.res, `Id *string `+"`"+`json:"id,omitempty" dc:"ID"`+"`")
 	}
 
 	if len(tpl.Handle.Label.List) == 1 && (!tpl.Handle.Label.IsDefault || slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeChar}, tpl.Handle.Label.List[0].FieldType)) {
-		// api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:`+tpl.Handle.Label.List[0].FieldLimitStr+`" dc:"`+tpl.Handle.Label.List[0].FieldDesc+`。常用于前端组件"`+"`")
-		api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:`+tpl.Handle.Label.List[0].FieldLimitStr+`|regex:^[\\p{L}\\p{N}_-]+$" dc:"搜索关键词。常用于前端组件"`+"`")
+		// api.listFilterOfFixed = append(api.listFilterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:`+tpl.Handle.Label.List[0].FieldLimitStr+`" dc:"`+tpl.Handle.Label.List[0].FieldDesc+`。常用于前端组件"`+"`")
+		api.listFilterOfFixed = append(api.listFilterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:`+tpl.Handle.Label.List[0].FieldLimitStr+`|regex:^[\\p{L}\\p{N}_-]+$" dc:"搜索关键词。常用于前端组件"`+"`")
 	} else {
-		api.filterOfFixed = append(api.filterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"搜索关键词。常用于前端组件"`+"`")
+		api.listFilterOfFixed = append(api.listFilterOfFixed, `Label string `+"`"+`json:"label,omitempty" v:"max-length:30|regex:^[\\p{L}\\p{N}_-]+$" dc:"搜索关键词。常用于前端组件"`+"`")
 	}
 	api.res = append(api.res, `Label *string `+"`"+`json:"label,omitempty" dc:"标签。常用于前端组件"`+"`")
 	return
@@ -519,7 +532,7 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.createType.Method = internal.ReturnEmpty
 		apiField.updateType.Method = internal.ReturnEmpty
 
-		apiField.filterOfFixed = append(apiField.filterOfFixed,
+		apiField.listFilterOfFixed = append(apiField.listFilterOfFixed,
 			`TimeRangeStart *gtime.Time `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_start`)+`,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`+"`",
 			`TimeRangeEnd   *gtime.Time `+"`"+`json:"`+internal.GetStrByFieldStyle(tpl.FieldStyle, `time_range_end`)+`,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`+"`",
 		)
@@ -676,7 +689,7 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 	for _, v := range tplEM.FieldList {
 		apiTmp.Add(getApiField(tplEM.tpl, v), v, tplEM.TableType)
 	}
-	api.filter = append(api.filter, apiTmp.filter...)
+	api.listFilter = append(api.listFilter, apiTmp.listFilter...)
 	if len(tplEM.FieldList) == 1 {
 		v := tplEM.FieldList[0]
 
@@ -839,10 +852,10 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 
 		// apiField.saveRule.DataTypeName = append([]string{`distinct`}, apiField.saveRule.GetData()...)
 		if apiField.createType.GetData() != `` {
-			api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.createType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
+			api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.createType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
 		}
 		if apiField.updateType.GetData() != `` {
-			api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.updateType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
+			api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.updateType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"`+gstr.Join(append([]string{`distinct`}, apiField.saveRule.GetData()...), `|`)+`" dc:"`+v.FieldDesc+`"`+"`")
 		}
 		if apiField.resType.GetData() != `` {
 			api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVar)+` `+apiField.resType.GetData()+` `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" dc:"`+v.FieldDesc+`"`+"`")
@@ -850,10 +863,10 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 	} else {
 		api.create = append(api.create, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.create...), `
 		`)+`
-	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
+	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
 		api.update = append(api.update, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.update...), `
 		`)+`
-	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" filter:"-" data:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
+	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" v:"" dc:"列表"`+"`")
 		api.res = append(api.res, gstr.CaseCamel(tplEM.FieldVar)+` []struct {`+gstr.Join(append([]string{``}, apiTmp.res...), `
 		`)+`
 	} `+"`"+`json:"`+tplEM.FieldVar+`,omitempty" dc:"列表"`+"`")

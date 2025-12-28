@@ -290,7 +290,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 // 新增
 func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `CreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{` + "`data`" + `}})` + loginDataStr + `
+	data := gconv.Map(req.` + tpl.TableCaseCamel + `CreateData, gconv.MapOption{Deep: true, OmitEmpty: true})` + loginDataStr + `
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
@@ -319,8 +319,8 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Create(ctx context.Context, re
 // 修改
 func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `UpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{` + "`filter`" + `}})
-	data := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{` + "`data`" + `}})
+	filter := gconv.Map(req.` + tpl.TableCaseCamel + `UpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
+	data := gconv.Map(req.` + tpl.TableCaseCamel + `UpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	` + gstr.Join(append(controller.update, ``), `
 	`) + `if len(data) == 0 {
 		err = utils.NewErrorCode(ctx, 89999999, ` + "``" + `)
@@ -350,7 +350,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Update(ctx context.Context, re
 // 删除
 func (controllerThis *` + tpl.TableCaseCamel + `) Delete(ctx context.Context, req *api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `DeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	filter := gconv.Map(req, gconv.MapOption{Deep: true, OmitEmpty: true, Tags: []string{` + "`filter`" + `}})` + loginFilterStr + `
+	filter := gconv.Map(req.` + tpl.TableCaseCamel + `UpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})` + loginFilterStr + `
 	/**--------参数处理 结束--------**/
 `
 		if option.IsAuthAction {
