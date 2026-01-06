@@ -175,7 +175,7 @@ func GetFileBytesByLocal(ctx context.Context, fileUrl string, serverNameOpt ...s
 
 // 获取文件内容（远程文件）
 func GetFileBytesByRemote(ctx context.Context, fileUrl string) (fileBytes []byte, err error) {
-	res, err := HttpClient().Get(ctx, fileUrl)
+	res, err := NewHttpClient(ctx).Get(ctx, fileUrl)
 	if err != nil {
 		return
 	}

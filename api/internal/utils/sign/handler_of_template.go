@@ -20,13 +20,11 @@ package sign
 type HandlerOfTemplate struct {
 	Ctx    context.Context
 	sign   model.Sign
-	client *gclient.Client
+	client *utils.HttpClient
 }
 
-var client = g.Client().SetTimeout(30 * time.Second)
-
 func NewHandlerOfTemplate(ctx context.Context, sceneIdOpt ...string) *HandlerOfTemplate {
-	handlerObj := &HandlerOfTemplate{Ctx: ctx, client: client}
+	handlerObj := &HandlerOfTemplate{Ctx: ctx, client: utils.NewHttpClient(ctx, utils.HttpClientConfig{Timeout: 30 * time.Second})}
 	var sceneInfo gdb.Record
 	if len(sceneIdOpt) == 0 {
 		sceneInfo = utils.GetCtxSceneInfo(ctx)

@@ -1,13 +1,13 @@
 package aliyun
 
 import (
+	"api/internal/utils"
 	"api/internal/utils/id-card/model"
 	"context"
 	"errors"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/net/gclient"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -16,7 +16,7 @@ type IdCard struct {
 	Ctx     context.Context
 	Url     string `json:"url"`
 	Appcode string `json:"appcode"`
-	client  *gclient.Client
+	client  *utils.HttpClient
 }
 
 func NewIdCard(ctx context.Context, config map[string]any) model.IdCard {
@@ -25,7 +25,7 @@ func NewIdCard(ctx context.Context, config map[string]any) model.IdCard {
 	if obj.Url == `` || obj.Appcode == `` {
 		panic(`缺少插件配置：实名认证-阿里云`)
 	}
-	obj.client = g.Client().SetHeaderMap(g.MapStrStr{`Authorization`: `APPCODE ` + obj.Appcode})
+	obj.client = utils.NewHttpClient(ctx, utils.HttpClientConfig{Header: map[string]string{`Authorization`: `APPCODE ` + obj.Appcode}})
 	return obj
 }
 

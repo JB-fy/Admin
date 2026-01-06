@@ -1,13 +1,13 @@
 package wx
 
 import (
+	"api/internal/utils"
 	"context"
 	"errors"
 	"net/url"
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/net/gclient"
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
@@ -15,7 +15,7 @@ type OneClick struct {
 	Host   string `json:"host"`
 	AppId  string `json:"app_id"`
 	Secret string `json:"secret"`
-	client *gclient.Client
+	client *utils.HttpClient
 }
 
 func NewOneClick(ctx context.Context, config map[string]any) *OneClick {
@@ -24,7 +24,7 @@ func NewOneClick(ctx context.Context, config map[string]any) *OneClick {
 	if obj.Host == `` || obj.AppId == `` || obj.Secret == `` {
 		panic(`缺少插件配置：一键登录-微信`)
 	}
-	obj.client = g.Client()
+	obj.client = utils.NewHttpClient(ctx)
 	return obj
 }
 

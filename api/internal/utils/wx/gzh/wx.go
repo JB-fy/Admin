@@ -15,7 +15,6 @@ import (
 
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/net/gclient"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -29,7 +28,7 @@ type Wx struct {
 	Token          string `json:"token"`
 	EncodingAESKey string `json:"encoding_aes_key"`
 	AESKey         []byte
-	client         *gclient.Client
+	client         *utils.HttpClient
 }
 
 func NewWx(ctx context.Context, config map[string]any) *Wx {
@@ -39,7 +38,7 @@ func NewWx(ctx context.Context, config map[string]any) *Wx {
 		panic(`缺少插件配置：微信-公众号`)
 	}
 	obj.AESKey, _ = base64.StdEncoding.DecodeString(obj.EncodingAESKey + `=`)
-	obj.client = g.Client()
+	obj.client = utils.NewHttpClient(ctx)
 	return obj
 }
 

@@ -156,7 +156,7 @@ func FileReadLineByLocal(filePath string, callback func(line []byte) (bool, erro
 
 // 远程文件逐行读取
 func FileReadLineByRemote(ctx context.Context, fileUrl string, callback func(line []byte) (bool, error)) (err error) {
-	res, err := HttpClient().Get(ctx, fileUrl)
+	res, err := NewHttpClient(ctx).Get(ctx, fileUrl)
 	if err != nil {
 		return
 	}
