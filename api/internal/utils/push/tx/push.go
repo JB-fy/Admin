@@ -1,6 +1,7 @@
 package tx
 
 import (
+	"api/internal/utils"
 	"api/internal/utils/push/model"
 	"context"
 	"crypto/hmac"
@@ -23,7 +24,7 @@ type Push struct {
 	Host      string `json:"host"`
 	AccessID  string `json:"access_id"`
 	SecretKey string `json:"secret_key"`
-	client    *gclient.Client
+	client    *utils.HttpClient
 }
 
 func NewPush(ctx context.Context, config map[string]any) model.Push {
@@ -33,25 +34,30 @@ func NewPush(ctx context.Context, config map[string]any) model.Push {
 		panic(`缺少插件配置：推送-腾讯移动推送`)
 	}
 	/* // Basic Auth 认证
-	obj.client = g.Client().SetHeaderMap(g.MapStrStr{
+	obj.client = utils.NewHttpClient(ctx, utils.HttpClientConfig{Header: map[string]string{
 		`Content-Type`:  `application/json`,
 		`Authorization`: `Basic ` + base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf(`%d:%s`, obj.AccessID, obj.SecretKey))),
-	}) */
+	}}) */
 
 	//签名认证（推荐）。注意：obj.client只初始化一次，请求前不能含有动态数据，否则会造成全局污染。所以动态请求头TimeStamp和Sign必须在中间件中处理，中间件内的r *http.Request参数是请求前临时生成的并且唯一，故不会污染全局
-	obj.client = g.Client().SetHeaderMap(g.MapStrStr{
-		`Content-Type`: `application/json`,
-		`AccessId`:     obj.AccessID,
-	})
-	obj.client.Use(func(c *gclient.Client, r *http.Request) (resp *gclient.Response, err error) {
-		timeStamp := gtime.Now().Unix()
-		bodyBytes, _ := io.ReadAll(r.Body)
-		reqDataJson := string(bodyBytes)
-		r.Header.Set(`TimeStamp`, gconv.String(timeStamp))
-		r.Header.Set(`Sign`, obj.sign(timeStamp, reqDataJson))
+	obj.client = utils.NewHttpClient(ctx, utils.HttpClientConfig{
+		Header: map[string]string{
+			`Content-Type`: `application/json`,
+			`AccessId`:     obj.AccessID,
+		},
+		HandlerCode: `pushTxClient`,
+		HandlerFuncArr: []gclient.HandlerFunc{
+			func(c *gclient.Client, r *http.Request) (resp *gclient.Response, err error) {
+				timeStamp := gtime.Now().Unix()
+				bodyBytes, _ := io.ReadAll(r.Body)
+				reqDataJson := string(bodyBytes)
+				r.Header.Set(`TimeStamp`, gconv.String(timeStamp))
+				r.Header.Set(`Sign`, obj.sign(timeStamp, reqDataJson))
 
-		resp, err = c.Next(r)
-		return
+				resp, err = c.Next(r)
+				return
+			},
+		},
 	})
 	return obj
 }

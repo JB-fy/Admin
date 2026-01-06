@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/gclient"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -21,10 +22,12 @@ type HttpClient struct {
 }
 
 type HttpClientConfig struct {
-	Timeout      time.Duration     `json:"timeout"`
-	Header       map[string]string `json:"header"`
-	ProxyUrl     string            `json:"proxy_url"`
-	IsFileUpload bool              `json:"is_file_upload"`
+	Timeout        time.Duration         `json:"timeout,omitempty"`
+	Header         map[string]string     `json:"header,omitempty"`
+	HandlerFuncArr []gclient.HandlerFunc `json:"-"`
+	HandlerCode    string                `json:"handler_code,omitempty"` //设置HandlerFuncArr对应的标识
+	ProxyUrl       string                `json:"proxy_url,omitempty"`
+	IsFileUpload   bool                  `json:"is_file_upload,omitempty"`
 }
 
 var (
@@ -37,7 +40,7 @@ func NewHttpClient(ctx context.Context, configOpt ...HttpClientConfig) (obj *Htt
 	if len(configOpt) > 0 {
 		config = configOpt[0]
 	}
-	key := gmd5.MustEncrypt(config)
+	key := gmd5.MustEncrypt(gjson.MustEncode(config))
 	ok := false
 	if obj, ok = httpClientMap[key]; ok { //先读一次（不加锁）
 		return
@@ -56,6 +59,7 @@ func NewHttpClient(ctx context.Context, configOpt ...HttpClientConfig) (obj *Htt
 	client.SetTimeout(config.Timeout)
 	client.SetHeaderMap(config.Header)
 	client.SetProxy(config.ProxyUrl)
+	client.Use(config.HandlerFuncArr...)
 	if config.IsFileUpload {
 		client.Use(func(c *gclient.Client, r *http.Request) (resp *gclient.Response, err error) {
 			query := r.URL.Query()
