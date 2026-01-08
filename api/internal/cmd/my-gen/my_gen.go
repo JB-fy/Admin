@@ -81,10 +81,12 @@ package my_gen
 
 import (
 	"api/internal/cmd/my-gen/internal"
+	"api/internal/consts"
 	daoAuth "api/internal/dao/auth"
 	"context"
 	"fmt"
 	"slices"
+	"time"
 
 	"github.com/fatih/color"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -102,6 +104,8 @@ type myGenOption struct {
 	DbTable            string `json:"dbTable"`            //db表。示例：auth_test
 	RemovePrefixCommon string `json:"removePrefixCommon"` //要删除的共有前缀，没有可为空。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致
 	RemovePrefixAlone  string `json:"removePrefixAlone"`  //要删除的独有前缀。removePrefixCommon + removePrefixAlone必须和hack/config.yaml内removePrefix保持一致，示例：auth_
+	CacheType          uint8  `json:"cacheType"`          //缓存类型：0不缓存 1内存缓存 2Redis缓存
+	CacheTime          string `json:"cacheTime"`          //缓存时间
 	IsApi              bool   `json:"isApi"`              //是否生成后端接口文件
 	/*
 		是否重置logic层。一般情况下不建议重置，原因：logic层生成基本不会有任何变化，且常会在该层手写一些逻辑验证和自定义方法。只建议在以下两种情况下重置：
@@ -133,7 +137,7 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 	option := createOption(ctx, parser)
 	tpl := createTpl(ctx, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true, false)
 
-	genDao(tpl) // dao模板生成
+	genDao(option, tpl) // dao模板生成
 
 	if option.IsApi {
 		genApi(option, tpl)           // api模板生成
@@ -227,6 +231,63 @@ func createOption(ctx context.Context, parser *gcmd.Parser) (option myGenOption)
 			break
 		}
 		option.RemovePrefixAlone = gcmd.Scan(color.RedString(`    要删除的独有前缀不存在，请重新输入，默认(空)：`))
+	}
+	// 缓存类型：0不缓存 1内存缓存 2Redis缓存
+	cacheType, ok := optionMap[`cacheType`]
+	if !ok {
+		cacheType = gcmd.Scan(
+			color.HiYellowString(`> 是否生成缓存代码：`)+"\n",
+			color.HiYellowString(`    0：不缓存`)+"\n",
+			color.HiYellowString(`    1：内存缓存`)+"\n",
+			color.HiYellowString(`    2：Redis缓存（注意：选择该缓存时，如项目中已存在该表的操作代码，需人工检查修改删除操作是否触发后置Hook，未触发时，需执行SetIdArr()和HookUpdate或HookDelete）`)+"\n",
+			color.BlueString(`> 请选择缓存类型？默认(0)：`),
+		)
+	}
+cacheTypeEnd:
+	for {
+		switch cacheType {
+		case ``, `0`, `1`, `2`:
+			option.CacheType = gconv.Uint8(cacheType)
+			break cacheTypeEnd
+		default:
+			cacheType = gcmd.Scan(color.RedString(`    输入错误，请重新输入，默认(0)：`))
+		}
+	}
+	if option.CacheType > 0 {
+		//缓存时间
+		switch option.CacheType {
+		case 1: //内存缓存
+			max := gconv.String(gconv.Uint8(24 * time.Hour / consts.CACHE_LOCAL_INTERVAL_MINUTE))
+			option.CacheTime, ok = optionMap[`cacheTime`]
+			if !ok {
+				option.CacheTime = gcmd.Scan(color.BlueString(`> 请输入缓存时间，范围0～` + max + `，默认(0)：`))
+			}
+		cacheTimeEnd1:
+			for {
+				if option.CacheTime == `` {
+					option.CacheTime = `0`
+				}
+				if g.Validator().Rules(`integer|between:0,`+max).Data(option.CacheTime).Run(ctx) == nil {
+					break cacheTimeEnd1
+				}
+				option.CacheTime = gcmd.Scan(color.RedString(`    输入错误，请重新输入，缓存时间，范围0～` + max + `，默认(0)：`))
+			}
+		case 2: //Redis缓存
+			option.CacheTime, ok = optionMap[`cacheTime`]
+			if !ok {
+				option.CacheTime = gcmd.Scan(color.BlueString(`> 请输入缓存时间，单位：秒，默认(0)：`))
+			}
+		cacheTimeEnd2:
+			for {
+				if option.CacheTime == `` {
+					option.CacheTime = `0`
+				}
+				if g.Validator().Rules(`integer|min:0`).Data(option.CacheTime).Run(ctx) == nil {
+					break cacheTimeEnd2
+				}
+				option.CacheTime = gcmd.Scan(color.RedString(`    输入错误，请重新输入，缓存时间，单位：秒，默认(0)：`))
+			}
+		}
 	}
 	// 是否生成后端接口文件
 	isApi, ok := optionMap[`isApi`]
@@ -514,6 +575,8 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 		`-dbTable=` + option.DbTable,
 		`-removePrefixCommon=` + option.RemovePrefixCommon,
 		`-removePrefixAlone=` + option.RemovePrefixAlone,
+		`-cacheType=` + gconv.String(option.CacheType),
+		`-cacheTime=` + option.CacheTime,
 	}
 	myGenCommandArr = append(myGenCommandArr, `-isApi=`+gconv.String(gconv.Uint(option.IsApi)))
 	if option.IsApi {
@@ -547,10 +610,11 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 	saveFile := gfile.SelfDir() + `/internal/cmd/my-gen/log/` + saveFileName + `.log`
 	if gfile.IsFile(saveFile) {
 		log := gfile.GetContents(saveFile)
-		if gstr.Pos(log, myGenCommand) == -1 {
+		myGenCommandPoint := `./main myGen -dbGroup=` + option.DbGroup + ` -dbTable=` + option.DbTable
+		if gstr.Pos(log, myGenCommandPoint) == -1 {
 			log = log + "\r\n" + logStr
 		} else {
-			match, _ := gregex.MatchString(`(`+gregex.Quote(myGenCommand)+`[\s\S]*?)(((\r|\n)\./main)|$)`, log)
+			match, _ := gregex.MatchString(`(`+gregex.Quote(myGenCommandPoint)+`[\s\S]*?)(((\r|\n)\./main)|$)`, log)
 			log = gstr.Replace(log, match[1], logStr)
 		}
 		gfile.PutContents(saveFile, log)

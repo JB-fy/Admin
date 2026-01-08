@@ -4,7 +4,9 @@ import (
 	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
 	"fmt"
+	"regexp"
 	"slices"
+	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/os/gfile"
@@ -94,7 +96,7 @@ func (daoThis *myGenDao) Unique() {
 }
 
 // dao生成
-func genDao(tpl *myGenTpl) {
+func genDao(option myGenOption, tpl *myGenTpl) {
 	tpl.gfGenDao(true) //dao文件生成
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	tplDao := gfile.GetContents(saveFile)
@@ -113,11 +115,11 @@ func genDao(tpl *myGenTpl) {
 		dao.Add(getDaoField(tpl, v))
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
-		genDao(v.tpl)
+		genDao(option, v.tpl)
 		dao.Merge(getDaoExtendMiddleOne(v))
 	}
 	for _, v := range tpl.Handle.MiddleTableOneList {
-		genDao(v.tpl)
+		genDao(option, v.tpl)
 		dao.Merge(getDaoExtendMiddleOne(v))
 	}
 	for _, v := range tpl.Handle.ExtendTableManyList {
@@ -350,6 +352,104 @@ func genDao(tpl *myGenTpl) {
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` + "` AS `" + `+joinTable, joinTable+` + "`.`" + `+Xxxx.Columns().XxxxId+` + "` = `" + `+daoModel.DbTable+` + "`.`" + `+daoThis.Columns().XxxxId) */`
 		tplDao = gstr.Replace(tplDao, joinParsePoint, joinParsePoint+gstr.Join(append([]string{``}, dao.joinParse...), `
 		`), 1)
+	}
+
+	if tpl.Table == option.DbTable && tpl.Group == option.DbGroup && option.CacheType != 0 {
+		idParamArr := []string{}
+		idFormatArr := []string{}
+		idFieldArr := []string{}
+		for _, v := range tpl.Handle.Id.List {
+			id := gstr.CaseCamelLower(v.FieldCaseCamel)
+			if len(tpl.Handle.Id.List) == 1 {
+				id = `id`
+			} else {
+				idFieldArr = append(idFieldArr, id)
+			}
+			switch v.FieldType {
+			case internal.TypeInt:
+				idParamArr = append(idParamArr, id+` int`)
+				idFormatArr = append(idFormatArr, `%d`)
+			case internal.TypeIntU:
+				idParamArr = append(idParamArr, id+` uint`)
+				idFormatArr = append(idFormatArr, `%d`)
+			default:
+				idParamArr = append(idParamArr, id+` string`)
+				idFormatArr = append(idFormatArr, `%s`)
+			}
+		}
+		idStr := `id`
+		if len(tpl.Handle.Id.List) > 1 {
+			idStr = `fmt.Sprintf(` + "`" + strings.Join(idFormatArr, `|`) + "`" + `, ` + strings.Join(idFieldArr, `, `) + `)`
+		}
+		cacheGetInfoFuncStr := `func (daoThis *` + gstr.CaseCamelLower(tpl.TableCaseCamel) + `Dao) CacheGetInfo(ctx context.Context, ` + strings.Join(idParamArr, `, `) + `) (info gdb.Record, err error) {
+	info, err = cache.{DbDataType}.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), ` + idStr + `, {ttl})
+	return
+}`
+		switch option.CacheType {
+		// case 0: //不缓存
+		case 1: //内存缓存
+			cacheGetInfoFuncStr = strings.Replace(cacheGetInfoFuncStr, `{DbDataType}`, `DbDataLocal`, 1)
+			cacheGetInfoFuncStr = strings.Replace(cacheGetInfoFuncStr, `{ttl}`, `0`, 1)
+
+			saveFileOfDbDataLocal := gfile.SelfDir() + `/internal/cache/db_data_local.go`
+			tplDbDataLocal := gfile.GetContents(saveFileOfDbDataLocal)
+			dbDataLocalTableStr := "`" + option.DbGroup + `:` + option.DbTable + "`: "
+			if strings.Contains(tplDbDataLocal, dbDataLocalTableStr) {
+				tplDbDataLocal = regexp.MustCompile(dbDataLocalTableStr+`[^,]+`).ReplaceAllString(tplDbDataLocal, dbDataLocalTableStr+option.CacheTime)
+			} else {
+				dbDataLocalPoint := `
+	},
+	methodCode:`
+				tplDbDataLocal = strings.Replace(tplDbDataLocal, dbDataLocalPoint, dbDataLocalTableStr+option.CacheTime+`,
+		`+dbDataLocalPoint, 1)
+			}
+			utils.FilePutFormat(saveFileOfDbDataLocal, []byte(tplDbDataLocal)...)
+		case 2: //Redis缓存
+			cacheGetInfoFuncStr = strings.Replace(cacheGetInfoFuncStr, `{DbDataType}`, `DbData`, 1)
+			cacheTime := option.CacheTime
+			if cacheTime != `0` {
+				cacheTime = cacheTime + `*time.Second`
+			}
+			cacheGetInfoFuncStr = strings.Replace(cacheGetInfoFuncStr, `{ttl}`, cacheTime, 1)
+
+			tplDao = strings.Replace(tplDao, `if len(daoModel.AfterUpdate) > 0 {
+			m = m.Hook(daoThis.HookUpdate(daoModel))
+			if len(daoModel.SaveData) == 0 { //解决主表无数据更新无法触发扩展表更新的问题
+				m = m.Data(reflect.ValueOf(*daoThis.Columns()).Field(0).String(), struct{}{})
+			}
+		}`, `// if len(daoModel.AfterUpdate) > 0 {
+		m = m.Hook(daoThis.HookUpdate(daoModel))
+		if len(daoModel.SaveData) == 0 { //解决主表无数据更新无法触发扩展表更新的问题
+			m = m.Data(reflect.ValueOf(*daoThis.Columns()).Field(0).String(), struct{}{})
+		}
+		// }`, 1)
+			tplDao = strings.Replace(tplDao, `/* row, _ := result.RowsAffected()
+			if row == 0 {
+				return
+			} */`, `row, _ := result.RowsAffected()
+			if row == 0 {
+				return
+			}`, -1)
+			hookUpdatePoint := `return
+		},
+	}
+}
+
+// hook delete`
+			tplDao = strings.Replace(tplDao, hookUpdatePoint, `cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
+			`+hookUpdatePoint, 1)
+			hookDeletePoint := `return
+		},
+	}
+}
+
+// 解析group`
+			tplDao = strings.Replace(tplDao, hookDeletePoint, `cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
+			`+hookDeletePoint, 1)
+		}
+		tplDao += `
+` + cacheGetInfoFuncStr + `
+`
 	}
 
 	utils.FilePutFormat(saveFile, []byte(tplDao)...)
