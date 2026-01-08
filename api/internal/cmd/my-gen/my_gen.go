@@ -86,6 +86,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -599,8 +600,7 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 			`-isUpdate=`+gconv.String(gconv.Uint(option.IsUpdate)),
 			`-isDelete=`+gconv.String(gconv.Uint(option.IsDelete)))
 	}
-	myGenCommand := gstr.Join(myGenCommandArr, ` `)
-	logStr := myGenCommand + gstr.Join(append([]string{``}, tableCmdLog...), `
+	logStr := strings.Join(myGenCommandArr, ` `) + gstr.Join(append([]string{``}, tableCmdLog...), `
     `)
 
 	saveFileName := option.SceneId
@@ -610,7 +610,7 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 	saveFile := gfile.SelfDir() + `/internal/cmd/my-gen/log/` + saveFileName + `.log`
 	if gfile.IsFile(saveFile) {
 		log := gfile.GetContents(saveFile)
-		myGenCommandPoint := `./main myGen -dbGroup=` + option.DbGroup + ` -dbTable=` + option.DbTable
+		myGenCommandPoint := strings.Join(myGenCommandArr[:4], ` `) + ` `
 		if gstr.Pos(log, myGenCommandPoint) == -1 {
 			log = log + "\r\n" + logStr
 		} else {
