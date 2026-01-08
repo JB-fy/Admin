@@ -9,7 +9,7 @@ const (
 	ENV_SERVER_NETWORK_IP = `SERVER_NETWORK_IP` //外网ip
 	ENV_SERVER_LOCAL_IP   = `SERVER_LOCAL_IP`   //内网ip
 
-	CACHE_LOCAL_INTERVAL_MINUTE = 15 //清空本地缓存间隔时间。单位：分钟
+	CACHE_LOCAL_INTERVAL_MINUTE = 15 * time.Minute //清空本地缓存间隔时间
 
 	CACHE_TIME_DEFAULT = 7 * 24 * time.Hour //默认缓存时间
 

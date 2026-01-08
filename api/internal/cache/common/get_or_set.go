@@ -16,7 +16,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var GetOrSet = getOrSet{goCache: cache.New(0, consts.CACHE_LOCAL_INTERVAL_MINUTE*time.Minute)}
+var GetOrSet = getOrSet{goCache: cache.New(0, consts.CACHE_LOCAL_INTERVAL_MINUTE)}
 
 type getOrSet struct {
 	goCache *cache.Cache

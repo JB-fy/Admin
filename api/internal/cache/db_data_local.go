@@ -57,7 +57,7 @@ func (cacheThis *dbDataLocal) Flush(ctx context.Context) {
 	totalMinute := hour*60 + minute
 	cacheThis.goCacheMap.Range(func(key, value any) bool {
 		if cacheKey := key.(uint8); cacheKey > 0 {
-			if totalMinute%(int(cacheKey)*consts.CACHE_LOCAL_INTERVAL_MINUTE) == 0 {
+			if totalMinute%(int(cacheKey)*int(consts.CACHE_LOCAL_INTERVAL_MINUTE/time.Minute)) == 0 {
 				value.(*cache.Cache).Flush()
 			}
 		} else if hour == 3 && minute == 0 { //第一个缓存库默认凌晨3点清空
