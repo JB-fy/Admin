@@ -376,7 +376,7 @@ func (daoThis *adminDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 
-			AdminPrivacy.CtxDaoModel(ctx).Filter(AdminPrivacy.Columns().AdminId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
+			AdminPrivacy.CtxDaoModel(ctx).SetIdArr(daoModel.IdArr).HookDelete().Delete()
 			daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return

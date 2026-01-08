@@ -385,7 +385,7 @@ func (daoThis *adminDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 
-			AdminPrivacy.CtxDaoModel(ctx).Filter(AdminPrivacy.Columns().AdminId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
+			AdminPrivacy.CtxDaoModel(ctx).SetIdArr(daoModel.IdArr).HookDelete().Delete()
 			daoAuth.RoleRelOfOrgAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfOrgAdmin.Columns().AdminId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
@@ -466,6 +466,11 @@ func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 
 // Add your custom methods and functionality below.
 
+func (daoThis *adminDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
+	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
+	return
+}
+
 func (daoThis *adminDao) JoinLoginName(orgId uint, loginName string) string {
 	if loginName == `` {
 		return ``
@@ -478,9 +483,4 @@ func (daoThis *adminDao) GetLoginName(loginName string) string {
 		loginName = gstr.SubStr(loginName, index+1)
 	}
 	return loginName
-}
-
-func (daoThis *adminDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
-	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
-	return
 }

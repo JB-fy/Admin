@@ -387,7 +387,7 @@ func (daoThis *usersDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 
-			Privacy.CtxDaoModel(ctx).Filter(Privacy.Columns().UserId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
+			Privacy.CtxDaoModel(ctx).SetIdArr(daoModel.IdArr).HookDelete().Delete()
 			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
 		},

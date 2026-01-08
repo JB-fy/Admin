@@ -577,7 +577,9 @@ func logMyGenCommand(option myGenOption, tableCmdLog []string) {
 		`-removePrefixCommon=` + option.RemovePrefixCommon,
 		`-removePrefixAlone=` + option.RemovePrefixAlone,
 		`-cacheType=` + gconv.String(option.CacheType),
-		`-cacheTime=` + option.CacheTime,
+	}
+	if option.CacheType != 0 {
+		myGenCommandArr = append(myGenCommandArr, `-cacheTime=`+option.CacheTime)
 	}
 	myGenCommandArr = append(myGenCommandArr, `-isApi=`+gconv.String(gconv.Uint(option.IsApi)))
 	if option.IsApi {

@@ -598,6 +598,11 @@ func (daoThis *menuDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel)
 
 // Add your custom methods and functionality below.
 
+func (daoThis *menuDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
+	info, err = cache.DbDataLocal.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
+	return
+}
+
 func (daoThis *menuDao) CacheGetList(ctx context.Context, sceneId string) (list gdb.Result, err error) {
 	list, err = cache.DbDataLocal.GetOrSetList(ctx, daoThis.CtxDaoModel(ctx), `scene_id_`+sceneId, func(daoModel *daoIndex.DaoModel) (value gdb.Result, ttl time.Duration, err error) {
 		value, err = daoModel.ResetNew().Master().Fields(append(daoThis.ColumnArr(), `id`, `label`, `tree`, `show_menu`)...).Filter(daoThis.Columns().SceneId, sceneId).All()

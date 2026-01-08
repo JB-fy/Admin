@@ -403,6 +403,15 @@ func genDao(option myGenOption, tpl *myGenTpl) {
 				tplDbDataLocal = strings.Replace(tplDbDataLocal, dbDataLocalPoint, dbDataLocalTableStr+option.CacheTime+`,
 		`+dbDataLocalPoint, 1)
 			}
+			if option.CacheTime == `0` {
+				if !strings.Contains(tplDbDataLocal, `// `+dbDataLocalTableStr) {
+					tplDbDataLocal = strings.Replace(tplDbDataLocal, dbDataLocalTableStr, `// `+dbDataLocalTableStr, 1)
+				}
+			} else {
+				if strings.Contains(tplDbDataLocal, `// `+dbDataLocalTableStr) {
+					tplDbDataLocal = strings.Replace(tplDbDataLocal, `// `+dbDataLocalTableStr, dbDataLocalTableStr, 1)
+				}
+			}
 			utils.FilePutFormat(saveFileOfDbDataLocal, []byte(tplDbDataLocal)...)
 		case 2: //Redis缓存
 			cacheGetInfoFuncStr = strings.Replace(cacheGetInfoFuncStr, `{DbDataType}`, `DbData`, 1)
