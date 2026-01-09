@@ -5,7 +5,7 @@ import (
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
-	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
+	"api/internal/utils/jbctx"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -84,8 +84,8 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any)
 
 // 判断操作权限
 func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionIdArr ...string) (isAuth bool, err error) {
-	loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
-	sceneInfo := get_or_set_ctx.GetCtxSceneInfo(ctx)
+	loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	sceneInfo := jbctx.GetCtxSceneInfo(ctx)
 	if sceneInfo[daoAuth.Scene.Columns().SceneId].String() == `platform` && loginInfo[daoPlatform.Admin.Columns().IsSuper].Uint8() == 1 { //平台超级管理员，无权限限制
 		isAuth = true
 		return

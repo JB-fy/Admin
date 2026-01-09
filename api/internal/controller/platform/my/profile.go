@@ -8,7 +8,7 @@ import (
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
-	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
+	"api/internal/utils/jbctx"
 	"context"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
@@ -24,7 +24,7 @@ func NewProfile() *Profile {
 
 // 个人信息
 func (controllerThis *Profile) Info(ctx context.Context, req *apiMy.ProfileInfoReq) (res *apiMy.ProfileInfoRes, err error) {
-	loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetCtxLoginInfo(ctx)
 	res = &apiMy.ProfileInfoRes{}
 	loginInfo.Struct(&res.Info)
 	return
@@ -35,7 +35,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req.ProfileUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
-	loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetCtxLoginInfo(ctx)
 	var isGetPrivacy bool
 	var privacyInfo gdb.Record
 	initPrivacyInfo := func() {
@@ -64,7 +64,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39991003, ``)
 				return
 			}
-			code, _ := cache.Code.Get(ctx, get_or_set_ctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), phone, 3) //场景：3密码修改(手机)
+			code, _ := cache.Code.Get(ctx, jbctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), phone, 3) //场景：3密码修改(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -74,7 +74,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			if req.Phone == nil {
 				continue
 			}
-			code, _ := cache.Code.Get(ctx, get_or_set_ctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), *req.Phone, 4) //场景：4绑定(手机)
+			code, _ := cache.Code.Get(ctx, jbctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), *req.Phone, 4) //场景：4绑定(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -86,7 +86,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39991003, ``)
 				return
 			}
-			code, _ := cache.Code.Get(ctx, get_or_set_ctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), phone, 5) //场景：5解绑(手机)
+			code, _ := cache.Code.Get(ctx, jbctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), phone, 5) //场景：5解绑(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -99,7 +99,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39991013, ``)
 				return
 			}
-			code, _ := cache.Code.Get(ctx, get_or_set_ctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), email, 13) //场景：13密码修改(邮箱)
+			code, _ := cache.Code.Get(ctx, jbctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), email, 13) //场景：13密码修改(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -109,7 +109,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			if req.Email == nil {
 				continue
 			}
-			code, _ := cache.Code.Get(ctx, get_or_set_ctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), *req.Email, 14) //场景：14绑定(邮箱)
+			code, _ := cache.Code.Get(ctx, jbctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), *req.Email, 14) //场景：14绑定(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -121,7 +121,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39991013, ``)
 				return
 			}
-			code, _ := cache.Code.Get(ctx, get_or_set_ctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), email, 15) //场景：15解绑(邮箱)
+			code, _ := cache.Code.Get(ctx, jbctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), email, 15) //场景：15解绑(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return

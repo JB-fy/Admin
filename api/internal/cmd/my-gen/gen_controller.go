@@ -139,11 +139,11 @@ func genController(option myGenOption, tpl *myGenTpl) {
 	if option.LoginRelId != `` {
 		loginFilterStr = `
 
-	loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetCtxLoginInfo(ctx)
 	filter[dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(option.LoginRelId) + `] = loginInfo[` + option.LoginIdStr + `]`
 		loginDataStr = `
 
-	loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetCtxLoginInfo(ctx)
 	data[dao` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `.Columns().` + gstr.CaseCamel(option.LoginRelId) + `] = loginInfo[` + option.LoginIdStr + `]`
 	}
 	if option.FilterIsStop {

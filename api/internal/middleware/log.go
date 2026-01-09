@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
+	"api/internal/utils/jbctx"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -24,7 +24,7 @@ func Log(r *ghttp.Request) {
 	if maxResBufferLength := g.Cfg().MustGet(r.GetCtx(), `logger.http.maxResBufferLength`).Int(); maxResBufferLength > 0 && r.Response.BufferLength() <= maxResBufferLength {
 		data[`res_data`] = r.Response.BufferString()
 	}
-	loginInfo := get_or_set_ctx.GetCtxLoginInfo(r.GetCtx())
+	loginInfo := jbctx.GetCtxLoginInfo(r.GetCtx())
 	if !loginInfo.IsEmpty() {
 		data[`login_id`] = loginInfo[`login_id`]
 	}

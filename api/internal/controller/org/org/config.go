@@ -6,7 +6,7 @@ import (
 	daoOrg "api/internal/dao/org"
 	"api/internal/service"
 	"api/internal/utils"
-	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
+	"api/internal/utils/jbctx"
 	"context"
 
 	"github.com/gogf/gf/v2/container/gset"
@@ -38,7 +38,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiOrg.ConfigGetReq)
 	}
 	/**--------权限验证 结束--------**/
 
-	loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetCtxLoginInfo(ctx)
 	config, err := daoOrg.Config.GetPluck(ctx, loginInfo[daoOrg.Admin.Columns().OrgId].String(), *req.ConfigKeyArr...)
 	if err != nil {
 		return
@@ -76,7 +76,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiOrg.ConfigSaveRe
 	}
 	/**--------权限验证 结束--------**/
 
-	loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetCtxLoginInfo(ctx)
 	err = daoOrg.Config.Save(ctx, loginInfo[daoOrg.Admin.Columns().OrgId].String(), config)
 	return
 }

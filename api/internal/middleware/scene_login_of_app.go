@@ -3,7 +3,7 @@ package middleware
 import (
 	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
-	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
+	"api/internal/utils/jbctx"
 	utilsToken "api/internal/utils/token"
 
 	"github.com/gogf/gf/v2/container/gvar"
@@ -56,7 +56,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 		}
 
 		info[`login_id`] = gvar.New(tokenInfo.LoginId) //所有场景追加这个字段，方便统一调用
-		get_or_set_ctx.SetCtxLoginInfo(r, info)        //用户信息保存在协程上下文
+		jbctx.SetCtxLoginInfo(r, info)                 //用户信息保存在协程上下文
 		/**--------获取用户信息并验证 结束--------**/
 
 		r.Middleware.Next()

@@ -4,7 +4,7 @@ import (
 	apiMy "api/api/org/my"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
-	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
+	"api/internal/utils/jbctx"
 	"context"
 
 	"github.com/gogf/gf/v2/util/gconv"
@@ -18,8 +18,8 @@ func NewMenu() *Menu {
 
 // 列表（树状）
 func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (res *apiMy.MenuTreeRes, err error) {
-	loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
-	sceneInfo := get_or_set_ctx.GetCtxSceneInfo(ctx)
+	loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	sceneInfo := jbctx.GetCtxSceneInfo(ctx)
 
 	/* // 表数据很小，无需这样做，且会导致数据修改无法立即生效。确实需要减轻数据库压力时可以使用
 	list, err := daoAuth.Menu.CacheGetListOfSelf(ctx, sceneInfo[daoAuth.Scene.Columns().SceneId].String(), loginInfo[`login_id`]) */

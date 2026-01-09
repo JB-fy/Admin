@@ -6,7 +6,7 @@ import (
 	daoPay "api/internal/dao/pay"
 	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
-	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
+	"api/internal/utils/jbctx"
 	"api/internal/utils/pay"
 	payModel "api/internal/utils/pay/model"
 	"context"
@@ -36,7 +36,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq)
 		return
 	}
 
-	/* sceneInfo := get_or_set_ctx.GetCtxSceneInfo(ctx)
+	/* sceneInfo := jbctx.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	switch sceneId {
 	case `app`:
@@ -82,9 +82,9 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	}
 
 	var payReq payModel.PayReq
-	switch get_or_set_ctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String() {
+	switch jbctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String() {
 	case `app`:
-		loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
+		loginInfo := jbctx.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
