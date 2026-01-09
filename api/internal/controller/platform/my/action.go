@@ -4,7 +4,7 @@ import (
 	apiMy "api/api/platform/my"
 	daoAuth "api/internal/dao/auth"
 	daoPlatform "api/internal/dao/platform"
-	"api/internal/utils"
+	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
 	"context"
 )
 
@@ -16,8 +16,8 @@ func NewAction() *Action {
 
 // 操作列表
 func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq) (res *apiMy.ActionListRes, err error) {
-	loginInfo := utils.GetCtxLoginInfo(ctx)
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
+	sceneInfo := get_or_set_ctx.GetCtxSceneInfo(ctx)
 
 	/* // 表数据很小，无需这样做，且会导致数据修改无法立即生效。确实需要减轻数据库压力时可以使用
 	var list gdb.Result

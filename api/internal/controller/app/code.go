@@ -8,6 +8,7 @@ import (
 	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
 	"api/internal/utils/email"
+	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
 	"api/internal/utils/sms"
 	"context"
 	"time"
@@ -53,7 +54,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 	case 3: //密码修改(手机)
-		loginInfo := utils.GetCtxLoginInfo(ctx)
+		loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -64,7 +65,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 	case 4: //绑定(手机)
-		loginInfo := utils.GetCtxLoginInfo(ctx)
+		loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -79,7 +80,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 	case 5: //解绑(手机)
-		loginInfo := utils.GetCtxLoginInfo(ctx)
+		loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -106,7 +107,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 	case 13: //密码修改(邮箱)
-		loginInfo := utils.GetCtxLoginInfo(ctx)
+		loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -117,7 +118,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 	case 14: //绑定(邮箱)
-		loginInfo := utils.GetCtxLoginInfo(ctx)
+		loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -132,7 +133,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 	case 15: //解绑(邮箱)
-		loginInfo := utils.GetCtxLoginInfo(ctx)
+		loginInfo := get_or_set_ctx.GetCtxLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -154,6 +155,6 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	if err != nil {
 		return
 	}
-	err = cache.Code.Set(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), to, req.Scene, code, 5*time.Minute)
+	err = cache.Code.Set(ctx, get_or_set_ctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), to, req.Scene, code, 5*time.Minute)
 	return
 }

@@ -73,9 +73,9 @@ func (handlerThis *Handler) createUploadParam() (param model.UploadParam) {
 			MaxSize:    1024 * 1024 * 1024,
 		}
 	}
-	/* sceneInfo := utils.GetCtxSceneInfo(handlerThis.Ctx)
+	/* sceneInfo := get_or_set_ctx.GetCtxSceneInfo(handlerThis.Ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
-	loginInfo := utils.GetCtxLoginInfo(handlerThis.Ctx)
+	loginInfo := get_or_set_ctx.GetCtxLoginInfo(handlerThis.Ctx)
 	loginId := loginInfo[`login_id`]
 	switch sceneId {
 	case `platform`:

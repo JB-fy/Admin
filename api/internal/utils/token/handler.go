@@ -4,6 +4,7 @@ import (
 	"api/internal/cache"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
+	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
 	"api/internal/utils/token/model"
 	"context"
 	"time"
@@ -26,7 +27,7 @@ func NewHandler(ctx context.Context, sceneIdOpt ...string) model.Handler {
 	handlerObj := &Handler{Ctx: ctx}
 	var sceneInfo gdb.Record
 	if len(sceneIdOpt) == 0 {
-		sceneInfo = utils.GetCtxSceneInfo(ctx)
+		sceneInfo = get_or_set_ctx.GetCtxSceneInfo(ctx)
 	} else {
 		sceneInfo, _ = daoAuth.Scene.CacheGetInfo(ctx, sceneIdOpt[0])
 	}

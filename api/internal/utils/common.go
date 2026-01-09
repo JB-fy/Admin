@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"path/filepath"
 
-	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
@@ -63,28 +62,6 @@ func HttpWriteJson(ctx context.Context, data map[string]any, code int, msg strin
 		resData[`msg`] = g.I18n().T(ctx, `code.`+gconv.String(code))
 	}
 	g.RequestFromCtx(ctx).Response.WriteJson(resData)
-}
-
-// 设置场景信息
-func SetCtxSceneInfo(r *ghttp.Request, info gdb.Record) {
-	r.SetCtxVar(consts.CTX_SCENE_INFO_NAME, info)
-}
-
-// 获取场景信息
-func GetCtxSceneInfo(ctx context.Context) (info gdb.Record) {
-	info, _ = ctx.Value(consts.CTX_SCENE_INFO_NAME).(gdb.Record)
-	return
-}
-
-// 设置登录身份信息
-func SetCtxLoginInfo(r *ghttp.Request, info gdb.Record) {
-	r.SetCtxVar(consts.CTX_LOGIN_INFO_NAME, info)
-}
-
-// 获取登录身份信息
-func GetCtxLoginInfo(ctx context.Context) (info gdb.Record) {
-	info, _ = ctx.Value(consts.CTX_LOGIN_INFO_NAME).(gdb.Record)
-	return
 }
 
 // 获取当前请求Url

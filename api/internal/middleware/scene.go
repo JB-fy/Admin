@@ -3,6 +3,7 @@ package middleware
 import (
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
+	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
 	"strings"
 
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -31,7 +32,7 @@ func Scene(sceneIdOpt ...string) func(r *ghttp.Request) {
 			r.SetError(utils.NewErrorCode(r.GetCtx(), 39999997, ``))
 			return
 		}
-		utils.SetCtxSceneInfo(r, sceneInfo)
+		get_or_set_ctx.SetCtxSceneInfo(r, sceneInfo)
 
 		r.Middleware.Next()
 	}

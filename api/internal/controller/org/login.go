@@ -8,6 +8,7 @@ import (
 	daoOrg "api/internal/dao/org"
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils"
+	get_or_set_ctx "api/internal/utils/get-or-set-ctx"
 	"api/internal/utils/token"
 	"context"
 	"time"
@@ -57,7 +58,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 	saltDynamic := grand.S(8)
-	err = cache.Salt.Set(ctx, utils.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), req.LoginName, saltDynamic, 5*time.Second)
+	err = cache.Salt.Set(ctx, get_or_set_ctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), req.LoginName, saltDynamic, 5*time.Second)
 	if err != nil {
 		return
 	}
@@ -90,7 +91,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneInfo := get_or_set_ctx.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	if req.Password != `` { //密码
 		password, _ := daoOrg.AdminPrivacy.CtxDaoModel(ctx).FilterPri(info[daoOrg.Admin.Columns().AdminId]).ValueStr(daoOrg.AdminPrivacy.Columns().Password)
@@ -139,7 +140,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 // 注册
 func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
 	data := g.Map{}
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneInfo := get_or_set_ctx.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	if req.Phone != `` {
 		code, _ := cache.Code.Get(ctx, sceneId, req.Phone, 1) //场景：1注册(手机)
@@ -215,7 +216,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 
 // 密码找回
 func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurrent.LoginPasswordRecoveryReq) (res *api.CommonNoDataRes, err error) {
-	sceneInfo := utils.GetCtxSceneInfo(ctx)
+	sceneInfo := get_or_set_ctx.GetCtxSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	filter := g.Map{}
 	if req.Phone != `` {
