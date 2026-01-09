@@ -27,7 +27,7 @@ func NewHandlerOfTemplate(ctx context.Context, sceneIdOpt ...string) *HandlerOfT
 	handlerObj := &HandlerOfTemplate{Ctx: ctx, client: utils.NewHttpClient(ctx, utils.HttpClientConfig{Timeout: 30 * time.Second})}
 	var sceneInfo gdb.Record
 	if len(sceneIdOpt) == 0 {
-		sceneInfo = jbctx.GetCtxSceneInfo(ctx)
+		sceneInfo = jbctx.GetSceneInfo(ctx)
 	} else {
 		sceneInfo, _ = daoAuth.Scene.CacheGetInfo(ctx, sceneIdOpt[0])
 	}

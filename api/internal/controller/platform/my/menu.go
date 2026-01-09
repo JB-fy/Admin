@@ -19,8 +19,8 @@ func NewMenu() *Menu {
 
 // 列表（树状）
 func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (res *apiMy.MenuTreeRes, err error) {
-	loginInfo := jbctx.GetCtxLoginInfo(ctx)
-	sceneInfo := jbctx.GetCtxSceneInfo(ctx)
+	loginInfo := jbctx.GetLoginInfo(ctx)
+	sceneInfo := jbctx.GetSceneInfo(ctx)
 
 	/* // 表数据很小，无需这样做，且会导致数据修改无法立即生效。确实需要减轻数据库压力时可以使用
 	var list gdb.Result

@@ -27,7 +27,7 @@ func NewHandler(ctx context.Context, sceneIdOpt ...string) model.Handler {
 	handlerObj := &Handler{Ctx: ctx}
 	var sceneInfo gdb.Record
 	if len(sceneIdOpt) == 0 {
-		sceneInfo = jbctx.GetCtxSceneInfo(ctx)
+		sceneInfo = jbctx.GetSceneInfo(ctx)
 	} else {
 		sceneInfo, _ = daoAuth.Scene.CacheGetInfo(ctx, sceneIdOpt[0])
 	}

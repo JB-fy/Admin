@@ -49,7 +49,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiOrg.AdminListReq)
 		field = controllerThis.defaultFieldOfList
 	}
 
-	loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetLoginInfo(ctx)
 	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	/**--------参数处理 结束--------**/
 
@@ -87,7 +87,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq)
 	}
 	filter := map[string]any{`id`: req.Id}
 
-	loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetLoginInfo(ctx)
 	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	/**--------参数处理 结束--------**/
 
@@ -115,7 +115,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq)
 // 新增
 func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
-	loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetLoginInfo(ctx)
 	orgId := loginInfo[daoOrg.Admin.Columns().OrgId].Uint()
 	if req.Phone != nil {
 		*req.Phone = daoOrg.Admin.JoinLoginName(orgId, *req.Phone)
@@ -128,7 +128,7 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreate
 	}
 	data := gconv.Map(req.AdminCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
-	// loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	// loginInfo := jbctx.GetLoginInfo(ctx)
 	data[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	data[daoOrg.Admin.Columns().IsSuper] = 0 //不允许创建机构超级管理员
 	/**--------参数处理 结束--------**/
@@ -151,7 +151,7 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreate
 // 修改
 func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetLoginInfo(ctx)
 	orgId := loginInfo[daoOrg.Admin.Columns().OrgId].Uint()
 	if req.Phone != nil {
 		*req.Phone = daoOrg.Admin.JoinLoginName(orgId, *req.Phone)
@@ -169,7 +169,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdate
 		return
 	}
 
-	// loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	// loginInfo := jbctx.GetLoginInfo(ctx)
 	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	filter[daoOrg.Admin.Columns().IsSuper] = 0 //不允许修改机构超级管理员
 	/**--------参数处理 结束--------**/
@@ -190,7 +190,7 @@ func (controllerThis *Admin) Delete(ctx context.Context, req *apiOrg.AdminDelete
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.AdminUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 
-	loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetLoginInfo(ctx)
 	filter[daoOrg.Admin.Columns().OrgId] = loginInfo[daoOrg.Admin.Columns().OrgId]
 	filter[daoOrg.Admin.Columns().IsSuper] = 0 //不允许删除机构超级管理员
 	/**--------参数处理 结束--------**/

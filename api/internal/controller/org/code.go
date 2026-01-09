@@ -55,7 +55,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 	case 3: //密码修改(手机)
-		loginInfo := jbctx.GetCtxLoginInfo(ctx)
+		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -71,7 +71,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 		}
 		loginName = daoOrg.Admin.GetLoginName(to)
 	case 4: //绑定(手机)
-		loginInfo := jbctx.GetCtxLoginInfo(ctx)
+		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -85,7 +85,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 	case 5: //解绑(手机)
-		loginInfo := jbctx.GetCtxLoginInfo(ctx)
+		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -113,7 +113,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 	case 13: //密码修改(邮箱)
-		loginInfo := jbctx.GetCtxLoginInfo(ctx)
+		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -125,7 +125,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 		}
 		loginName = daoOrg.Admin.GetLoginName(to)
 	case 14: //绑定(邮箱)
-		loginInfo := jbctx.GetCtxLoginInfo(ctx)
+		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -143,7 +143,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 	case 15: //解绑(邮箱)
-		loginInfo := jbctx.GetCtxLoginInfo(ctx)
+		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
@@ -166,6 +166,6 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	if err != nil {
 		return
 	}
-	err = cache.Code.Set(ctx, jbctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), to, req.Scene, code, 5*time.Minute)
+	err = cache.Code.Set(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), to, req.Scene, code, 5*time.Minute)
 	return
 }

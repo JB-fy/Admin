@@ -84,8 +84,8 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any)
 
 // 判断操作权限
 func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionIdArr ...string) (isAuth bool, err error) {
-	loginInfo := jbctx.GetCtxLoginInfo(ctx)
-	sceneInfo := jbctx.GetCtxSceneInfo(ctx)
+	loginInfo := jbctx.GetLoginInfo(ctx)
+	sceneInfo := jbctx.GetSceneInfo(ctx)
 	if sceneInfo[daoAuth.Scene.Columns().SceneId].String() == `platform` && loginInfo[daoPlatform.Admin.Columns().IsSuper].Uint8() == 1 { //平台超级管理员，无权限限制
 		isAuth = true
 		return

@@ -38,7 +38,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiOrg.ConfigGetReq)
 	}
 	/**--------权限验证 结束--------**/
 
-	loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetLoginInfo(ctx)
 	config, err := daoOrg.Config.GetPluck(ctx, loginInfo[daoOrg.Admin.Columns().OrgId].String(), *req.ConfigKeyArr...)
 	if err != nil {
 		return
@@ -76,7 +76,7 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiOrg.ConfigSaveRe
 	}
 	/**--------权限验证 结束--------**/
 
-	loginInfo := jbctx.GetCtxLoginInfo(ctx)
+	loginInfo := jbctx.GetLoginInfo(ctx)
 	err = daoOrg.Config.Save(ctx, loginInfo[daoOrg.Admin.Columns().OrgId].String(), config)
 	return
 }

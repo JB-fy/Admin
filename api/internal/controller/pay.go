@@ -36,7 +36,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq)
 		return
 	}
 
-	/* sceneInfo := jbctx.GetCtxSceneInfo(ctx)
+	/* sceneInfo := jbctx.GetSceneInfo(ctx)
 	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	switch sceneId {
 	case `app`:
@@ -82,9 +82,9 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	}
 
 	var payReq payModel.PayReq
-	switch jbctx.GetCtxSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String() {
+	switch jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String() {
 	case `app`:
-		loginInfo := jbctx.GetCtxLoginInfo(ctx)
+		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return

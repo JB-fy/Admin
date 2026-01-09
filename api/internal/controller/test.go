@@ -184,7 +184,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	/* //不阻塞，直接返回响应数据。注意：gctx.NeverDone(ctx)必须有
 	go func(ctx context.Context) {
 		// ctx := g.RequestFromCtx(ctx).GetNeverDoneCtx()
-		jbctx.GetCtxSceneInfo(ctx)
+		jbctx.GetSceneInfo(ctx)
 	}(gctx.NeverDone(ctx)) */
 	/*--------常用协程示例 结束--------*/
 

@@ -32,7 +32,7 @@ func Scene(sceneIdOpt ...string) func(r *ghttp.Request) {
 			r.SetError(utils.NewErrorCode(r.GetCtx(), 39999997, ``))
 			return
 		}
-		jbctx.SetCtxSceneInfo(r, sceneInfo)
+		jbctx.SetSceneInfo(r, sceneInfo)
 
 		r.Middleware.Next()
 	}

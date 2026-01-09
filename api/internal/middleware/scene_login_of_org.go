@@ -56,7 +56,7 @@ func SceneLoginOfOrg(isForce bool) func(r *ghttp.Request) {
 		}
 
 		info[`login_id`] = gvar.New(tokenInfo.LoginId) //所有场景追加这个字段，方便统一调用
-		jbctx.SetCtxLoginInfo(r, info)                 //用户信息保存在协程上下文
+		jbctx.SetLoginInfo(r, info)                    //用户信息保存在协程上下文
 		/**--------获取用户信息并验证 结束--------**/
 
 		r.Middleware.Next()
