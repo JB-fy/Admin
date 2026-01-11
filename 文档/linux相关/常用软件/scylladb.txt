@@ -1,3 +1,9 @@
+# scylladb
+    # 长时间运行会产生大量快照占用硬盘空间，可用以下命令清理
+        nodetool clearsnapshot 键空间
+
+
+# 安装cassandra
     1、依赖java11
         安装java11
             dnf install java-11-openjdk

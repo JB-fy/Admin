@@ -138,6 +138,8 @@ docker run -d --ulimit memlock=-1 --ulimit nofile=100000:100000 -p 9042:9042 -v 
             vi /home/jb/dev/tool/scylladb/6.2.3/conf/cassandra-rackdc.properties
 dc=数据中心标识
 rack=物理机标识
+        # scylladb长时间运行会产生大量快照占用硬盘空间，可用以下命令清理
+            docker exec 容器名 nodetool clearsnapshot 键空间
 
 # cassandra
 docker run -d -p 9042:9042 -v 配置:/etc/cassandra/cassandra.yaml -v 数据:/var/lib/cassandra cassandra
