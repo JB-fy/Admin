@@ -3,6 +3,7 @@
         nodetool clearsnapshot 键空间
 
 
+
 # 安装cassandra
     1、依赖java11
         安装java11
