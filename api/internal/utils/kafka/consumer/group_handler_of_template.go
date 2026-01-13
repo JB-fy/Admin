@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/IBM/sarama"
 	"github.com/gogf/gf/v2/frame/g"
@@ -15,6 +16,7 @@ type GroupHandlerOfTemplate struct {
 	Ctx          context.Context
 	Config       *model.Config
 	ConsumerInfo *model.ConsumerInfo
+	SaramaConfig *sarama.Config
 }
 
 func (handlerThis *GroupHandlerOfTemplate) Setup(session sarama.ConsumerGroupSession) (err error) {
@@ -31,14 +33,32 @@ func (handlerThis *GroupHandlerOfTemplate) Cleanup(session sarama.ConsumerGroupS
 
 func (handlerThis *GroupHandlerOfTemplate) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) (err error) {
 	for msg := range claim.Messages() {
-		handlerThis.handle(msg)
+		// handlerThis.handle(ctx, msg)执行时间超过handlerThis.SaramaConfig.Consumer.Group.Session.Timeout配置时，会造成kafka消费组假死（不消费消息，但可接收消息）
+		timeout := handlerThis.SaramaConfig.Consumer.Group.Session.Timeout
+		if timeout <= 0 {
+			timeout = 10 * time.Second
+		}
+		if timeout > time.Second {
+			timeout = timeout - 500*time.Millisecond
+		}
+		ctx, cancel := context.WithTimeout(handlerThis.Ctx, timeout)
+		defer cancel()
+		ch := make(chan struct{}, 1)
+		go func() {
+			handlerThis.handle(ctx, msg)
+			close(ch)
+		}()
+		select {
+		case <-ch:
+		case <-ctx.Done():
+		}
 		// session.MarkMessage(msg, ``) // 标记消息为已处理
 		// session.Commit()             // 马上提交到kafka
 	}
 	return
 }
 
-func (handlerThis *GroupHandlerOfTemplate) handle(msg *sarama.ConsumerMessage) (err error) {
+func (handlerThis *GroupHandlerOfTemplate) handle(ctx context.Context, msg *sarama.ConsumerMessage) (err error) {
 	defer func() { //防止panic导致消费者断开
 		if rec := recover(); rec != nil {
 			err = errors.New(`panic错误：` + gconv.String(rec))
