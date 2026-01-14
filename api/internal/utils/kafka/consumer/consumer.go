@@ -22,6 +22,9 @@ var (
 
 func Add(ctx context.Context, group string, configMap map[string]any) {
 	config := model.GetConfig(group, configMap)
+	if len(config.ConsumerList) == 0 {
+		return
+	}
 	var err error
 	for _, consumerInfo := range config.ConsumerList {
 		consumerConfig := model.CreateConsumerConfig(config, &consumerInfo)
