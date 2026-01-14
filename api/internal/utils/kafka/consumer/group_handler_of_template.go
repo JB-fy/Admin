@@ -42,10 +42,12 @@ func (handlerThis *GroupHandlerOfTemplate) ConsumeClaim(session sarama.ConsumerG
 		}()
 		select {
 		case <-ch:
-		case <-ctx.Done():
+		case <-ctx.Done(): //超时处理
 		}
-		// session.MarkMessage(msg, ``) // 标记消息为已处理
-		// session.Commit()             // 马上提交到kafka
+		if !handlerThis.ConsumerInfo.AutoCommit {
+			session.MarkMessage(msg, ``) // 标记消息为已处理
+			// session.Commit()             // 马上提交到kafka
+		}
 	}
 	return
 }
