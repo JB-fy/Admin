@@ -6,6 +6,7 @@ import (
 
 // 初始化可能有顺序要求，故统一到这里执行初始化函数
 func Entry(ctx context.Context) {
+	// initPprof(ctx) // PPROF
 	initGenv(ctx)  // 环境变量设置
 	initI18n(ctx)  // 多语言设置
 	initGtime(ctx) // 时区设置
