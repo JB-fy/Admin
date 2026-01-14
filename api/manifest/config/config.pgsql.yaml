@@ -127,7 +127,9 @@ redisDb: # 参考redis.UniversalOption结构体
 #     # producerType: "sync" # 生产者类型：sync同步 async异步。默认为async
 #     consumerList: # 消费者列表。在api/internal/utils/kafka/consumer目录下根据 groupId 或 topicArr[0] 实现处理器，并设置到 handlerMapOfGroupId 或 handlerMapOfGroupId 全局变量中
 #       - groupId: "" # 分组ID
-#         # autoCommit: false # 自动提交。默认true
-#         number: 4 # 启动数量。groupId不为空时生效，需满足：服务器数量 * 该值 < topicArr的合计分区数量，超出时会有分组相当于没用，处于闲置中
 #         topicArr: # 主题。groupId空时，只有第一个主题生效
 #           - ""
+#         number: 4 # 启动数量。groupId不为空时生效，需满足：服务器数量 * 该值 < topicArr的合计分区数量，超出时会有分组相当于没用，处于闲置中
+#         # autoCommit: false # 自动提交。默认true
+#         # sessionTimeout: "60s" # 超时时间。默认10s。一般设置为执行任务所需花费的最大时间，否则容易造成消费组假死，停止消费，任务停止
+#         # heartbeatInterval: "15s" # 心跳检测时间。默认3s。建议：heartbeatInterval <= sessionTimeout / 3

@@ -16,7 +16,6 @@ type GroupHandlerOfTemplate struct {
 	Ctx          context.Context
 	Config       *model.Config
 	ConsumerInfo *model.ConsumerInfo
-	SaramaConfig *sarama.Config
 }
 
 func (handlerThis *GroupHandlerOfTemplate) Setup(session sarama.ConsumerGroupSession) (err error) {
@@ -34,14 +33,7 @@ func (handlerThis *GroupHandlerOfTemplate) Cleanup(session sarama.ConsumerGroupS
 func (handlerThis *GroupHandlerOfTemplate) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) (err error) {
 	for msg := range claim.Messages() {
 		// handlerThis.handle(ctx, msg)执行时间超过handlerThis.SaramaConfig.Consumer.Group.Session.Timeout配置时，会造成kafka消费组假死（不消费消息，但可接收消息）
-		timeout := handlerThis.SaramaConfig.Consumer.Group.Session.Timeout
-		if timeout <= 0 {
-			timeout = 10 * time.Second
-		}
-		if timeout > time.Second {
-			timeout = timeout - 500*time.Millisecond
-		}
-		ctx, cancel := context.WithTimeout(handlerThis.Ctx, timeout)
+		ctx, cancel := context.WithTimeout(handlerThis.Ctx, handlerThis.ConsumerInfo.SessionTimeout-500*time.Millisecond)
 		defer cancel()
 		ch := make(chan struct{}, 1)
 		go func() {

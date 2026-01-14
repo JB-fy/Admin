@@ -1,6 +1,8 @@
 package model
 
 import (
+	"time"
+
 	"github.com/IBM/sarama"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/xdg-go/scram"
@@ -8,13 +10,13 @@ import (
 
 type Config struct {
 	Group        string
-	Hosts        []string        `json:"hosts"`
-	UserName     string          `json:"userName"`
-	Password     string          `json:"password"`
-	SaslType     string          `json:"saslType"`
-	TopicList    []*TopicInfo    `json:"topicList"`
-	ProducerType string          `json:"producerType"`
-	ConsumerList []*ConsumerInfo `json:"consumerList"`
+	Hosts        []string       `json:"hosts"`
+	UserName     string         `json:"userName"`
+	Password     string         `json:"password"`
+	SaslType     string         `json:"saslType"`
+	TopicList    []TopicInfo    `json:"topicList"`
+	ProducerType string         `json:"producerType"`
+	ConsumerList []ConsumerInfo `json:"consumerList"`
 }
 
 type TopicInfo struct {
@@ -24,15 +26,30 @@ type TopicInfo struct {
 }
 
 type ConsumerInfo struct {
-	GroupId    string   `json:"groupId"`
-	Number     int      `json:"number"`
-	AutoCommit *bool    `json:"autoCommit"`
-	TopicArr   []string `json:"topicArr"`
+	GroupId           string        `json:"groupId"`
+	TopicArr          []string      `json:"topicArr"`
+	Number            uint          `json:"number"`
+	AutoCommit        bool          `json:"autoCommit"`
+	SessionTimeout    time.Duration `json:"sessionTimeout"`
+	HeartbeatInterval time.Duration `json:"heartbeatInterval"`
 }
 
 func GetConfig(group string, configMap map[string]any) (config *Config) {
 	config = &Config{Group: group}
 	gconv.Struct(configMap, config)
+	for i, v := range gconv.Maps(configMap[`consumerList`]) {
+		if _, ok := v[`autoCommit`]; !ok {
+			config.ConsumerList[i].AutoCommit = true
+		}
+	}
+	for i := range config.ConsumerList {
+		if config.ConsumerList[i].SessionTimeout <= 5*time.Second {
+			config.ConsumerList[i].SessionTimeout = 10 * time.Second
+		}
+		if config.ConsumerList[i].HeartbeatInterval <= 0 {
+			config.ConsumerList[i].HeartbeatInterval = 3 * time.Second
+		}
+	}
 	return
 }
 
@@ -53,21 +70,11 @@ func CreateConsumerConfig(config *Config, consumerInfo *ConsumerInfo) (saramaCon
 	saramaConfig = createSaramaConfig(config)
 	saramaConfig.Consumer.Return.Errors = true
 	saramaConfig.Consumer.Group.Rebalance.GroupStrategies = []sarama.BalanceStrategy{sarama.NewBalanceStrategySticky() /* , sarama.NewBalanceStrategyRoundRobin(), sarama.NewBalanceStrategyRange() */}
-	if consumerInfo.AutoCommit != nil {
-		saramaConfig.Consumer.Offsets.AutoCommit.Enable = *consumerInfo.AutoCommit
-	}
-	switch consumerInfo.GroupId {
-	case ``:
-		switch consumerInfo.TopicArr[0] {
-		case `xxxx`:
-			// saramaConfig.Consumer.MaxWaitTime = 250 * time.Millisecond // 多久拉取一次消息
-			// saramaConfig.Consumer.MaxProcessingTime = 10 * time.Second // 单次消息处理的最大时间
-		}
-	case `xxxx`:
-		// saramaConfig.Consumer.MaxWaitTime = 250 * time.Millisecond // 多久拉取一次消息
-		// saramaConfig.Consumer.Group.Session.Timeout = 10 * time.Second
-		// saramaConfig.Consumer.Group.Heartbeat.Interval = 3 * time.Second
-	}
+	saramaConfig.Consumer.Offsets.AutoCommit.Enable = consumerInfo.AutoCommit
+	// saramaConfig.Consumer.MaxWaitTime = 250 * time.Millisecond // 多久拉取一次消息
+	// saramaConfig.Consumer.MaxProcessingTime = 10 * time.Second // 单次消息处理的最大时间
+	saramaConfig.Consumer.Group.Session.Timeout = consumerInfo.SessionTimeout
+	saramaConfig.Consumer.Group.Heartbeat.Interval = consumerInfo.HeartbeatInterval
 	return
 }
 
