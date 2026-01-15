@@ -35,13 +35,13 @@ func (handlerThis *GroupHandlerOfTemplate) ConsumeClaim(session sarama.ConsumerG
 		// handlerThis.handle(ctx, msg)执行时间超过handlerThis.SaramaConfig.Consumer.Group.Session.Timeout配置时，会造成kafka消费组假死（不消费消息，但可接收消息）
 		ctx, cancel := context.WithTimeout(handlerThis.Ctx, handlerThis.ConsumerInfo.SessionTimeout-500*time.Millisecond)
 		defer cancel()
-		ch := make(chan struct{}, 1)
+		ch := make(chan error, 1)
 		go func() {
-			handlerThis.handle(ctx, msg)
-			close(ch)
+			ch <- handlerThis.handle(ctx, msg)
+			// close(ch)
 		}()
 		select {
-		case <-ch:
+		case /* err = */ <-ch:
 		case <-ctx.Done(): //超时处理
 		}
 		if !handlerThis.ConsumerInfo.AutoCommit {
