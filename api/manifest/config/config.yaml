@@ -69,7 +69,7 @@ database:
     file: "sql.log" # 日志文件格式。默认为"{Y-m-d}.log"。开启切分特性，必须固定一个文件名，否则日期切换后，无法删除当天之前的日志
     rotateSize: "50M" # 按照日志文件大小对文件进行滚动切分。默认为0，表示关闭滚动切分特性
   default:
-    - link: "mysql:root:123456@tcp(0.0.0.0:3306)/dev_admin"
+    - link: "mysql:root:123456@tcp(0.0.0.0:3306)/admin"
       # role: "master" # 主从配置(master/slave)
       # weight: "100" # 负载均衡权重，用于负载均衡控制，不使用应用层的负载均衡机制请置空
       # prefix: ""

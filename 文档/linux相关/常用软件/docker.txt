@@ -79,63 +79,63 @@ docker network create 名称 --driver bridge
 /**----------------常用软件 开始----------------**/
 # golang
 docker run -v /home/jb/dev/app:/app -w 工作目录 --rm -it golang:1.22.12 bash
-    # 示例：docker run --network host -v /home/jb/dev/app:/app -w /app/pg/tbGo/cmd/tbinner_server -it golang:1.22.12 go run main.go
+    # 示例：docker run --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/app:/app -w /app/pg/tbGo/cmd/tbinner_server -it golang:1.22.12 go run main.go
 
 # nginx
 docker run -d -p 80:80 -v 配置:/etc/nginx/nginx.conf -v 静态文件:/usr/share/nginx/html -v 日志:/var/log/nginx nginx
-    # 示例：docker run -d --name nginx-alone --network host -v /home/jb/dev/tool/nginx/1.27.5/config/nginx.conf:/etc/nginx/nginx.conf -v /home/jb/dev/tool/nginx/1.27.5/config/web:/etc/nginx/web -v /home/jb/dev/app:/home/jb/dev/app nginx:1.27.5
+    # 示例：docker run -d --name nginx-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/nginx/1.27.5/config/nginx.conf:/etc/nginx/nginx.conf -v /home/jb/dev/tool/nginx/1.27.5/config/web:/etc/nginx/web -v /home/jb/dev/app:/home/jb/dev/app nginx:1.27.5
 
 # mysql
 docker run -d -p 3306:3306 -v 配置:/etc/mysql/conf.d -v 数据:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 mysql
-    # 示例：docker run -d --name mysql-alone --network host -v /home/jb/dev/tool/mysql/9.3.0/conf:/etc/mysql/conf.d -v /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql:9.3.0
+    # 示例：docker run -d --name mysql-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/mysql/latest/conf:/etc/mysql/conf.d -v /home/jb/dev/tool/mysql/latest/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 mysql:latest
     # bitnami/mysql镜像已经商业化，不再建议使用
     # 集群示例（使用bitnami/mysql镜像比较简单方便，不用手动写配置文件。如果设置主从复制，还是建议手动设置配置文件，修改binlog_expire_logs_seconds清理日志，防止日志太大，导致硬盘满）：
-    docker run -d --name mysql-node --network host -v 配置:/opt/bitnami/mysql/conf/my.cnf -v 数据:/bitnami/mysql/data -v 备份.sql:/docker-entrypoint-initdb.d/备份.sql -e MYSQL_PORT_NUMBER=3306 -e MYSQL_ROOT_USER=用户 -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 -e MYSQL_REPLICATION_MODE=master或slave -e MYSQL_REPLICATION_USER=复制用户 -e MYSQL_REPLICATION_PASSWORD=复制密码 -e MYSQL_MASTER_HOST=主库IP（从库设置） -e MYSQL_MASTER_PORT_NUMBER=主库端口（从库设置） -e MYSQL_MASTER_ROOT_USER=主库账号（从库设置） -e MYSQL_MASTER_ROOT_PASSWORD=主库密码（从库设置） bitnami/mysql:9.3.0
+    docker run -d --name mysql-node --network host -v 配置:/opt/bitnami/mysql/conf/my.cnf -v 数据:/bitnami/mysql/data -v 备份.sql:/docker-entrypoint-initdb.d/备份.sql -e MYSQL_PORT_NUMBER=3306 -e MYSQL_ROOT_USER=用户 -e MYSQL_ROOT_PASSWORD=密码 -e MYSQL_DATABASE=库名 -e MYSQL_USER=用户 -e MYSQL_PASSWORD=密码 -e MYSQL_REPLICATION_MODE=master或slave -e MYSQL_REPLICATION_USER=复制用户 -e MYSQL_REPLICATION_PASSWORD=复制密码 -e MYSQL_MASTER_HOST=主库IP（从库设置） -e MYSQL_MASTER_PORT_NUMBER=主库端口（从库设置） -e MYSQL_MASTER_ROOT_USER=主库账号（从库设置） -e MYSQL_MASTER_ROOT_PASSWORD=主库密码（从库设置） bitnami/mysql:latest
     # 宿主机需先创建目录，并赋予写入权限
-        mkdir -p /home/jb/dev/tool/mysql/9.3.0/data && chmod -R 777 /home/jb/dev/tool/mysql/9.3.0/data
+        mkdir -p /home/jb/dev/tool/mysql/latest/data && chmod -R 777 /home/jb/dev/tool/mysql/latest/data
     # 主库执行
-        docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/bitnami/mysql/data -v /home/jb/dev/tool/mysql/9.3.0/备份数据.sql:/docker-entrypoint-initdb.d/备份数据.sql -e MYSQL_ROOT_PASSWORD=123456 -e MYSQL_REPLICATION_MODE=master -e MYSQL_REPLICATION_USER=repl_user -e MYSQL_REPLICATION_PASSWORD=123456 bitnami/mysql:9.3.0
+        docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/latest/data:/bitnami/mysql/data -v /home/jb/dev/tool/mysql/latest/备份数据.sql:/docker-entrypoint-initdb.d/备份数据.sql -e MYSQL_ROOT_PASSWORD=123456 -e MYSQL_REPLICATION_MODE=master -e MYSQL_REPLICATION_USER=repl_user -e MYSQL_REPLICATION_PASSWORD=123456 bitnami/mysql:latest
         # 数据库已有数据导出
             docker exec -it mysql-node mysqldump -h 192.168.0.200 -P 3306 -u root -p --single-transaction --flush-logs --master-data=2 --routines --triggers --databases 库名 > /bitnami/mysql/备份数据.sql
     # 从库执行
-        docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/bitnami/mysql/data -e MYSQL_REPLICATION_MODE=slave -e MYSQL_REPLICATION_USER=repl_user -e MYSQL_REPLICATION_PASSWORD=123456 -e MYSQL_MASTER_HOST=192.168.0.200 -e MYSQL_MASTER_ROOT_PASSWORD=123456 bitnami/mysql:9.3.0
+        docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/latest/data:/bitnami/mysql/data -e MYSQL_REPLICATION_MODE=slave -e MYSQL_REPLICATION_USER=repl_user -e MYSQL_REPLICATION_PASSWORD=123456 -e MYSQL_MASTER_HOST=192.168.0.200 -e MYSQL_MASTER_ROOT_PASSWORD=123456 bitnami/mysql:latest
         # 导入原有数据库
-            docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/9.3.0/data:/bitnami/mysql/data -v /home/jb/dev/tool/mysql/9.3.0/备份数据.sql:/docker-entrypoint-initdb.d/备份数据.sql bitnami/mysql:9.3.0
+            docker run -d --name mysql-node --network host -v /home/jb/dev/tool/mysql/latest/data:/bitnami/mysql/data -v /home/jb/dev/tool/mysql/latest/备份数据.sql:/docker-entrypoint-initdb.d/备份数据.sql bitnami/mysql:latest
 
 # postgresql
 docker run -d -p 5432:5432 -v 配置:/etc/postgresql -v 数据:/var/lib/postgresql/data -e POSTGRES_USER=用户 -e POSTGRES_PASSWORD=密码 -e POSTGRES_DB=库名 postgres -c config_file=/etc/postgresql
-    # 示例：docker run -d --name postgresql-alone --network host -v /home/jb/dev/tool/postgresql/17.4/data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=123456 postgres:17.4
+    # 示例：docker run -d --name postgresql-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/postgresql/latest/data:/var/lib/postgresql/18/data -e POSTGRES_PASSWORD=123456 postgres:latest
     # 集群示例（使用bitnami/postgresql镜像比较简单方便，不用手动写配置文件）：
-        docker run -d --name postgresql-node --network host -v 配置和数据:/bitnami/postgresql -e POSTGRESQL_PORT_NUMBER=5432 -e POSTGRESQL_USERNAME=用户 -e POSTGRESQL_PASSWORD=密码 -e POSTGRESQL_DATABASE=库名 -e POSTGRESQL_REPLICATION_MODE=master或slave -e POSTGRESQL_REPLICATION_USER=复制用户 -e POSTGRESQL_REPLICATION_PASSWORD=复制密码 -e POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=0（同步复制副本数量，需从库确认主库才提交事务） -e POSTGRESQL_SYNCHRONOUS_COMMIT_MODE=on或remote_write或remote_apply（越后面越安全） -e POSTGRESQL_MASTER_HOST=主库IP（从库设置） -e POSTGRESQL_MASTER_PORT=主库端口（从库设置） bitnami/postgresql:17.5.0
+        docker run -d --name postgresql-node --network host -v 配置和数据:/bitnami/postgresql -e POSTGRESQL_PORT_NUMBER=5432 -e POSTGRESQL_USERNAME=用户 -e POSTGRESQL_PASSWORD=密码 -e POSTGRESQL_DATABASE=库名 -e POSTGRESQL_REPLICATION_MODE=master或slave -e POSTGRESQL_REPLICATION_USER=复制用户 -e POSTGRESQL_REPLICATION_PASSWORD=复制密码 -e POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=0（同步复制副本数量，需从库确认主库才提交事务） -e POSTGRESQL_SYNCHRONOUS_COMMIT_MODE=on或remote_write或remote_apply（越后面越安全） -e POSTGRESQL_MASTER_HOST=主库IP（从库设置） -e POSTGRESQL_MASTER_PORT=主库端口（从库设置） bitnami/postgresql:latest
         # 宿主机需先创建目录，并赋予写入权限
-            mkdir -p /home/jb/dev/tool/postgresql/17.5.0 && chmod -R 777 /home/jb/dev/tool/postgresql/17.5.0
+            mkdir -p /home/jb/dev/tool/postgresql/latest && chmod -R 777 /home/jb/dev/tool/postgresql/latest
         # 主库执行
-            docker run -d --name postgresql-node --network host -v /home/jb/dev/tool/postgresql/17.5.0:/bitnami/postgresql -e POSTGRESQL_PASSWORD=123456 -e POSTGRESQL_REPLICATION_MODE=master -e POSTGRESQL_REPLICATION_USER=repl_user -e POSTGRESQL_REPLICATION_PASSWORD=123456 bitnami/postgresql:17.5.0
+            docker run -d --name postgresql-node --network host -v /home/jb/dev/tool/postgresql/latest:/bitnami/postgresql -e POSTGRESQL_PASSWORD=123456 -e POSTGRESQL_REPLICATION_MODE=master -e POSTGRESQL_REPLICATION_USER=repl_user -e POSTGRESQL_REPLICATION_PASSWORD=123456 bitnami/postgresql:latest
         # 从库执行
-            docker run -d --name postgresql-node --network host -v /home/jb/dev/tool/postgresql/17.5.0:/bitnami/postgresql -e POSTGRESQL_PASSWORD=123456 -e POSTGRESQL_REPLICATION_MODE=slave -e POSTGRESQL_REPLICATION_USER=repl_user -e POSTGRESQL_REPLICATION_PASSWORD=123456 -e POSTGRESQL_MASTER_HOST=192.168.0.200 bitnami/postgresql:17.5.0
+            docker run -d --name postgresql-node --network host -v /home/jb/dev/tool/postgresql/latest:/bitnami/postgresql -e POSTGRESQL_PASSWORD=123456 -e POSTGRESQL_REPLICATION_MODE=slave -e POSTGRESQL_REPLICATION_USER=repl_user -e POSTGRESQL_REPLICATION_PASSWORD=123456 -e POSTGRESQL_MASTER_HOST=192.168.0.200 bitnami/postgresql:latest
 
 # redis
 docker run -d -p 6379:6379 -v 配置:/usr/local/etc/redis/redis.conf -v 数据:/data redis redis-server /usr/local/etc/redis/redis.conf --protected-mode no --bind 0.0.0.0 --port 6379 --requirepass 密码
-# 示例：docker run -d --name redis-alone --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1
+# 示例：docker run -d --name redis-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/redis/latest/data:/data redis:latest
 # 集群示例：
     # 使用以下命令启动多个节点
-        docker run -d --name redis-node --network host -v /home/jb/dev/tool/redis/8.0.1/data:/data redis:8.0.1 redis-server --protected-mode no --bind 0.0.0.0 --port 6379 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-announce-ip 外网IP（集群需对外时才设置，同时需要开放总线端口6379+10000，否则集群无法启动。一般不推荐设置，会导致集群内部也使用外网IP通讯，影响性能） --cluster-announce-port 宿主机映射监听端口（在容器需要与宿主机端口映射时使用） --cluster-announce-bus-port 宿主机映射总线端口（在容器需要与宿主机端口映射时使用） --cluster-node-timeout 5000 --appendonly yes --requirepass 密码 --masterauth 密码
+        docker run -d --name redis-node --network host -v /home/jb/dev/tool/redis/latest/data:/data redis:latest redis-server --protected-mode no --bind 0.0.0.0 --port 6379 --cluster-enabled yes --cluster-config-file /data/nodes.conf --cluster-announce-ip 外网IP（集群需对外时才设置，同时需要开放总线端口6379+10000，否则集群无法启动。一般不推荐设置，会导致集群内部也使用外网IP通讯，影响性能） --cluster-announce-port 宿主机映射监听端口（在容器需要与宿主机端口映射时使用） --cluster-announce-bus-port 宿主机映射总线端口（在容器需要与宿主机端口映射时使用） --cluster-node-timeout 5000 --appendonly yes --requirepass 密码 --masterauth 密码
     # 任意容器执行以下命令启动集群
         docker exec -it redis-node redis-cli --cluster create -a 密码 节点IP:6379 节点IP:6379 节点IP:6379 --cluster-replicas 0
 
 # mongodb
 docker run -d -p 27017:27017 -v 配置:/etc/mongod.conf -v 数据:/data/db -e MONGO_INITDB_ROOT_USERNAME=用户 -e MONGO_INITDB_ROOT_PASSWORD=密码 mongo --config /etc/mongod.conf
-    # 示例：docker run -d --name mongo-alone --network host -v /home/jb/dev/tool/mongodb/8.0.8/data:/data/db mongo:8.0.8
+    # 示例：docker run -d --name mongo-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/mongodb/latest/data:/data/db mongo:latest
 
 # scylladb（ALLOW_EMPTY_PASSWORD=yes设为无需账号密码登录）
 docker run -d --ulimit memlock=-1 --ulimit nofile=100000:100000 -p 9042:9042 -v 配置:/conf -v 数据:/bitnami/scylladb/data -e SCYLLADB_CQL_PORT_NUMBER=9042(修改需同时修改SCYLLADB_SEEDS，在节点IP后面追加修改后的端口) -e SCYLLADB_CLUSTER_NAME=集群名称 -e SCYLLADB_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e SCYLLADB_SEEDS=种子节点IP,种子节点IP（集群第一个节点初始化时不允许设置多个，否则会因竞争导致初始化卡住而失败） -e SCYLLADB_HOST=当前节点内网IP -e SCYLLADB_BROADCAST_ADDRESS=当前节点外网IP（不建议设置，通过开放宿主机端口可直接实现外网访问。如设置需将SCYLLADB_SEEDS中的内网ip也改成外网IP） bitnami/scylladb
-    # 示例：docker run -d --name scylladb-alone --network host -v /home/jb/dev/tool/scylladb/6.2.3/data:/bitnami/scylladb/data -e SCYLLADB_HOST=192.168.0.200 -e ALLOW_EMPTY_PASSWORD=yes bitnami/scylladb:6.2.3
+    # 示例：docker run -d --name scylladb-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/scylladb/latest/data:/bitnami/scylladb/data -e SCYLLADB_HOST=192.168.0.200 -e ALLOW_EMPTY_PASSWORD=yes bitnami/scylladb:latest
     # 注意事项
         # 宿主机需先创建数据目录，并赋予写入权限
-            mkdir -p /home/jb/dev/tool/scylladb/6.2.3/data && chmod -R 777 /home/jb/dev/tool/scylladb/6.2.3/data
+            mkdir -p /home/jb/dev/tool/scylladb/latest/data && chmod -R 777 /home/jb/dev/tool/scylladb/latest/data
         # SCYLLADB_DATACENTER=数据中心标识 和 SCYLLADB_RACK=物理机标识 实测无效，只能通过挂载配置文件cassandra-rackdc.properties到/conf目录实现
-            mkdir -p /home/jb/dev/tool/scylladb/6.2.3/conf
-            vi /home/jb/dev/tool/scylladb/6.2.3/conf/cassandra-rackdc.properties
+            mkdir -p /home/jb/dev/tool/scylladb/latest/conf
+            vi /home/jb/dev/tool/scylladb/latest/conf/cassandra-rackdc.properties
 dc=数据中心标识
 rack=物理机标识
         # scylladb长时间运行会产生大量快照占用硬盘空间，可用以下命令清理
@@ -143,24 +143,24 @@ rack=物理机标识
 
 # cassandra
 docker run -d -p 9042:9042 -v 配置:/etc/cassandra/cassandra.yaml -v 数据:/var/lib/cassandra cassandra
-    # 示例：docker run -d --name cassandra-alone --network host -v /home/jb/dev/tool/cassandra/5.0.4/data:/var/lib/cassandra cassandra:5.0.4
+    # 示例：docker run -d --name cassandra-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/cassandra/latest/data:/var/lib/cassandra cassandra:latest
 
 # kafka（可用uuidgen生成集群UUID。不设置密码时，将SASL_PLAINTEXT改成PLAINTEXT。当只作为broker节点时，只需修改以下设置：-e KAFKA_CFG_PROCESS_ROLES=broker -e KAFKA_CFG_LISTENERS=SASL_PLAINTEXT://:9092）
 docker run -d -p 9092:9092 -p 9093:9093 -v 配置:/opt/bitnami/kafka/config/server.properties -v 数据:/bitnami/kafka -e KAFKA_CLUSTER_ID=集群UUID -e KAFKA_CFG_NODE_ID=节点标识 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=节点标识@节点IP:9093,节点标识@节点IP:9093（集群所有节点设置都必须一样，控制器节点需依次顺序启动） -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:SASL_PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -e KAFKA_CFG_INTER_BROKER_LISTENER_NAME=SASL_PLAINTEXT -e KAFKA_CLIENT_LISTENER_NAME=SASL_PLAINTEXT -e KAFKA_CFG_LISTENERS=CONTROLLER://:9093,SASL_PLAINTEXT://:9092,EXTERNAL://:39092 -e KAFKA_CFG_ADVERTISED_LISTENERS=SASL_PLAINTEXT://节点IP:9092,EXTERNAL://外网IP:39092(增加一个监听器支持外网访问，需同时在KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP和KAFKA_CFG_LISTENERS增加) -e KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN -e KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN -e KAFKA_INTER_BROKER_USER=账号 -e KAFKA_INTER_BROKER_PASSWORD=密码 -e KAFKA_CONTROLLER_USER=账号 -e KAFKA_CONTROLLER_PASSWORD=密码 -e KAFKA_CLIENT_USERS=账号 -e KAFKA_CLIENT_PASSWORDS=密码 bitnami/kafka
-    # 示例：docker run -d --name kafka-alone --network host -v /home/jb/dev/tool/kafka/4.0.0:/bitnami/kafka -e KAFKA_CFG_NODE_ID=1 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@192.168.0.200:9093 -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -e KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT -e KAFKA_CLIENT_LISTENER_NAME=PLAINTEXT -e KAFKA_CFG_LISTENERS=CONTROLLER://:9093,PLAINTEXT://:9092 -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.0.200:9092 -e KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN -e KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN bitnami/kafka:4.0.0
+    # 示例：docker run -d --name kafka-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/kafka/latest:/bitnami/kafka -e KAFKA_CFG_NODE_ID=1 -e KAFKA_CFG_PROCESS_ROLES=controller,broker -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@192.168.0.200:9093 -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER -e KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT -e KAFKA_CLIENT_LISTENER_NAME=PLAINTEXT -e KAFKA_CFG_LISTENERS=CONTROLLER://:9093,PLAINTEXT://:9092 -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.0.200:9092 -e KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN -e KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN bitnami/kafka:latest
     # 注意事项
         # 宿主机需先创建数据目录，并赋予写入权限
-            mkdir -p /home/jb/dev/tool/kafka/4.0.0 && chmod -R 777 /home/jb/dev/tool/kafka/4.0.0
+            mkdir -p /home/jb/dev/tool/kafka/latest && chmod -R 777 /home/jb/dev/tool/kafka/latest
         # 云服务器设置--network host，且主机名不是IP时，会无法识别主机名，需修改/etc/hosts文件追加
             当前服务器IP 服务器主机名(hostname查看)
 
 # minio
 docker run -d -p 9000:9000 -p 9001:9001 -v 数据:/data -e MINIO_ROOT_USER=账号 -e MINIO_ROOT_PASSWORD=密码 minio/minio server --address 节点IP:9000 --console-address 节点IP:9001 /data（集群时列举所有节点：域名1/data 域名2/data ...）
-    # 示例：docker run -d --name minio-alone --network host -v /home/jb/dev/tool/minio/data:/data -e MINIO_ROOT_USER=admin -e MINIO_ROOT_PASSWORD=12345678 minio/minio:RELEASE.2025-04-22T22-12-26Z server --address :9000 --console-address :9001 /data
+    # 示例：docker run -d --name minio-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/minio/data:/data -e MINIO_ROOT_USER=admin -e MINIO_ROOT_PASSWORD=12345678 minio/minio:RELEASE.2025-04-22T22-12-26Z server --address :9000 --console-address :9001 /data
 
 # rustfs
 docker run -d -p 9000:9000 -v 数据:/data -e RUSTFS_ADDRESS=节点IP:9000 -e RUSTFS_ACCESS_KEY=账号(默认：rustfsadmin) -e RUSTFS_SECRET_KEY=密码(默认：rustfsadmin) -e RUSTFS_CONSOLE_ENABLE=true -e RUSTFS_SERVER_DOMAINS=域名 rustfs/rustfs
-    # 示例：docker run -d --name rustfs-alone --network host -v /home/jb/dev/tool/rustfs/data:/data -e RUSTFS_ACCESS_KEY=admin -e RUSTFS_SECRET_KEY=12345678 rustfs/rustfs
+    # 示例：docker run -d --name rustfs-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/rustfs/data:/data -e RUSTFS_ACCESS_KEY=admin -e RUSTFS_SECRET_KEY=12345678 rustfs/rustfs
 
 # gitlab
     # gitlab-ce（不建议用--network host。gitlab只带软件所用端口可能与当前服务器已安装软件冲突）
@@ -223,13 +223,13 @@ services:
       - /home/jb/dev/app:/home/jb/dev/app
 
 #   mysql-alone:
-#     image: mysql:9.3.0
+#     image: mysql:latest
 #     container_name: mysql-alone
 #     restart: unless-stopped
 #     network_mode: host
 #     volumes:
 #       - /etc/localtime:/etc/localtime:ro
-#       - /home/jb/dev/tool/mysql/9.3.0/data:/var/lib/mysql
+#       - /home/jb/dev/tool/mysql/latest/data:/var/lib/mysql
 #     environment:
 #       MYSQL_ROOT_PASSWORD: 密码
 #       MYSQL_DATABASE: 库名
@@ -237,7 +237,7 @@ services:
 #       MYSQL_PASSWORD: 密码
 
   mysql-node:
-    image: mysql:9.3.0
+    image: mysql:latest
     container_name: mysql-node
     restart: unless-stopped
     network_mode: host
@@ -248,8 +248,8 @@ services:
           memory: 8g
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /server/tool/mysql/9.3.0/conf:/etc/mysql/conf.d
-      - /server/tool/mysql/9.3.0/data:/var/lib/mysql
+      - /server/tool/mysql/latest/conf:/etc/mysql/conf.d
+      - /server/tool/mysql/latest/data:/var/lib/mysql
     environment:
       MALLOC_ARENA_MAX: 2 # glibc内存优化。解决容器内存持续上涨BUG
       MYSQL_ROOT_USER: 账号
@@ -272,13 +272,13 @@ services:
 #       MYSQL_DATABASE: 库名
 
   postgresql-node:
-    image: bitnami/postgresql:17.5.0
+    image: bitnami/postgresql:latest
     container_name: postgresql-node
     restart: unless-stopped
     network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/jb/dev/tool/postgresql/17.5.0:/bitnami/postgresql # mkdir -p /home/jb/dev/tool/postgresql/17.5.0 && chmod -R 777 /home/jb/dev/tool/postgresql/17.5.0
+      - /home/jb/dev/tool/postgresql/latest:/bitnami/postgresql # mkdir -p /home/jb/dev/tool/postgresql/latest && chmod -R 777 /home/jb/dev/tool/postgresql/latest
     environment:
       POSTGRESQL_PORT_NUMBER: 5432
       POSTGRESQL_USERNAME: 账号
@@ -293,17 +293,17 @@ services:
       POSTGRESQL_MASTER_PORT: 主库端口（从库设置）
 
   redis-alone:
-    image: redis:8.0.1
+    image: redis:latest
     container_name: redis-alone
     restart: unless-stopped
     network_mode: host
     command: ["redis-server", "--port", "6379", "--requirepass", "密码"] # command: ["redis-server", "--protected-mode", "no", "--bind", "0.0.0.0", "--port", "6379", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-announce-ip", "外网IP（集群需对外时才设置）", "--cluster-node-timeout", "5000", "--appendonly", "yes", "--requirepass", "密码", "--masterauth", "密码"] # 任意节点执行docker exec -it redis-node redis-cli --cluster create -a 密码 节点IP:6379 节点IP:6379 节点IP:6379 --cluster-replicas 0
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/jb/dev/tool/redis/8.0.1/data:/data
+      - /home/jb/dev/tool/redis/latest/data:/data
 
   scylladb-node:
-    image: bitnami/scylladb:6.2.3
+    image: bitnami/scylladb:latest
     container_name: scylladb-node
     restart: unless-stopped
     network_mode: host
@@ -320,8 +320,8 @@ services:
     # command: ["/opt/bitnami/scripts/scylladb/run.sh", "--memory=6G", "--reserve-memory=1G", "--smp", "4"]
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /server/tool/scylladb/6.2.3/conf:/conf # 宿主机需先创建配置目录：mkdir -p /server/tool/scylladb/6.2.3/conf && echo -e "dc=DC_Xx\nrack=Xx_1" > /server/tool/scylladb/6.2.3/conf/cassandra-rackdc.properties
-      - /server/tool/scylladb/6.2.3/data:/bitnami/scylladb/data # 宿主机需先创建数据目录，并赋予写入权限：mkdir -p /server/tool/scylladb/6.2.3/data && chmod -R 777 /server/tool/scylladb/6.2.3/data
+      - /server/tool/scylladb/latest/conf:/conf # 宿主机需先创建配置目录：mkdir -p /server/tool/scylladb/latest/conf && echo -e "dc=DC_Xx\nrack=Xx_1" > /server/tool/scylladb/latest/conf/cassandra-rackdc.properties
+      - /server/tool/scylladb/latest/data:/bitnami/scylladb/data # 宿主机需先创建数据目录，并赋予写入权限：mkdir -p /server/tool/scylladb/latest/data && chmod -R 777 /server/tool/scylladb/latest/data
     environment:
       # SCYLLADB_DEVELOPER_MODE: "no"
       # SCYLLADB_CQL_PORT_NUMBER: 9042
@@ -335,13 +335,13 @@ services:
     # ALTER USER 'cassandra' WITH PASSWORD '密码';
 
   kafka-node: # 云服务器可能需要执行：vi /etc/hosts追加: 服务器IP 主机名(hostname查看)
-    image: bitnami/kafka:4.0.0
+    image: bitnami/kafka:latest
     container_name: kafka-node
     restart: unless-stopped
     network_mode: host
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /server/tool/kafka/4.0.0:/bitnami/kafka # 宿主机需先创建数据目录，并赋予写入权限：mkdir -p /server/tool/kafka/4.0.0 && chmod -R 777 /server/tool/kafka/4.0.0
+      - /server/tool/kafka/latest:/bitnami/kafka # 宿主机需先创建数据目录，并赋予写入权限：mkdir -p /server/tool/kafka/latest && chmod -R 777 /server/tool/kafka/latest
     environment:
       KAFKA_CLUSTER_ID: 集群标识
       KAFKA_CFG_NODE_ID: 1 # 注意修改
