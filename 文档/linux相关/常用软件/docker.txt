@@ -128,7 +128,6 @@ docker run -d -p 27017:27017 -v 配置:/etc/mongod.conf -v 数据:/data/db -e MO
     # 示例：docker run -d --name mongo-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/mongodb/latest/data:/data/db mongo:latest
 
 # scylladb（ALLOW_EMPTY_PASSWORD=yes设为无需账号密码登录）
-docker run -d --name scylladb-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/scylladb/latest/data:/var/lib/scylla -e SCYLLA_IP_ADDRESS=192.168.0.200 scylladb/scylla:latest
 docker run -d --ulimit memlock=-1 --ulimit nofile=100000:100000 -p 9042:9042 -v 配置:/conf -v 数据:/bitnami/scylladb/data -e SCYLLADB_CQL_PORT_NUMBER=9042(修改需同时修改SCYLLADB_SEEDS，在节点IP后面追加修改后的端口) -e SCYLLADB_CLUSTER_NAME=集群名称 -e SCYLLADB_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e SCYLLADB_SEEDS=种子节点IP,种子节点IP（集群第一个节点初始化时不允许设置多个，否则会因竞争导致初始化卡住而失败） -e SCYLLADB_HOST=当前节点内网IP -e SCYLLADB_BROADCAST_ADDRESS=当前节点外网IP（不建议设置，通过开放宿主机端口可直接实现外网访问。如设置需将SCYLLADB_SEEDS中的内网ip也改成外网IP） bitnami/scylladb
     # 示例：docker run -d --name scylladb-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/scylladb/latest/data:/bitnami/scylladb/data -e SCYLLADB_HOST=192.168.0.200 -e ALLOW_EMPTY_PASSWORD=yes bitnami/scylladb:latest
     # 注意事项
