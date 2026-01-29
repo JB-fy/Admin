@@ -401,8 +401,7 @@ func genDao(option myGenOption, tpl *myGenTpl) {
 	},
 	methodCode:`
 				tplDbDataLocal = strings.Replace(tplDbDataLocal, dbDataLocalPoint, `
-		`+dbDataLocalTableStr+option.CacheTime+`,
-		`+dbDataLocalPoint, 1)
+		`+dbDataLocalTableStr+option.CacheTime+`,`+dbDataLocalPoint, 1)
 			}
 			if option.CacheTime == `0` {
 				if !strings.Contains(tplDbDataLocal, `// `+dbDataLocalTableStr) {
