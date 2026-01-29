@@ -400,7 +400,8 @@ func genDao(option myGenOption, tpl *myGenTpl) {
 				dbDataLocalPoint := `
 	},
 	methodCode:`
-				tplDbDataLocal = strings.Replace(tplDbDataLocal, dbDataLocalPoint, dbDataLocalTableStr+option.CacheTime+`,
+				tplDbDataLocal = strings.Replace(tplDbDataLocal, dbDataLocalPoint, `
+		`+dbDataLocalTableStr+option.CacheTime+`,
 		`+dbDataLocalPoint, 1)
 			}
 			if option.CacheTime == `0` {
