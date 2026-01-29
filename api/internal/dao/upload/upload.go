@@ -180,7 +180,7 @@ func (daoThis *uploadDao) ParseInsert(insert map[string]any, daoModel *daoIndex.
 			case daoThis.Columns().IsDefault:
 				daoModel.SaveData[k] = v
 				if gconv.Uint(v) == 1 {
-					daoModel.AfterInsert[k] = nil
+					daoModel.AfterInsert[k] = struct{}{}
 				}
 			default:
 				if daoThis.Contains(k) {
