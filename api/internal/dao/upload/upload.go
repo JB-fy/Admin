@@ -209,7 +209,7 @@ func (daoThis *uploadDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandle
 			for k := range daoModel.AfterInsert {
 				switch k {
 				case daoThis.Columns().IsDefault:
-					daoModel.CloneNew().Filter(`exc_id`, id).HookUpdateOne(daoThis.Columns().IsDefault, 0).Update()
+					daoModel.CloneNew().Filter(`exc_id`, id). /* SetIdArr(). */ HookUpdateOne(daoThis.Columns().IsDefault, 0).Update()
 				}
 			}
 			return
@@ -225,7 +225,7 @@ func (daoThis *uploadDao) ParseUpdate(update map[string]any, daoModel *daoIndex.
 			case daoThis.Columns().IsDefault:
 				daoModel.SaveData[k] = v
 				if gconv.Uint(v) == 1 {
-					daoModel.AfterUpdate[k] = v
+					daoModel.AfterUpdate[k] = struct{}{}
 				}
 			default:
 				if daoThis.Contains(k) {
@@ -266,7 +266,7 @@ func (daoThis *uploadDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandle
 				switch k {
 				case daoThis.Columns().IsDefault:
 					for _, id := range daoModel.IdArr {
-						daoModel.CloneNew().Filter(`exc_id`, id).HookUpdateOne(daoThis.Columns().IsDefault, 0).Update()
+						daoModel.CloneNew().Filter(`exc_id`, id). /* SetIdArr(). */ HookUpdateOne(daoThis.Columns().IsDefault, 0).Update()
 					}
 				}
 			}
