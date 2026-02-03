@@ -80,7 +80,7 @@ func InitSession(ctx context.Context, config *model.Config) (session *gocql.Sess
 			replDcList = append(replDcList, fmt.Sprintf(replDcFormat, v.DcName, v.ReplNum))
 		}
 	}
-	err = sessionTmp.Query(fmt.Sprintf(`CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = {'class': '%s', %s}`, config.Keyspace, replType, strings.Join(replDcList, `, `))).ExecRelease()
+	err = sessionTmp.Query(fmt.Sprintf(`CREATE KEYSPACE IF NOT EXISTS %s WITH REPLICATION = {'class': '%s', %s}`, config.Keyspace, replType, strings.Join(replDcList, `, `))).Exec()
 	if err != nil {
 		return
 	}
