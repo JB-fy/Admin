@@ -41,9 +41,9 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	/*--------数据库cql使用示例 开始--------*/
 	/* // 有BUG（gcqlx）：names无法被填充
-	// err = jbcql.DB().ContextQuery(ctx, `SELECT ?, ? FROM goods_detail`, []string{`key`,`value`}).Exec()
+	// err = jbcql.DB().ContextQuery(ctx, `SELECT ?, ? FROM goods_detail`, []string{`key`,`value`}).ExecRelease()
 	// 有BUG（gcqlx）：qb.Fn第二参数无法被填充
-	// err = qb.Update(`goods_detail`).SetFunc(`value`, qb.Fn(`textAsBlob`, `'2222'`)).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).Exec()
+	// err = qb.Update(`goods_detail`).SetFunc(`value`, qb.Fn(`textAsBlob`, `'2222'`)).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).ExecRelease()
 
 	var key string
 	var value string
@@ -72,11 +72,11 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	listStruct := []KVEntity{}
 	err = qb.Select(`goods_detail`).Where(qb.EqLit(`key`, `'1'`)).Limit(10).Query(*jbcql.DB()).WithContext(ctx).SelectRelease(&listStruct)
 
-	err = qb.Insert(`goods_detail`).Columns(`key`, `value`).Query(*jbcql.DB()).WithContext(ctx).BindMap(g.Map{`key`: `1`, `value`: `2`}).Exec()
+	err = qb.Insert(`goods_detail`).Columns(`key`, `value`).Query(*jbcql.DB()).WithContext(ctx).BindMap(g.Map{`key`: `1`, `value`: `2`}).ExecRelease()
 
-	err = qb.Update(`goods_detail`).SetLit(`value`, `textAsBlob('2222')`).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).Exec()
+	err = qb.Update(`goods_detail`).SetLit(`value`, `textAsBlob('2222')`).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).ExecRelease()
 
-	err = qb.Delete(`goods_detail`).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).Exec()
+	err = qb.Delete(`goods_detail`).Where(qb.EqLit(`key`, `'1'`)).Query(*jbcql.DB()).WithContext(ctx).ExecRelease()
 
 	session := jbcql.DB()
 	batch := session.NewBatch(gocql.UnloggedBatch).WithContext(ctx)
