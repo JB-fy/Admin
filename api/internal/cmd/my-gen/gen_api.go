@@ -128,21 +128,23 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
+`
+	if option.IsList || option.IsInfo {
+		tplApi += `// 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
 type ` + tpl.TableCaseCamel + `Info struct {` + gstr.Join(append([]string{``}, api.res...), `
 	`) + gstr.Join(append([]string{``}, api.resOfAdd...), `
 	`)
-	if option.IsList && tpl.Handle.Pid.Pid != `` {
-		tplApi += `
+		if option.IsList && tpl.Handle.Pid.Pid != `` {
+			tplApi += `
 	Children []` + tpl.TableCaseCamel + `Info ` + "`" + `json:"children" dc:"子级列表"` + "`"
-	}
-	tplApi += `
+		}
+		tplApi += `
 }
 
 `
+	}
 	if option.IsList {
-		tplApi += `
-type ` + tpl.TableCaseCamel + `ListFilter struct {` + gstr.Join(append([]string{``}, api.listFilterOfFixed...), `
+		tplApi += `type ` + tpl.TableCaseCamel + `ListFilter struct {` + gstr.Join(append([]string{``}, api.listFilterOfFixed...), `
 	`) + gstr.Join(append([]string{``}, api.listFilter...), `
 	`) + `
 }
