@@ -2,9 +2,9 @@ package my_gen
 
 import (
 	"api/internal/utils"
+	"strings"
 
 	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/text/gstr"
 )
 
 // 后端路由生成
@@ -14,11 +14,11 @@ func genRouter(option myGenOption, tpl *myGenTpl) {
 
 	moduleName := tpl.GetModuleName(`controller`)
 	importControllerStr := `"api/internal/controller/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `"`
-	if gstr.Pos(tplRouter, importControllerStr) == -1 {
-		tplRouter = gstr.Replace(tplRouter, `"api/internal/middleware"`, importControllerStr+`
+	if !strings.Contains(tplRouter, importControllerStr) {
+		tplRouter = strings.Replace(tplRouter, `"api/internal/middleware"`, importControllerStr+`
 	"api/internal/middleware"`, 1)
 		// 路由生成（controller未导入）
-		tplRouter = gstr.Replace(tplRouter, `/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseKebab+"`"+`, func(group *ghttp.RouterGroup) {
+		tplRouter = strings.Replace(tplRouter, `/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseKebab+"`"+`, func(group *ghttp.RouterGroup) {
 				group.Bind(`+moduleName+`.New`+tpl.TableCaseCamel+`())
 			})
 
@@ -26,9 +26,11 @@ func genRouter(option myGenOption, tpl *myGenTpl) {
 		utils.FilePutFormat(saveFile, []byte(tplRouter)...)
 	} else {
 		// 路由生成（controller已导入，但路由不存在）
-		if gstr.Pos(tplRouter, `group.Bind(`+moduleName+`.New`+tpl.TableCaseCamel+`())`) == -1 {
-			tplRouter = gstr.Replace(tplRouter, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseKebab+"`"+`, func(group *ghttp.RouterGroup) {`, `group.Group(`+"`"+`/`+tpl.ModuleDirCaseKebab+"`"+`, func(group *ghttp.RouterGroup) {
-				group.Bind(`+moduleName+`.New`+tpl.TableCaseCamel+`())`, 1)
+		if !strings.Contains(tplRouter, `group.Bind(`+moduleName+`.New`+tpl.TableCaseCamel+`())`) {
+			replacePoint := `group.Group(` + "`" + `/` + tpl.ModuleDirCaseKebab + "`" + `, func(group *ghttp.RouterGroup) {`
+			idx := strings.LastIndex(tplRouter, replacePoint)
+			tplRouter = tplRouter[:idx] + replacePoint + `
+				group.Bind(` + moduleName + `.New` + tpl.TableCaseCamel + `())` + tplRouter[idx+len(replacePoint):]
 			utils.FilePutFormat(saveFile, []byte(tplRouter)...)
 		}
 	}
