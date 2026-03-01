@@ -154,7 +154,7 @@ func (pushThis *Push) Tag(ctx context.Context, param model.TagParam) (err error)
 }
 
 func (pushThis *Push) post(ctx context.Context, apiPath string, param g.Map) (resData *gjson.Json, err error) {
-	res, err := pushThis.client.Post(ctx, pushThis.Host+apiPath, gjson.MustEncodeString(param))
+	res, err := pushThis.client.Post(ctx, pushThis.Host+apiPath, gjson.MustEncode(param))
 	if err != nil {
 		return
 	}

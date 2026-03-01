@@ -1377,7 +1377,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 					vList := gconv.Maps(v)
 					insertList := make([]map[string]any, len(vList))
 					for index, item := range vList {
-						insertItem := gjson.New(gjson.MustEncodeString(item)).Map()
+						insertItem := maps.Clone(item)
 						insertItem[`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`] = id
 						insertList[index] = insertItem
 					}

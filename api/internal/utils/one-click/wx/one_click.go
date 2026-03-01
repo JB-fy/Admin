@@ -59,7 +59,7 @@ func (oneClickThis *OneClick) AccessToken(ctx context.Context, code string) (acc
 	if err != nil {
 		return
 	}
-	resData.Var().Struct(&accessToken)
+	gconv.Struct(resData.Map(), &accessToken)
 	return
 }
 
@@ -73,7 +73,7 @@ func (oneClickThis *OneClick) UserInfo(ctx context.Context, openid, accessToken 
 	if err != nil {
 		return
 	}
-	resData.Var().Struct(&userInfo)
+	gconv.Struct(resData.Map(), &userInfo)
 	return
 }
 
@@ -87,7 +87,7 @@ func (oneClickThis *OneClick) RefreshToken(ctx context.Context, refreshTokenStr 
 	if err != nil {
 		return
 	}
-	resData.Var().Struct(&refreshToken)
+	gconv.Struct(resData.Map(), &refreshToken)
 	return
 }
 

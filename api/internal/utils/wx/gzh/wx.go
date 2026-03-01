@@ -167,7 +167,7 @@ func (wxGzhThis *Wx) AccessToken(ctx context.Context) (accessToken AccessToken, 
 	if err != nil {
 		return
 	}
-	resData.Var().Struct(&accessToken)
+	gconv.Struct(resData.Map(), &accessToken)
 	return
 }
 
@@ -181,7 +181,7 @@ func (wxGzhThis *Wx) UserInfo(ctx context.Context, accessToken, openid string) (
 	if err != nil {
 		return
 	}
-	resData.Var().Struct(&userInfo)
+	gconv.Struct(resData.Map(), &userInfo)
 	return
 }
 
@@ -194,7 +194,7 @@ func (wxGzhThis *Wx) UserGet(ctx context.Context, accessToken, nextOpenid string
 	if err != nil {
 		return
 	}
-	resData.Var().Struct(&userGet)
+	gconv.Struct(resData.Map(), &userGet)
 	return
 }
 

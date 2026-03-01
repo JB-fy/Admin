@@ -2,9 +2,9 @@ package dao
 
 import (
 	"context"
+	"maps"
 
 	"github.com/gogf/gf/v2/container/gset"
-	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -62,7 +62,7 @@ func SaveListRelMany(ctx context.Context, relDao DaoInterface, idField string, i
 	idFieldArr := append([]string{idField}, idSuffixFieldArr...)
 	inStrArr := make([]string, valListLen)
 	for i, v := range valList {
-		saveItem := gjson.New(gjson.MustEncodeString(v)).Map()
+		saveItem := maps.Clone(v)
 		saveItem[idField] = id
 		relDao.CtxDaoModel(ctx).Data(saveItem).OnConflict(gconv.SliceAny(idFieldArr)...).Save()
 
@@ -85,7 +85,7 @@ func SaveListRelManyWithSort(ctx context.Context, relDao DaoInterface, idField s
 	insertList := make([]map[string]any, 0, len(idArr)*len(valList))
 	for _, id := range idArr {
 		for _, v := range valList {
-			insertItem := gjson.New(gjson.MustEncodeString(v)).Map()
+			insertItem := maps.Clone(v)
 			insertItem[idField] = id
 			insertList = append(insertList, insertItem)
 		}

@@ -10,12 +10,12 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"maps"
 	"reflect"
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -231,7 +231,7 @@ func (daoThis *orderDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 					vList := gconv.Maps(v)
 					insertList := make([]map[string]any, len(vList))
 					for index, item := range vList {
-						insertItem := gjson.New(gjson.MustEncodeString(item)).Map()
+						insertItem := maps.Clone(item)
 						insertItem[OrderRel.Columns().OrderId] = id
 						insertList[index] = insertItem
 					}
