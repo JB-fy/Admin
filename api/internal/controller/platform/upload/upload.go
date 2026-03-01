@@ -67,7 +67,7 @@ func (controllerThis *Upload) List(ctx context.Context, req *apiUpload.UploadLis
 	}
 
 	res = &apiUpload.UploadListRes{Count: count, List: []apiUpload.UploadInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -101,7 +101,7 @@ func (controllerThis *Upload) Info(ctx context.Context, req *apiUpload.UploadInf
 	}
 
 	res = &apiUpload.UploadInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

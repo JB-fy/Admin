@@ -239,7 +239,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) List(ctx context.Context, req 
 			tplController += `Count: count, `
 		}
 		tplController += `List: []api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `Info{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 `
@@ -280,7 +280,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 	}
 
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 `

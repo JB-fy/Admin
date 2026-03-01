@@ -74,7 +74,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	}
 
 	res = &apiAuth.RoleListRes{Count: count, List: []apiAuth.RoleInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -113,7 +113,7 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	}
 
 	res = &apiAuth.RoleInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

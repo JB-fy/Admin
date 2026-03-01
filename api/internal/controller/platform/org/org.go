@@ -67,7 +67,7 @@ func (controllerThis *Org) List(ctx context.Context, req *apiOrg.OrgListReq) (re
 	}
 
 	res = &apiOrg.OrgListRes{Count: count, List: []apiOrg.OrgInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -101,7 +101,7 @@ func (controllerThis *Org) Info(ctx context.Context, req *apiOrg.OrgInfoReq) (re
 	}
 
 	res = &apiOrg.OrgInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

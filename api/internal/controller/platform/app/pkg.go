@@ -67,7 +67,7 @@ func (controllerThis *Pkg) List(ctx context.Context, req *apiApp.PkgListReq) (re
 	}
 
 	res = &apiApp.PkgListRes{Count: count, List: []apiApp.PkgInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -101,7 +101,7 @@ func (controllerThis *Pkg) Info(ctx context.Context, req *apiApp.PkgInfoReq) (re
 	}
 
 	res = &apiApp.PkgInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

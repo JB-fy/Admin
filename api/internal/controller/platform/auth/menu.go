@@ -70,7 +70,7 @@ func (controllerThis *Menu) List(ctx context.Context, req *apiAuth.MenuListReq) 
 	}
 
 	res = &apiAuth.MenuListRes{Count: count, List: []apiAuth.MenuInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -104,7 +104,7 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	}
 
 	res = &apiAuth.MenuInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

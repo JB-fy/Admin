@@ -6,6 +6,8 @@ import (
 	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils/jbctx"
 	"context"
+
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type Action struct{}
@@ -39,6 +41,6 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 		return
 	}
 	res = &apiMy.ActionListRes{List: []apiMy.ActionListItem{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }

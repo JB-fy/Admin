@@ -67,7 +67,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiPay.SceneListReq)
 	}
 
 	res = &apiPay.SceneListRes{Count: count, List: []apiPay.SceneInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -101,7 +101,7 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiPay.SceneInfoReq)
 	}
 
 	res = &apiPay.SceneInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

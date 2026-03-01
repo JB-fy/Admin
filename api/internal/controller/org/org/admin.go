@@ -71,7 +71,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiOrg.AdminListReq)
 	}
 
 	res = &apiOrg.AdminListRes{Count: count, List: []apiOrg.AdminInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -108,7 +108,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq)
 	}
 
 	res = &apiOrg.AdminInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

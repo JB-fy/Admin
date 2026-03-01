@@ -67,7 +67,7 @@ func (controllerThis *Users) List(ctx context.Context, req *apiUsers.UsersListRe
 	}
 
 	res = &apiUsers.UsersListRes{Count: count, List: []apiUsers.UsersInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -101,7 +101,7 @@ func (controllerThis *Users) Info(ctx context.Context, req *apiUsers.UsersInfoRe
 	}
 
 	res = &apiUsers.UsersInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

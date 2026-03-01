@@ -155,7 +155,7 @@ func (daoThis *orderDao) HandleAfterField(ctx context.Context, record gdb.Record
 		switch k {
 		case `order_rel_list`:
 			orderRelList, _ := OrderRel.CtxDaoModel(ctx).Filter(OrderRel.Columns().OrderId, record[daoThis.Columns().OrderId]). /* OrderAsc(OrderRel.Columns().CreatedAt). */ All() // 有顺序要求时使用，自定义OrderAsc
-			record[k] = gvar.New(gjson.MustEncodeString(orderRelList))                                                                                                              //转成json字符串，控制器中list.Structs(&res.List)和info.Struct(&res.Info)才有效
+			record[k] = gvar.New(orderRelList)
 		default:
 			if v == struct{}{} {
 				record[k] = gvar.New(nil)

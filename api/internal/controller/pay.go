@@ -51,7 +51,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq)
 	}
 
 	res = &api.PayChannelListRes{List: []api.PayChannelInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 

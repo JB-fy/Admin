@@ -208,7 +208,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	}, 0, ``) */
 	res = &api.TestRes{}
 	/* info, _ := g.DB().Model(`auth_scene`).Ctx(ctx).One()
-	info.Struct(&res.Info) */
+	gconv.Structs(info.Map(), &res.Info) */
 	return
 }
 

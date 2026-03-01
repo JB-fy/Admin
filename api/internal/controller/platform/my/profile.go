@@ -26,7 +26,7 @@ func NewProfile() *Profile {
 func (controllerThis *Profile) Info(ctx context.Context, req *apiMy.ProfileInfoReq) (res *apiMy.ProfileInfoRes, err error) {
 	loginInfo := jbctx.GetLoginInfo(ctx)
 	res = &apiMy.ProfileInfoRes{}
-	loginInfo.Struct(&res.Info)
+	gconv.Structs(loginInfo.Map(), &res.Info)
 	return
 }
 

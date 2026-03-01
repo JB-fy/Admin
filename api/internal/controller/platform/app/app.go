@@ -67,7 +67,7 @@ func (controllerThis *App) List(ctx context.Context, req *apiApp.AppListReq) (re
 	}
 
 	res = &apiApp.AppListRes{Count: count, List: []apiApp.AppInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -101,7 +101,7 @@ func (controllerThis *App) Info(ctx context.Context, req *apiApp.AppInfoReq) (re
 	}
 
 	res = &apiApp.AppInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

@@ -67,7 +67,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *apiPay.PayListReq) (re
 	}
 
 	res = &apiPay.PayListRes{Count: count, List: []apiPay.PayInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -101,7 +101,7 @@ func (controllerThis *Pay) Info(ctx context.Context, req *apiPay.PayInfoReq) (re
 	}
 
 	res = &apiPay.PayInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

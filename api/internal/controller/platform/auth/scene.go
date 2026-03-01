@@ -67,7 +67,7 @@ func (controllerThis *Scene) List(ctx context.Context, req *apiAuth.SceneListReq
 	}
 
 	res = &apiAuth.SceneListRes{Count: count, List: []apiAuth.SceneInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -101,7 +101,7 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 	}
 
 	res = &apiAuth.SceneInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 

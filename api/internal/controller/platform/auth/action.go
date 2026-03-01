@@ -67,7 +67,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiAuth.ActionListR
 	}
 
 	res = &apiAuth.ActionListRes{Count: count, List: []apiAuth.ActionInfo{}}
-	list.Structs(&res.List)
+	gconv.Structs(list.List(), &res.List)
 	return
 }
 
@@ -101,7 +101,7 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 	}
 
 	res = &apiAuth.ActionInfoRes{}
-	info.Struct(&res.Info)
+	gconv.Structs(info.Map(), &res.Info)
 	return
 }
 
