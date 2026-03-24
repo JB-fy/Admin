@@ -16,6 +16,7 @@ func main() {
 // %X	整型以十六进制、字母大写方式显示
 // %U	Unicode 字符
 // %f	浮点数
+// %.2f	浮点数（2位小数点）
 // %p	指针，十六进制方式显示
 
 /* type SearchApiParams struct {
