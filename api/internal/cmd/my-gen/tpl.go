@@ -341,7 +341,7 @@ func createTpl(ctx context.Context, group, table, removePrefixCommon, removePref
 			fieldTmp.FieldTypeName = internal.TypeNameAudioSuffix
 		} else if slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeText, internal.TypeJson}, fieldTmp.FieldType) && (slices.Contains([]string{`file`}, fieldSuffix) || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -9) == `FileList` || gstr.SubStr(fieldTmp.FieldCaseCamelRemove, -8) == `FileArr`) { //file,file_list,fileList,file_arr,fileArr等后缀
 			fieldTmp.FieldTypeName = internal.TypeNameFileSuffix
-		} else if slices.Contains([]internal.MyGenFieldType{internal.TypeText, internal.TypeJson}, fieldTmp.FieldType) && slices.Contains([]string{`list`, `arr`}, fieldSuffix) { //list,arr等后缀
+		} else if slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeText, internal.TypeJson}, fieldTmp.FieldType) && slices.Contains([]string{`list`, `arr`}, fieldSuffix) { //list,arr等后缀
 			fieldTmp.FieldTypeName = internal.TypeNameArrSuffix
 		} else if slices.Contains([]internal.MyGenFieldType{internal.TypeVarchar, internal.TypeText}, fieldTmp.FieldType) && slices.Contains([]string{`remark`, `desc`, `msg`, `message`, `intro`, `content`}, fieldSuffix) { //remark,desc,msg,message,intro,content后缀
 			fieldTmp.FieldTypeName = internal.TypeNameRemarkSuffix

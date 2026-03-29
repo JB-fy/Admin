@@ -637,8 +637,8 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.filterType.Method = internal.ReturnType
 	case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
 		apiField.filterType.Method = internal.ReturnEmpty
-	case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix, internal.TypeNameAudioSuffix, internal.TypeNameFileSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text	// audio,audio_list,audioList,audio_arr,audioArr等后缀；	类型：单音频varchar，多音频json或text	// file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
-		if v.FieldType == internal.TypeVarchar {
+	case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix, internal.TypeNameAudioSuffix, internal.TypeNameFileSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：varchar或json或text	// video,video_list,videoList,video_arr,videoArr等后缀；	类型：varchar或json或text	// audio,audio_list,audioList,audio_arr,audioArr等后缀；	类型：varchar或json或text	// file,file_list,fileList,file_arr,fileArr等后缀；	类型：varchar或json或text
+		if v.FieldType == internal.TypeVarchar && gstr.SubStr(v.FieldCaseCamelRemove, -4) != `List` && gstr.SubStr(v.FieldCaseCamelRemove, -3) != `Arr` {
 			apiField.filterType.Method = internal.ReturnEmpty
 
 			apiField.saveRule.Method = internal.ReturnUnion
@@ -654,7 +654,7 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 			apiField.saveRule.Method = internal.ReturnTypeName
 			apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `distinct`, `foreach`, `url`, `foreach`, `min-length:1`)
 		}
-	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：varchar或json或text；
 		apiField.createType.Method = internal.ReturnTypeName
 		apiField.createType.DataTypeName = `*[]any`
 		apiField.updateType.Method = internal.ReturnTypeName
@@ -843,12 +843,12 @@ func getApiExtendMiddleMany(tplEM handleExtendMiddle) (api myGenApi) {
 		case internal.TypeNameStartPrefix: // start_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameEndPrefix: // end_前缀；	类型：datetime或date或timestamp或time；
 		case internal.TypeNameRemarkSuffix: // remark,desc,msg,message,intro,content后缀；	类型：varchar或text；前端对应组件：varchar文本输入框，text富文本编辑器
-		case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix, internal.TypeNameAudioSuffix, internal.TypeNameFileSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：单图片varchar，多图片json或text	// video,video_list,videoList,video_arr,videoArr等后缀；	类型：单视频varchar，多视频json或text	// audio,audio_list,audioList,audio_arr,audioArr等后缀；	类型：单音频varchar，多音频json或text	// file,file_list,fileList,file_arr,fileArr等后缀；	类型：单文件varchar，多文件json或text
-			if v.FieldType == internal.TypeVarchar {
+		case internal.TypeNameImageSuffix, internal.TypeNameVideoSuffix, internal.TypeNameAudioSuffix, internal.TypeNameFileSuffix: // icon,cover,avatar,img,img_list,imgList,img_arr,imgArr,image,image_list,imageList,image_arr,imageArr等后缀；	类型：varchar或json或text	// video,video_list,videoList,video_arr,videoArr等后缀；	类型：varchar或json或text	// audio,audio_list,audioList,audio_arr,audioArr等后缀；	类型：varchar或json或text	// file,file_list,fileList,file_arr,fileArr等后缀；	类型：varchar或json或text
+			if v.FieldType == internal.TypeVarchar && gstr.SubStr(v.FieldCaseCamelRemove, -4) != `List` && gstr.SubStr(v.FieldCaseCamelRemove, -3) != `Arr` {
 				apiField.saveRule.Method = internal.ReturnUnion
 				apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `foreach`, `url`)
 			}
-		case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：json或text；
+		case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：varchar或json或text；
 		}
 		/*--------根据字段命名类型处理 结束--------*/
 
