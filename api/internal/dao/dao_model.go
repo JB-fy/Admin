@@ -737,6 +737,14 @@ func (daoModelThis *DaoModel) ValueInt64(fieldsAndWhere ...any) (int64, error) {
 	return result.Int64(), nil
 }
 
+func (daoModelThis *DaoModel) ValueFloat64(fieldsAndWhere ...any) (float64, error) {
+	result, err := daoModelThis.Value(fieldsAndWhere...)
+	if err != nil {
+		return 0, err
+	}
+	return result.Float64(), nil
+}
+
 func (daoModelThis *DaoModel) ValueMap(fieldsAndWhere ...any) (g.Map, error) {
 	result, err := daoModelThis.Value(fieldsAndWhere...)
 	if err != nil {
