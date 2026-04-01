@@ -22,6 +22,6 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 	}
 
 	res = &apiPlatform.ConfigGetRes{}
-	gconv.Structs(config.Map(), &res.Config)
+	gconv.Struct(config.Map(), &res.Config)
 	return
 }

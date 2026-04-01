@@ -101,7 +101,7 @@ func (controllerThis *Pkg) Info(ctx context.Context, req *apiApp.PkgInfoReq) (re
 	}
 
 	res = &apiApp.PkgInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

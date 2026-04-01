@@ -101,7 +101,7 @@ func (controllerThis *Scene) Info(ctx context.Context, req *apiAuth.SceneInfoReq
 	}
 
 	res = &apiAuth.SceneInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

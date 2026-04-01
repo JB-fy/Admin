@@ -101,7 +101,7 @@ func (controllerThis *Action) Info(ctx context.Context, req *apiAuth.ActionInfoR
 	}
 
 	res = &apiAuth.ActionInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

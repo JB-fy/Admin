@@ -104,7 +104,7 @@ func (controllerThis *Menu) Info(ctx context.Context, req *apiAuth.MenuInfoReq) 
 	}
 
 	res = &apiAuth.MenuInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

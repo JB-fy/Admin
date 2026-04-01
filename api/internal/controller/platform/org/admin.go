@@ -101,7 +101,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq)
 	}
 
 	res = &apiOrg.AdminInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

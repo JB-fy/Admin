@@ -101,7 +101,7 @@ func (controllerThis *Users) Info(ctx context.Context, req *apiUsers.UsersInfoRe
 	}
 
 	res = &apiUsers.UsersInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

@@ -47,6 +47,6 @@ func (controllerThis *AppPkg) Info(ctx context.Context, req *api.AppPkgInfoReq) 
 	}
 
 	res = &api.AppPkgInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }

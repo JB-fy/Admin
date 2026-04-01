@@ -101,7 +101,7 @@ func (controllerThis *Pay) Info(ctx context.Context, req *apiPay.PayInfoReq) (re
 	}
 
 	res = &apiPay.PayInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

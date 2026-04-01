@@ -101,7 +101,7 @@ func (controllerThis *Upload) Info(ctx context.Context, req *apiUpload.UploadInf
 	}
 
 	res = &apiUpload.UploadInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

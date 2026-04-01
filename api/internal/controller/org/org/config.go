@@ -45,7 +45,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiOrg.ConfigGetReq)
 	}
 
 	res = &apiOrg.ConfigGetRes{}
-	gconv.Structs(config.Map(), &res.Config)
+	gconv.Struct(config.Map(), &res.Config)
 	return
 }
 

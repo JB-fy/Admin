@@ -101,7 +101,7 @@ func (controllerThis *Channel) Info(ctx context.Context, req *apiPay.ChannelInfo
 	}
 
 	res = &apiPay.ChannelInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

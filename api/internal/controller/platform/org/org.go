@@ -101,7 +101,7 @@ func (controllerThis *Org) Info(ctx context.Context, req *apiOrg.OrgInfoReq) (re
 	}
 
 	res = &apiOrg.OrgInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

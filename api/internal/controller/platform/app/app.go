@@ -101,7 +101,7 @@ func (controllerThis *App) Info(ctx context.Context, req *apiApp.AppInfoReq) (re
 	}
 
 	res = &apiApp.AppInfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 

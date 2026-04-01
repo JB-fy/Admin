@@ -280,7 +280,7 @@ func (controllerThis *` + tpl.TableCaseCamel + `) Info(ctx context.Context, req 
 	}
 
 	res = &api` + tpl.ModuleDirCaseCamel + `.` + tpl.TableCaseCamel + `InfoRes{}
-	gconv.Structs(info.Map(), &res.Info)
+	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 `
