@@ -36,6 +36,10 @@ VMware设置
 docker login --username=账号 --password=密码 仓库地址
 # 详细信息
 docker info
+# 清理所有未使用的资源（镜像，构建缓存等）
+docker system prune
+# 清理构建缓存
+docker builder prune
 # 查看当前镜像
 docker images
 # 打包镜像
