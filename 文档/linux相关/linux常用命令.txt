@@ -16,7 +16,7 @@ yum info 包名 		//查询详细信息
 sed -i -e "s|mirrorlist=|#mirrorlist=|g" /etc/yum.repos.d/CentOS-*
 sed -i -e "s|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g" /etc/yum.repos.d/CentOS-*
 
-curl ifconfig.me	//查看本服务器外网IP
+curl ifconfig.me	//查看本服务器外网IP。国内用：http://ip.3322.net,http://ip.qaros.com
 passwd //修改密码
 which 文件名	//查找命令文件。只在环境变量$PATH设置的目录里查找
 whereis 文件名	//查找可执行的二进制文件

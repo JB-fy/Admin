@@ -76,7 +76,7 @@ func StringsBuilderPoolPut(builder *strings.Builder) {
 
 // 获取服务器外网ip
 func GetServerNetworkIp() string {
-	for _, v := range []string{`ifconfig.me`, `https://ipinfo.io/ip`, `https://checkip.amazonaws.com`, `https://icanhazip.com`, `https://api.ipify.org`} {
+	for _, v := range []string{`http://ip.3322.net`, `http://ip.qaros.com`, `ifconfig.me`, `https://ipinfo.io/ip`, `https://checkip.amazonaws.com`, `https://icanhazip.com`, `https://api.ipify.org`} {
 		cmd := exec.Command(`/bin/bash`, `-c`, `curl -s --max-time 3 `+v)
 		output, _ := cmd.Output()
 		if ip := string(output); ip != `` {
