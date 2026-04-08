@@ -103,7 +103,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 		err = utils.NewErrorCode(ctx, 30012000, ``)
 		return
 	}
-	if channelInfo[daoPay.Channel.Columns().IsStop].Uint8() == 1 {
+	if channelInfo[daoPay.Channel.Columns().IsStop].Uint8() != 0 {
 		err = utils.NewErrorCode(ctx, 30012001, ``)
 		return
 	}
