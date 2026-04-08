@@ -1,18 +1,18 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : Postgresql
+ Source Server         : PostgreSQL
  Source Server Type    : PostgreSQL
- Source Server Version : 170005 (170005)
+ Source Server Version : 180001 (180001)
  Source Host           : 192.168.0.200:5432
- Source Catalog        : admin
+ Source Catalog        : admin_bak
  Source Schema         : public
 
  Target Server Type    : PostgreSQL
- Target Server Version : 170005 (170005)
+ Target Server Version : 180001 (180001)
  File Encoding         : 65001
 
- Date: 19/09/2025 05:15:13
+ Date: 08/04/2026 11:41:19
 */
 
 
@@ -847,65 +847,40 @@ CREATE TABLE "public"."pay_order" (
   "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "order_id" int4 NOT NULL DEFAULT nextval('pay_order_order_id_seq'::regclass),
   "order_no" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "rel_order_type" int2 NOT NULL DEFAULT 0,
-  "rel_order_user_id" int4 NOT NULL DEFAULT 0,
+  "order_type" int2 NOT NULL DEFAULT 0,
+  "rel_id" int4 NOT NULL DEFAULT 0,
   "pay_id" int4 NOT NULL DEFAULT 0,
   "channel_id" int4 NOT NULL DEFAULT 0,
   "pay_type" int2 NOT NULL DEFAULT 0,
   "amount" numeric(10,2) NOT NULL DEFAULT 0.00,
   "pay_status" int2 NOT NULL DEFAULT 0,
-  "pay_time" timestamp(6),
+  "pay_at" timestamp(6),
   "pay_rate" numeric(4,4) NOT NULL DEFAULT 0.0000,
-  "third_order_no" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying
+  "third_order_no" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+  "ext_data" varchar(120) COLLATE "pg_catalog"."default" DEFAULT NULL::character varying,
+  "order_ip" varchar(15) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying
 )
 ;
 COMMENT ON COLUMN "public"."pay_order"."created_at" IS '创建时间';
 COMMENT ON COLUMN "public"."pay_order"."updated_at" IS '更新时间';
 COMMENT ON COLUMN "public"."pay_order"."order_id" IS '订单ID';
 COMMENT ON COLUMN "public"."pay_order"."order_no" IS '订单号';
-COMMENT ON COLUMN "public"."pay_order"."rel_order_type" IS '关联订单类型：0默认';
-COMMENT ON COLUMN "public"."pay_order"."rel_order_user_id" IS '关联订单用户ID';
+COMMENT ON COLUMN "public"."pay_order"."order_type" IS '订单类型：0默认';
+COMMENT ON COLUMN "public"."pay_order"."rel_id" IS '关联ID。根据order_type对应不同表';
 COMMENT ON COLUMN "public"."pay_order"."pay_id" IS '支付ID';
 COMMENT ON COLUMN "public"."pay_order"."channel_id" IS '通道ID';
 COMMENT ON COLUMN "public"."pay_order"."pay_type" IS '类型：0支付宝 1微信';
 COMMENT ON COLUMN "public"."pay_order"."amount" IS '实付金额';
 COMMENT ON COLUMN "public"."pay_order"."pay_status" IS '状态：0未付款 1已付款';
-COMMENT ON COLUMN "public"."pay_order"."pay_time" IS '支付时间';
+COMMENT ON COLUMN "public"."pay_order"."pay_at" IS '支付时间';
 COMMENT ON COLUMN "public"."pay_order"."pay_rate" IS '费率';
 COMMENT ON COLUMN "public"."pay_order"."third_order_no" IS '第三方订单号';
+COMMENT ON COLUMN "public"."pay_order"."ext_data" IS '扩展数据';
+COMMENT ON COLUMN "public"."pay_order"."order_ip" IS '订单IP';
 COMMENT ON TABLE "public"."pay_order" IS '支付订单表';
 
 -- ----------------------------
 -- Records of pay_order
--- ----------------------------
-
--- ----------------------------
--- Table structure for pay_order_rel
--- ----------------------------
-DROP TABLE IF EXISTS "public"."pay_order_rel";
-CREATE TABLE "public"."pay_order_rel" (
-  "created_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "updated_at" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "order_id" int4 NOT NULL DEFAULT 0,
-  "rel_order_type" int2 NOT NULL DEFAULT 0,
-  "rel_order_id" int4 NOT NULL DEFAULT 0,
-  "rel_order_no" varchar(60) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-  "rel_order_user_id" int4 NOT NULL DEFAULT 0,
-  "rel_order_amount" numeric(10,2) NOT NULL DEFAULT 0.00
-)
-;
-COMMENT ON COLUMN "public"."pay_order_rel"."created_at" IS '创建时间';
-COMMENT ON COLUMN "public"."pay_order_rel"."updated_at" IS '更新时间';
-COMMENT ON COLUMN "public"."pay_order_rel"."order_id" IS '订单ID';
-COMMENT ON COLUMN "public"."pay_order_rel"."rel_order_type" IS '关联订单类型：0默认';
-COMMENT ON COLUMN "public"."pay_order_rel"."rel_order_id" IS '关联订单ID';
-COMMENT ON COLUMN "public"."pay_order_rel"."rel_order_no" IS '关联订单号';
-COMMENT ON COLUMN "public"."pay_order_rel"."rel_order_user_id" IS '关联订单用户ID';
-COMMENT ON COLUMN "public"."pay_order_rel"."rel_order_amount" IS '关联订单实付金额';
-COMMENT ON TABLE "public"."pay_order_rel" IS '支付订单关联表';
-
--- ----------------------------
--- Records of pay_order_rel
 -- ----------------------------
 
 -- ----------------------------
@@ -1442,8 +1417,8 @@ CREATE UNIQUE INDEX "pay_order_order_no_idx" ON "public"."pay_order" USING btree
 CREATE INDEX "pay_order_pay_id_idx" ON "public"."pay_order" USING btree (
   "pay_id" "pg_catalog"."int4_ops" ASC NULLS LAST
 );
-CREATE INDEX "pay_order_rel_order_user_id_idx" ON "public"."pay_order" USING btree (
-  "rel_order_user_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+CREATE INDEX "pay_order_rel_id_idx" ON "public"."pay_order" USING btree (
+  "rel_id" "pg_catalog"."int4_ops" ASC NULLS LAST
 );
 CREATE INDEX "pay_order_third_order_no_idx" ON "public"."pay_order" USING btree (
   "third_order_no" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
@@ -1453,13 +1428,6 @@ CREATE INDEX "pay_order_third_order_no_idx" ON "public"."pay_order" USING btree 
 -- Primary Key structure for table pay_order
 -- ----------------------------
 ALTER TABLE "public"."pay_order" ADD CONSTRAINT "pay_order_pkey" PRIMARY KEY ("order_id");
-
--- ----------------------------
--- Indexes structure for table pay_order_rel
--- ----------------------------
-CREATE INDEX "pay_order_rel_order_id_idx" ON "public"."pay_order_rel" USING btree (
-  "order_id" "pg_catalog"."int4_ops" ASC NULLS LAST
-);
 
 -- ----------------------------
 -- Primary Key structure for table pay_scene

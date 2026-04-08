@@ -3,15 +3,15 @@
 
  Source Server         : Mysql
  Source Server Type    : MySQL
- Source Server Version : 90300 (9.3.0)
+ Source Server Version : 90600 (9.6.0)
  Source Host           : 192.168.0.200:3306
- Source Schema         : admin
+ Source Schema         : admin_bak
 
  Target Server Type    : MySQL
- Target Server Version : 90300 (9.3.0)
+ Target Server Version : 90600 (9.6.0)
  File Encoding         : 65001
 
- Date: 15/01/2026 14:49:42
+ Date: 08/04/2026 11:36:48
 */
 
 SET NAMES utf8mb4;
@@ -575,44 +575,28 @@ CREATE TABLE `pay_order`  (
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `order_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '订单ID',
   `order_no` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '订单号',
-  `rel_order_type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联订单类型：0默认',
-  `rel_order_user_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联订单用户ID',
+  `order_type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单类型：0默认',
+  `rel_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联ID。根据order_type对应不同表',
   `pay_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '支付ID',
   `channel_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '通道ID',
   `pay_type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '类型：0支付宝 1微信',
   `amount` decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '实付金额',
   `pay_status` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '状态：0未付款 1已付款',
-  `pay_time` datetime NULL DEFAULT NULL COMMENT '支付时间',
+  `pay_at` datetime NULL DEFAULT NULL COMMENT '支付时间',
   `pay_rate` decimal(4, 4) UNSIGNED NOT NULL DEFAULT 0.0000 COMMENT '费率',
   `third_order_no` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '第三方订单号',
+  `ext_data` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '扩展数据',
+  `order_ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '订单IP',
   PRIMARY KEY (`order_id`) USING BTREE,
   UNIQUE INDEX `order_no`(`order_no` ASC) USING BTREE,
   INDEX `pay_id`(`pay_id` ASC) USING BTREE,
-  INDEX `channel_id`(`channel_id` ASC) USING BTREE
+  INDEX `channel_id`(`channel_id` ASC) USING BTREE,
+  INDEX `rel_id`(`rel_id` ASC) USING BTREE,
+  INDEX `third_order_no`(`third_order_no` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '支付订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay_order
--- ----------------------------
-
--- ----------------------------
--- Table structure for pay_order_rel
--- ----------------------------
-DROP TABLE IF EXISTS `pay_order_rel`;
-CREATE TABLE `pay_order_rel`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `order_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单ID',
-  `rel_order_type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联订单类型：0默认',
-  `rel_order_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联订单ID',
-  `rel_order_no` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '关联订单号',
-  `rel_order_user_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联订单用户ID',
-  `rel_order_amount` decimal(10, 2) UNSIGNED NOT NULL DEFAULT 0.00 COMMENT '关联订单实付金额',
-  INDEX `order_id`(`order_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '支付订单关联表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of pay_order_rel
 -- ----------------------------
 
 -- ----------------------------
