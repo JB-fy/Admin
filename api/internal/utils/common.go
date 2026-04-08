@@ -157,7 +157,9 @@ func GetFileBytesByRemote(ctx context.Context, fileUrl string) (fileBytes []byte
 		return
 	}
 	defer res.Close()
-
+	if location := res.Request.URL.String(); fileUrl != location {
+		return GetFileBytesByRemote(ctx, location)
+	}
 	fileBytes = res.ReadAll()
 	return
 }
