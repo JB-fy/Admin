@@ -49,6 +49,7 @@ func InitRouterApp(ctx context.Context, s *ghttp.Server) {
 				controllerThis := controller.NewPay()
 				group.Bind(
 					controllerThis.List,
+					controllerThis.Create,
 					controllerThis.Pay,
 				)
 			})

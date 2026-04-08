@@ -57,7 +57,7 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq)
 }
 
 // 新增
-func (controllerThis *Pay) Create(ctx context.Context, req *api.PayOrderCreateReq) (res *api.PayOrderCreateRes, err error) {
+func (controllerThis *Pay) Create(ctx context.Context, req *api.PayCreateReq) (res *api.PayCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := g.Map{}
 	data[daoPay.Order.Columns().OrderNo] = strconv.FormatInt(gtime.Now().UnixNano(), 36) + grand.S(4)
@@ -91,7 +91,7 @@ func (controllerThis *Pay) Create(ctx context.Context, req *api.PayOrderCreateRe
 	}
 	data[daoPay.Order.Columns().OrderId] = id
 
-	res = &api.PayOrderCreateRes{}
+	res = &api.PayCreateRes{}
 	gconv.Struct(data, &res.Info)
 	return
 }
