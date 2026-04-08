@@ -139,7 +139,7 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 			return
 		} */
 		orderFilter[daoPay.Order.Columns().RelId] = loginInfo[`login_id`]
-		orderFilter[daoPay.Order.Columns().OrderType] = []uint8{0}
+		orderFilter[daoPay.Order.Columns().OrderType] = []uint{0}
 		if channelInfo[daoPay.Channel.Columns().PayMethod].Uint8() == 3 { //小程序支付
 			switch payInfo[daoPay.Pay.Columns().PayType].Uint8() {
 			case 0: //支付宝
