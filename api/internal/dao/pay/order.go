@@ -10,7 +10,6 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
-	"maps"
 	"reflect"
 	"sync"
 
@@ -83,10 +82,6 @@ func (daoThis *orderDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 				}
 			case `label`:
 				m = m.WhereLike(daoModel.DbTable+`.`+daoThis.Columns().OrderNo, `%`+gconv.String(v)+`%`)
-			case OrderRel.Columns().RelOrderType, OrderRel.Columns().RelOrderId, OrderRel.Columns().RelOrderUserId:
-				tableOrderRel := OrderRel.ParseDbTable(m.GetCtx())
-				m = m.Where(tableOrderRel+`.`+k, v)
-				m = m.Handler(daoThis.ParseJoin(tableOrderRel, daoModel))
 			case `time_range_start`:
 				m = m.WhereGTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `time_range_end`:
@@ -125,9 +120,6 @@ func (daoThis *orderDao) ParseField(field []string, fieldWithParam map[string]an
 				tableChannel := Channel.ParseDbTable(m.GetCtx())
 				m = m.Fields(tableChannel + `.` + v)
 				m = m.Handler(daoThis.ParseJoin(tableChannel, daoModel))
-			case `order_rel_list`:
-				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().OrderId)
-				daoModel.AfterField[v] = struct{}{}
 			default:
 				if daoThis.Contains(v) {
 					m = m.Fields(daoModel.DbTable + `.` + v)
@@ -153,9 +145,6 @@ func (daoThis *orderDao) ParseField(field []string, fieldWithParam map[string]an
 func (daoThis *orderDao) HandleAfterField(ctx context.Context, record gdb.Record, daoModel *daoIndex.DaoModel) {
 	for k, v := range daoModel.AfterField {
 		switch k {
-		case `order_rel_list`:
-			orderRelList, _ := OrderRel.CtxDaoModel(ctx).Filter(OrderRel.Columns().OrderId, record[daoThis.Columns().OrderId]). /* OrderAsc(OrderRel.Columns().CreatedAt). */ All() // 有顺序要求时使用，自定义OrderAsc
-			record[k] = gvar.New(orderRelList)
 		default:
 			if v == struct{}{} {
 				record[k] = gvar.New(nil)
@@ -194,13 +183,16 @@ func (daoThis *orderDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range insert {
 			switch k {
-			case daoThis.Columns().PayTime:
+			case daoThis.Columns().PayAt:
 				if gconv.String(v) == `` {
 					v = nil
 				}
 				daoModel.SaveData[k] = v
-			case `order_rel_list`:
-				daoModel.AfterInsert[k] = v
+			case daoThis.Columns().ExtData:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				daoModel.SaveData[k] = v
 			default:
 				if daoThis.Contains(k) {
 					daoModel.SaveData[k] = v
@@ -223,21 +215,14 @@ func (daoThis *orderDao) HookInsert(daoModel *daoIndex.DaoModel) gdb.HookHandler
 			if err != nil {
 				return
 			}
-			id, _ := result.LastInsertId()
+			// id, _ := result.LastInsertId()
 
-			for k, v := range daoModel.AfterInsert {
+			/* for k, v := range daoModel.AfterInsert {
 				switch k {
-				case `order_rel_list`:
-					vList := gconv.Maps(v)
-					insertList := make([]map[string]any, len(vList))
-					for index, item := range vList {
-						insertItem := maps.Clone(item)
-						insertItem[OrderRel.Columns().OrderId] = id
-						insertList[index] = insertItem
-					}
-					OrderRel.CtxDaoModel(ctx).Data(insertList).Insert()
+				case `xxxx`:
+					daoModel.CloneNew().SetIdArr(id).HookUpdateOne(k, v).Update()
 				}
-			}
+			} */
 			return
 		},
 	}
@@ -248,13 +233,16 @@ func (daoThis *orderDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range update {
 			switch k {
-			case daoThis.Columns().PayTime:
+			case daoThis.Columns().PayAt:
 				if gconv.String(v) == `` {
 					v = nil
 				}
 				daoModel.SaveData[k] = v
-			case `order_rel_list`:
-				daoModel.AfterUpdate[k] = v
+			case daoThis.Columns().ExtData:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				daoModel.SaveData[k] = v
 			default:
 				if daoThis.Contains(k) {
 					daoModel.SaveData[k] = v
@@ -285,14 +273,6 @@ func (daoThis *orderDao) HookUpdate(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				}
 			}
 
-			for k, v := range daoModel.AfterUpdate {
-				switch k {
-				case `order_rel_list`:
-					valList := gconv.Maps(v)
-					daoIndex.SaveListRelManyWithSort(ctx, &OrderRel, OrderRel.Columns().OrderId, gconv.SliceAny(daoModel.IdArr), valList)
-				}
-			}
-
 			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
@@ -320,12 +300,11 @@ func (daoThis *orderDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				return
 			}
 
-			row, _ := result.RowsAffected()
+			/* row, _ := result.RowsAffected()
 			if row == 0 {
 				return
-			}
+			} */
 
-			OrderRel.CtxDaoModel(ctx).Filter(OrderRel.Columns().OrderId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			return
 		},
 	}
@@ -360,7 +339,7 @@ func (daoThis *orderDao) ParseOrder(order []string, daoModel *daoIndex.DaoModel)
 			switch k {
 			case `id`:
 				m = m.Order(daoModel.DbTable + `.` + gstr.Replace(v, k, daoThis.Columns().OrderId, 1))
-			case daoThis.Columns().PayTime:
+			case daoThis.Columns().PayAt:
 				m = m.Order(daoModel.DbTable + `.` + v)
 				m = m.OrderDesc(daoModel.DbTable + `.` + daoThis.Columns().OrderId)
 			case daoThis.Columns().UpdatedAt:
@@ -396,8 +375,6 @@ func (daoThis *orderDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 			m = m.LeftJoin(joinTable, joinTable+`.`+Pay.Columns().PayId+` = `+daoModel.DbTable+`.`+daoThis.Columns().PayId)
 		case Channel.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+Channel.Columns().ChannelId+` = `+daoModel.DbTable+`.`+daoThis.Columns().ChannelId)
-		case OrderRel.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+OrderRel.Columns().OrderId+` = `+daoModel.DbTable+`.`+daoThis.Columns().OrderId)
 		default:
 			m = m.LeftJoin(joinTable, joinTable+`.`+daoThis.Columns().OrderId+` = `+daoModel.DbTable+`.`+daoThis.Columns().OrderId)
 		}

@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 )
 
 // 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
@@ -23,6 +24,34 @@ type PayChannelListRes struct {
 }
 
 /*--------列表 结束--------*/
+
+/*--------新增 开始--------*/
+type PayOrderCreateReq struct {
+	g.Meta `path:"/order/create" method:"post" tags:"支付" sm:"新增"`
+	CommonAllTokenHeaderReq
+	OrderType *uint8 `json:"order_type,omitempty" v:"required|in:0" dc:"订单类型：0默认。值对应的请求参数必传"`
+	// Amount    *float64 `json:"amount,omitempty" v:"required-if:OrderType,0|between:0,99999999.99" dc:"实付金额"`
+	// ExtData   *string  `json:"ext_data,omitempty" v:"max-length:120" dc:"扩展数据"`
+	Param0 *struct {
+		Amount *float64 `json:"amount,omitempty" v:"required|between:0,99999999.99" dc:"金额"`
+	} `json:"param_0,omitempty" v:"required-if:OrderType,0" dc:"请求参数0"`
+}
+
+type PayOrderCreateRes struct {
+	Info PayOrderInfo `json:"info" dc:"详情"`
+}
+
+type PayOrderInfo struct {
+	OrderId   *uint       `json:"order_id,omitempty" dc:"订单ID"`
+	OrderNo   *string     `json:"order_no,omitempty" dc:"订单号"`
+	OrderType *uint       `json:"order_type,omitempty" dc:"订单类型：0默认"`
+	Amount    *float64    `json:"amount,omitempty" dc:"实付金额"`
+	ExtData   *string     `json:"ext_data,omitempty" dc:"扩展数据"`
+	OrderIp   *string     `json:"order_ip,omitempty" dc:"订单IP"`
+	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
+}
+
+/*--------新增 结束--------*/
 
 /*--------支付 开始--------*/
 type PayPayReq struct {
