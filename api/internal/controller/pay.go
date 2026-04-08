@@ -247,8 +247,7 @@ func (controllerThis *Pay) Notify(ctx context.Context, req *api.PayNotifyReq) (r
 
 		/**--------处理关联订单 开始--------**/
 		switch orderInfo[daoPay.Order.Columns().OrderType].Uint8() { // 根据订单类型处理
-		case 0:
-			// 业务逻辑
+		// case 0: //默认
 		default:
 			err = utils.NewErrorCode(ctx, 30013001, ``)
 			return
