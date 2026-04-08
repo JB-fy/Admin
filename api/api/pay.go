@@ -61,7 +61,7 @@ type PayPayReq struct {
 }
 
 type PayPayRes struct {
-	PayStr string `json:"payStr" dc:"支付字符串"`
+	PayStr string `json:"pay_str" dc:"支付字符串"`
 }
 
 /*--------支付 结束--------*/
