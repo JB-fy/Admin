@@ -16,6 +16,7 @@ type Pay struct {
 	PublicKey  string `json:"public_key"`
 	OpAppId    string `json:"op_app_id"`
 	NotifyUrl  string `json:"notify_url"`
+	client     *alipay.Client
 }
 
 func NewPay(ctx context.Context, config map[string]any) model.Pay {
@@ -24,15 +25,19 @@ func NewPay(ctx context.Context, config map[string]any) model.Pay {
 	if obj.AppId == `` || obj.PrivateKey == `` || obj.PublicKey == `` || obj.NotifyUrl == `` {
 		panic(`缺少配置：支付-支付宝`)
 	}
+	var err error
+	obj.client, err = alipay.New(obj.AppId, obj.PrivateKey, true)
+	if err != nil {
+		panic(err.Error())
+	}
+	err = obj.client.LoadAliPayPublicKey(obj.PublicKey)
+	if err != nil {
+		panic(err.Error())
+	}
 	return obj
 }
 
 func (payThis *Pay) App(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
-	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
-	if err != nil {
-		return
-	}
-
 	param := alipay.TradeAppPay{
 		Trade: alipay.Trade{
 			Subject:     payReq.Desc,
@@ -42,7 +47,7 @@ func (payThis *Pay) App(ctx context.Context, payReq model.PayReq) (payRes model.
 			NotifyURL:   payThis.NotifyUrl,
 		},
 	}
-	result, err := client.TradeAppPay(param)
+	result, err := payThis.client.TradeAppPay(param)
 	if err != nil {
 		return
 	}
@@ -52,11 +57,6 @@ func (payThis *Pay) App(ctx context.Context, payReq model.PayReq) (payRes model.
 }
 
 func (payThis *Pay) H5(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
-	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
-	if err != nil {
-		return
-	}
-
 	param := alipay.TradeWapPay{
 		Trade: alipay.Trade{
 			Subject:     payReq.Desc,
@@ -69,7 +69,7 @@ func (payThis *Pay) H5(ctx context.Context, payReq model.PayReq) (payRes model.P
 	if payReq.ReturnUrl != `` {
 		param.ReturnURL = payReq.ReturnUrl
 	}
-	result, err := client.TradeWapPay(param)
+	result, err := payThis.client.TradeWapPay(param)
 	if err != nil {
 		return
 	}
@@ -79,11 +79,6 @@ func (payThis *Pay) H5(ctx context.Context, payReq model.PayReq) (payRes model.P
 }
 
 func (payThis *Pay) QRCode(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
-	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
-	if err != nil {
-		return
-	}
-
 	param := alipay.TradePreCreate{
 		Trade: alipay.Trade{
 			Subject:     payReq.Desc,
@@ -93,7 +88,7 @@ func (payThis *Pay) QRCode(ctx context.Context, payReq model.PayReq) (payRes mod
 			NotifyURL:   payThis.NotifyUrl,
 		},
 	}
-	result, err := client.TradePreCreate(param)
+	result, err := payThis.client.TradePreCreate(ctx, param)
 	if err != nil {
 		return
 	}
@@ -107,10 +102,6 @@ func (payThis *Pay) QRCode(ctx context.Context, payReq model.PayReq) (payRes mod
 }
 
 func (payThis *Pay) Jsapi(ctx context.Context, payReq model.PayReq) (payRes model.PayRes, err error) {
-	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
-	if err != nil {
-		return
-	}
 	if payThis.OpAppId == `` {
 		err = errors.New(`缺少插件配置：支付-小程序AppID`)
 		return
@@ -129,7 +120,7 @@ func (payThis *Pay) Jsapi(ctx context.Context, payReq model.PayReq) (payRes mode
 		OpAppId:     payThis.OpAppId, //小程序应用ID
 	}
 
-	result, err := client.TradeCreate(param)
+	result, err := payThis.client.TradeCreate(ctx, param)
 	if err != nil {
 		return
 	}
@@ -143,16 +134,7 @@ func (payThis *Pay) Jsapi(ctx context.Context, payReq model.PayReq) (payRes mode
 }
 
 func (payThis *Pay) Notify(ctx context.Context, r *ghttp.Request) (notifyInfo model.NotifyInfo, err error) {
-	client, err := alipay.New(payThis.AppId, payThis.PrivateKey, true)
-	if err != nil {
-		return
-	}
-	err = client.LoadAliPayPublicKey(payThis.PublicKey)
-	if err != nil {
-		return
-	}
-
-	notifyData, err := client.DecodeNotification(r.Form)
+	notifyData, err := payThis.client.DecodeNotification(ctx, r.Form)
 	if err != nil {
 		return
 	}

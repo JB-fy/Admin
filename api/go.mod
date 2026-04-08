@@ -20,7 +20,7 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/scylladb/gocqlx/v3 v3.0.1
-	github.com/smartwalle/alipay/v3 v3.2.20
+	github.com/smartwalle/alipay/v3 v3.2.29
 	github.com/wechatpay-apiv3/wechatpay-go v0.2.18
 	github.com/xdg-go/scram v1.1.2
 	github.com/yidun/yidun-golang-sdk v1.0.6
@@ -79,7 +79,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/scylladb/go-reflectx v1.0.1 // indirect
 	github.com/smartwalle/ncrypto v1.0.4 // indirect
-	github.com/smartwalle/ngx v1.0.9 // indirect
+	github.com/smartwalle/ngx v1.1.0 // indirect
 	github.com/smartwalle/nsign v1.0.9 // indirect
 	github.com/tjfoc/gmsm v1.4.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
