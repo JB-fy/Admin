@@ -2,7 +2,6 @@ package router
 
 import (
 	"api/internal/controller"
-	"api/internal/middleware"
 	"api/internal/utils"
 	"context"
 
@@ -24,7 +23,7 @@ func InitRouterCommon(ctx context.Context, s *ghttp.Server) {
 			controllerThis.Sts,
 		)
 		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.BodyRepeatable(true))
+			// group.Middleware(middleware.BodyRepeatable(true))
 			group.Bind(controllerThis.Notify)
 		})
 	})
@@ -36,7 +35,7 @@ func InitRouterCommon(ctx context.Context, s *ghttp.Server) {
 		// controllerThis.Pay, //建议在场景内验证登录token后才可调用
 		) */
 		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.BodyRepeatable(true))
+			// group.Middleware(middleware.BodyRepeatable(true))
 			group.Bind(controllerThis.Notify)
 		})
 	})
@@ -46,7 +45,7 @@ func InitRouterCommon(ctx context.Context, s *ghttp.Server) {
 	})
 	//微信
 	s.Group(`/wx`, func(group *ghttp.RouterGroup) {
-		group.Middleware(middleware.BodyRepeatable(true))
+		// group.Middleware(middleware.BodyRepeatable(true))
 		controllerThis := controller.NewWx()
 		group.Bind(controllerThis.GzhNotify)
 	})
