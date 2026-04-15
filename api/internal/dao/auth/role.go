@@ -191,10 +191,10 @@ func (daoThis *roleDao) HandleAfterField(ctx context.Context, record gdb.Record,
 		switch k {
 		case `action_id_arr`:
 			actionIdArr, _ := RoleRelToAction.CtxDaoModel(ctx).Filter(RoleRelToAction.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToAction.Columns().ActionId)
-			record[k] = gvar.New(actionIdArr)
+			record[k] = gvar.New(actionIdArr.Interfaces())
 		case `menu_id_arr`:
 			menuIdArr, _ := RoleRelToMenu.CtxDaoModel(ctx).Filter(RoleRelToMenu.Columns().RoleId, record[daoThis.Columns().RoleId]).Array(RoleRelToMenu.Columns().MenuId)
-			record[k] = gvar.New(menuIdArr)
+			record[k] = gvar.New(menuIdArr.Interfaces())
 		case `rel_name`:
 			relName := ``
 			if record[daoThis.Columns().RelId].Uint() == 0 {

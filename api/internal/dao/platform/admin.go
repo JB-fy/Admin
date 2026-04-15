@@ -154,7 +154,7 @@ func (daoThis *adminDao) HandleAfterField(ctx context.Context, record gdb.Record
 		switch k {
 		case `role_id_arr`:
 			roleIdArr, _ := daoAuth.RoleRelOfPlatformAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfPlatformAdmin.Columns().AdminId, record[daoThis.Columns().AdminId]).Array(daoAuth.RoleRelOfPlatformAdmin.Columns().RoleId)
-			record[k] = gvar.New(roleIdArr)
+			record[k] = gvar.New(roleIdArr.Interfaces())
 		default:
 			if v == struct{}{} {
 				record[k] = gvar.New(nil)

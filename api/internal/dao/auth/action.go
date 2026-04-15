@@ -185,7 +185,7 @@ func (daoThis *actionDao) HandleAfterField(ctx context.Context, record gdb.Recor
 		switch k {
 		case `scene_id_arr`:
 			sceneIdArr, _ := ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().ActionId, record[daoThis.Columns().ActionId]).Array(ActionRelToScene.Columns().SceneId)
-			record[k] = gvar.New(sceneIdArr)
+			record[k] = gvar.New(sceneIdArr.Interfaces())
 		default:
 			if v == struct{}{} {
 				record[k] = gvar.New(nil)
