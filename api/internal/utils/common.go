@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"strings"
 
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -115,9 +116,9 @@ func SaveFileBytes(ctx context.Context, savePath string, fileBytes []byte, isHtt
 	}
 	port := ``
 	if isPort {
-		port = g.Cfg().MustGet(ctx, serverPath+`.address`).String()
+		port = strings.Split(g.Cfg().MustGet(ctx, serverPath+`.address`).String(), `,`)[0]
 		if isHttps {
-			port = g.Cfg().MustGet(ctx, serverPath+`.httpsAddr`).String()
+			port = strings.Split(g.Cfg().MustGet(ctx, serverPath+`.httpsAddr`).String(), `,`)[0]
 		}
 	}
 	fileUrl = fmt.Sprintf(`%s://%s%s/%s`, scheme, genv.Get(consts.ENV_SERVER_NETWORK_IP).String(), port, savePath)
