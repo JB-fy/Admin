@@ -78,6 +78,7 @@ database:
       maxIdle: "10" # 连接池最大闲置的连接数(默认10)
       maxOpen: "50" # 连接池最大打开的连接数(默认无限制)。该值 * 服务器数量 < mysql的max_connections
       maxLifeTime: "30m" # 连接对象可重复使用的时间长度(默认30秒)。该值 < mysql的wait_timeout和interactive_timeout的最小值
+      maxIdleTime: "1m" # 连接池中空闲连接的最大生存时间(默认30秒)。避免长时间空闲连接占用资源
       # debug: true # 开启调试模式。默认为false
       # dryRun: false # ORM空跑(只读不写)
       timeMaintainDisabled: true # 是否完全关闭时间更新特性，true时CreatedAt/UpdatedAt/DeletedAt都将失效
