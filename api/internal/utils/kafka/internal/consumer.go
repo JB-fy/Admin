@@ -4,7 +4,6 @@ import (
 	"api/internal/utils/kafka/model"
 	"context"
 	"fmt"
-	"syscall"
 	"time"
 
 	"github.com/IBM/sarama"
@@ -34,11 +33,11 @@ func InitConsumer(ctx context.Context, saramaConfig *sarama.Config, config *mode
 		// consumePartitionArr = append(consumePartitionArr, consumePartition)
 		// defer consumePartition.AsyncClose()	//长期跑，不准关闭
 
-		go func() {
+		go func(consumePartition sarama.PartitionConsumer) {
 			for msg := range consumePartition.Messages() {
 				runFunc(msg)
 			}
-		}()
+		}(consumePartition)
 	}
 	return
 }
@@ -51,11 +50,11 @@ func InitConsumerGroup(ctx context.Context, saramaConfig *sarama.Config, config 
 	// defer consumer.Close() //长期跑，不准关闭
 
 	go func() {
-		if err := consumer.Consume(ctx, consumerInfo.TopicArr, consumerGroupHandler); err != nil {
-			g.Log(`kafka`).Error(ctx, fmt.Sprintf(`消费者(分组:%s，组ID:%s，主题:%s)创建失败`, config.Group, consumerInfo.GroupId, gconv.String(consumerInfo.TopicArr)), err)
-			time.Sleep(3 * time.Second /* + time.Duration(3-time.Now().Second()%3)*time.Second */)
-			syscall.Kill(syscall.Getpid(), syscall.SIGTERM) //消费者组启动失败时，直接关闭进程，触发服务重启
-			return
+		for {
+			if err := consumer.Consume(ctx, consumerInfo.TopicArr, consumerGroupHandler); err != nil {
+				g.Log(`kafka`).Error(ctx, fmt.Sprintf(`消费者(分组:%s，组ID:%s，主题:%s)创建失败`, config.Group, consumerInfo.GroupId, gconv.String(consumerInfo.TopicArr)), err)
+			}
+			time.Sleep(5 * time.Second)
 		}
 	}()
 	return
