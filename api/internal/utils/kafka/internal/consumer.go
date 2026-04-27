@@ -54,7 +54,7 @@ func InitConsumerGroup(ctx context.Context, saramaConfig *sarama.Config, config 
 			if err := consumer.Consume(ctx, consumerInfo.TopicArr, consumerGroupHandler); err != nil {
 				g.Log(`kafka`).Error(ctx, fmt.Sprintf(`消费者(分组:%s，组ID:%s，主题:%s)创建失败`, config.Group, consumerInfo.GroupId, gconv.String(consumerInfo.TopicArr)), err)
 			}
-			time.Sleep(5 * time.Second)
+			time.Sleep(3 * time.Second)
 		}
 	}()
 	return
