@@ -1188,6 +1188,21 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 	if len(myGenTplThis.Handle.Id.List) > 1 || !myGenTplThis.Handle.Id.IsPrimary { //联合主键或无主键时，不获取其它关联表
 		return
 	}
+	if !slices.Contains([]string{`id`, myGenTplThis.TableCaseSnake + `_id`}, myGenTplThis.Handle.Id.List[0].FieldCaseSnake) { //可能是扩展表
+		fmt.Println(color.HiYellowString(`该表主键命名不符合规范，可能是其它表的扩展表，是则无需查找其它关联表，需手动确认`))
+		isContinueStr := gcmd.Scan(color.BlueString(`> 是否继续查找其它关联表，请确认？默认(no)：`))
+	isContinueEnd:
+		for {
+			switch isContinueStr {
+			case `1`, `yes`:
+				break isContinueEnd
+			case ``, `0`, `no`:
+				return
+			default:
+				isContinueStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否继续查找其它关联表，请确认？默认(no)：`))
+			}
+		}
+	}
 	extendMiddleTableArr := []string{}
 	for _, v := range myGenTplThis.Handle.ExtendTableOneList {
 		extendMiddleTableArr = append(extendMiddleTableArr, v.tpl.Table)
