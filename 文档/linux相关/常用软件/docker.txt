@@ -24,7 +24,9 @@ VMware设置
     "max-file": "5"
   },
   "registry-mirrors": [
-    "https://docker.m.daocloud.io"
+    "https://docker.m.daocloud.io",
+    "https://docker.1panel.live",
+    "https://hub.rat.dev"
   ]
 }
 非root用户需添加到docker用户组
