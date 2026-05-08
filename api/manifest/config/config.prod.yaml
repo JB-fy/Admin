@@ -93,6 +93,11 @@ redisDb: # 参考redis.UniversalOption结构体
     addrs: "0.0.0.0:6379"
     # password: ""
     # db: 0
+    poolSize: "100" # 连接池最大打开的连接数（默认10*CPU核数）
+    minIdleConns: "10" # 连接池最小闲置的连接数（默认0）
+    # maxIdleConns: "20" # 连接池最大闲置的连接数（默认0）
+    # connMaxIdleTime: "30m" # 连接池中空闲连接的最大生存时间(默认:30m）
+    # connMaxLifetime: "30m" # 连接对象可重复使用的时间长度(默认0，不限制)
     # debug: true # 开启调试模式。默认为false
   # test:
   #   addrs:
