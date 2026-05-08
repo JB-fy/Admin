@@ -133,8 +133,6 @@ docker run -d -p 6379:6379 -v 配置:/usr/local/etc/redis/redis.conf -v 数据:/
 docker run -d -p 27017:27017 -v 配置:/etc/mongod.conf -v 数据:/data/db -e MONGO_INITDB_ROOT_USERNAME=用户 -e MONGO_INITDB_ROOT_PASSWORD=密码 mongo --config /etc/mongod.conf
     # 示例：docker run -d --name mongo-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/mongodb/latest/data:/data/db mongo:latest
 
-
-
 # scylladb
 docker run -d -p 9042:9042 -v 配置:/etc/scylla -v 数据:/var/lib/scylla scylladb/scylla:latest --authenticator PasswordAuthenticator --authorizer CassandraAuthorizer --listen-address 当前节点IP（监听地址，所有节点都在同一内网中时，填内网IP，否则填外网IP） --rpc-address 客户端连接节点的IP地址（所有节点都在同一内网中时，填内网IP，否则填外网IP。可用0.0.0.0同时支持外网IP和内网IP） --broadcast-rpc-address 节点广播给其它节点的IP地址（所有节点都在同一内网中时，填内网IP，否则填公网IP。当rpc_address设置为0.0.0.0时必须设置） --native-transport-port 9042（CQL协议端口） --storage-port 7000（节点间的通信端口） --seeds 种子节点IP:端口,种子节点IP:7000
     # 示例：docker run -d --name scylladb-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/scylladb/latest/data:/var/lib/scylla scylladb/scylla:latest --listen-address 192.168.0.200 --rpc-address 0.0.0.0 --broadcast-rpc-address 192.168.0.200
