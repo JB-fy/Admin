@@ -133,19 +133,27 @@ docker run -d -p 6379:6379 -v 配置:/usr/local/etc/redis/redis.conf -v 数据:/
 docker run -d -p 27017:27017 -v 配置:/etc/mongod.conf -v 数据:/data/db -e MONGO_INITDB_ROOT_USERNAME=用户 -e MONGO_INITDB_ROOT_PASSWORD=密码 mongo --config /etc/mongod.conf
     # 示例：docker run -d --name mongo-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/mongodb/latest/data:/data/db mongo:latest
 
-# scylladb（ALLOW_EMPTY_PASSWORD=yes设为无需账号密码登录）
-docker run -d --ulimit memlock=-1 --ulimit nofile=100000:100000 -p 9042:9042 -v 配置:/conf -v 数据:/bitnami/scylladb/data -e SCYLLADB_CQL_PORT_NUMBER=9042(修改需同时修改SCYLLADB_SEEDS，在节点IP后面追加修改后的端口) -e SCYLLADB_CLUSTER_NAME=集群名称 -e SCYLLADB_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e SCYLLADB_SEEDS=种子节点IP,种子节点IP（集群第一个节点初始化时不允许设置多个，否则会因竞争导致初始化卡住而失败） -e SCYLLADB_HOST=当前节点内网IP -e SCYLLADB_BROADCAST_ADDRESS=当前节点外网IP（不建议设置，通过开放宿主机端口可直接实现外网访问。如设置需将SCYLLADB_SEEDS中的内网ip也改成外网IP） bitnami/scylladb
-    # 示例：docker run -d --name scylladb-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/scylladb/latest/data:/bitnami/scylladb/data -e SCYLLADB_HOST=192.168.0.200 -e ALLOW_EMPTY_PASSWORD=yes bitnami/scylladb:latest
+
+
+# scylladb
+docker run -d -p 9042:9042 -v 配置:/etc/scylla -v 数据:/var/lib/scylla scylladb/scylla:latest --authenticator PasswordAuthenticator --authorizer CassandraAuthorizer --listen-address 当前节点IP（监听地址，所有节点都在同一内网中时，填内网IP，否则填外网IP） --rpc-address 客户端连接节点的IP地址（所有节点都在同一内网中时，填内网IP，否则填外网IP。可用0.0.0.0同时支持外网IP和内网IP） --broadcast-rpc-address 节点广播给其它节点的IP地址（所有节点都在同一内网中时，填内网IP，否则填公网IP。当rpc_address设置为0.0.0.0时必须设置） --native-transport-port 9042（CQL协议端口） --storage-port 7000（节点间的通信端口） --seeds 种子节点IP:端口,种子节点IP:7000
+    # 示例：docker run -d --name scylladb-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/scylladb/latest/data:/var/lib/scylla scylladb/scylla:latest --listen-address 192.168.0.200 --rpc-address 0.0.0.0 --broadcast-rpc-address 192.168.0.200
     # 注意事项
         # 宿主机需先创建数据目录，并赋予写入权限
             mkdir -p /home/jb/dev/tool/scylladb/latest/data && chmod -R 777 /home/jb/dev/tool/scylladb/latest/data
-        # SCYLLADB_DATACENTER=数据中心标识 和 SCYLLADB_RACK=物理机标识 实测无效，只能通过挂载配置文件cassandra-rackdc.properties到/conf目录实现
+        # 需要自定义配置时，需先创建配置目录，并写入scylla.yaml和cassandra-rackdc.properties两个文件
             mkdir -p /home/jb/dev/tool/scylladb/latest/conf
+        # 编辑配置文件
+            vi /home/jb/dev/tool/scylladb/latest/conf/scylla.yaml
+        # SCYLLADB_DATACENTER=数据中心标识 和 SCYLLADB_RACK=物理机标识 实测无效，只能通过挂载配置文件cassandra-rackdc.properties到/conf目录实现
             vi /home/jb/dev/tool/scylladb/latest/conf/cassandra-rackdc.properties
 dc=数据中心标识
 rack=物理机标识
         # scylladb长时间运行会产生大量快照占用硬盘空间，可用以下命令清理
             docker exec 容器名 nodetool clearsnapshot 键空间
+    # bitnami/scylladb镜像已经从hub.docker.com上移除，不再建议使用
+    docker run -d --ulimit memlock=-1 --ulimit nofile=100000:100000 -p 9042:9042 -v 配置:/conf -v 数据:/bitnami/scylladb/data -e SCYLLADB_CQL_PORT_NUMBER=9042(修改需同时修改SCYLLADB_SEEDS，在节点IP后面追加修改后的端口) -e SCYLLADB_CLUSTER_NAME=集群名称 -e SCYLLADB_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e SCYLLADB_SEEDS=种子节点IP,种子节点IP（集群第一个节点初始化时不允许设置多个，否则会因竞争导致初始化卡住而失败） -e SCYLLADB_HOST=当前节点内网IP -e SCYLLADB_BROADCAST_ADDRESS=当前节点外网IP（不建议设置，通过开放宿主机端口可直接实现外网访问。如设置需将SCYLLADB_SEEDS中的内网ip也改成外网IP） bitnami/scylladb
+        # 示例：docker run -d --name scylladb-alone --network host -v /etc/localtime:/etc/localtime:ro -v /home/jb/dev/tool/scylladb/latest/data:/bitnami/scylladb/data -e SCYLLADB_HOST=192.168.0.200 -e ALLOW_EMPTY_PASSWORD=yes bitnami/scylladb:latest
 
 # cassandra
 docker run -d -p 9042:9042 -v 配置:/etc/cassandra/cassandra.yaml -v 数据:/var/lib/cassandra cassandra
