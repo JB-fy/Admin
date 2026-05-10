@@ -86,7 +86,7 @@ type VidOption struct {
 	MinDuration     float64  `json:"min_duration"` //注意：转换目标格式是webm时，不支持填充时长
 	MaxDuration     float64  `json:"max_duration"`
 	EncodeFormatArr []string `json:"encode_format_arr"` //需要转换的格式：video/mp4, video/web
-	TargerFormat    string   `json:"targer_format"`     //当EncodeFormatArr不为空，且需要格式转换时才有用，用于指定转换后的目标格式，默认：mp4
+	TargetFormat    string   `json:"target_format"`     //当EncodeFormatArr不为空，且需要格式转换时才有用，用于指定转换后的目标格式，默认：mp4
 	IsError         bool     `json:"is_error"`          //报错：0否 1是
 }
 
@@ -123,7 +123,7 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 	var argsOfVf []string
 	var argsOfAf []string
 	var argsOfT []string
-	targerFormat := ffmpegFormat
+	targetFormat := ffmpegFormat
 	if vidOption.Width > 0 && vidOption.Height > 0 {
 		if len(vidOption.RatioArr) == 0 {
 			if !(vidMeta.Width == vidOption.Width && vidMeta.Height == vidOption.Height) {
@@ -171,9 +171,9 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 	}
 	if len(vidOption.EncodeFormatArr) > 0 && slices.Contains(vidOption.EncodeFormatArr, vidType) {
 		isHandle = true
-		targerFormat = vidOption.TargerFormat
-		if targerFormat == `` {
-			targerFormat = `mp4`
+		targetFormat = vidOption.TargetFormat
+		if targetFormat == `` {
+			targetFormat = `mp4`
 		}
 	}
 	if !isHandle {
@@ -189,15 +189,15 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 	if len(argsOfT) > 0 {
 		args = append(args, `-t`, strings.Join(argsOfT, `,`))
 	}
-	targerFormat = `avi`
-	switch targerFormat {
+	targetFormat = `avi`
+	switch targetFormat {
 	case `webm`:
-		args = append(args, `-c:v`, `libvpx-vp9`, `-crf`, `30`, `-b:v`, `0`, `-c:a`, `libopus`, `-b:a`, `128k`, `-cpu-used`, `4`, `-row-mt`, `1`, `-f`, targerFormat, `pipe:1`)
+		args = append(args, `-c:v`, `libvpx-vp9`, `-crf`, `30`, `-b:v`, `0`, `-c:a`, `libopus`, `-b:a`, `128k`, `-cpu-used`, `4`, `-row-mt`, `1`, `-f`, targetFormat, `pipe:1`)
 	case `avi`:
-		args = append(args, `-c:v`, `msmpeg4v3`, `-c:a`, `libmp3lame`, `-b:a`, `128k`, `-f`, targerFormat, `pipe:1`)
+		args = append(args, `-c:v`, `msmpeg4v3`, `-c:a`, `libmp3lame`, `-b:a`, `128k`, `-f`, targetFormat, `pipe:1`)
 	// case `mp4`, `mov`:
 	default:
-		args = append(args, `-c:v`, `libx264`, `-crf`, `23`, `-preset`, `fast`, `-c:a`, `aac`, `-b:a`, `128k`, `-f`, targerFormat, `-movflags`, `frag_keyframe+empty_moov`, `pipe:1`)
+		args = append(args, `-c:v`, `libx264`, `-crf`, `23`, `-preset`, `fast`, `-c:a`, `aac`, `-b:a`, `128k`, `-f`, targetFormat, `-movflags`, `frag_keyframe+empty_moov`, `pipe:1`)
 	}
 
 	cmd := exec.Command(`ffmpeg`, args...)
