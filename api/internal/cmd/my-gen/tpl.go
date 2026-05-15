@@ -1190,18 +1190,18 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 	}
 	if !slices.Contains([]string{`id`, myGenTplThis.TableCaseSnake + `_id`}, myGenTplThis.Handle.Id.List[0].FieldCaseSnake) { //可能是扩展表
 		fmt.Println(color.HiYellowString(`该表主键命名不符合规范，是否继续查找其它关联表（比如是其它表的扩展表时，则无需继续查找），需手动确认`))
-		isContinueStr := gcmd.Scan(color.BlueString(`> 是否继续查找其它关联表，请确认？默认(no)：`))
+		isContinueStr := gcmd.Scan(color.BlueString(`> 是否继续查找其它关联表，请确认？默认(yes)：`))
 	isContinueEnd:
 		for {
 			switch isContinueStr {
-			case `1`, `yes`:
+			case ``, `1`, `yes`:
 				myGenTplThis.Handle.OtherRelTableCmdLog = append(myGenTplThis.Handle.OtherRelTableCmdLog, fmt.Sprintf(`%s:%s`, `继续查找其它关联表`, `是`))
 				break isContinueEnd
-			case ``, `0`, `no`:
+			case `0`, `no`:
 				myGenTplThis.Handle.OtherRelTableCmdLog = append(myGenTplThis.Handle.OtherRelTableCmdLog, fmt.Sprintf(`%s:%s`, `继续查找其它关联表`, `否`))
 				return
 			default:
-				isContinueStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否继续查找其它关联表，请确认？默认(no)：`))
+				isContinueStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否继续查找其它关联表，请确认？默认(yes)：`))
 			}
 		}
 	}
