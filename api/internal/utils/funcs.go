@@ -232,6 +232,42 @@ func GetRatio[T MyInteger](a, b T) string {
 	return fmt.Sprintf(`%d:%d`, a/g, b/g)
 }
 
+// 获取字符串匹配率
+func GetMatchOfStr(str1, str2 string, countSoure bool) float64 {
+	set1 := make(map[rune]int)
+	for _, v := range str1 {
+		set1[v]++
+	}
+	set2 := make(map[rune]int)
+	for _, v := range str2 {
+		set2[v]++
+	}
+	return GetMatchOfSet(set1, set2, countSoure)
+}
+
+// 获取字符串匹配率（集）
+func GetMatchOfSet(set1, set2 map[rune]int, countSoure bool) float64 {
+	set := set1
+	if countSoure {
+		set = set2
+	}
+	count := 0
+	for _, v := range set {
+		count += v
+	}
+	countOfIn := 0
+	for k, count1 := range set1 {
+		if count2, ok := set2[k]; ok {
+			if count2 > count1 {
+				countOfIn += count1
+			} else {
+				countOfIn += count2
+			}
+		}
+	}
+	return float64(countOfIn) / float64(count)
+}
+
 // 从结构体中获取对应字段的值
 func GetValueFromStruct(Obj any, name string) (val any) {
 	v := reflect.ValueOf(Obj)
