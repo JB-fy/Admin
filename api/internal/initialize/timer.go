@@ -6,6 +6,7 @@ import (
 	"api/internal/utils"
 	"api/internal/utils/wx"
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -31,13 +32,13 @@ func (myTimerThis *myTimer) CACHE_WX_GZH_ACCESS_TOKEN(ctx context.Context) {
 			wxGzhObj := wx.NewWxGzh(ctx)
 			accessTokenInfo, err := wxGzhObj.AccessToken(ctx)
 			if err != nil {
-				g.Log().Error(ctx, `获取微信公众号AccessToken接口错误：`+err.Error(), err)
+				g.Log().Error(ctx, fmt.Errorf(`获取微信公众号AccessToken接口错误：%w`, err))
 				time.Sleep(3 * time.Second)
 				continue
 			}
 			err = cache.WxGzhAccessToken.Set(ctx, wxGzhObj.AppId, accessTokenInfo.AccessToken, time.Duration(accessTokenInfo.ExpiresIn)*time.Second)
 			if err != nil {
-				g.Log().Error(ctx, `缓存微信公众号AccessToken错误：`+err.Error(), err)
+				g.Log().Error(ctx, fmt.Errorf(`缓存微信公众号AccessToken错误：%w`, err))
 				time.Sleep(3 * time.Second)
 				continue
 			}

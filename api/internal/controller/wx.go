@@ -24,8 +24,8 @@ func (controllerThis *Wx) GzhNotify(ctx context.Context, req *api.WxGzhNotifyReq
 	signature := r.Get(`signature`).String()
 
 	if wxGzhObj.Sign(timestamp, nonce) != signature {
-		g.Log().Error(ctx, `签名错误`)
 		err = errors.New(`签名错误`)
+		// g.Log().Error(ctx, err)
 		return
 	}
 	//接入验证：GET请求
@@ -42,13 +42,13 @@ func (controllerThis *Wx) GzhNotify(ctx context.Context, req *api.WxGzhNotifyReq
 	encrypt := encryptReqBody.Encrypt
 	// encrypt := r.Get(`Encrypt`).String() //body是xml时，框架已经做了解析。故也可以直接取
 	if encryptType != `aes` {
-		g.Log().Error(ctx, `请设置消息加解密方式：安全模式`)
 		err = errors.New(`请设置消息加解密方式：安全模式`)
+		// g.Log().Error(ctx, err)
 		return
 	}
 	if wxGzhObj.MsgSign(timestamp, nonce, encrypt) != msgSignature {
-		g.Log().Error(ctx, `消息签名错误`)
 		err = errors.New(`消息签名错误`)
+		// g.Log().Error(ctx, err)
 		return
 	}
 	msgByte, err := wxGzhObj.AesDecrypt(encrypt)
