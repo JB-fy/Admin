@@ -10,7 +10,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/patrickmn/go-cache"
 	"github.com/redis/go-redis/v9"
@@ -87,10 +86,10 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 				if rec := recover(); rec != nil { //防止panic导致redis锁长时间没释放，造成频繁执行getFunc()方法
 					err = errors.New(`设置缓存panic错误：` + gconv.String(rec) + `。栈信息：` + string(debug.Stack()))
 					cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
-					g.Log().Error(ctx, err.Error())
+					// g.Log().Error(ctx, err)
 				} else if ctxErr := ctx.Err(); ctxErr != nil { //上下文取消或超时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
 					cacheThis.cache().Del(ctx, isSetKey)
-					g.Log().Error(ctx, `上下文取消或超时：`+ctxErr.Error())
+					// g.Log().Error(ctx, fmt.Errorf(`设置缓存上下文错误：%w`, ctxErr))
 				}
 			}()
 			value, notExist, err = setFunc()
