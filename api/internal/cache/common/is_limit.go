@@ -6,6 +6,7 @@ import (
 	"api/internal/utils/jbredis"
 	"context"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -44,7 +45,7 @@ end`).Result()
 		panic(`redis加载脚本错误：` + err.Error())
 	}
 
-	if utils.IsDev(ctx) || g.Cfg().MustGet(ctx, `masterServerNetworkIp`).String() == genv.Get(consts.ENV_SERVER_NETWORK_IP).String() {
+	if utils.IsDev(ctx) || slices.Index(g.Cfg().MustGet(ctx, `masterServerNetworkIpArr`).Strings(), genv.Get(consts.ENV_SERVER_NETWORK_IP).String()) == 0 {
 		match := IsLimit.key(`*`)
 		var keyArr []string
 		var cursor uint64

@@ -1,6 +1,7 @@
 dev: false # 是否开发环境
 
-masterServerNetworkIp: "" # 主服务器外网IP（线上必须设置。多服务器时，只开启其中一台服务器执行某些任务）
+masterServerNetworkIpArr: # 主服务器外网IP数组（线上必须设置。注意：第1台服务器将开启更多任务）
+  # - "外网IP"
 
 i18n:
   path: "manifest/i18n" # i18n文件的存储目录路径
