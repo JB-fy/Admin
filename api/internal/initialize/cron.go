@@ -23,7 +23,7 @@ func initCron(ctx context.Context) {
 	/*--------数据库中某些配置表极少修改，统一缓存在本机内存中，能极大增加服务器性能，减少数据库压力 结束--------*/
 
 	// 部分定时任务不允许全部服务器都开启，只有指定IP的服务器才能开启。比如任务存在数据库先读后改的逻辑时，多服务器同时开启任务，会存在重复处理的问题
-	if !utils.IsDev(ctx) && slices.Index(g.Cfg().MustGet(ctx, `masterServerNetworkIpArr`).Strings(), genv.Get(consts.ENV_SERVER_NETWORK_IP).String()) != 0 {
+	if !(utils.IsDev(ctx) || slices.Index(g.Cfg().MustGet(ctx, `masterServerNetworkIpArr`).Strings(), genv.Get(consts.ENV_SERVER_NETWORK_IP).String()) == 0) {
 		return
 	}
 

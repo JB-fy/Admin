@@ -15,7 +15,7 @@ import (
 )
 
 func initTimer(ctx context.Context) {
-	if !utils.IsDev(ctx) && slices.Index(g.Cfg().MustGet(ctx, `masterServerNetworkIpArr`).Strings(), genv.Get(consts.ENV_SERVER_NETWORK_IP).String()) != 0 {
+	if !(utils.IsDev(ctx) || slices.Index(g.Cfg().MustGet(ctx, `masterServerNetworkIpArr`).Strings(), genv.Get(consts.ENV_SERVER_NETWORK_IP).String()) == 0) {
 		return
 	}
 
