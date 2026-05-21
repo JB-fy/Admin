@@ -87,7 +87,7 @@ type VidOption struct {
 	MaxDuration     float64  `json:"max_duration"`
 	EncodeFormatArr []string `json:"encode_format_arr"` //需要转换的格式：video/mp4, video/web
 	TargetFormat    string   `json:"target_format"`     //当EncodeFormatArr不为空，且需要格式转换时才有用，用于指定转换后的目标格式，默认：mp4
-	IsError         bool     `json:"is_error"`          //报错：0否 1是
+	IsErrorBefore   bool     `json:"is_error_before"`   //处理前不符合就报错：0否 1是
 }
 
 func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err error) {
@@ -101,7 +101,7 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 		if !slices.Contains(vidOption.EncodeFormatArr, vidType) {
 			return
 		} else {
-			if vidOption.IsError {
+			if vidOption.IsErrorBefore {
 				err = fmt.Errorf(`视频格式不支持：%s`, vidType)
 				return
 			}
@@ -127,14 +127,14 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 	if vidOption.Width > 0 && vidOption.Height > 0 {
 		if len(vidOption.RatioArr) == 0 {
 			if !(vidMeta.Width == vidOption.Width && vidMeta.Height == vidOption.Height) {
-				if vidOption.IsError {
+				if vidOption.IsErrorBefore {
 					err = fmt.Errorf(`视频宽高不符合要求：宽%d,高%d`, vidOption.Width, vidOption.Height)
 					return
 				}
 				isHandle = true
 			}
 		} else if !slices.Contains(vidOption.RatioArr, GetRatio(vidMeta.Width, vidMeta.Height)) {
-			if vidOption.IsError {
+			if vidOption.IsErrorBefore {
 				err = fmt.Errorf(`视频宽高比不符合要求：%s`, gconv.String(vidOption.RatioArr))
 				return
 			}
@@ -148,7 +148,7 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 		}
 	}
 	if vidOption.MinDuration > 0 && vidMeta.Duration < vidOption.MinDuration {
-		if vidOption.IsError {
+		if vidOption.IsErrorBefore {
 			err = fmt.Errorf(`视频时长不能低于%.3f秒`, vidOption.MinDuration)
 			return
 		}
@@ -162,7 +162,7 @@ func VidHandle(vidBytesOfRaw []byte, vidOption VidOption) (vidBytes []byte, err 
 		argsOfAf = append(argsOfAf, fmt.Sprintf(`apad=pad_dur=%.3f`, padDur))
 	}
 	if vidOption.MaxDuration > 0 && vidMeta.Duration > vidOption.MaxDuration {
-		if vidOption.IsError {
+		if vidOption.IsErrorBefore {
 			err = fmt.Errorf(`视频时长不能高于%.3f秒`, vidOption.MaxDuration)
 			return
 		}

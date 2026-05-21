@@ -34,7 +34,8 @@ type ImgOption struct {
 	RatioArr        []string       `json:"ratio_arr"`         //宽高比：1:1, 3:4。比例正确时，不修改宽高
 	EncodeFormatArr []string       `json:"encode_format_arr"` //需要转换的格式：video/jpeg, image/webp
 	TargetFormat    imaging.Format `json:"target_format"`     //当EncodeFormatArr不为空，且需要格式转换时才有用，用于指定转换后的目标格式，默认：imaging.JPEG
-	IsError         bool           `json:"is_error"`          //报错：0否 1是
+	IsErrorBefore   bool           `json:"is_error_before"`   //处理前不符合就报错：0否 1是
+	IsErrorAfter    bool           `json:"is_error_after"`    //处理后不符合才报错：0否 1是
 }
 
 func ImgHandle(imgBytesOfRaw []byte, imgOption ImgOption) (imgBytes []byte, err error) {
@@ -46,7 +47,7 @@ func ImgHandle(imgBytesOfRaw []byte, imgOption ImgOption) (imgBytes []byte, err 
 	}
 	isHandle := len(imgOption.EncodeFormatArr) > 0 && slices.Contains(imgOption.EncodeFormatArr, imgType)
 	if isHandle {
-		if imgOption.IsError {
+		if imgOption.IsErrorBefore {
 			err = fmt.Errorf(`图片格式不支持：%s`, imgType)
 			return
 		}
@@ -61,14 +62,14 @@ func ImgHandle(imgBytesOfRaw []byte, imgOption ImgOption) (imgBytes []byte, err 
 	if imgOption.Width > 0 && imgOption.Height > 0 && !(imgObj.Bounds().Dx() == imgOption.Width && imgObj.Bounds().Dy() == imgOption.Height) {
 		if len(imgOption.RatioArr) == 0 {
 			if !(imgObj.Bounds().Dx() == imgOption.Width && imgObj.Bounds().Dy() == imgOption.Height) {
-				if imgOption.IsError {
+				if imgOption.IsErrorBefore {
 					err = fmt.Errorf(`图片宽高不符合要求：宽%d,高%d`, imgOption.Width, imgOption.Height)
 					return
 				}
 				isHandle = true
 			}
 		} else if !slices.Contains(imgOption.RatioArr, GetRatio(imgObj.Bounds().Dx(), imgObj.Bounds().Dy())) {
-			if imgOption.IsError {
+			if imgOption.IsErrorBefore {
 				err = fmt.Errorf(`图片宽高比不符合要求：%s`, gconv.String(imgOption.RatioArr))
 				return
 			}
@@ -99,7 +100,7 @@ func ImgHandle(imgBytesOfRaw []byte, imgOption ImgOption) (imgBytes []byte, err 
 		var opts []imaging.EncodeOption
 		buf := bytes.NewBuffer(nil)
 		for len(imgBytes) > imgOption.MaxSize {
-			if imgOption.IsError {
+			if imgOption.IsErrorBefore {
 				err = fmt.Errorf(`图片大小不符合要求：最大%d`, imgOption.MaxSize)
 				return
 			}
@@ -107,7 +108,9 @@ func ImgHandle(imgBytesOfRaw []byte, imgOption ImgOption) (imgBytes []byte, err 
 			case imaging.JPEG:
 				quality -= qualityStep
 				if quality < qualityLimit {
-					err = fmt.Errorf(`图片压缩后大小不符合要求：最大%d,图片质量%d。继续压缩无意义，会变得模糊`, imgOption.MaxSize, quality)
+					if imgOption.IsErrorAfter {
+						err = fmt.Errorf(`图片压缩后大小不符合要求：最大%d,图片质量%d。继续压缩无意义，会变得模糊`, imgOption.MaxSize, quality)
+					}
 					return
 				}
 				opts = []imaging.EncodeOption{imaging.JPEGQuality(quality)}
@@ -118,11 +121,13 @@ func ImgHandle(imgBytesOfRaw []byte, imgOption ImgOption) (imgBytes []byte, err 
 			// case imaging.BMP:
 			default: //统一使用：高斯模糊
 				sigma += sigmaStep
-				if sigmaStep > sigmaLimit {
-					err = fmt.Errorf(`图片压缩后大小不符合要求：最大%d,高斯模糊%f。继续压缩无意义，会变得模糊`, imgOption.MaxSize, sigma)
+				if sigma > sigmaLimit {
+					if imgOption.IsErrorAfter {
+						err = fmt.Errorf(`图片压缩后大小不符合要求：最大%d,高斯模糊%f。继续压缩无意义，会变得模糊`, imgOption.MaxSize, sigma)
+					}
 					return
 				}
-				imgObj = imaging.Blur(imgObj, 2)
+				imgObj = imaging.Blur(imgObj, sigma)
 			}
 			buf.Reset()
 			err = imaging.Encode(buf, imgObj, format, opts...)
