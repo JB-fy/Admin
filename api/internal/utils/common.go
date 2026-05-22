@@ -161,6 +161,10 @@ func GetFileBytesByRemote(ctx context.Context, fileUrl string) (fileBytes []byte
 	if location := res.Request.URL.String(); fileUrl != location {
 		return GetFileBytesByRemote(ctx, location)
 	}
+	if res.StatusCode != http.StatusOK {
+		err = fmt.Errorf(`文件地址已失效：%s`, fileUrl)
+		return
+	}
 	fileBytes = res.ReadAll()
 	return
 }
