@@ -61,12 +61,10 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	if !notExist || err != nil {
 		return
 	}
-	isSetKey := cacheThis.keyOfIsSet(key)
-	resultTmp, err, _ := cacheThis.sfg.Do(key, func() (result any, err error) { // 防止当前服务器并发
+	resultTmp, err, shared := cacheThis.sfg.Do(key, func() (result any, err error) { // 防止当前服务器并发
 		numLock, numRead, oneTime, isSetTtl := cacheThis.retryInfo(numLock, numRead, oneTime)
 		var isSet bool
-		var value any
-		var notExist bool
+		isSetKey := cacheThis.keyOfIsSet(key)
 		for range numLock {
 			isSet, err = cacheThis.cache().SetNX(ctx, isSetKey, ``, isSetTtl).Result() // 防止不同服务器并发
 			if err != nil {
@@ -117,7 +115,7 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 		err = errors.New(`尝试多次查询缓存失败：` + key)
 		return
 	})
-	if err != nil {
+	if !shared || err != nil {
 		return
 	}
 	result := resultTmp.(*getOrSetResult)
