@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"runtime/debug"
-	"sync"
 	"time"
 
 	"github.com/gogf/gf/v2/util/gconv"
@@ -25,7 +24,6 @@ var GetOrSet = getOrSet{goCache: cache.New(0, consts.CACHE_LOCAL_INTERVAL_MINUTE
 
 type getOrSet struct {
 	goCache *cache.Cache
-	muMap   sync.Map //存放所有缓存KEY的锁（当前服务器用）
 	sfg     singleflight.Group
 }
 
