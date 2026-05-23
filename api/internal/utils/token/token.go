@@ -8,44 +8,31 @@ import (
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/util/gconv"
+	"golang.org/x/sync/singleflight"
 )
 
 var (
-	// tokenMap     sync.Map
-	tokenMap     = map[string]model.Token{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	tokenMuMap   sync.Map
+	tokenMap     sync.Map
+	tokenSfg     singleflight.Group
 	tokenFuncMap = map[uint]model.TokenFunc{
 		0: jwt.NewToken,
 	}
 	tokenTypeDef uint = 0
 )
 
-func NewToken(ctx context.Context, tokenType uint, config map[string]any) (token model.Token) {
-	tokenKey := gconv.String(tokenType) + gmd5.MustEncrypt(config)
-	/* token, _ = tokenMap.LoadOrStore(tokenKey, func() Token {
-		if _, ok := tokenFuncMap[tokenType]; !ok {
-			tokenType = tokenTypeDef
-		}
-		return tokenFuncMap[tokenType](ctx, config)
-	}) */
-	ok := false
-	if token, ok = tokenMap[tokenKey]; ok { //先读一次（不加锁）
-		return
-	}
-	muTmp, _ := tokenMuMap.LoadOrStore(tokenKey, &sync.Mutex{})
-	mu := muTmp.(*sync.Mutex)
-	mu.Lock()
-	defer func() {
-		mu.Unlock()
-		tokenMuMap.Delete(tokenKey)
-	}()
-	if token, ok = tokenMap[tokenKey]; ok { // 再读一次（加锁），防止重复初始化
-		return
-	}
-	if _, ok = tokenFuncMap[tokenType]; !ok {
+func NewToken(ctx context.Context, tokenType uint, config map[string]any) (obj model.Token) {
+	if _, ok := tokenFuncMap[tokenType]; !ok {
 		tokenType = tokenTypeDef
 	}
-	token = tokenFuncMap[tokenType](ctx, config)
-	tokenMap[tokenKey] = token
+	key := gconv.String(tokenType) + gmd5.MustEncrypt(config)
+	objTmp, ok := tokenMap.Load(key)
+	if !ok {
+		objTmp, _, _ = tokenSfg.Do(key, func() (obj any, err error) {
+			obj = tokenFuncMap[tokenType](ctx, config)
+			tokenMap.Store(key, obj)
+			return
+		})
+	}
+	obj = objTmp.(model.Token)
 	return
 }

@@ -158,7 +158,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 
 	/*--------常用协程示例 开始--------*/
 	/* //阻塞，等待协程完成。
-	mp := sync.Map{}
+	var mp sync.Map
 	var wg sync.WaitGroup
 	var mx sync.Mutex
 	total := 0

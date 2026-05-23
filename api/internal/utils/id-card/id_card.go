@@ -7,38 +7,32 @@ import (
 	"sync"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"golang.org/x/sync/singleflight"
 )
 
 var (
-	idCardMap     = map[string]model.IdCard{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	idCardMuMap   sync.Map
+	idCardMap     sync.Map
+	idCardSfg     singleflight.Group
 	idCardTypeDef = `id_card_of_aliyun`
 	idCardFuncMap = map[string]model.IdCardFunc{
 		`id_card_of_aliyun`: aliyun.NewIdCard,
 	}
 )
 
-func NewIdCard(ctx context.Context, idCardType string, config map[string]any) (idCard model.IdCard) {
-	idCardKey := idCardType + gmd5.MustEncrypt(config)
-	ok := false
-	if idCard, ok = idCardMap[idCardKey]; ok { //先读一次（不加锁）
-		return
-	}
-	muTmp, _ := idCardMuMap.LoadOrStore(idCardKey, &sync.Mutex{})
-	mu := muTmp.(*sync.Mutex)
-	mu.Lock()
-	defer func() {
-		mu.Unlock()
-		idCardMuMap.Delete(idCardKey)
-	}()
-	if idCard, ok = idCardMap[idCardKey]; ok { // 再读一次（加锁），防止重复初始化
-		return
-	}
-	if _, ok = idCardFuncMap[idCardType]; !ok {
+func NewIdCard(ctx context.Context, idCardType string, config map[string]any) (obj model.IdCard) {
+	if _, ok := idCardFuncMap[idCardType]; !ok {
 		idCardType = idCardTypeDef
 	}
-	idCard = idCardFuncMap[idCardType](ctx, config)
-	idCardMap[idCardKey] = idCard
+	key := idCardType + gmd5.MustEncrypt(config)
+	objTmp, ok := idCardMap.Load(key)
+	if !ok {
+		objTmp, _, _ = idCardSfg.Do(key, func() (obj any, err error) {
+			obj = idCardFuncMap[idCardType](ctx, config)
+			idCardMap.Store(key, obj)
+			return
+		})
+	}
+	obj = objTmp.(model.IdCard)
 	return
 
 }

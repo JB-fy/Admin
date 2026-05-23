@@ -5,36 +5,29 @@ import (
 	"context"
 	"sync"
 	"time"
+
+	"golang.org/x/sync/singleflight"
 )
 
-var IsLimitLocal = isLimitLocal{
-	chanMap: map[string]chan struct{}{},
-}
+var IsLimitLocal = isLimitLocal{}
 
 type isLimitLocal struct {
-	chanMap   map[string]chan struct{}
-	chanMuMap sync.Map
+	chanMap sync.Map
+	chanSfg singleflight.Group
 }
 
 func (cacheThis *isLimitLocal) GetChan(key string, size uint) (ch chan struct{}) {
 	chanKey := key
 	// chanKey := fmt.Sprintf(`%s:%d`, key, size)
-	ok := false
-	if ch, ok = cacheThis.chanMap[chanKey]; ok { //先读一次（不加锁）
-		return
+	chTmp, ok := cacheThis.chanMap.Load(chanKey)
+	if !ok {
+		chTmp, _, _ = cacheThis.chanSfg.Do(chanKey, func() (ch any, err error) {
+			ch = make(chan struct{}, size)
+			cacheThis.chanMap.Store(chanKey, ch)
+			return
+		})
 	}
-	muTmp, _ := cacheThis.chanMuMap.LoadOrStore(chanKey, &sync.Mutex{})
-	mu := muTmp.(*sync.Mutex)
-	mu.Lock()
-	defer func() {
-		mu.Unlock()
-		cacheThis.chanMuMap.Delete(chanKey)
-	}()
-	if ch, ok = cacheThis.chanMap[chanKey]; ok { // 再读一次（加锁），防止重复初始化
-		return
-	}
-	ch = make(chan struct{}, size)
-	cacheThis.chanMap[chanKey] = ch
+	ch = chTmp.(chan struct{})
 	return
 }
 

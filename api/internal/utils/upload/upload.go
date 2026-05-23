@@ -9,11 +9,12 @@ import (
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/util/gconv"
+	"golang.org/x/sync/singleflight"
 )
 
 var (
-	uploadMap     = map[string]model.Upload{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	uploadMuMap   sync.Map
+	uploadMap     sync.Map
+	uploadSfg     singleflight.Group
 	uploadFuncMap = map[uint]model.UploadFunc{
 		0: local.NewUpload,
 		1: aliyun_oss.NewUpload,
@@ -21,26 +22,19 @@ var (
 	uploadTypeDef uint = 0
 )
 
-func NewUpload(ctx context.Context, uploadType uint, config map[string]any) (upload model.Upload) {
-	uploadKey := gconv.String(uploadType) + gmd5.MustEncrypt(config)
-	ok := false
-	if upload, ok = uploadMap[uploadKey]; ok { //先读一次（不加锁）
-		return
-	}
-	muTmp, _ := uploadMuMap.LoadOrStore(uploadKey, &sync.Mutex{})
-	mu := muTmp.(*sync.Mutex)
-	mu.Lock()
-	defer func() {
-		mu.Unlock()
-		uploadMuMap.Delete(uploadKey)
-	}()
-	if upload, ok = uploadMap[uploadKey]; ok { // 再读一次（加锁），防止重复初始化
-		return
-	}
-	if _, ok = uploadFuncMap[uploadType]; !ok {
+func NewUpload(ctx context.Context, uploadType uint, config map[string]any) (obj model.Upload) {
+	if _, ok := uploadFuncMap[uploadType]; !ok {
 		uploadType = uploadTypeDef
 	}
-	upload = uploadFuncMap[uploadType](ctx, config)
-	uploadMap[uploadKey] = upload
+	key := gconv.String(uploadType) + gmd5.MustEncrypt(config)
+	objTmp, ok := uploadMap.Load(key)
+	if !ok {
+		objTmp, _, _ = uploadSfg.Do(key, func() (obj any, err error) {
+			obj = uploadFuncMap[uploadType](ctx, config)
+			uploadMap.Store(key, obj)
+			return
+		})
+	}
+	obj = objTmp.(model.Upload)
 	return
 }

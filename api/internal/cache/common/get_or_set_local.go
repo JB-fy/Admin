@@ -2,7 +2,8 @@ package common
 
 import (
 	"context"
-	"sync"
+
+	"golang.org/x/sync/singleflight"
 )
 
 var (
@@ -10,28 +11,26 @@ var (
 )
 
 type getOrSetLocal struct {
-	muMap sync.Map //存放所有缓存KEY的锁（当前服务器用）
+	sfg singleflight.Group
+}
+
+type localResult struct {
+	value    any
+	notExist bool
 }
 
 func (cacheThis *getOrSetLocal) GetOrSetLocal(ctx context.Context, key string, setFunc func() (value any, notExist bool, err error), getFunc func() (value any, notExist bool, err error)) (value any, notExist bool, err error) {
 	value, notExist, err = getFunc()
-	if !notExist || err != nil { //先读一次（不加锁）
-		return
-	}
-
-	// 防止当前服务器并发
-	muTmp, _ := cacheThis.muMap.LoadOrStore(key, &sync.Mutex{})
-	mu := muTmp.(*sync.Mutex)
-	mu.Lock()
-	defer func() {
-		mu.Unlock()
-		cacheThis.muMap.Delete(key)
-	}()
-	value, notExist, err = getFunc() // 再读一次（加锁），防止重复初始化
 	if !notExist || err != nil {
 		return
 	}
-
-	value, notExist, err = setFunc()
+	resultTmp, err, _ := cacheThis.sfg.Do(key, func() (result any, err error) {
+		value, notExist, err := setFunc()
+		result = &localResult{value: value, notExist: notExist}
+		return
+	})
+	result := resultTmp.(*localResult)
+	value = result.value
+	notExist = result.notExist
 	return
 }

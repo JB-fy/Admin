@@ -7,31 +7,25 @@ import (
 	"sync"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"golang.org/x/sync/singleflight"
 )
 
 var (
-	wxGzhMap   = map[string]*gzh.Wx{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	wxGzhMuMap sync.Map
+	wxGzhMap sync.Map
+	wxGzhSfg singleflight.Group
 )
 
-func NewWxGzh(ctx context.Context) (wxGzh *gzh.Wx) {
+func NewWxGzh(ctx context.Context) (obj *gzh.Wx) {
 	config := daoPlatform.Config.Get(ctx, `wx_gzh`).Map()
-	wxGzhKey := gmd5.MustEncrypt(config)
-	ok := false
-	if wxGzh, ok = wxGzhMap[wxGzhKey]; ok { //先读一次（不加锁）
-		return
+	key := gmd5.MustEncrypt(config)
+	objTmp, ok := wxGzhMap.Load(key)
+	if !ok {
+		objTmp, _, _ = wxGzhSfg.Do(key, func() (obj any, err error) {
+			obj = gzh.NewWx(ctx, config)
+			wxGzhMap.Store(key, obj)
+			return
+		})
 	}
-	muTmp, _ := wxGzhMuMap.LoadOrStore(wxGzhKey, &sync.Mutex{})
-	mu := muTmp.(*sync.Mutex)
-	mu.Lock()
-	defer func() {
-		mu.Unlock()
-		wxGzhMuMap.Delete(wxGzhKey)
-	}()
-	if wxGzh, ok = wxGzhMap[wxGzhKey]; ok { // 再读一次（加锁），防止重复初始化
-		return
-	}
-	wxGzh = gzh.NewWx(ctx, config)
-	wxGzhMap[wxGzhKey] = wxGzh
+	obj = objTmp.(*gzh.Wx)
 	return
 }

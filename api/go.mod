@@ -24,6 +24,7 @@ require (
 	github.com/wechatpay-apiv3/wechatpay-go v0.2.18
 	github.com/xdg-go/scram v1.1.2
 	github.com/yidun/yidun-golang-sdk v1.0.6
+	golang.org/x/sync v0.14.0
 	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d
 )
 

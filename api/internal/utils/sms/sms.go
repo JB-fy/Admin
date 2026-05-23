@@ -7,37 +7,31 @@ import (
 	"sync"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
+	"golang.org/x/sync/singleflight"
 )
 
 var (
-	smsMap     = map[string]model.Sms{} //存放不同配置实例。因初始化只有一次，故重要的是读性能，普通map比sync.Map的读性能好
-	smsMuMap   sync.Map
+	smsMap     sync.Map
+	smsSfg     singleflight.Group
 	smsFuncMap = map[string]model.SmsFunc{
 		`sms_of_aliyun`: aliyun.NewSms,
 	}
 	smsTypeDef = `sms_of_aliyun`
 )
 
-func NewSms(ctx context.Context, smsType string, config map[string]any) (sms model.Sms) {
-	smsKey := smsType + gmd5.MustEncrypt(config)
-	ok := false
-	if sms, ok = smsMap[smsKey]; ok { //先读一次（不加锁）
-		return
-	}
-	muTmp, _ := smsMuMap.LoadOrStore(smsKey, &sync.Mutex{})
-	mu := muTmp.(*sync.Mutex)
-	mu.Lock()
-	defer func() {
-		mu.Unlock()
-		smsMuMap.Delete(smsKey)
-	}()
-	if sms, ok = smsMap[smsKey]; ok { // 再读一次（加锁），防止重复初始化
-		return
-	}
-	if _, ok = smsFuncMap[smsType]; !ok {
+func NewSms(ctx context.Context, smsType string, config map[string]any) (obj model.Sms) {
+	if _, ok := smsFuncMap[smsType]; !ok {
 		smsType = smsTypeDef
 	}
-	sms = smsFuncMap[smsType](ctx, config)
-	smsMap[smsKey] = sms
+	key := smsType + gmd5.MustEncrypt(config)
+	objTmp, ok := smsMap.Load(key)
+	if !ok {
+		objTmp, _, _ = smsSfg.Do(key, func() (obj any, err error) {
+			obj = smsFuncMap[smsType](ctx, config)
+			smsMap.Store(key, obj)
+			return
+		})
+	}
+	obj = objTmp.(model.Sms)
 	return
 }
