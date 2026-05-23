@@ -13,13 +13,20 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/patrickmn/go-cache"
 	"github.com/redis/go-redis/v9"
+	"golang.org/x/sync/singleflight"
 )
+
+type getOrSetResult struct {
+	value    any
+	notExist bool
+}
 
 var GetOrSet = getOrSet{goCache: cache.New(0, consts.CACHE_LOCAL_INTERVAL_MINUTE)}
 
 type getOrSet struct {
 	goCache *cache.Cache
 	muMap   sync.Map //存放所有缓存KEY的锁（当前服务器用）
+	sfg     singleflight.Group
 }
 
 func (cacheThis *getOrSet) cache() redis.UniversalClient {
@@ -56,73 +63,68 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 	if !notExist || err != nil {
 		return
 	}
-
-	// 防止当前服务器并发
-	muTmp, _ := cacheThis.muMap.LoadOrStore(key, &sync.Mutex{})
-	mu := muTmp.(*sync.Mutex)
-	mu.Lock()
-	defer func() {
-		mu.Unlock()
-		cacheThis.muMap.Delete(key)
-	}()
 	isSetKey := cacheThis.keyOfIsSet(key)
-	if _, isSetOfLocal := cacheThis.goCache.Get(isSetKey); isSetOfLocal { //当有协程（一般是第一个上锁成功的协程）执行setFunc设置缓存 或 发现缓存已存在 后，后续协程即可直接执行getFunc获取缓存
-		value, notExist, err = getFunc()
-		if !notExist || err != nil {
-			return
-		}
-	}
-
-	// 防止不同服务器并发
-	numLock, numRead, oneTime, isSetTtl := cacheThis.retryInfo(numLock, numRead, oneTime)
-	var isSet bool
-	for range numLock {
-		isSet, err = cacheThis.cache().SetNX(ctx, isSetKey, ``, isSetTtl).Result()
-		if err != nil {
-			return
-		}
-		if isSet {
-			defer func() {
-				if rec := recover(); rec != nil { //防止panic导致redis锁长时间没释放，造成频繁执行getFunc()方法
-					err = errors.New(`设置缓存panic错误：` + gconv.String(rec) + `。栈信息：` + string(debug.Stack()))
-					cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
-					// g.Log().Error(ctx, err)
-				} else if ctxErr := ctx.Err(); ctxErr != nil { //上下文取消或超时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
-					cacheThis.cache().Del(ctx, isSetKey)
-					// g.Log().Error(ctx, fmt.Errorf(`设置缓存上下文错误：%w`, ctxErr))
-				}
-			}()
-			value, notExist, err = setFunc()
-			if notExist || err != nil {
-				cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
-				return
-			}
-			cacheThis.goCache.Set(isSetKey, struct{}{}, isSetTtl)
-			cacheThis.cache().PExpire(ctx, isSetKey, isSetTtl)
-			return
-		}
-		// 等待读取数据
-		for range numRead {
-			value, notExist, err = getFunc()
+	resultTmp, err, _ := cacheThis.sfg.Do(key, func() (result any, err error) { // 防止当前服务器并发
+		numLock, numRead, oneTime, isSetTtl := cacheThis.retryInfo(numLock, numRead, oneTime)
+		var isSet bool
+		var value any
+		var notExist bool
+		for range numLock {
+			isSet, err = cacheThis.cache().SetNX(ctx, isSetKey, ``, isSetTtl).Result() // 防止不同服务器并发
 			if err != nil {
 				return
 			}
-			if !notExist /* || err != nil */ {
-				pttl, _ := cacheThis.cache().PTTL(ctx, isSetKey).Result()
-				cacheThis.goCache.Set(isSetKey, struct{}{}, time.Until(time.Now().Add(pttl)))
+			if isSet {
+				defer func() {
+					if rec := recover(); rec != nil { //防止panic导致redis锁长时间没释放，造成频繁执行getFunc()方法
+						err = errors.New(`设置缓存panic错误：` + gconv.String(rec) + `。栈信息：` + string(debug.Stack()))
+						cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
+						// g.Log().Error(ctx, err)
+					} else if ctxErr := ctx.Err(); ctxErr != nil { //上下文取消或超时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
+						cacheThis.cache().Del(ctx, isSetKey)
+						// g.Log().Error(ctx, fmt.Errorf(`设置缓存上下文错误：%w`, ctxErr))
+					}
+				}()
+				value, notExist, err = setFunc()
+				result = &getOrSetResult{value: value, notExist: notExist}
+				if notExist || err != nil {
+					cacheThis.cache().Del(ctx, isSetKey) //报错时，删除redis锁缓存Key，允许其它服务器重新尝试设置缓存
+					return
+				}
+				cacheThis.goCache.Set(isSetKey, struct{}{}, isSetTtl)
+				cacheThis.cache().PExpire(ctx, isSetKey, isSetTtl)
 				return
 			}
-			// 放for前面执行。坏处：首次读取缓存有延迟；好处：减少缓存压力
-			// 放for后面执行。好处：首次读取缓存没有延迟；坏处：增加缓存压力（通过当前服务器 上锁【getOrSetMu】 和 缓存【goCache】 可保证不会对缓存造成压力，除非服务器数量庞大）
-			time.Sleep(oneTime)
+			for range numRead { // 等待读取数据
+				value, notExist, err = getFunc()
+				if err != nil {
+					return
+				}
+				result = &getOrSetResult{value: value, notExist: notExist}
+				if !notExist /* || err != nil */ {
+					pttl, _ := cacheThis.cache().PTTL(ctx, isSetKey).Result()
+					cacheThis.goCache.Set(isSetKey, struct{}{}, time.Until(time.Now().Add(pttl)))
+					return
+				}
+				// 放for前面执行。坏处：首次读取缓存有延迟；好处：减少缓存压力
+				// 放for后面执行。好处：首次读取缓存没有延迟；坏处：增加缓存压力（通过当前服务器 上锁【getOrSetMu】 和 缓存【goCache】 可保证不会对缓存造成压力，除非服务器数量庞大）
+				time.Sleep(oneTime)
+			}
 		}
+		/*
+		   出现该错误的情况：
+		   	1：所有服务器执行方法时都报错了。一般不大可能出现这种情况，概率极低
+		   	2：redis服务负载过高，需要及时做优化了。解决方案：扩容或分库
+		*/
+		err = errors.New(`尝试多次查询缓存失败：` + key)
+		return
+	})
+	if err != nil {
+		return
 	}
-	/*
-		出现该错误的情况：
-			1：所有服务器执行方法时都报错了。一般不大可能出现这种情况，概率极低
-			2：redis服务负载过高，需要及时做优化了。解决方案：扩容或分库
-	*/
-	err = errors.New(`尝试多次查询缓存失败：` + key)
+	result := resultTmp.(*getOrSetResult)
+	value = result.value
+	notExist = result.notExist
 	return
 }
 
