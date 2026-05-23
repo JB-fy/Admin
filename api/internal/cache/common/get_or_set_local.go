@@ -19,13 +19,15 @@ func (cacheThis *getOrSetLocal) GetOrSetLocal(ctx context.Context, key string, s
 	if !notExist || err != nil {
 		return
 	}
-	resultTmp, err, _ := cacheThis.sfg.Do(key, func() (result any, err error) {
-		value, notExist, err := setFunc()
+	resultTmp, err, shared := cacheThis.sfg.Do(key, func() (result any, err error) {
+		value, notExist, err = setFunc()
 		result = &getOrSetResult{value: value, notExist: notExist}
 		return
 	})
-	result := resultTmp.(*getOrSetResult)
-	value = result.value
-	notExist = result.notExist
+	if shared {
+		result := resultTmp.(*getOrSetResult)
+		value = result.value
+		notExist = result.notExist
+	}
 	return
 }

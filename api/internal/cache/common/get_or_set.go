@@ -115,12 +115,14 @@ func (cacheThis *getOrSet) GetOrSet(ctx context.Context, key string, setFunc fun
 		err = errors.New(`尝试多次查询缓存失败：` + key)
 		return
 	})
-	if !shared || err != nil {
-		return
+	if shared {
+		if err != nil {
+			return
+		}
+		result := resultTmp.(*getOrSetResult)
+		value = result.value
+		notExist = result.notExist
 	}
-	result := resultTmp.(*getOrSetResult)
-	value = result.value
-	notExist = result.notExist
 	return
 }
 
