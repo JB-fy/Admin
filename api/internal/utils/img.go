@@ -123,12 +123,12 @@ func ImgHandle(imgBytesOfRaw []byte, imgOption ImgOption) (imgBytes []byte, err 
 		imgBytes = buf.Bytes()
 	}
 	if imgOption.MaxSize > 0 && len(imgBytes) > imgOption.MaxSize {
+		if imgOption.IsError {
+			err = fmt.Errorf(`图片大小不符合要求：最大%d`, imgOption.MaxSize)
+			return
+		}
 		buf := bytes.NewBuffer(nil)
 		for len(imgBytes) > imgOption.MaxSize {
-			if imgOption.IsError {
-				err = fmt.Errorf(`图片大小不符合要求：最大%d`, imgOption.MaxSize)
-				return
-			}
 			switch format {
 			case imaging.JPEG:
 				quality -= ImgQualityStep
