@@ -24,7 +24,7 @@ type HttpClient struct {
 
 type HttpClientConfig struct {
 	Timeout        time.Duration         `json:"timeout,omitempty"`
-	Header         map[string]string     `json:"header,omitempty"`
+	Header         map[string]string     `json:"header,omitempty"` //注意：包含状态类字段（如不同用户Token）时，会导致大量客户端占用内存，建议设置一个HandlerFunc方法统一处理
 	HandlerFuncArr []gclient.HandlerFunc `json:"-"`
 	HandlerCode    string                `json:"handler_code,omitempty"` //设置HandlerFuncArr对应的标识
 	ProxyUrl       string                `json:"proxy_url,omitempty"`
