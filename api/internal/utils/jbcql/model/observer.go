@@ -15,8 +15,8 @@ type Observer struct {
 }
 
 func (obThis *Observer) ObserveQuery(ctx context.Context, observedQuery gocql.ObservedQuery) {
-	obThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [%d ms] [%s] [%s] [rows:%d] %s`,
-		observedQuery.End.UnixMilli()-observedQuery.Start.UnixMilli(),
+	obThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [%f ms] [%s] [%s] [rows:%d] %s`,
+		float64(observedQuery.End.UnixMilli()-observedQuery.Start.UnixMilli())/1000,
 		obThis.Config.Group,
 		observedQuery.Keyspace,
 		observedQuery.Rows,
@@ -40,8 +40,8 @@ func (obThis *Observer) ObserveBatch(ctx context.Context, observedBatch gocql.Ob
 			fmt.Sprintf(gstr.Replace(statement, `?`, `%v`), observedBatch.Values[index]...),
 		))
 	}
-	obThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [BATCH] [%d ms] [%s] [%s] %s`,
-		observedBatch.End.UnixMilli()-observedBatch.Start.UnixMilli(),
+	obThis.Log.Debug(ctx, fmt.Sprintf(`[CQL] [BATCH] [%f ms] [%s] [%s] %s`,
+		float64(observedBatch.End.UnixMilli()-observedBatch.Start.UnixMilli())/1000,
 		obThis.Config.Group,
 		observedBatch.Keyspace,
 		`BATCH END`,
