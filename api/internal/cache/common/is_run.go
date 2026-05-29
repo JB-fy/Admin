@@ -32,7 +32,7 @@ func (cacheThis *isRun) IsRun(ctx context.Context, key string, ttl time.Duration
 	}
 	runEndFunc = func(isDel bool) {
 		if isDel {
-			cacheThis.cache().Del(ctx, isRunKey).Result()
+			cacheThis.cache().Del(ctx, isRunKey)
 		}
 	}
 	return
@@ -67,7 +67,7 @@ func (cacheThis *isRun) IsRunAndRefreshTTL(ctx context.Context, key string, ttl 
 	runEndFunc = func(isDel bool) {
 		timer.Close()
 		if isDel {
-			cacheThis.cache().Del(ctx, isRunKey).Result()
+			cacheThis.cache().Del(ctx, isRunKey)
 		}
 	}
 	return
