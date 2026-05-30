@@ -7,7 +7,6 @@ import (
 	"api/internal/utils/kafka/consumer"
 	"api/internal/utils/kafka/producer"
 	"context"
-	"slices"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/genv"
@@ -17,7 +16,7 @@ import (
 func initKafka(ctx context.Context) {
 	for group, config := range g.Cfg().MustGet(ctx, `kafka`).Map() {
 		configMap := gconv.Map(config)
-		if utils.IsDev(ctx) || slices.Index(g.Cfg().MustGet(ctx, `masterServerNetworkIpArr`).Strings(), genv.Get(consts.ENV_SERVER_NETWORK_IP).String()) == 0 {
+		if utils.IsDev(ctx) || g.Cfg().MustGet(ctx, `masterServerNetworkIpArr.0`).String() == genv.Get(consts.ENV_SERVER_NETWORK_IP).String() {
 			cluster_admin.Add(ctx, group, configMap)
 		}
 		producer.Add(ctx, group, configMap)
