@@ -86,7 +86,6 @@ import (
 	"context"
 	"fmt"
 	"slices"
-	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -94,7 +93,6 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -136,7 +134,7 @@ type myGenOption struct {
 // 生成代码
 func Run(ctx context.Context, parser *gcmd.Parser) {
 	option := createOption(ctx, parser)
-	tpl := createTpl(ctx, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true, false)
+	tpl := createTpl(ctx, option, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true, false)
 
 	genDao(option, tpl) // dao模板生成
 
@@ -161,12 +159,7 @@ func Run(ctx context.Context, parser *gcmd.Parser) {
 		internal.Command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneId, `npm`, `run`, `format`) // 前端代码格式化
 	}
 
-	// 记录myGen命令
-	var tableCmdLog []string
-	tableCmdLog = append(tableCmdLog, tpl.Handle.RelIdTableCmdLog...)
-	tableCmdLog = append(tableCmdLog, tpl.Handle.ExtendTableCmdLog...)
-	tableCmdLog = append(tableCmdLog, tpl.Handle.OtherRelTableCmdLog...)
-	logMyGenCommand(option, tableCmdLog)
+	genCmdLog(option, tpl) //命令日志生成
 }
 
 // 创建命令选项
@@ -565,62 +558,4 @@ isViewEnd:
 		}
 	}
 	return
-}
-
-// 记录myGen命令
-func logMyGenCommand(option myGenOption, tableCmdLog []string) {
-	myGenCommandArr := []string{
-		`./main`,
-		`myGen`,
-		`-dbGroup=` + option.DbGroup,
-		`-dbTable=` + option.DbTable,
-		`-removePrefixCommon=` + option.RemovePrefixCommon,
-		`-removePrefixAlone=` + option.RemovePrefixAlone,
-		`-cacheType=` + gconv.String(option.CacheType),
-	}
-	if option.CacheType != 0 {
-		myGenCommandArr = append(myGenCommandArr, `-cacheTime=`+option.CacheTime)
-	}
-	myGenCommandArr = append(myGenCommandArr, `-isApi=`+gconv.String(gconv.Uint(option.IsApi)))
-	if option.IsApi {
-		myGenCommandArr = append(myGenCommandArr,
-			`-isResetLogic=`+gconv.String(gconv.Uint(option.IsResetLogic)),
-			`-isAuthAction=`+gconv.String(gconv.Uint(option.IsAuthAction)),
-			`-commonName=`+option.CommonName,
-			`-loginRelId=`+option.LoginRelId,
-			`-loginIdStr="`+option.LoginIdStr+`"`,
-			`-filterIsStop=`+gconv.String(gconv.Uint(option.FilterIsStop)))
-	}
-	myGenCommandArr = append(myGenCommandArr, `-isView=`+gconv.String(gconv.Uint(option.IsView)))
-	if option.IsApi || option.IsView {
-		myGenCommandArr = append(myGenCommandArr,
-			`-sceneId=`+option.SceneId,
-			`-isList=`+gconv.String(gconv.Uint(option.IsList)),
-			`-isCount=`+gconv.String(gconv.Uint(option.IsCount)),
-			`-isInfo=`+gconv.String(gconv.Uint(option.IsInfo)),
-			`-isCreate=`+gconv.String(gconv.Uint(option.IsCreate)),
-			`-isUpdate=`+gconv.String(gconv.Uint(option.IsUpdate)),
-			`-isDelete=`+gconv.String(gconv.Uint(option.IsDelete)))
-	}
-	logStr := strings.Join(myGenCommandArr, ` `) + gstr.Join(append([]string{``}, tableCmdLog...), `
-    `)
-
-	saveFileName := option.SceneId
-	if !(option.IsApi || option.IsView) {
-		saveFileName = `gen_dao`
-	}
-	saveFile := gfile.SelfDir() + `/internal/cmd/my-gen/log/` + saveFileName + `.log`
-	if gfile.IsFile(saveFile) {
-		log := gfile.GetContents(saveFile)
-		myGenCommandPoint := strings.Join(myGenCommandArr[:4], ` `) + ` `
-		if gstr.Pos(log, myGenCommandPoint) == -1 {
-			log = log + "\r\n" + logStr
-		} else {
-			match, _ := gregex.MatchString(`(`+gregex.Quote(myGenCommandPoint)+`[\s\S]*?)(((\r|\n)\./main)|$)`, log)
-			log = gstr.Replace(log, match[1], logStr)
-		}
-		gfile.PutContents(saveFile, log)
-	} else {
-		gfile.PutContents(saveFile, logStr)
-	}
 }

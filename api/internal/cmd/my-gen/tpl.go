@@ -16,6 +16,7 @@ import (
 )
 
 type myGenTpl struct {
+	Option             myGenOption
 	DbHandler          internal.MyGenDbHandler  //数据库处理器
 	FieldStyle         internal.MyGenFieldStyle //表字段命名风格
 	Link               string                   //当前数据库连接配置（gf gen dao命令生成dao需要）
@@ -84,9 +85,14 @@ type myGenTpl struct {
 		MiddleTableOneList  []handleExtendMiddle   //中间表（一对一）：表命名：主表名_rel_to_xxxx 或 xxxx_rel_of_主表名，同模块时，后面部分可省略独有前缀，并存在至少2个与关联表（主键 或 表名去掉前缀 + ID）同名的id后缀字段。主表的关联字段设为：非递增主键 或 唯一索引
 		MiddleTableManyList []handleExtendMiddle   //中间表（一对多）：表命名：主表名_rel_to_xxxx 或 xxxx_rel_of_主表名，同模块时，后面部分可省略独有前缀，并存在至少2个与关联表（主键 或 表名去掉前缀 + ID）同名的id后缀字段。所有表的关联字段设为：联合主键 或 联合唯一索引
 		OtherRelTableList   []handleOtherRel       //其它关联表（不含扩展表和中间表）：存在与主表主键（主键 或 表名去掉前缀 + ID）同名的id后缀字段。作用：logic层delete方法生成验证代码；dao层HookDelete方法生成关联删除代码
-		RelIdTableCmdLog    []string               //id后缀字段关联表Cmd记录
-		ExtendTableCmdLog   []string               //扩展表Cmd记录
-		OtherRelTableCmdLog []string               //其它关联表Cmd记录
+	}
+	CmdLog struct { //命令日志
+		File     string   //文件路径
+		Content  string   //日志
+		Last     string   //上一次日志
+		RelId    []string //id后缀字段关联表日志
+		Extend   []string //扩展表日志
+		OtherRel []string //其它关联表日志
 	}
 }
 
@@ -153,13 +159,17 @@ type handleOtherRel struct {
 }
 
 // 创建模板参数
-func createTpl(ctx context.Context, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isFromOtherRel bool) (tpl *myGenTpl) {
+func createTpl(ctx context.Context, option myGenOption, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isFromOtherRel bool) (tpl *myGenTpl) {
 	tpl = &myGenTpl{
+		Option:             option,
 		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
 		RemovePrefixAlone:  removePrefixAlone,
 		RemovePrefix:       removePrefixCommon + removePrefixAlone,
 		Table:              table,
+	}
+	if isTop {
+		initCmdLog(tpl.Option, tpl)
 	}
 	tpl.DbHandler = internal.NewMyGenDbHandler(ctx, g.DB(tpl.Group).GetConfig().Type)
 	tpl.Link = gconv.String(gconv.Maps(g.Cfg().MustGet(ctx, `database`).Map()[tpl.Group])[0][`link`])
@@ -742,6 +752,16 @@ func (myGenTplThis *myGenTpl) IsSamePrimary(isAutoInc bool, fieldTypeRaw, field 
 	return slices.Contains(primaryKeyArr, gstr.CaseSnake(field))
 }
 
+// 获取上次cmd输入值
+func (myGenTplThis *myGenTpl) getCmdLogLast(prefix string) (last string) {
+	if myGenTplThis.CmdLog.Last != `` {
+		if match, _ := gregex.MatchString(gregex.Quote(prefix)+`([\S]+)`, myGenTplThis.CmdLog.Last); len(match) > 0 {
+			last = match[1]
+		}
+	}
+	return
+}
+
 // 获取id后缀字段关联的表信息
 func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, field myGenField) (relTpl *myGenTpl) {
 	tableSuffix := gstr.TrimRightStr(field.FieldCaseSnakeRemove, `_id`, 1)
@@ -777,7 +797,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, field myGenField)
 				}
 			}
 
-			relTpl = createTpl(ctx, myGenTplThis.Group, table, removePrefixCommon, removePrefixAlone, false, false)
+			relTpl = createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, table, removePrefixCommon, removePrefixAlone, false, false)
 			relTpl.gfGenDao(false) //dao文件生成
 		}
 		return
@@ -894,27 +914,34 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, field myGenField)
 		}
 	}
 
-	scanInfo := append([]any{}, color.HiYellowString(`表(`+myGenTplThis.Table+`)的id后缀字段(`+field.FieldRaw+`)匹配到多个表：`+"\n"), color.HiYellowString(`  0：都不匹配`+"\n"))
-	for index, mayBeTable := range mayBeTableArr {
-		scanInfo = append(scanInfo, color.HiYellowString(`  `+gconv.String(index+1)+`：`+mayBeTable+"\n"))
-	}
-	scanInfo = append(scanInfo, color.BlueString(`> 请输入正确的表序号？默认(1)：`))
-	indexStr := gcmd.Scan(scanInfo...)
-	for {
-		index := 1
-		if indexStr != `` {
-			index = gconv.Int(indexStr)
+	mayBeTableArr = append([]string{`都不匹配`}, mayBeTableArr...)
+	cmdLog := fmt.Sprintf(`%s:%s:`, `id后缀字段关联表`, field.FieldRaw)
+	relTable := myGenTplThis.getCmdLogLast(cmdLog)
+	if relTable == `` || !slices.Contains(mayBeTableArr, relTable) {
+		scanInfo := append([]any{}, color.HiYellowString(`表(`+myGenTplThis.Table+`)的id后缀字段(`+field.FieldRaw+`)匹配到多个表：`+"\n"))
+		for index, mayBeTable := range mayBeTableArr {
+			scanInfo = append(scanInfo, color.HiYellowString(`  `+gconv.String(index)+`：`+mayBeTable+"\n"))
 		}
-		if index == 0 {
-			myGenTplThis.Handle.RelIdTableCmdLog = append(myGenTplThis.Handle.RelIdTableCmdLog, fmt.Sprintf(`%s:%s:%s`, `id后缀字段关联表`, field.FieldRaw, `都不匹配`))
-			return
-		} else if index > 0 && index <= len(mayBeTableArr) {
-			relTpl = getTableTplFunc(mayBeTableArr[index-1])
-			myGenTplThis.Handle.RelIdTableCmdLog = append(myGenTplThis.Handle.RelIdTableCmdLog, fmt.Sprintf(`%s:%s:%s`, `id后缀字段关联表`, field.FieldRaw, relTpl.Table))
-			return
+		scanInfo = append(scanInfo, color.BlueString(`> 请输入正确的表序号？默认(1)：`))
+		indexStr := gcmd.Scan(scanInfo...)
+	relTableEnd:
+		for {
+			index := 1
+			if indexStr != `` {
+				index = gconv.Int(indexStr)
+			}
+			if index >= 0 && index < len(mayBeTableArr) {
+				relTable = mayBeTableArr[index]
+				break relTableEnd
+			}
+			indexStr = gcmd.Scan(color.BlueString(`> 输入错误，请重新输入？默认(1)：`))
 		}
-		indexStr = gcmd.Scan(color.BlueString(`> 输入错误，请重新输入？默认(1)：`))
 	}
+	if relTable != `都不匹配` {
+		relTpl = getTableTplFunc(relTable)
+	}
+	myGenTplThis.CmdLog.RelId = append(myGenTplThis.CmdLog.RelId, fmt.Sprintf(cmdLog+`%s`, relTable))
+	return
 	/*--------确定关联表 结束--------*/
 }
 
@@ -988,7 +1015,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context) {
 		if gstr.Pos(v, myGenTplThis.Table+`_`) != 0 { // 不符合扩展表命名（主表名_xxxx）的跳过
 			continue
 		}
-		extendTpl := createTpl(ctx, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
+		extendTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, key := range extendTpl.KeyList {
 			if len(key.FieldList) != 1 {
 				continue
@@ -1024,41 +1051,49 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context) {
 
 			switch handleExtendMiddleObj.TableType {
 			case internal.TableTypeExtendOne:
-				isExtendOne := true
-				fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
-				isExtendOneStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对一)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
-			isExtendOneEnd:
-				for {
-					switch isExtendOneStr {
-					case ``, `1`, `yes`:
-						isExtendOne = true
-						break isExtendOneEnd
-					case `0`, `no`:
-						isExtendOne = false
-						break isExtendOneEnd
-					default:
-						isExtendOneStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对一)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
+				cmdLog := fmt.Sprintf(`%s:%s:%s:`, `扩展表(一对一)`, extendTpl.Table, key.FieldList[0].FieldRaw)
+				last := myGenTplThis.getCmdLogLast(cmdLog)
+				isExtendOne := gconv.Bool(last)
+				if last == `` {
+					fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
+					isExtendOneStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对一)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
+				isExtendOneEnd:
+					for {
+						switch isExtendOneStr {
+						case ``, `1`, `yes`:
+							isExtendOne = true
+							break isExtendOneEnd
+						case `0`, `no`:
+							isExtendOne = false
+							break isExtendOneEnd
+						default:
+							isExtendOneStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对一)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
+						}
 					}
 				}
 				if isExtendOne {
 					myGenTplThis.Handle.ExtendTableOneList = append(myGenTplThis.Handle.ExtendTableOneList, handleExtendMiddleObj)
 				}
-				myGenTplThis.Handle.ExtendTableCmdLog = append(myGenTplThis.Handle.ExtendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对一)`, extendTpl.Table, key.FieldList[0].FieldRaw, isExtendOne))
+				myGenTplThis.CmdLog.Extend = append(myGenTplThis.CmdLog.Extend, fmt.Sprintf(cmdLog+`%t`, isExtendOne))
 			case internal.TableTypeExtendMany:
-				isExtendMany := true
-				fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
-				isExtendManyStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对多)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
-			isExtendManyEnd:
-				for {
-					switch isExtendManyStr {
-					case ``, `1`, `yes`:
-						isExtendMany = true
-						break isExtendManyEnd
-					case `0`, `no`:
-						isExtendMany = false
-						break isExtendManyEnd
-					default:
-						isExtendManyStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对多)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
+				cmdLog := fmt.Sprintf(`%s:%s:%s:`, `扩展表(一对多)`, extendTpl.Table, key.FieldList[0].FieldRaw)
+				last := myGenTplThis.getCmdLogLast(cmdLog)
+				isExtendMany := gconv.Bool(last)
+				if last == `` {
+					fmt.Println(color.HiYellowString(`因扩展表的命名方式要求，无法百分百确定扩展表，故需手动确认`))
+					isExtendManyStr := gcmd.Scan(color.BlueString(`> 表(` + extendTpl.Table + `)疑似为扩展表(一对多)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
+				isExtendManyEnd:
+					for {
+						switch isExtendManyStr {
+						case ``, `1`, `yes`:
+							isExtendMany = true
+							break isExtendManyEnd
+						case `0`, `no`:
+							isExtendMany = false
+							break isExtendManyEnd
+						default:
+							isExtendManyStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + extendTpl.Table + `)疑似为扩展表(一对多)，关联字段(` + key.FieldList[0].FieldRaw + `)，请确认？默认(yes)：`))
+						}
 					}
 				}
 				if isExtendMany {
@@ -1069,7 +1104,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context) {
 					}
 					myGenTplThis.Handle.ExtendTableManyList = append(myGenTplThis.Handle.ExtendTableManyList, handleExtendMiddleObj)
 				}
-				myGenTplThis.Handle.ExtendTableCmdLog = append(myGenTplThis.Handle.ExtendTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `扩展表(一对多)`, extendTpl.Table, key.FieldList[0].FieldRaw, isExtendMany))
+				myGenTplThis.CmdLog.Extend = append(myGenTplThis.CmdLog.Extend, fmt.Sprintf(cmdLog+`%t`, isExtendMany))
 			}
 			break
 		}
@@ -1124,7 +1159,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context) {
 			}
 		}
 
-		middleTpl := createTpl(ctx, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
+		middleTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, key := range middleTpl.KeyList {
 			if !key.IsUnique { // 必须唯一
 				continue
@@ -1189,21 +1224,30 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 		return
 	}
 	if !slices.Contains([]string{`id`, myGenTplThis.TableCaseSnake + `_id`}, myGenTplThis.Handle.Id.List[0].FieldCaseSnake) { //可能是扩展表
-		fmt.Println(color.HiYellowString(`该表主键命名不符合规范，是否继续查找其它关联表（比如是其它表的扩展表时，则无需继续查找），需手动确认`))
-		isContinueStr := gcmd.Scan(color.BlueString(`> 是否继续查找其它关联表，请确认？默认(yes)：`))
-	isContinueEnd:
-		for {
-			switch isContinueStr {
-			case ``, `1`, `yes`:
-				myGenTplThis.Handle.OtherRelTableCmdLog = append(myGenTplThis.Handle.OtherRelTableCmdLog, fmt.Sprintf(`%s:%s`, `继续查找其它关联表`, `是`))
-				break isContinueEnd
-			case `0`, `no`:
-				myGenTplThis.Handle.OtherRelTableCmdLog = append(myGenTplThis.Handle.OtherRelTableCmdLog, fmt.Sprintf(`%s:%s`, `继续查找其它关联表`, `否`))
-				return
-			default:
-				isContinueStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否继续查找其它关联表，请确认？默认(yes)：`))
+		cmdLog := fmt.Sprintf(`%s:`, `继续查找其它关联表`)
+		last := myGenTplThis.getCmdLogLast(cmdLog)
+		isContinue := gconv.Bool(last)
+		if last == `` {
+			fmt.Println(color.HiYellowString(`该表主键命名不符合规范，是否继续查找其它关联表（比如是其它表的扩展表时，则无需继续查找），需手动确认`))
+			isContinueStr := gcmd.Scan(color.BlueString(`> 是否继续查找其它关联表，请确认？默认(yes)：`))
+		isContinueEnd:
+			for {
+				switch isContinueStr {
+				case ``, `1`, `yes`:
+					isContinue = true
+					break isContinueEnd
+				case `0`, `no`:
+					isContinue = false
+					break isContinueEnd
+				default:
+					isContinueStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，是否继续查找其它关联表，请确认？默认(yes)：`))
+				}
 			}
 		}
+		if !isContinue {
+			return
+		}
+		myGenTplThis.CmdLog.OtherRel = append(myGenTplThis.CmdLog.OtherRel, fmt.Sprintf(cmdLog+`%t`, isContinue))
 	}
 	extendMiddleTableArr := []string{}
 	for _, v := range myGenTplThis.Handle.ExtendTableOneList {
@@ -1237,25 +1281,29 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 			continue
 		} */
 
-		otherRelTpl := createTpl(ctx, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, true)
+		otherRelTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, true)
 		for _, field := range otherRelTpl.FieldList {
 			if !myGenTplThis.IsSamePrimary(field.IsAutoInc, field.FieldTypeRaw, field.FieldCaseSnakeRemove) {
 				continue
 			}
-			isOtherRel := true
-			fmt.Println(color.HiYellowString(`其它关联表（不含扩展表和中间表），需手动确认`))
-			isOtherRelStr := gcmd.Scan(color.BlueString(`> 表(` + otherRelTpl.Table + `)疑似为关联表，关联字段(` + field.FieldRaw + `)，请确认？默认(yes)：`))
-		isOtherRelEnd:
-			for {
-				switch isOtherRelStr {
-				case ``, `1`, `yes`:
-					isOtherRel = true
-					break isOtherRelEnd
-				case `0`, `no`:
-					isOtherRel = false
-					break isOtherRelEnd
-				default:
-					isOtherRelStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + otherRelTpl.Table + `)疑似为关联表，关联字段(` + field.FieldRaw + `)，请确认？默认(yes)：`))
+			cmdLog := fmt.Sprintf(`%s:%s:%s:`, `其它关联表`, otherRelTpl.Table, field.FieldRaw)
+			last := myGenTplThis.getCmdLogLast(cmdLog)
+			isOtherRel := gconv.Bool(last)
+			if last == `` {
+				fmt.Println(color.HiYellowString(`其它关联表（不含扩展表和中间表），需手动确认`))
+				isOtherRelStr := gcmd.Scan(color.BlueString(`> 表(` + otherRelTpl.Table + `)疑似为关联表，关联字段(` + field.FieldRaw + `)，请确认？默认(yes)：`))
+			isOtherRelEnd:
+				for {
+					switch isOtherRelStr {
+					case ``, `1`, `yes`:
+						isOtherRel = true
+						break isOtherRelEnd
+					case `0`, `no`:
+						isOtherRel = false
+						break isOtherRelEnd
+					default:
+						isOtherRelStr = gcmd.Scan(color.RedString(`    输入错误，请重新输入，表(` + otherRelTpl.Table + `)疑似为关联表，关联字段(` + field.FieldRaw + `)，请确认？默认(yes)：`))
+					}
 				}
 			}
 			if isOtherRel {
@@ -1270,7 +1318,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 				}
 				myGenTplThis.Handle.OtherRelTableList = append(myGenTplThis.Handle.OtherRelTableList, handleOtherRelObj)
 			}
-			myGenTplThis.Handle.OtherRelTableCmdLog = append(myGenTplThis.Handle.OtherRelTableCmdLog, fmt.Sprintf(`%s:%s:%s:%t`, `其它关联表`, otherRelTpl.Table, field.FieldRaw, isOtherRel))
+			myGenTplThis.CmdLog.OtherRel = append(myGenTplThis.CmdLog.OtherRel, fmt.Sprintf(cmdLog+`%t`, isOtherRel))
 			// break //可能有多个字段关联同一个表
 		}
 	}
