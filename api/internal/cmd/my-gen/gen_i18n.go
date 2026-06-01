@@ -1,6 +1,7 @@
 package my_gen
 
 import (
+	"context"
 	"slices"
 
 	"github.com/gogf/gf/v2/os/gfile"
@@ -39,7 +40,7 @@ func (i18nThis *myGenI18n) Unique() {
 }
 
 // 自动生成I18n
-func genI18n(i18n myGenI18n) {
+func genI18n(_ context.Context, i18n myGenI18n) {
 	saveFile := gfile.SelfDir() + `/manifest/i18n/zh-cn/name.yaml`
 	tplI18n := gfile.GetContents(saveFile)
 

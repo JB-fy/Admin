@@ -1,6 +1,7 @@
 package my_gen
 
 import (
+	"context"
 	"strings"
 
 	"github.com/gogf/gf/v2/os/gfile"
@@ -9,74 +10,85 @@ import (
 	"github.com/gogf/gf/v2/util/gconv"
 )
 
-func initCmdLog(option myGenOption, tpl *myGenTpl) {
+type cmdLog struct {
+	File     string   //文件路径
+	Content  string   //日志
+	Last     string   //上一次日志
+	RelId    []string //id后缀字段关联表日志
+	Extend   []string //扩展表日志
+	OtherRel []string //其它关联表日志
+}
+
+func createCmdLog(_ context.Context, option *myGenOption) (log *cmdLog) {
 	saveFileName := option.SceneId
 	if !(option.IsApi || option.IsView) {
 		saveFileName = `gen_dao`
 	}
-	tpl.CmdLog.File = gfile.SelfDir() + `/internal/cmd/my-gen/log/` + saveFileName + `.log`
-	if gfile.IsFile(tpl.CmdLog.File) {
-		tpl.CmdLog.Content = gfile.GetContents(tpl.CmdLog.File)
+	log = &cmdLog{}
+	log.File = gfile.SelfDir() + `/internal/cmd/my-gen/log/` + saveFileName + `.log`
+	if gfile.IsFile(log.File) {
+		log.Content = gfile.GetContents(log.File)
 		myGenCommandArr := []string{
 			`./main`,
 			`myGen`,
 			`-dbGroup=` + option.DbGroup,
 			`-dbTable=` + option.DbTable,
 		}
-		match, _ := gregex.MatchString(`(`+gregex.Quote(strings.Join(myGenCommandArr, ` `)+` `)+`[\s\S]*?)(((\r|\n)\./main)|$)`, tpl.CmdLog.Content)
+		match, _ := gregex.MatchString(`(`+gregex.Quote(strings.Join(myGenCommandArr, ` `)+` `)+`[\s\S]*?)(((\r|\n)\./main)|$)`, log.Content)
 		if len(match) > 0 {
-			tpl.CmdLog.Last = match[1]
+			log.Last = match[1]
 		}
 	}
+	return
 }
 
-func genCmdLog(option myGenOption, tpl *myGenTpl) {
-	tableCmdLog := []string{}
-	tableCmdLog = append(tableCmdLog, tpl.CmdLog.RelId...)
-	tableCmdLog = append(tableCmdLog, tpl.CmdLog.Extend...)
-	tableCmdLog = append(tableCmdLog, tpl.CmdLog.OtherRel...)
-
+func genCmdLog(_ context.Context, tpl *myGenTpl) {
 	myGenCommandArr := []string{
 		`./main`,
 		`myGen`,
-		`-dbGroup=` + option.DbGroup,
-		`-dbTable=` + option.DbTable,
-		`-removePrefixCommon=` + option.RemovePrefixCommon,
-		`-removePrefixAlone=` + option.RemovePrefixAlone,
-		`-cacheType=` + gconv.String(option.CacheType),
+		`-dbGroup=` + tpl.Option.DbGroup,
+		`-dbTable=` + tpl.Option.DbTable,
+		`-removePrefixCommon=` + tpl.Option.RemovePrefixCommon,
+		`-removePrefixAlone=` + tpl.Option.RemovePrefixAlone,
+		`-cacheType=` + gconv.String(tpl.Option.CacheType),
 	}
-	if option.CacheType != 0 {
-		myGenCommandArr = append(myGenCommandArr, `-cacheTime=`+option.CacheTime)
+	if tpl.Option.CacheType != 0 {
+		myGenCommandArr = append(myGenCommandArr, `-cacheTime=`+tpl.Option.CacheTime)
 	}
-	myGenCommandArr = append(myGenCommandArr, `-isApi=`+gconv.String(gconv.Uint(option.IsApi)))
-	if option.IsApi {
+	myGenCommandArr = append(myGenCommandArr, `-isApi=`+gconv.String(gconv.Uint(tpl.Option.IsApi)))
+	if tpl.Option.IsApi {
 		myGenCommandArr = append(myGenCommandArr,
-			`-isResetLogic=`+gconv.String(gconv.Uint(option.IsResetLogic)),
-			`-isAuthAction=`+gconv.String(gconv.Uint(option.IsAuthAction)),
-			`-commonName=`+option.CommonName,
-			`-loginRelId=`+option.LoginRelId,
-			`-loginIdStr="`+option.LoginIdStr+`"`,
-			`-filterIsStop=`+gconv.String(gconv.Uint(option.FilterIsStop)))
+			`-isResetLogic=`+gconv.String(gconv.Uint(tpl.Option.IsResetLogic)),
+			`-isAuthAction=`+gconv.String(gconv.Uint(tpl.Option.IsAuthAction)),
+			`-commonName=`+tpl.Option.CommonName,
+			`-loginRelId=`+tpl.Option.LoginRelId,
+			`-loginIdStr="`+tpl.Option.LoginIdStr+`"`,
+			`-filterIsStop=`+gconv.String(gconv.Uint(tpl.Option.FilterIsStop)))
 	}
-	myGenCommandArr = append(myGenCommandArr, `-isView=`+gconv.String(gconv.Uint(option.IsView)))
-	if option.IsApi || option.IsView {
+	myGenCommandArr = append(myGenCommandArr, `-isView=`+gconv.String(gconv.Uint(tpl.Option.IsView)))
+	if tpl.Option.IsApi || tpl.Option.IsView {
 		myGenCommandArr = append(myGenCommandArr,
-			`-sceneId=`+option.SceneId,
-			`-isList=`+gconv.String(gconv.Uint(option.IsList)),
-			`-isCount=`+gconv.String(gconv.Uint(option.IsCount)),
-			`-isInfo=`+gconv.String(gconv.Uint(option.IsInfo)),
-			`-isCreate=`+gconv.String(gconv.Uint(option.IsCreate)),
-			`-isUpdate=`+gconv.String(gconv.Uint(option.IsUpdate)),
-			`-isDelete=`+gconv.String(gconv.Uint(option.IsDelete)))
+			`-sceneId=`+tpl.Option.SceneId,
+			`-isList=`+gconv.String(gconv.Uint(tpl.Option.IsList)),
+			`-isCount=`+gconv.String(gconv.Uint(tpl.Option.IsCount)),
+			`-isInfo=`+gconv.String(gconv.Uint(tpl.Option.IsInfo)),
+			`-isCreate=`+gconv.String(gconv.Uint(tpl.Option.IsCreate)),
+			`-isUpdate=`+gconv.String(gconv.Uint(tpl.Option.IsUpdate)),
+			`-isDelete=`+gconv.String(gconv.Uint(tpl.Option.IsDelete)))
 	}
-	cmdLog := strings.Join(myGenCommandArr, ` `) + gstr.Join(append([]string{``}, tableCmdLog...), `
+
+	contentArr := []string{``}
+	contentArr = append(contentArr, tpl.CmdLog.RelId...)
+	contentArr = append(contentArr, tpl.CmdLog.Extend...)
+	contentArr = append(contentArr, tpl.CmdLog.OtherRel...)
+	content := strings.Join(myGenCommandArr, ` `) + gstr.Join(contentArr, `
     `)
 	if tpl.CmdLog.Content != `` {
 		if tpl.CmdLog.Last != `` {
-			cmdLog = gstr.Replace(tpl.CmdLog.Content, tpl.CmdLog.Last, cmdLog)
+			content = gstr.Replace(tpl.CmdLog.Content, tpl.CmdLog.Last, content)
 		} else {
-			cmdLog = tpl.CmdLog.Content + "\r\n" + cmdLog
+			content = tpl.CmdLog.Content + "\r\n" + content
 		}
 	}
-	gfile.PutContents(tpl.CmdLog.File, cmdLog)
+	gfile.PutContents(tpl.CmdLog.File, content)
 }

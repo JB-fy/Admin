@@ -16,7 +16,8 @@ import (
 )
 
 type myGenTpl struct {
-	Option             myGenOption
+	Option             *myGenOption
+	CmdLog             *cmdLog
 	DbHandler          internal.MyGenDbHandler  //数据库处理器
 	FieldStyle         internal.MyGenFieldStyle //表字段命名风格
 	Link               string                   //当前数据库连接配置（gf gen dao命令生成dao需要）
@@ -86,14 +87,6 @@ type myGenTpl struct {
 		MiddleTableManyList []handleExtendMiddle   //中间表（一对多）：表命名：主表名_rel_to_xxxx 或 xxxx_rel_of_主表名，同模块时，后面部分可省略独有前缀，并存在至少2个与关联表（主键 或 表名去掉前缀 + ID）同名的id后缀字段。所有表的关联字段设为：联合主键 或 联合唯一索引
 		OtherRelTableList   []handleOtherRel       //其它关联表（不含扩展表和中间表）：存在与主表主键（主键 或 表名去掉前缀 + ID）同名的id后缀字段。作用：logic层delete方法生成验证代码；dao层HookDelete方法生成关联删除代码
 	}
-	CmdLog struct { //命令日志
-		File     string   //文件路径
-		Content  string   //日志
-		Last     string   //上一次日志
-		RelId    []string //id后缀字段关联表日志
-		Extend   []string //扩展表日志
-		OtherRel []string //其它关联表日志
-	}
 }
 
 type myGenField struct {
@@ -159,17 +152,15 @@ type handleOtherRel struct {
 }
 
 // 创建模板参数
-func createTpl(ctx context.Context, option myGenOption, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isFromOtherRel bool) (tpl *myGenTpl) {
+func createTpl(ctx context.Context, option *myGenOption, cmdLog *cmdLog, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isFromOtherRel bool) (tpl *myGenTpl) {
 	tpl = &myGenTpl{
 		Option:             option,
+		CmdLog:             cmdLog,
 		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
 		RemovePrefixAlone:  removePrefixAlone,
 		RemovePrefix:       removePrefixCommon + removePrefixAlone,
 		Table:              table,
-	}
-	if isTop {
-		initCmdLog(tpl.Option, tpl)
 	}
 	tpl.DbHandler = internal.NewMyGenDbHandler(ctx, g.DB(tpl.Group).GetConfig().Type)
 	tpl.Link = gconv.String(gconv.Maps(g.Cfg().MustGet(ctx, `database`).Map()[tpl.Group])[0][`link`])
@@ -797,7 +788,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, field myGenField)
 				}
 			}
 
-			relTpl = createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, table, removePrefixCommon, removePrefixAlone, false, false)
+			relTpl = createTpl(ctx, myGenTplThis.Option, myGenTplThis.CmdLog, myGenTplThis.Group, table, removePrefixCommon, removePrefixAlone, false, false)
 			relTpl.gfGenDao(false) //dao文件生成
 		}
 		return
@@ -1015,7 +1006,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context) {
 		if gstr.Pos(v, myGenTplThis.Table+`_`) != 0 { // 不符合扩展表命名（主表名_xxxx）的跳过
 			continue
 		}
-		extendTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
+		extendTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.CmdLog, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, key := range extendTpl.KeyList {
 			if len(key.FieldList) != 1 {
 				continue
@@ -1159,7 +1150,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context) {
 			}
 		}
 
-		middleTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
+		middleTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.CmdLog, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, key := range middleTpl.KeyList {
 			if !key.IsUnique { // 必须唯一
 				continue
@@ -1281,7 +1272,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 			continue
 		} */
 
-		otherRelTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, true)
+		otherRelTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.CmdLog, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, true)
 		for _, field := range otherRelTpl.FieldList {
 			if !myGenTplThis.IsSamePrimary(field.IsAutoInc, field.FieldTypeRaw, field.FieldCaseSnakeRemove) {
 				continue

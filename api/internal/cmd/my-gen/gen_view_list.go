@@ -2,6 +2,7 @@ package my_gen
 
 import (
 	"api/internal/cmd/my-gen/internal"
+	"context"
 	"slices"
 
 	"github.com/gogf/gf/v2/os/gfile"
@@ -72,7 +73,7 @@ func (viewListThis *myGenViewList) Unique() {
 }
 
 // 视图模板List生成
-func genViewList(option myGenOption, tpl *myGenTpl) {
+func genViewList(ctx context.Context, tpl *myGenTpl) {
 	viewList := myGenViewList{
 		rowHeight: 50,
 		idType:    `number`,
@@ -81,30 +82,30 @@ func genViewList(option myGenOption, tpl *myGenTpl) {
 		viewList.idType = `string`
 	}
 	for _, v := range tpl.FieldListOfDefault {
-		viewList.Add(getViewListField(option, tpl, v, tpl.I18nPath))
+		viewList.Add(getViewListField(ctx, tpl, v, tpl.I18nPath))
 	}
 	for _, v := range tpl.FieldListOfAfter1 {
-		viewList.Add(getViewListField(option, tpl, v, tpl.I18nPath))
+		viewList.Add(getViewListField(ctx, tpl, v, tpl.I18nPath))
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
-		viewList.Merge(getViewListExtendMiddleOne(option, v))
+		viewList.Merge(getViewListExtendMiddleOne(ctx, v))
 	}
 	for _, v := range tpl.Handle.MiddleTableOneList {
-		viewList.Merge(getViewListExtendMiddleOne(option, v))
+		viewList.Merge(getViewListExtendMiddleOne(ctx, v))
 	}
 	for _, v := range tpl.Handle.ExtendTableManyList {
-		viewList.Merge(getViewListExtendMiddleMany(option, v))
+		viewList.Merge(getViewListExtendMiddleMany(ctx, v))
 	}
 	for _, v := range tpl.Handle.MiddleTableManyList {
-		viewList.Merge(getViewListExtendMiddleMany(option, v))
+		viewList.Merge(getViewListExtendMiddleMany(ctx, v))
 	}
 	for _, v := range tpl.FieldListOfAfter2 {
-		viewList.Add(getViewListField(option, tpl, v, tpl.I18nPath))
+		viewList.Add(getViewListField(ctx, tpl, v, tpl.I18nPath))
 	}
 	viewList.Unique()
 
 	tplView := `<script setup lang="tsx">`
-	if option.IsDelete {
+	if tpl.Option.IsDelete {
 		tplView += `
 import type { Action, MessageBoxState } from 'element-plus'`
 	}
@@ -114,7 +115,7 @@ const { t`
 		tplView += `, tm`
 	}
 	tplView += ` } = useI18n()`
-	if option.IsCreate || option.IsUpdate || option.IsDelete {
+	if tpl.Option.IsCreate || tpl.Option.IsUpdate || tpl.Option.IsDelete {
 		tplView += `
 
 const authAction = inject('authAction') as { [propName: string]: boolean }`
@@ -131,7 +132,7 @@ const table = reactive({
             width: 200,
             fixed: 'left',
             sortable: true,`
-	if option.IsUpdate || option.IsDelete {
+	if tpl.Option.IsUpdate || tpl.Option.IsDelete {
 		tplView += `
             headerCellRenderer: () => {
                 const allChecked = table.data.every((item: any) => item.checked)
@@ -151,7 +152,7 @@ const table = reactive({
 	tplView += `
         },` + gstr.Join(append([]string{``}, viewList.columns...), `
         `)
-	if option.IsCreate || option.IsUpdate || option.IsDelete {
+	if tpl.Option.IsCreate || tpl.Option.IsUpdate || tpl.Option.IsDelete {
 		tplView += `
         {
             title: t('common.name.action'),
@@ -162,7 +163,7 @@ const table = reactive({
             hidden: !(authAction.isCreate || authAction.isUpdate || authAction.isDelete),
             cellRenderer: (props: any): any => {
                 let vNode: any = []`
-		if option.IsUpdate {
+		if tpl.Option.IsUpdate {
 			tplView += `
                 if (authAction.isUpdate) {
                     vNode.push(
@@ -173,7 +174,7 @@ const table = reactive({
                     )
                 }`
 		}
-		if option.IsDelete {
+		if tpl.Option.IsDelete {
 			tplView += `
                 if (authAction.isDelete) {
                     vNode.push(
@@ -184,7 +185,7 @@ const table = reactive({
                     )
                 }`
 		}
-		if option.IsCreate {
+		if tpl.Option.IsCreate {
 			tplView += `
                 if (authAction.isCreate) {
                     vNode.push(
@@ -211,12 +212,12 @@ const table = reactive({
         getList()
     },
 })`
-	if option.IsCreate || option.IsUpdate {
+	if tpl.Option.IsCreate || tpl.Option.IsUpdate {
 		tplView += `
 
 const saveCommon = inject('saveCommon') as { visible: boolean; title: string; data: { [propName: string]: any } }`
 	}
-	if option.IsCreate {
+	if tpl.Option.IsCreate {
 		tplView += `
 //新增
 const handleAdd = () => {
@@ -225,7 +226,7 @@ const handleAdd = () => {
     saveCommon.visible = true
 }`
 	}
-	if option.IsDelete {
+	if tpl.Option.IsDelete {
 		tplView += `
 //批量删除
 const handleBatchDelete = () => {
@@ -234,7 +235,7 @@ const handleBatchDelete = () => {
     idArr.length == 0 ? ElMessage.error(t('common.tip.selectDelete')) : handleDelete(idArr)
 }`
 	}
-	if option.IsCreate || option.IsUpdate {
+	if tpl.Option.IsCreate || tpl.Option.IsUpdate {
 		tplView += `
 //编辑|复制
 const handleEditCopy = (id: ` + viewList.idType + `, type: string = 'edit') => {
@@ -248,7 +249,7 @@ const handleEditCopy = (id: ` + viewList.idType + `, type: string = 'edit') => {
     })
 }`
 	}
-	if option.IsDelete {
+	if tpl.Option.IsDelete {
 		tplView += `
 //删除
 const handleDelete = (id: ` + viewList.idType + ` | ` + viewList.idType + `[]) => {
@@ -270,7 +271,7 @@ const handleDelete = (id: ` + viewList.idType + ` | ` + viewList.idType + `[]) =
     })
 }`
 	}
-	if option.IsUpdate {
+	if tpl.Option.IsUpdate {
 		tplView += `
 //更新
 const handleUpdate = async (id: ` + viewList.idType + ` | ` + viewList.idType + `[], param: { [propName: string]: any }) => {
@@ -322,15 +323,15 @@ defineExpose({ getList })
     <el-row class="main-table-tool">
         <el-col :span="16">
             <el-space :size="10" style="height: 100%; margin-left: 10px">`
-	if option.IsCreate {
+	if tpl.Option.IsCreate {
 		tplView += `
                 <el-button v-if="authAction.isCreate" type="primary" @click="handleAdd"><autoicon-ep-edit-pen />{{ t('common.add') }}</el-button>`
 	}
-	if option.IsDelete {
+	if tpl.Option.IsDelete {
 		tplView += `
                 <el-button v-if="authAction.isDelete" type="danger" @click="handleBatchDelete"><autoicon-ep-delete-filled />{{ t('common.batchDelete') }}</el-button>`
 	}
-	if option.IsCreate || option.IsDelete {
+	if tpl.Option.IsCreate || tpl.Option.IsDelete {
 		tplView += `
             `
 	}
@@ -382,11 +383,11 @@ defineExpose({ getList })
 </template>
 `
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneId + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/List.vue`
+	saveFile := gfile.SelfDir() + `/../view/` + tpl.Option.SceneId + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/List.vue`
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewListField(option myGenOption, tpl *myGenTpl, v myGenField, i18nPath string) (viewListField myGenViewListField) {
+func getViewListField(ctx context.Context, tpl *myGenTpl, v myGenField, i18nPath string) (viewListField myGenViewListField) {
 	viewListField.dataKey.Method = internal.ReturnType
 	viewListField.dataKey.DataType = `'` + v.FieldRaw + `'`
 	viewListField.title.Method = internal.ReturnType
@@ -466,7 +467,7 @@ func getViewListField(option myGenOption, tpl *myGenTpl, v myGenField, i18nPath 
 	case internal.TypeNameSaltSuffix: // salt后缀，且对应的password,passwd后缀存在时（才）有效；	类型：char；
 		return myGenViewListField{}
 	case internal.TypeNameNameSuffix: // name,title后缀；	类型：varchar；
-		if option.IsUpdate {
+		if tpl.Option.IsUpdate {
 			viewListField.cellRenderer.Method = internal.ReturnTypeName
 			viewListField.cellRenderer.DataTypeName = `(props: any): any => {
                 if (!authAction.isUpdate) {
@@ -517,7 +518,7 @@ func getViewListField(option myGenOption, tpl *myGenTpl, v myGenField, i18nPath 
 		viewListField.width.Method = internal.ReturnTypeName
 		viewListField.width.DataTypeName = `100`
 		cellRendererStr := `disabled={true}`
-		if option.IsUpdate {
+		if tpl.Option.IsUpdate {
 			cellRendererStr = `disabled={!authAction.isUpdate}
                         onChange={(val: string) => {
                             if (val != props.rowData.color) {
@@ -555,7 +556,7 @@ func getViewListField(option myGenOption, tpl *myGenTpl, v myGenField, i18nPath 
 		viewListField.width.Method = internal.ReturnTypeName
 		viewListField.width.DataTypeName = `100`
 		cellRendererStr := `disabled={true}`
-		if option.IsUpdate && v.FieldTypeName != internal.TypeNameIsLeaf {
+		if tpl.Option.IsUpdate && v.FieldTypeName != internal.TypeNameIsLeaf {
 			cellRendererStr = `disabled={!authAction.isUpdate}
                         onChange={(val: any) => handleUpdate(props.rowData.id, { ` + v.FieldRaw + `: val }).then(() => (props.rowData.` + v.FieldRaw + ` = val))}`
 		}
@@ -582,7 +583,7 @@ func getViewListField(option myGenOption, tpl *myGenTpl, v myGenField, i18nPath 
 	case internal.TypeNameSortSuffix, internal.TypeNameNoSuffix: // sort,num,number,weight等后缀；	类型：int等类型；	// no,level,rank等后缀；	类型：int等类型；
 		viewListField.sortable.Method = internal.ReturnTypeName
 		viewListField.sortable.DataTypeName = `true`
-		if option.IsUpdate {
+		if tpl.Option.IsUpdate {
 			viewListField.cellRenderer.Method = internal.ReturnTypeName
 			attrOfAdd := `placeholder={t('` + i18nPath + `.name.` + v.FieldRaw + `')}`
 			if v.FieldTip != `` {
@@ -779,24 +780,24 @@ func getViewListField(option myGenOption, tpl *myGenTpl, v myGenField, i18nPath 
 	return
 }
 
-func getViewListExtendMiddleOne(option myGenOption, tplEM handleExtendMiddle) (viewList myGenViewList) {
+func getViewListExtendMiddleOne(ctx context.Context, tplEM handleExtendMiddle) (viewList myGenViewList) {
 	switch tplEM.TableType {
 	case internal.TableTypeExtendOne:
 		for _, v := range tplEM.FieldList {
-			viewList.Add(getViewListField(option, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
+			viewList.Add(getViewListField(ctx, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
 		}
 	case internal.TableTypeMiddleOne:
 		for _, v := range tplEM.FieldListOfIdSuffix {
-			viewList.Add(getViewListField(option, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
+			viewList.Add(getViewListField(ctx, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
 		}
 		for _, v := range tplEM.FieldListOfOther {
-			viewList.Add(getViewListField(option, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
+			viewList.Add(getViewListField(ctx, tplEM.tpl, v, tplEM.tplOfTop.I18nPath))
 		}
 	}
 	return
 }
 
-func getViewListExtendMiddleMany(option myGenOption, tplEM handleExtendMiddle) (viewList myGenViewList) {
+func getViewListExtendMiddleMany(ctx context.Context, tplEM handleExtendMiddle) (viewList myGenViewList) {
 	if len(tplEM.FieldList) == 1 {
 		v := tplEM.FieldList[0]
 

@@ -134,38 +134,40 @@ type myGenOption struct {
 // 生成代码
 func Run(ctx context.Context, parser *gcmd.Parser) {
 	option := createOption(ctx, parser)
-	tpl := createTpl(ctx, option, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true, false)
+	cmdLog := createCmdLog(ctx, option)
+	tpl := createTpl(ctx, option, cmdLog, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true, false)
 
-	genDao(option, tpl) // dao模板生成
+	genDao(ctx, tpl) // dao模板生成
 
 	if option.IsApi {
-		genApi(option, tpl)           // api模板生成
-		genController(option, tpl)    // controller模板生成
-		i18n := genLogic(option, tpl) // logic模板生成
-		genI18n(i18n)                 // i18n生成
-		genRouter(option, tpl)        // 后端路由生成
-		genAction(ctx, option, tpl)   // 操作权限生成
+		genApi(ctx, tpl)           // api模板生成
+		genController(ctx, tpl)    // controller模板生成
+		i18n := genLogic(ctx, tpl) // logic模板生成
+		genI18n(ctx, i18n)         // i18n生成
+		genRouter(ctx, tpl)        // 后端路由生成
+		genAction(ctx, tpl)        // 操作权限生成
 	}
 
 	if option.IsView {
-		genViewIndex(option, tpl)  // 视图模板Index生成
-		genViewList(option, tpl)   // 视图模板List生成
-		genViewQuery(option, tpl)  // 视图模板Query生成
-		genViewSave(option, tpl)   // 视图模板Save生成
-		genViewI18n(option, tpl)   // 视图模板I18n生成
-		genViewRouter(option, tpl) // 前端路由生成
-		genMenu(ctx, option, tpl)  // 菜单生成
+		genViewIndex(ctx, tpl)  // 视图模板Index生成
+		genViewList(ctx, tpl)   // 视图模板List生成
+		genViewQuery(ctx, tpl)  // 视图模板Query生成
+		genViewSave(ctx, tpl)   // 视图模板Save生成
+		genViewI18n(ctx, tpl)   // 视图模板I18n生成
+		genViewRouter(ctx, tpl) // 前端路由生成
+		genMenu(ctx, tpl)       // 菜单生成
 
 		internal.Command(`前端代码格式化`, false, gfile.SelfDir()+`/../view/`+option.SceneId, `npm`, `run`, `format`) // 前端代码格式化
 	}
 
-	genCmdLog(option, tpl) //命令日志生成
+	genCmdLog(ctx, tpl) //命令日志生成
 }
 
 // 创建命令选项
-func createOption(ctx context.Context, parser *gcmd.Parser) (option myGenOption) {
+func createOption(ctx context.Context, parser *gcmd.Parser) (option *myGenOption) {
+	option = &myGenOption{}
 	optionMap := parser.GetOptAll()
-	gconv.Struct(optionMap, &option)
+	gconv.Struct(optionMap, option)
 
 	// 命令执行前提示搭配Git使用
 	gcmd.Scan(

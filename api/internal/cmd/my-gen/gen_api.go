@@ -4,6 +4,7 @@ import (
 	"api/internal/cmd/my-gen/internal"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
+	"context"
 	"slices"
 
 	"github.com/gogf/gf/v2/container/gvar"
@@ -81,7 +82,7 @@ func (apiThis *myGenApi) Unique() {
 }
 
 // api生成
-func genApi(option myGenOption, tpl *myGenTpl) {
+func genApi(ctx context.Context, tpl *myGenTpl) {
 	api := getApiIdAndLabel(tpl)
 	for _, v := range tpl.FieldListOfDefault {
 		api.Add(getApiField(tpl, v), v, internal.TableTypeDefault)
@@ -108,11 +109,11 @@ func genApi(option myGenOption, tpl *myGenTpl) {
 
 	saveFileOfCommon := gfile.SelfDir() + `/api/common.go`
 	tplApiOfCommon := gfile.GetContents(saveFileOfCommon)
-	commonHeaderStr := `type Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq struct {`
+	commonHeaderStr := `type Common` + gstr.CaseCamel(tpl.Option.SceneId) + `HeaderReq struct {`
 	if gstr.Pos(tplApiOfCommon, commonHeaderStr) == -1 {
-		tplApiOfCommon = gstr.Replace(tplApiOfCommon, `type CommonInfoReq struct {`, `type Common`+gstr.CaseCamel(option.SceneId)+`HeaderReq struct {
+		tplApiOfCommon = gstr.Replace(tplApiOfCommon, `type CommonInfoReq struct {`, `type Common`+gstr.CaseCamel(tpl.Option.SceneId)+`HeaderReq struct {
 	CommonHeaderReq
-	`+gstr.CaseCamel(option.SceneId)+`Token string `+"`"+`json:"`+gstr.CaseCamel(option.SceneId)+`Token,omitempty" v:"" in:"header" d:"" dc:"登录token"`+"`"+`
+	`+gstr.CaseCamel(tpl.Option.SceneId)+`Token string `+"`"+`json:"`+gstr.CaseCamel(tpl.Option.SceneId)+`Token,omitempty" v:"" in:"header" d:"" dc:"登录token"`+"`"+`
 }
 
 type CommonInfoReq struct {`, 1)
@@ -129,12 +130,12 @@ import (
 )
 
 `
-	if option.IsList || option.IsInfo {
+	if tpl.Option.IsList || tpl.Option.IsInfo {
 		tplApi += `// 共用详情。list,info,tree等接口返回时用，但返回默认字段有差异。可根据需要在controller对应的defaultField中补充所需字段
 type ` + tpl.TableCaseCamel + `Info struct {` + gstr.Join(append([]string{``}, api.res...), `
 	`) + gstr.Join(append([]string{``}, api.resOfAdd...), `
 	`)
-		if option.IsList && tpl.Handle.Pid.Pid != `` {
+		if tpl.Option.IsList && tpl.Handle.Pid.Pid != `` {
 			tplApi += `
 	Children []` + tpl.TableCaseCamel + `Info ` + "`" + `json:"children" dc:"子级列表"` + "`"
 		}
@@ -143,7 +144,7 @@ type ` + tpl.TableCaseCamel + `Info struct {` + gstr.Join(append([]string{``}, a
 
 `
 	}
-	if option.IsList {
+	if tpl.Option.IsList {
 		tplApi += `type ` + tpl.TableCaseCamel + `ListFilter struct {` + gstr.Join(append([]string{``}, api.listFilterOfFixed...), `
 	`) + gstr.Join(append([]string{``}, api.listFilter...), `
 	`) + `
@@ -151,18 +152,18 @@ type ` + tpl.TableCaseCamel + `Info struct {` + gstr.Join(append([]string{``}, a
 
 `
 	}
-	if option.IsUpdate || option.IsDelete {
+	if tpl.Option.IsUpdate || tpl.Option.IsDelete {
 		tplApi += `type ` + tpl.TableCaseCamel + `UpdateDeleteFilter struct {` + gstr.Join(append([]string{``}, api.updateDeleteFilter...), `
 	`) + `
 }
 
 `
 	}
-	if option.IsList {
+	if tpl.Option.IsList {
 		tplApi += `/*--------列表 开始--------*/
 type ` + tpl.TableCaseCamel + `ListReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/list" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"列表"` + "`" + `
-	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/list" method:"post" tags:"` + tpl.Option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + tpl.Option.CommonName + `" sm:"列表"` + "`" + `
+	api.Common` + gstr.CaseCamel(tpl.Option.SceneId) + `HeaderReq
 	api.CommonListReq`
 		if tpl.Handle.DefSort.Field != `id` || gstr.ToUpper(tpl.Handle.DefSort.Order) != `DESC` {
 			tplApi += `
@@ -173,7 +174,7 @@ type ` + tpl.TableCaseCamel + `ListReq struct {
 }
 
 type ` + tpl.TableCaseCamel + `ListRes struct {`
-		if option.IsCount {
+		if tpl.Option.IsCount {
 			tplApi += `
 	Count int         ` + "`" + `json:"count" dc:"总数"` + "`"
 		}
@@ -185,11 +186,11 @@ type ` + tpl.TableCaseCamel + `ListRes struct {`
 
 `
 	}
-	if option.IsInfo {
+	if tpl.Option.IsInfo {
 		tplApi += `/*--------详情 开始--------*/
 type ` + tpl.TableCaseCamel + `InfoReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/info" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"详情"` + "`" + `
-	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/info" method:"post" tags:"` + tpl.Option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + tpl.Option.CommonName + `" sm:"详情"` + "`" + `
+	api.Common` + gstr.CaseCamel(tpl.Option.SceneId) + `HeaderReq
 	api.CommonInfoReq` + gstr.Join(append([]string{``}, api.info...), `
 	`) + `
 }
@@ -202,15 +203,15 @@ type ` + tpl.TableCaseCamel + `InfoRes struct {
 
 `
 	}
-	if option.IsCreate {
+	if tpl.Option.IsCreate {
 		tplApi += `/*--------新增 开始--------*/
 type ` + tpl.TableCaseCamel + `CreateData struct {` + gstr.Join(append([]string{``}, api.create...), `
 	`) + `
 }
 
 type ` + tpl.TableCaseCamel + `CreateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"新增"` + "`" + `
-	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/create" method:"post" tags:"` + tpl.Option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + tpl.Option.CommonName + `" sm:"新增"` + "`" + `
+	api.Common` + gstr.CaseCamel(tpl.Option.SceneId) + `HeaderReq
 	` + tpl.TableCaseCamel + `CreateData
 }
 
@@ -219,15 +220,15 @@ type ` + tpl.TableCaseCamel + `CreateReq struct {
 `
 	}
 
-	if option.IsUpdate {
+	if tpl.Option.IsUpdate {
 		tplApi += `/*--------修改 开始--------*/
 type ` + tpl.TableCaseCamel + `UpdateData struct {` + gstr.Join(append([]string{``}, api.update...), `
 	`) + `
 }
 
 type ` + tpl.TableCaseCamel + `UpdateReq struct {
-	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"修改"` + "`" + `
-	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	g.Meta      ` + "`" + `path:"/` + tpl.TableCaseKebab + `/update" method:"post" tags:"` + tpl.Option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + tpl.Option.CommonName + `" sm:"修改"` + "`" + `
+	api.Common` + gstr.CaseCamel(tpl.Option.SceneId) + `HeaderReq
 	` + tpl.TableCaseCamel + `UpdateDeleteFilter
 	` + tpl.TableCaseCamel + `UpdateData
 }
@@ -237,11 +238,11 @@ type ` + tpl.TableCaseCamel + `UpdateReq struct {
 `
 	}
 
-	if option.IsDelete {
+	if tpl.Option.IsDelete {
 		tplApi += `/*--------删除 开始--------*/
 type ` + tpl.TableCaseCamel + `DeleteReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/del" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"删除"` + "`" + `
-	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/del" method:"post" tags:"` + tpl.Option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + tpl.Option.CommonName + `" sm:"删除"` + "`" + `
+	api.Common` + gstr.CaseCamel(tpl.Option.SceneId) + `HeaderReq
 	` + tpl.TableCaseCamel + `UpdateDeleteFilter
 }
 
@@ -249,12 +250,12 @@ type ` + tpl.TableCaseCamel + `DeleteReq struct {
 `
 	}
 
-	if option.IsList && tpl.Handle.Pid.Pid != `` {
+	if tpl.Option.IsList && tpl.Handle.Pid.Pid != `` {
 		tplApi += `
 /*--------列表（树状） 开始--------*/
 type ` + tpl.TableCaseCamel + `TreeReq struct {
-	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/tree" method:"post" tags:"` + option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + option.CommonName + `" sm:"列表（树状）"` + "`" + `
-	api.Common` + gstr.CaseCamel(option.SceneId) + `HeaderReq
+	g.Meta ` + "`" + `path:"/` + tpl.TableCaseKebab + `/tree" method:"post" tags:"` + tpl.Option.SceneInfo[daoAuth.Scene.Columns().SceneName].String() + `/` + tpl.Option.CommonName + `" sm:"列表（树状）"` + "`" + `
+	api.Common` + gstr.CaseCamel(tpl.Option.SceneId) + `HeaderReq
 	api.CommonInfoReq
 	Filter ` + tpl.TableCaseCamel + `ListFilter ` + "`" + `json:"filter" dc:"过滤条件"` + "`" + `
 }
@@ -267,7 +268,7 @@ type ` + tpl.TableCaseCamel + `TreeRes struct {
 `
 	}
 
-	saveFile := gfile.SelfDir() + `/api/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
+	saveFile := gfile.SelfDir() + `/api/` + tpl.Option.SceneId + `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	utils.FilePutFormat(saveFile, []byte(tplApi)...)
 }
 

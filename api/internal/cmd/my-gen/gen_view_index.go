@@ -1,16 +1,18 @@
 package my_gen
 
 import (
+	"context"
+
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 )
 
 // 视图模板Index生成
-func genViewIndex(option myGenOption, tpl *myGenTpl) {
+func genViewIndex(ctx context.Context, tpl *myGenTpl) {
 	tplView := `<script setup lang="tsx">
 import List from './List.vue'
 import Query from './Query.vue'`
-	if option.IsCreate || option.IsUpdate {
+	if tpl.Option.IsCreate || tpl.Option.IsUpdate {
 		tplView += `
 import Save from './Save.vue'`
 	}
@@ -18,7 +20,7 @@ import Save from './Save.vue'`
 	tplView += `
 
 const { t } = useI18n()`
-	if option.IsAuthAction {
+	if tpl.Option.IsAuthAction {
 		tplView += `
 const adminStore = useAdminStore()`
 	}
@@ -26,30 +28,30 @@ const adminStore = useAdminStore()`
 
 const authAction: { [propName: string]: boolean } = {`
 	isReadStr := `true`
-	if option.IsAuthAction {
+	if tpl.Option.IsAuthAction {
 		isReadStr = `adminStore.isAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Read')`
 	}
 	tplView += `
     isRead: ` + isReadStr + `,`
-	if option.IsCreate {
+	if tpl.Option.IsCreate {
 		isCreateStr := `true`
-		if option.IsAuthAction {
+		if tpl.Option.IsAuthAction {
 			isCreateStr = `adminStore.isAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Create')`
 		}
 		tplView += `
     isCreate: ` + isCreateStr + `,`
 	}
-	if option.IsUpdate {
+	if tpl.Option.IsUpdate {
 		isUpdateStr := `true`
-		if option.IsAuthAction {
+		if tpl.Option.IsAuthAction {
 			isUpdateStr = `adminStore.isAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Update')`
 		}
 		tplView += `
     isUpdate: ` + isUpdateStr + `,`
 	}
-	if option.IsDelete {
+	if tpl.Option.IsDelete {
 		isDeleteStr := `true`
-		if option.IsAuthAction {
+		if tpl.Option.IsAuthAction {
 			isDeleteStr = `adminStore.isAction('` + gstr.CaseCamelLower(tpl.LogicStructName) + `Delete')`
 		}
 		tplView += `
@@ -70,7 +72,7 @@ const listCommon = reactive({
     ref: null as any,
 })
 provide('listCommon', listCommon)`
-	if option.IsCreate || option.IsUpdate {
+	if tpl.Option.IsCreate || tpl.Option.IsUpdate {
 		tplView += `
 
 //保存
@@ -93,7 +95,7 @@ provide('saveCommon', saveCommon)`
             </el-header>
 
             <list :ref="(el: any) => listCommon.ref = el" />`
-	if option.IsCreate || option.IsUpdate {
+	if tpl.Option.IsCreate || tpl.Option.IsUpdate {
 		tplView += `
 
             <!-- 加上v-if每次都重新生成组件。可防止不同操作之间的影响；新增操作数据的默认值也能写在save组件内 -->
@@ -105,6 +107,6 @@ provide('saveCommon', saveCommon)`
 </template>
 `
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneId + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Index.vue`
+	saveFile := gfile.SelfDir() + `/../view/` + tpl.Option.SceneId + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Index.vue`
 	gfile.PutContents(saveFile, tplView)
 }

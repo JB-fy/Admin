@@ -1,14 +1,16 @@
 package my_gen
 
 import (
+	"context"
+
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 )
 
 // 前端路由生成
-func genViewRouter(option myGenOption, tpl *myGenTpl) {
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneId + `/src/router/index.ts`
+func genViewRouter(ctx context.Context, tpl *myGenTpl) {
+	saveFile := gfile.SelfDir() + `/../view/` + tpl.Option.SceneId + `/src/router/index.ts`
 	tplViewRouter := gfile.GetContents(saveFile)
 
 	path := `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab

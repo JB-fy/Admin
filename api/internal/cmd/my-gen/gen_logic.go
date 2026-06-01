@@ -3,6 +3,7 @@ package my_gen
 import (
 	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
+	"context"
 	"slices"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -50,9 +51,9 @@ func (logicThis *myGenLogic) Unique() {
 }
 
 // logic生成
-func genLogic(option myGenOption, tpl *myGenTpl) (i18n myGenI18n) {
+func genLogic(ctx context.Context, tpl *myGenTpl) (i18n myGenI18n) {
 	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.Replace(tpl.ModuleDirCaseKebab, `/`, `-`) + `/` + tpl.TableCaseSnake + `.go`
-	if !option.IsResetLogic && gfile.IsFile(saveFile) {
+	if !tpl.Option.IsResetLogic && gfile.IsFile(saveFile) {
 		return
 	}
 

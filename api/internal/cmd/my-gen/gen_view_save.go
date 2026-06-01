@@ -2,6 +2,7 @@ package my_gen
 
 import (
 	"api/internal/cmd/my-gen/internal"
+	"context"
 	"slices"
 
 	"github.com/gogf/gf/v2/container/garray"
@@ -139,8 +140,8 @@ func (viewSaveThis *myGenViewSave) CreateForm() (form []string) {
 }
 
 // 视图模板Save生成
-func genViewSave(option myGenOption, tpl *myGenTpl) {
-	if !(option.IsCreate || option.IsUpdate) {
+func genViewSave(ctx context.Context, tpl *myGenTpl) {
+	if !(tpl.Option.IsCreate || tpl.Option.IsUpdate) {
 		return
 	}
 	viewSave := myGenViewSave{}
@@ -248,7 +249,7 @@ const saveDrawer = reactive({
 </template>
 `
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneId + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Save.vue`
+	saveFile := gfile.SelfDir() + `/../view/` + tpl.Option.SceneId + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Save.vue`
 	gfile.PutContents(saveFile, tplView)
 }
 

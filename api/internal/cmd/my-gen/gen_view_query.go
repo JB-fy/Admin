@@ -2,6 +2,7 @@ package my_gen
 
 import (
 	"api/internal/cmd/my-gen/internal"
+	"context"
 	"slices"
 
 	"github.com/gogf/gf/v2/os/gfile"
@@ -48,7 +49,7 @@ func (viewQueryThis *myGenViewQuery) Unique() {
 }
 
 // 视图模板Query生成
-func genViewQuery(option myGenOption, tpl *myGenTpl) {
+func genViewQuery(ctx context.Context, tpl *myGenTpl) {
 	viewQuery := getViewQueryIdAndLabel(tpl)
 	for _, v := range tpl.FieldListOfDefault {
 		viewQuery.Add(getViewQueryField(tpl, v, tpl.I18nPath, v.FieldRaw))
@@ -110,7 +111,7 @@ const queryForm = reactive({
 </template>
 `
 
-	saveFile := gfile.SelfDir() + `/../view/` + option.SceneId + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Query.vue`
+	saveFile := gfile.SelfDir() + `/../view/` + tpl.Option.SceneId + `/src/views/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab + `/Query.vue`
 	gfile.PutContents(saveFile, tplView)
 }
 

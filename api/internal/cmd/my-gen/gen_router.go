@@ -2,18 +2,19 @@ package my_gen
 
 import (
 	"api/internal/utils"
+	"context"
 	"strings"
 
 	"github.com/gogf/gf/v2/os/gfile"
 )
 
 // 后端路由生成
-func genRouter(option myGenOption, tpl *myGenTpl) {
-	saveFile := gfile.SelfDir() + `/internal/router/` + option.SceneId + `.go`
+func genRouter(ctx context.Context, tpl *myGenTpl) {
+	saveFile := gfile.SelfDir() + `/internal/router/` + tpl.Option.SceneId + `.go`
 	tplRouter := gfile.GetContents(saveFile)
 
 	moduleName := tpl.GetModuleName(`controller`)
-	importControllerStr := `"api/internal/controller/` + option.SceneId + `/` + tpl.ModuleDirCaseKebab + `"`
+	importControllerStr := `"api/internal/controller/` + tpl.Option.SceneId + `/` + tpl.ModuleDirCaseKebab + `"`
 	if strings.Contains(tplRouter, importControllerStr) {
 		if strings.Contains(tplRouter, `group.Bind(`+moduleName+`.New`+tpl.TableCaseCamel+`())`) {
 			return

@@ -9,10 +9,10 @@ import (
 )
 
 // 自动生成菜单
-func genMenu(ctx context.Context, option myGenOption, tpl *myGenTpl) {
-	sceneId := option.SceneInfo[daoAuth.Scene.Columns().SceneId].String()
+func genMenu(ctx context.Context, tpl *myGenTpl) {
+	sceneId := tpl.Option.SceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	menuUrl := `/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseKebab
-	menuName := option.CommonName
+	menuName := tpl.Option.CommonName
 	menuNameOfEn := tpl.TableCaseCamel
 
 	menuNameArr := gstr.Split(menuName, `/`)

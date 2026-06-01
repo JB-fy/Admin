@@ -8,34 +8,34 @@ import (
 )
 
 // 自动生成操作权限
-func genAction(ctx context.Context, option myGenOption, tpl *myGenTpl) {
-	if !option.IsAuthAction {
+func genAction(ctx context.Context, tpl *myGenTpl) {
+	if !tpl.Option.IsAuthAction {
 		return
 	}
 
 	actionList := []map[string]any{}
-	if option.IsList || option.IsInfo {
+	if tpl.Option.IsList || tpl.Option.IsInfo {
 		actionList = append(actionList, map[string]any{
 			daoAuth.Action.Columns().ActionId:   gstr.CaseCamelLower(tpl.LogicStructName) + `Read`,
-			daoAuth.Action.Columns().ActionName: gstr.Replace(option.CommonName, `/`, `-`) + `-查看`,
+			daoAuth.Action.Columns().ActionName: gstr.Replace(tpl.Option.CommonName, `/`, `-`) + `-查看`,
 		})
 	}
-	if option.IsCreate {
+	if tpl.Option.IsCreate {
 		actionList = append(actionList, map[string]any{
 			daoAuth.Action.Columns().ActionId:   gstr.CaseCamelLower(tpl.LogicStructName) + `Create`,
-			daoAuth.Action.Columns().ActionName: gstr.Replace(option.CommonName, `/`, `-`) + `-新增`,
+			daoAuth.Action.Columns().ActionName: gstr.Replace(tpl.Option.CommonName, `/`, `-`) + `-新增`,
 		})
 	}
-	if option.IsUpdate {
+	if tpl.Option.IsUpdate {
 		actionList = append(actionList, map[string]any{
 			daoAuth.Action.Columns().ActionId:   gstr.CaseCamelLower(tpl.LogicStructName) + `Update`,
-			daoAuth.Action.Columns().ActionName: gstr.Replace(option.CommonName, `/`, `-`) + `-编辑`,
+			daoAuth.Action.Columns().ActionName: gstr.Replace(tpl.Option.CommonName, `/`, `-`) + `-编辑`,
 		})
 	}
-	if option.IsDelete {
+	if tpl.Option.IsDelete {
 		actionList = append(actionList, map[string]any{
 			daoAuth.Action.Columns().ActionId:   gstr.CaseCamelLower(tpl.LogicStructName) + `Delete`,
-			daoAuth.Action.Columns().ActionName: gstr.Replace(option.CommonName, `/`, `-`) + `-删除`,
+			daoAuth.Action.Columns().ActionName: gstr.Replace(tpl.Option.CommonName, `/`, `-`) + `-删除`,
 		})
 	}
 
@@ -47,7 +47,7 @@ func genAction(ctx context.Context, option myGenOption, tpl *myGenTpl) {
 		} */
 		daoAuth.ActionRelToScene.CtxDaoModel(ctx).Data(map[string]any{
 			daoAuth.ActionRelToScene.Columns().ActionId: v[daoAuth.Action.Columns().ActionId],
-			daoAuth.ActionRelToScene.Columns().SceneId:  option.SceneInfo[daoAuth.Scene.Columns().SceneId],
+			daoAuth.ActionRelToScene.Columns().SceneId:  tpl.Option.SceneInfo[daoAuth.Scene.Columns().SceneId],
 		}).OnConflict(daoAuth.ActionRelToScene.Columns().ActionId, daoAuth.ActionRelToScene.Columns().SceneId).Save()
 	}
 }

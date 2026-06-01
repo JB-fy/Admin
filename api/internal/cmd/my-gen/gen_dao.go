@@ -3,6 +3,7 @@ package my_gen
 import (
 	"api/internal/cmd/my-gen/internal"
 	"api/internal/utils"
+	"context"
 	"fmt"
 	"regexp"
 	"slices"
@@ -96,7 +97,7 @@ func (daoThis *myGenDao) Unique() {
 }
 
 // dao生成
-func genDao(option myGenOption, tpl *myGenTpl) {
+func genDao(ctx context.Context, tpl *myGenTpl) {
 	tpl.gfGenDao(true) //dao文件生成
 	saveFile := gfile.SelfDir() + `/internal/dao/` + tpl.ModuleDirCaseKebab + `/` + tpl.TableCaseSnake + `.go`
 	tplDao := gfile.GetContents(saveFile)
@@ -115,11 +116,11 @@ func genDao(option myGenOption, tpl *myGenTpl) {
 		dao.Add(getDaoField(tpl, v))
 	}
 	for _, v := range tpl.Handle.ExtendTableOneList {
-		genDao(option, v.tpl)
+		genDao(ctx, v.tpl)
 		dao.Merge(getDaoExtendMiddleOne(v))
 	}
 	for _, v := range tpl.Handle.MiddleTableOneList {
-		genDao(option, v.tpl)
+		genDao(ctx, v.tpl)
 		dao.Merge(getDaoExtendMiddleOne(v))
 	}
 	for _, v := range tpl.Handle.ExtendTableManyList {
@@ -354,7 +355,7 @@ func genDao(option myGenOption, tpl *myGenTpl) {
 		`), 1)
 	}
 
-	if tpl.Table == option.DbTable && tpl.Group == option.DbGroup && option.CacheType != 0 {
+	if tpl.Table == tpl.Option.DbTable && tpl.Group == tpl.Option.DbGroup && tpl.Option.CacheType != 0 {
 		idParamArr := []string{}
 		idFormatArr := []string{}
 		idFieldArr := []string{}
@@ -385,7 +386,7 @@ func genDao(option myGenOption, tpl *myGenTpl) {
 	info, err = cache.{DbDataType}.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), ` + idStr + `, {ttl})
 	return
 }`
-		switch option.CacheType {
+		switch tpl.Option.CacheType {
 		// case 0: //不缓存
 		case 1: //内存缓存
 			cacheGetInfoFuncStr = strings.Replace(cacheGetInfoFuncStr, `{DbDataType}`, `DbDataLocal`, 1)
@@ -393,17 +394,17 @@ func genDao(option myGenOption, tpl *myGenTpl) {
 
 			saveFileOfDbDataLocal := gfile.SelfDir() + `/internal/cache/db_data_local.go`
 			tplDbDataLocal := gfile.GetContents(saveFileOfDbDataLocal)
-			dbDataLocalTableStr := "`" + option.DbGroup + `:` + option.DbTable + "`: "
+			dbDataLocalTableStr := "`" + tpl.Option.DbGroup + `:` + tpl.Option.DbTable + "`: "
 			if strings.Contains(tplDbDataLocal, dbDataLocalTableStr) {
-				tplDbDataLocal = regexp.MustCompile(dbDataLocalTableStr+`[^,]+`).ReplaceAllString(tplDbDataLocal, dbDataLocalTableStr+option.CacheTime)
+				tplDbDataLocal = regexp.MustCompile(dbDataLocalTableStr+`[^,]+`).ReplaceAllString(tplDbDataLocal, dbDataLocalTableStr+tpl.Option.CacheTime)
 			} else {
 				dbDataLocalPoint := `
 	},
 	methodCode:`
 				tplDbDataLocal = strings.Replace(tplDbDataLocal, dbDataLocalPoint, `
-		`+dbDataLocalTableStr+option.CacheTime+`,`+dbDataLocalPoint, 1)
+		`+dbDataLocalTableStr+tpl.Option.CacheTime+`,`+dbDataLocalPoint, 1)
 			}
-			if option.CacheTime == `0` {
+			if tpl.Option.CacheTime == `0` {
 				if !strings.Contains(tplDbDataLocal, `// `+dbDataLocalTableStr) {
 					tplDbDataLocal = strings.Replace(tplDbDataLocal, dbDataLocalTableStr, `// `+dbDataLocalTableStr, 1)
 				}
@@ -415,7 +416,7 @@ func genDao(option myGenOption, tpl *myGenTpl) {
 			utils.FilePutFormat(saveFileOfDbDataLocal, []byte(tplDbDataLocal)...)
 		case 2: //Redis缓存
 			cacheGetInfoFuncStr = strings.Replace(cacheGetInfoFuncStr, `{DbDataType}`, `DbData`, 1)
-			cacheTime := option.CacheTime
+			cacheTime := tpl.Option.CacheTime
 			if cacheTime != `0` {
 				cacheTime = cacheTime + `*time.Second`
 			}
@@ -1355,7 +1356,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 	if len(tplEM.FieldList) == 1 {
 		dao.fieldHook = append(dao.fieldHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 			`+gstr.CaseCamelLower(tplEM.FieldVar)+`, _ := `+tplEM.daoPath+`.CtxDaoModel(ctx).Filter(`+tplEM.daoPath+`.Columns().`+gstr.CaseCamel(tplEM.RelId)+`, record[daoThis.Columns().`+tplEM.tplOfTop.Handle.Id.List[0].FieldCaseCamel+`]).Array(`+tplEM.daoPath+`.Columns().`+tplEM.FieldList[0].FieldCaseCamel+`)
-			record[k] = gvar.New(`+gstr.CaseCamelLower(tplEM.FieldVar)+`).Interfaces()`)
+			record[k] = gvar.New(`+gstr.CaseCamelLower(tplEM.FieldVar)+`.Interfaces())`)
 		dao.insertHook = append(dao.insertHook, `case `+"`"+tplEM.FieldVar+"`"+`:
 					vArr := gconv.SliceAny(v)
 					insertList := make([]map[string]any, len(vArr))
