@@ -904,7 +904,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, field myGenField)
 	}
 
 	mayBeTableArr = append([]string{`都不匹配`}, mayBeTableArr...)
-	cmdLog := fmt.Sprintf(`%s:%s:`, `id后缀字段关联表`, field.FieldRaw)
+	cmdLog := fmt.Sprintf(`%s:%s:%s:`, `id后缀字段关联表`, myGenTplThis.Table, field.FieldRaw)
 	relTable := myGenTplThis.getCmdLogLast(cmdLog)
 	if relTable == `` || !slices.Contains(mayBeTableArr, relTable) {
 		scanInfo := append([]any{}, color.HiYellowString(`表(`+myGenTplThis.Table+`)的id后缀字段(`+field.FieldRaw+`)匹配到多个表：`+"\n"))
