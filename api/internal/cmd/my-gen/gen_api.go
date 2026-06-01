@@ -82,7 +82,7 @@ func (apiThis *myGenApi) Unique() {
 }
 
 // api生成
-func genApi(ctx context.Context, tpl *myGenTpl) {
+func genApi(_ context.Context, tpl *myGenTpl) {
 	api := getApiIdAndLabel(tpl)
 	for _, v := range tpl.FieldListOfDefault {
 		api.Add(getApiField(tpl, v), v, internal.TableTypeDefault)

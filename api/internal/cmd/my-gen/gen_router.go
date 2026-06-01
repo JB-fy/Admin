@@ -9,7 +9,7 @@ import (
 )
 
 // 后端路由生成
-func genRouter(ctx context.Context, tpl *myGenTpl) {
+func genRouter(_ context.Context, tpl *myGenTpl) {
 	saveFile := gfile.SelfDir() + `/internal/router/` + tpl.Option.SceneId + `.go`
 	tplRouter := gfile.GetContents(saveFile)
 

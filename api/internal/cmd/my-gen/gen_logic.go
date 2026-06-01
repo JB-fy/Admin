@@ -51,7 +51,7 @@ func (logicThis *myGenLogic) Unique() {
 }
 
 // logic生成
-func genLogic(ctx context.Context, tpl *myGenTpl) (i18n myGenI18n) {
+func genLogic(_ context.Context, tpl *myGenTpl) (i18n myGenI18n) {
 	saveFile := gfile.SelfDir() + `/internal/logic/` + gstr.Replace(tpl.ModuleDirCaseKebab, `/`, `-`) + `/` + tpl.TableCaseSnake + `.go`
 	if !tpl.Option.IsResetLogic && gfile.IsFile(saveFile) {
 		return

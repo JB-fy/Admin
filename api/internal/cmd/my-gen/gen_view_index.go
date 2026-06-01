@@ -8,7 +8,7 @@ import (
 )
 
 // 视图模板Index生成
-func genViewIndex(ctx context.Context, tpl *myGenTpl) {
+func genViewIndex(_ context.Context, tpl *myGenTpl) {
 	tplView := `<script setup lang="tsx">
 import List from './List.vue'
 import Query from './Query.vue'`

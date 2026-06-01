@@ -48,7 +48,7 @@ func (viewI18nThis *myGenViewI18n) Unique() {
 }
 
 // 视图模板I18n生成
-func genViewI18n(ctx context.Context, tpl *myGenTpl) {
+func genViewI18n(_ context.Context, tpl *myGenTpl) {
 	viewI18n := myGenViewI18n{}
 	for _, v := range tpl.FieldListOfDefault {
 		viewI18n.Add(getViewI18nField(tpl, v), v.FieldRaw)

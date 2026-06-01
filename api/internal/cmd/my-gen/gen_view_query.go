@@ -49,7 +49,7 @@ func (viewQueryThis *myGenViewQuery) Unique() {
 }
 
 // 视图模板Query生成
-func genViewQuery(ctx context.Context, tpl *myGenTpl) {
+func genViewQuery(_ context.Context, tpl *myGenTpl) {
 	viewQuery := getViewQueryIdAndLabel(tpl)
 	for _, v := range tpl.FieldListOfDefault {
 		viewQuery.Add(getViewQueryField(tpl, v, tpl.I18nPath, v.FieldRaw))

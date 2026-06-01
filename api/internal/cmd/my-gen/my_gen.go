@@ -86,6 +86,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -93,6 +94,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -129,13 +131,20 @@ type myGenOption struct {
 	IsUpdate     bool       `json:"isUpdate"`     //是否生成更新接口
 	IsDelete     bool       `json:"isDelete"`     //是否生成删除接口
 	SceneInfo    gdb.Record //场景信息
+	CmdLog       struct {
+		File     string   //文件路径
+		Content  string   //日志
+		Last     string   //上一次日志
+		RelId    []string //id后缀字段关联表日志
+		Extend   []string //扩展表日志
+		OtherRel []string //其它关联表日志
+	}
 }
 
 // 生成代码
 func Run(ctx context.Context, parser *gcmd.Parser) {
 	option := createOption(ctx, parser)
-	cmdLog := createCmdLog(ctx, option)
-	tpl := createTpl(ctx, option, cmdLog, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true, false)
+	tpl := createTpl(ctx, option, option.DbGroup, option.DbTable, option.RemovePrefixCommon, option.RemovePrefixAlone, true, false)
 
 	genDao(ctx, tpl) // dao模板生成
 
@@ -557,6 +566,24 @@ isViewEnd:
 		if !(option.IsList || option.IsInfo || option.IsCreate || option.IsUpdate || option.IsDelete) {
 			fmt.Println(`请重新选择生成哪些接口，不能全是no！`)
 			goto noAllRestart
+		}
+	}
+	saveFileName := option.SceneId
+	if !(option.IsApi || option.IsView) {
+		saveFileName = `gen_dao`
+	}
+	option.CmdLog.File = gfile.SelfDir() + `/internal/cmd/my-gen/log/` + saveFileName + `.log`
+	if gfile.IsFile(option.CmdLog.File) {
+		option.CmdLog.Content = gfile.GetContents(option.CmdLog.File)
+		myGenCommandArr := []string{
+			`./main`,
+			`myGen`,
+			`-dbGroup=` + option.DbGroup,
+			`-dbTable=` + option.DbTable,
+		}
+		match, _ := gregex.MatchString(`(`+gregex.Quote(strings.Join(myGenCommandArr, ` `)+` `)+`[\s\S]*?)(((\r|\n)\./main)|$)`, option.CmdLog.Content)
+		if len(match) > 0 {
+			option.CmdLog.Last = match[1]
 		}
 	}
 	return

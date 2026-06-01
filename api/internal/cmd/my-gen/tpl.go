@@ -17,7 +17,6 @@ import (
 
 type myGenTpl struct {
 	Option             *myGenOption
-	CmdLog             *cmdLog
 	DbHandler          internal.MyGenDbHandler  //数据库处理器
 	FieldStyle         internal.MyGenFieldStyle //表字段命名风格
 	Link               string                   //当前数据库连接配置（gf gen dao命令生成dao需要）
@@ -152,10 +151,9 @@ type handleOtherRel struct {
 }
 
 // 创建模板参数
-func createTpl(ctx context.Context, option *myGenOption, cmdLog *cmdLog, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isFromOtherRel bool) (tpl *myGenTpl) {
+func createTpl(ctx context.Context, option *myGenOption, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isFromOtherRel bool) (tpl *myGenTpl) {
 	tpl = &myGenTpl{
 		Option:             option,
-		CmdLog:             cmdLog,
 		Group:              group,
 		RemovePrefixCommon: removePrefixCommon,
 		RemovePrefixAlone:  removePrefixAlone,
@@ -745,8 +743,8 @@ func (myGenTplThis *myGenTpl) IsSamePrimary(isAutoInc bool, fieldTypeRaw, field 
 
 // 获取上次cmd输入值
 func (myGenTplThis *myGenTpl) getCmdLogLast(prefix string) (last string) {
-	if myGenTplThis.CmdLog.Last != `` {
-		if match, _ := gregex.MatchString(gregex.Quote(prefix)+`([\S]+)`, myGenTplThis.CmdLog.Last); len(match) > 0 {
+	if myGenTplThis.Option.CmdLog.Last != `` {
+		if match, _ := gregex.MatchString(gregex.Quote(prefix)+`([\S]+)`, myGenTplThis.Option.CmdLog.Last); len(match) > 0 {
 			last = match[1]
 		}
 	}
@@ -788,7 +786,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, field myGenField)
 				}
 			}
 
-			relTpl = createTpl(ctx, myGenTplThis.Option, myGenTplThis.CmdLog, myGenTplThis.Group, table, removePrefixCommon, removePrefixAlone, false, false)
+			relTpl = createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, table, removePrefixCommon, removePrefixAlone, false, false)
 			relTpl.gfGenDao(false) //dao文件生成
 		}
 		return
@@ -931,7 +929,7 @@ func (myGenTplThis *myGenTpl) getRelIdTpl(ctx context.Context, field myGenField)
 	if relTable != `都不匹配` {
 		relTpl = getTableTplFunc(relTable)
 	}
-	myGenTplThis.CmdLog.RelId = append(myGenTplThis.CmdLog.RelId, fmt.Sprintf(cmdLog+`%s`, relTable))
+	myGenTplThis.Option.CmdLog.RelId = append(myGenTplThis.Option.CmdLog.RelId, fmt.Sprintf(cmdLog+`%s`, relTable))
 	return
 	/*--------确定关联表 结束--------*/
 }
@@ -1006,7 +1004,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context) {
 		if gstr.Pos(v, myGenTplThis.Table+`_`) != 0 { // 不符合扩展表命名（主表名_xxxx）的跳过
 			continue
 		}
-		extendTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.CmdLog, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
+		extendTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, key := range extendTpl.KeyList {
 			if len(key.FieldList) != 1 {
 				continue
@@ -1065,7 +1063,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context) {
 				if isExtendOne {
 					myGenTplThis.Handle.ExtendTableOneList = append(myGenTplThis.Handle.ExtendTableOneList, handleExtendMiddleObj)
 				}
-				myGenTplThis.CmdLog.Extend = append(myGenTplThis.CmdLog.Extend, fmt.Sprintf(cmdLog+`%t`, isExtendOne))
+				myGenTplThis.Option.CmdLog.Extend = append(myGenTplThis.Option.CmdLog.Extend, fmt.Sprintf(cmdLog+`%t`, isExtendOne))
 			case internal.TableTypeExtendMany:
 				cmdLog := fmt.Sprintf(`%s:%s:%s:`, `扩展表(一对多)`, extendTpl.Table, key.FieldList[0].FieldRaw)
 				last := myGenTplThis.getCmdLogLast(cmdLog)
@@ -1095,7 +1093,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context) {
 					}
 					myGenTplThis.Handle.ExtendTableManyList = append(myGenTplThis.Handle.ExtendTableManyList, handleExtendMiddleObj)
 				}
-				myGenTplThis.CmdLog.Extend = append(myGenTplThis.CmdLog.Extend, fmt.Sprintf(cmdLog+`%t`, isExtendMany))
+				myGenTplThis.Option.CmdLog.Extend = append(myGenTplThis.Option.CmdLog.Extend, fmt.Sprintf(cmdLog+`%t`, isExtendMany))
 			}
 			break
 		}
@@ -1150,7 +1148,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context) {
 			}
 		}
 
-		middleTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.CmdLog, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
+		middleTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, key := range middleTpl.KeyList {
 			if !key.IsUnique { // 必须唯一
 				continue
@@ -1238,7 +1236,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 		if !isContinue {
 			return
 		}
-		myGenTplThis.CmdLog.OtherRel = append(myGenTplThis.CmdLog.OtherRel, fmt.Sprintf(cmdLog+`%t`, isContinue))
+		myGenTplThis.Option.CmdLog.OtherRel = append(myGenTplThis.Option.CmdLog.OtherRel, fmt.Sprintf(cmdLog+`%t`, isContinue))
 	}
 	extendMiddleTableArr := []string{}
 	for _, v := range myGenTplThis.Handle.ExtendTableOneList {
@@ -1272,7 +1270,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 			continue
 		} */
 
-		otherRelTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.CmdLog, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, true)
+		otherRelTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, true)
 		for _, field := range otherRelTpl.FieldList {
 			if !myGenTplThis.IsSamePrimary(field.IsAutoInc, field.FieldTypeRaw, field.FieldCaseSnakeRemove) {
 				continue
@@ -1309,7 +1307,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 				}
 				myGenTplThis.Handle.OtherRelTableList = append(myGenTplThis.Handle.OtherRelTableList, handleOtherRelObj)
 			}
-			myGenTplThis.CmdLog.OtherRel = append(myGenTplThis.CmdLog.OtherRel, fmt.Sprintf(cmdLog+`%t`, isOtherRel))
+			myGenTplThis.Option.CmdLog.OtherRel = append(myGenTplThis.Option.CmdLog.OtherRel, fmt.Sprintf(cmdLog+`%t`, isOtherRel))
 			// break //可能有多个字段关联同一个表
 		}
 	}

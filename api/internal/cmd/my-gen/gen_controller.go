@@ -45,7 +45,7 @@ func (controllerThis *myGenController) Unique() {
 }
 
 // controller生成
-func genController(ctx context.Context, tpl *myGenTpl) {
+func genController(_ context.Context, tpl *myGenTpl) {
 	controller := myGenController{}
 	controller.importDao = append(controller.importDao, `dao`+tpl.ModuleDirCaseCamel+` "api/internal/dao/`+tpl.ModuleDirCaseKebab+`"`)
 	if tpl.Option.LoginIdStr != `` {

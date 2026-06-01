@@ -140,7 +140,7 @@ func (viewSaveThis *myGenViewSave) CreateForm() (form []string) {
 }
 
 // 视图模板Save生成
-func genViewSave(ctx context.Context, tpl *myGenTpl) {
+func genViewSave(_ context.Context, tpl *myGenTpl) {
 	if !(tpl.Option.IsCreate || tpl.Option.IsUpdate) {
 		return
 	}

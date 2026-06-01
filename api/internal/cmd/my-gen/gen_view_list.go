@@ -387,7 +387,7 @@ defineExpose({ getList })
 	gfile.PutContents(saveFile, tplView)
 }
 
-func getViewListField(ctx context.Context, tpl *myGenTpl, v myGenField, i18nPath string) (viewListField myGenViewListField) {
+func getViewListField(_ context.Context, tpl *myGenTpl, v myGenField, i18nPath string) (viewListField myGenViewListField) {
 	viewListField.dataKey.Method = internal.ReturnType
 	viewListField.dataKey.DataType = `'` + v.FieldRaw + `'`
 	viewListField.title.Method = internal.ReturnType
@@ -797,7 +797,7 @@ func getViewListExtendMiddleOne(ctx context.Context, tplEM handleExtendMiddle) (
 	return
 }
 
-func getViewListExtendMiddleMany(ctx context.Context, tplEM handleExtendMiddle) (viewList myGenViewList) {
+func getViewListExtendMiddleMany(_ context.Context, tplEM handleExtendMiddle) (viewList myGenViewList) {
 	if len(tplEM.FieldList) == 1 {
 		v := tplEM.FieldList[0]
 
