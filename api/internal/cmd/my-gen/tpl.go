@@ -1233,10 +1233,10 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 				}
 			}
 		}
+		myGenTplThis.Option.CmdLog.OtherRel = append(myGenTplThis.Option.CmdLog.OtherRel, fmt.Sprintf(cmdLog+`%t`, isContinue))
 		if !isContinue {
 			return
 		}
-		myGenTplThis.Option.CmdLog.OtherRel = append(myGenTplThis.Option.CmdLog.OtherRel, fmt.Sprintf(cmdLog+`%t`, isContinue))
 	}
 	extendMiddleTableArr := []string{}
 	for _, v := range myGenTplThis.Handle.ExtendTableOneList {
