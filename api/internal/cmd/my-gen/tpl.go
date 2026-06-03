@@ -1112,11 +1112,11 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context) {
 		if v == myGenTplThis.Table { //自身跳过
 			continue
 		}
-		if gstr.Pos(v, `_rel_to_`) == -1 && gstr.Pos(v, `_rel_of_`) == -1 { //不是中间表跳过
+		if !strings.Contains(v, `_rel_to_`) && !strings.Contains(v, `_rel_of_`) { //不是中间表跳过
 			continue
 		}
-		if gstr.Pos(v, `_rel_to_`) != -1 {
-			if gstr.Pos(v, myGenTplThis.Table+`_rel_to_`) != 0 { //不符合中间表_rel_to_命名的跳过
+		if strings.Contains(v, `_rel_to_`) {
+			if !strings.HasPrefix(v, myGenTplThis.Table+`_rel_to_`) { //不符合中间表_rel_to_命名的跳过
 				continue
 			}
 			removePrefixCommon = myGenTplThis.RemovePrefixCommon
@@ -1125,8 +1125,8 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context) {
 				removePrefixAlone = gstr.TrimLeftStr(myGenTplThis.Table, removePrefixCommon, 1) + `_`
 			}
 		} else {
-			if (myGenTplThis.RemovePrefix != `` && gstr.Pos(v, myGenTplThis.RemovePrefix) == 0) || (myGenTplThis.RemovePrefix == `` && gstr.Pos(v, myGenTplThis.Table) == 0) { //不符合中间表_rel_of_命名的跳过（同模块）
-				if len(v) != gstr.Pos(v, `_rel_of_`+myGenTplThis.Table)+len(`_rel_of_`+myGenTplThis.Table) || len(v) != gstr.Pos(v, `_rel_of_`+gstr.Replace(myGenTplThis.Table, myGenTplThis.RemovePrefix, ``, 1))+len(`_rel_of_`+gstr.Replace(myGenTplThis.Table, myGenTplThis.RemovePrefix, ``, 1)) {
+			if (myGenTplThis.RemovePrefix != `` && strings.HasPrefix(v, myGenTplThis.RemovePrefix)) || (myGenTplThis.RemovePrefix == `` && strings.HasPrefix(v, myGenTplThis.Table)) { //不符合中间表_rel_of_命名的跳过（同模块）
+				if !strings.HasSuffix(v, `_rel_of_`+myGenTplThis.Table) || !strings.HasSuffix(v, `_rel_of_`+strings.Replace(myGenTplThis.Table, myGenTplThis.RemovePrefix, ``, 1)) {
 					continue
 				}
 				removePrefixCommon = myGenTplThis.RemovePrefixCommon
@@ -1135,11 +1135,11 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context) {
 					removePrefixAlone = gstr.TrimLeftStr(myGenTplThis.Table, removePrefixCommon, 1) + `_`
 				}
 			} else { //不符合中间表_rel_of_命名的跳过（不同模块）
-				if len(v) != gstr.Pos(v, `_rel_of_`+myGenTplThis.Table)+len(`_rel_of_`+myGenTplThis.Table) {
+				if !strings.HasSuffix(v, `_rel_of_`+myGenTplThis.Table) {
 					continue
 				}
 				removePrefixCommon = myGenTplThis.RemovePrefixCommon
-				if gstr.Pos(v, myGenTplThis.RemovePrefixCommon) != 0 {
+				if !strings.HasPrefix(v, myGenTplThis.RemovePrefixCommon) {
 					removePrefixCommon = ``
 				}
 				// 第一个分隔符之前的部分设置为removePrefixAlone
