@@ -151,7 +151,7 @@ type handleOtherRel struct {
 }
 
 // 创建模板参数
-func createTpl(ctx context.Context, option *myGenOption, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isFromOtherRel bool) (tpl *myGenTpl) {
+func createTpl(ctx context.Context, option *myGenOption, group, table, removePrefixCommon, removePrefixAlone string, isTop bool, isRelId bool) (tpl *myGenTpl) {
 	tpl = &myGenTpl{
 		Option:             option,
 		Group:              group,
@@ -277,7 +277,7 @@ func createTpl(ctx context.Context, option *myGenOption, group, table, removePre
 				fieldTmp.FieldTypeName = internal.TypeNameNamePath
 			}
 		} else if slices.Contains([]internal.MyGenFieldType{internal.TypeInt, internal.TypeIntU, internal.TypeVarchar, internal.TypeChar}, fieldTmp.FieldType) && slices.Contains([]string{`id`}, fieldSuffix) { //id后缀
-			if !isFromOtherRel && !slices.Contains([]internal.MyGenFieldTypePrimary{internal.TypePrimary, internal.TypePrimaryAutoInc, internal.TypePrimaryManyAutoInc}, fieldTmp.FieldTypePrimary) { // 本表id字段不算
+			if isRelId && !slices.Contains([]internal.MyGenFieldTypePrimary{internal.TypePrimary, internal.TypePrimaryAutoInc, internal.TypePrimaryManyAutoInc}, fieldTmp.FieldTypePrimary) { // 本表id字段不算
 				fieldTmp.FieldTypeName = internal.TypeNameIdSuffix
 
 				handleRelIdObj := handleRelId{
@@ -1004,7 +1004,7 @@ func (myGenTplThis *myGenTpl) getExtendTable(ctx context.Context) {
 		if gstr.Pos(v, myGenTplThis.Table+`_`) != 0 { // 不符合扩展表命名（主表名_xxxx）的跳过
 			continue
 		}
-		extendTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
+		extendTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, true)
 		for _, key := range extendTpl.KeyList {
 			if len(key.FieldList) != 1 {
 				continue
@@ -1148,7 +1148,7 @@ func (myGenTplThis *myGenTpl) getMiddleTable(ctx context.Context) {
 			}
 		}
 
-		middleTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
+		middleTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, true)
 		for _, key := range middleTpl.KeyList {
 			if !key.IsUnique { // 必须唯一
 				continue
@@ -1270,7 +1270,7 @@ func (myGenTplThis *myGenTpl) getOtherRel(ctx context.Context) {
 			continue
 		} */
 
-		otherRelTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, true)
+		otherRelTpl := createTpl(ctx, myGenTplThis.Option, myGenTplThis.Group, v, removePrefixCommon, removePrefixAlone, false, false)
 		for _, field := range otherRelTpl.FieldList {
 			if !myGenTplThis.IsSamePrimary(field.IsAutoInc, field.FieldTypeRaw, field.FieldCaseSnakeRemove) {
 				continue
