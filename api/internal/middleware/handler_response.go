@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"api/internal/utils"
+	"fmt"
 	"net/http"
 
 	"github.com/gogf/gf/v2/errors/gcode"
@@ -56,6 +57,8 @@ func HandlerResponse(r *ghttp.Request) {
 				msg := ``
 				if utils.IsDev(r.GetCtx()) { //开发环境抛出sql错误语句
 					msg = err.Error()
+				} else {
+					g.Log().File(`debug.log`).Debug(r.GetCtx(), fmt.Errorf(`sql错误:%w`, err))
 				}
 				code = utils.NewCode(r.GetCtx(), 29999999, msg, r.GetHandlerResponse())
 			}
