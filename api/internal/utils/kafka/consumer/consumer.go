@@ -26,7 +26,6 @@ var (
 )
 
 func Add(ctx context.Context, config *model.Config) {
-	var err error
 	for _, consumerConfig := range config.ConsumerList {
 		consumerConfig.CommonConfig = &config.CommonConfig
 		consumerConfig.SaramaConfig = model.CreateConsumerConfig(config, &consumerConfig)
@@ -35,8 +34,7 @@ func Add(ctx context.Context, config *model.Config) {
 			if !ok {
 				panic(fmt.Sprintf(`消费者(分组:%s,主题:%s)缺少处理器，请实现！`, consumerConfig.Group, consumerConfig.TopicArr[0]))
 			}
-			_, err = internal.InitConsumer(ctx, &consumerConfig, handler(ctx, &consumerConfig))
-			if err != nil {
+			if _, err := internal.InitConsumer(ctx, &consumerConfig, handler(ctx, &consumerConfig)); err != nil {
 				panic(err)
 			}
 			g.Log(`kafka`).Info(ctx, fmt.Sprintf(`消费者(分组:%s,主题:%s)连接成功`, consumerConfig.Group, consumerConfig.TopicArr[0]))
@@ -46,8 +44,7 @@ func Add(ctx context.Context, config *model.Config) {
 				panic(fmt.Sprintf(`消费者(分组:%s,组ID:%s)缺少处理器，请实现！`, consumerConfig.Group, consumerConfig.GroupId))
 			}
 			for range consumerConfig.Number {
-				_, err = internal.InitConsumerGroup(ctx, &consumerConfig, handler(ctx, &consumerConfig))
-				if err != nil {
+				if _, err := internal.InitConsumerGroup(ctx, &consumerConfig, handler(ctx, &consumerConfig)); err != nil {
 					panic(err)
 				}
 			}
