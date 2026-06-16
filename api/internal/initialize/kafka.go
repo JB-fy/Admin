@@ -3,8 +3,9 @@ package initialize
 import (
 	"api/internal/consts"
 	"api/internal/utils"
-	cluster_admin "api/internal/utils/kafka/cluster-admin"
+	"api/internal/utils/kafka/admin"
 	"api/internal/utils/kafka/consumer"
+	"api/internal/utils/kafka/model"
 	"api/internal/utils/kafka/producer"
 	"context"
 
@@ -15,11 +16,11 @@ import (
 
 func initKafka(ctx context.Context) {
 	for group, config := range g.Cfg().MustGet(ctx, `kafka`).Map() {
-		configMap := gconv.Map(config)
+		config := model.GetConfig(group, gconv.Map(config))
 		if utils.IsDev(ctx) || g.Cfg().MustGet(ctx, `masterServerNetworkIpArr.0`).String() == genv.Get(consts.ENV_SERVER_NETWORK_IP).String() {
-			cluster_admin.Add(ctx, group, configMap)
+			admin.Add(ctx, config)
 		}
-		producer.Add(ctx, group, configMap)
-		consumer.Add(ctx, group, configMap)
+		producer.Add(ctx, config)
+		consumer.Add(ctx, config)
 	}
 }

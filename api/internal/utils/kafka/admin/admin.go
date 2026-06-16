@@ -1,4 +1,4 @@
-package cluster_admin
+package admin
 
 import (
 	"api/internal/utils/kafka/internal"
