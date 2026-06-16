@@ -4,49 +4,54 @@ import (
 	"api/internal/utils/kafka/internal"
 	"api/internal/utils/kafka/model"
 	"context"
+	"fmt"
 
 	"github.com/IBM/sarama"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
 var (
-	handlerMapOfGroupId = map[string]func(ctx context.Context, config *model.Config, consumerInfo *model.ConsumerInfo) sarama.ConsumerGroupHandler{
-		/* `template`: func(ctx context.Context, config *model.Config, consumerInfo *model.ConsumerInfo) sarama.ConsumerGroupHandler {
-			return &GroupHandlerOfTemplate{Ctx: ctx, Config: config, ConsumerInfo: consumerInfo}
-		}, */
+	handlerMapOfGroupId = map[string]map[string]func(ctx context.Context, consumerConfig *model.ConsumerConfig) sarama.ConsumerGroupHandler{
+		`default`: {
+			/* `template`: func(ctx context.Context, consumerConfig *model.ConsumerConfig) sarama.ConsumerGroupHandler {
+				return &GroupHandlerOfTemplate{Ctx: ctx, ConsumerConfig: consumerConfig}
+			}, */
+		},
 	}
-	handlerMapOfTopic = map[string]func(ctx context.Context, config *model.Config, consumerInfo *model.ConsumerInfo) func(msg *sarama.ConsumerMessage){
-		// `template`: TopicHandlerOfTemplate,
+	handlerMapOfTopic = map[string]map[string]func(ctx context.Context, consumerConfig *model.ConsumerConfig) func(msg *sarama.ConsumerMessage){
+		`default`: {
+			// `template`: TopicHandlerOfTemplate,
+		},
 	}
 )
 
-func Add(ctx context.Context, group string, configMap map[string]any) {
-	config := model.GetConfig(group, configMap)
-	if len(config.ConsumerList) == 0 {
-		return
-	}
+func Add(ctx context.Context, config *model.Config) {
 	var err error
-	for _, consumerInfo := range config.ConsumerList {
-		consumerConfig := model.CreateConsumerConfig(config, &consumerInfo)
-		if consumerInfo.GroupId == `` {
-			if _, ok := handlerMapOfTopic[consumerInfo.TopicArr[0]]; !ok {
-				panic(`消费者(分组:` + config.Group + `，主题:` + consumerInfo.TopicArr[0] + `)缺少处理器，请实现！`)
+	for _, consumerConfig := range config.ConsumerList {
+		consumerConfig.CommonConfig = &config.CommonConfig
+		consumerConfig.SaramaConfig = model.CreateConsumerConfig(config, &consumerConfig)
+		if consumerConfig.GroupId == `` {
+			handler, ok := handlerMapOfTopic[consumerConfig.Group][consumerConfig.TopicArr[0]]
+			if !ok {
+				panic(fmt.Sprintf(`消费者(分组:%s,主题:%s)缺少处理器，请实现！`, consumerConfig.Group, consumerConfig.TopicArr[0]))
 			}
-			_, err = internal.InitConsumer(ctx, consumerConfig, config, &consumerInfo, handlerMapOfTopic[consumerInfo.TopicArr[0]](ctx, config, &consumerInfo))
+			_, err = internal.InitConsumer(ctx, &consumerConfig, handler(ctx, &consumerConfig))
 			if err != nil {
-				panic(`消费者(分组:` + config.Group + `，主题:` + consumerInfo.TopicArr[0] + `)连接失败：` + err.Error())
+				panic(err)
 			}
+			g.Log(`kafka`).Info(ctx, fmt.Sprintf(`消费者(分组:%s,主题:%s)连接成功`, consumerConfig.Group, consumerConfig.TopicArr[0]))
 		} else {
-			if _, ok := handlerMapOfGroupId[consumerInfo.GroupId]; !ok {
-				panic(`消费者(分组:` + config.Group + `，组ID:` + consumerInfo.GroupId + `)缺少处理器，请实现！`)
+			handler, ok := handlerMapOfGroupId[consumerConfig.Group][consumerConfig.GroupId]
+			if !ok {
+				panic(fmt.Sprintf(`消费者(分组:%s,组ID:%s)缺少处理器，请实现！`, consumerConfig.Group, consumerConfig.GroupId))
 			}
-			for range consumerInfo.Number {
-				_, err = internal.InitConsumerGroup(ctx, consumerConfig, config, &consumerInfo, handlerMapOfGroupId[consumerInfo.GroupId](ctx, config, &consumerInfo))
+			for range consumerConfig.Number {
+				_, err = internal.InitConsumerGroup(ctx, &consumerConfig, handler(ctx, &consumerConfig))
 				if err != nil {
-					panic(`消费者(分组:` + config.Group + `，组ID:` + consumerInfo.GroupId + `)连接失败：` + err.Error())
+					panic(err)
 				}
 			}
+			g.Log(`kafka`).Info(ctx, fmt.Sprintf(`消费者(分组:%s,组ID:%s)连接成功`, consumerConfig.Group, consumerConfig.GroupId))
 		}
 	}
-	g.Log(`kafka`).Info(ctx, `消费者(分组:`+config.Group+`)连接成功`)
 }

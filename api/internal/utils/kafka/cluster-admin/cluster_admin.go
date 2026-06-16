@@ -4,6 +4,7 @@ import (
 	"api/internal/utils/kafka/internal"
 	"api/internal/utils/kafka/model"
 	"context"
+	"fmt"
 
 	"github.com/IBM/sarama"
 	"github.com/gogf/gf/v2/frame/g"
@@ -13,15 +14,17 @@ var (
 	clusterAdminMap = map[string]sarama.ClusterAdmin{}
 )
 
-func Add(ctx context.Context, group string, configMap map[string]any) {
-	config := model.GetConfig(group, configMap)
-	clusterAdminConfig := model.CreateClusterAdmin(config)
-	clusterAdmin, err := internal.InitClusterAdmin(ctx, clusterAdminConfig, config)
-	if err != nil {
-		panic(`管理员(分组:` + config.Group + `)连接失败：` + err.Error())
+func Add(ctx context.Context, config *model.Config) {
+	adminConfig := &model.AdminConfig{
+		CommonConfig: &config.CommonConfig,
+		SaramaConfig: model.CreateAdminConfig(config),
 	}
-	clusterAdminMap[config.Group] = clusterAdmin
-	g.Log(`kafka`).Info(ctx, `管理员(分组:`+config.Group+`)连接成功`)
+	clusterAdmin, err := internal.InitClusterAdmin(ctx, adminConfig)
+	if err != nil {
+		panic(fmt.Errorf(`管理员(分组:%s)连接错误:%w`, adminConfig.Group, err))
+	}
+	clusterAdminMap[adminConfig.Group] = clusterAdmin
+	g.Log(`kafka`).Info(ctx, fmt.Errorf(`管理员(分组:%s)连接成功`, adminConfig.Group))
 
 	for _, topicInfo := range config.TopicList { // 创建主题
 		if topicInfo.Name == `` {
@@ -41,6 +44,6 @@ func Add(ctx context.Context, group string, configMap map[string]any) {
 				continue
 			}
 		}
-		panic(`主题(分组:` + config.Group + `，主题:` + topicInfo.Name + `)创建失败：` + err.Error())
+		panic(fmt.Errorf(`主题(分组:%s,主题:%s)创建错误:%w`, adminConfig.Group, topicInfo.Name, err))
 	}
 }

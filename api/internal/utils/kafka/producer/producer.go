@@ -4,31 +4,36 @@ import (
 	"api/internal/utils/kafka/internal"
 	"api/internal/utils/kafka/model"
 	"context"
-	"errors"
+	"fmt"
 
 	"github.com/IBM/sarama"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
 var (
-	producerMap = map[string]any{}
+	producerMap = map[string]map[string]any{}
 )
 
-func Add(ctx context.Context, group string, configMap map[string]any) {
-	config := model.GetConfig(group, configMap)
-	producerConfig := model.CreateProducerConfig(config)
-	var producerTmp any
-	var err error
-	if config.ProducerType == `sync` {
-		producerTmp, err = internal.InitSyncProducer(ctx, producerConfig, config)
-	} else {
-		producerTmp, err = internal.InitAsyncProducer(ctx, producerConfig, config)
+func Add(ctx context.Context, config *model.Config) {
+	for _, producerConfig := range config.ProducerList {
+		producerConfig.CommonConfig = &config.CommonConfig
+		producerConfig.SaramaConfig = model.CreateProducerConfig(config, &producerConfig)
+		var producerTmp any
+		var err error
+		if producerConfig.IsSync {
+			producerTmp, err = internal.InitSyncProducer(ctx, &producerConfig)
+		} else {
+			producerTmp, err = internal.InitAsyncProducer(ctx, &producerConfig)
+		}
+		if err != nil {
+			panic(fmt.Errorf(`生产者(分组:%s,主题:%s)连接错误:%w`, producerConfig.Group, producerConfig.Topic, err))
+		}
+		if producerMap[producerConfig.Group] == nil {
+			producerMap[producerConfig.Group] = map[string]any{}
+		}
+		producerMap[producerConfig.Group][producerConfig.Topic] = producerTmp
+		g.Log(`kafka`).Info(ctx, fmt.Sprintf(`生产者(分组:%s,主题:%s)连接成功`, producerConfig.Group, producerConfig.Topic))
 	}
-	if err != nil {
-		panic(`生产者(分组:` + config.Group + `)连接失败：` + err.Error())
-	}
-	producerMap[config.Group] = producerTmp
-	g.Log(`kafka`).Info(ctx, `生产者(分组:`+config.Group+`)连接成功`)
 }
 
 // 同步生产者才有返回值
@@ -37,11 +42,14 @@ func SendMessage(ctx context.Context, topic string, value []byte, groupOpt ...st
 	if len(groupOpt) > 0 && groupOpt[0] != `` {
 		group = groupOpt[0]
 	}
-	producerTmp, ok := producerMap[group]
+	producerTmp, ok := producerMap[group][topic]
 	if !ok {
-		err = errors.New(`生产者(分组:` + group + `)不存在`)
-		g.Log(`kafka`).Error(ctx, `发送消息失败`, err)
-		return
+		producerTmp, ok = producerMap[group][``] //共用生产者
+		if !ok {
+			err = fmt.Errorf(`生产者(分组:%s,主题:%s)不存在`, group, topic)
+			g.Log(`kafka`).Error(ctx, err)
+			return
+		}
 	}
 	switch producer := producerTmp.(type) {
 	case sarama.AsyncProducer:
@@ -55,8 +63,14 @@ func SendMessage(ctx context.Context, topic string, value []byte, groupOpt ...st
 			Value: sarama.ByteEncoder(value),
 		})
 		if err != nil {
-			g.Log(`kafka`).Error(ctx, `生产者(分组:`+group+`)同步发送消息失败`, err)
+			err = fmt.Errorf(`生产者(分组:%s,主题:%s)同步发送消息错误:%w`, group, topic, err)
+			g.Log(`kafka`).Error(ctx, err)
+			return
 		}
+	default:
+		err = fmt.Errorf(`生产者(分组:%s,主题:%s)类型错误`, group, topic)
+		g.Log(`kafka`).Error(ctx, err)
+		return
 	}
 	return
 }

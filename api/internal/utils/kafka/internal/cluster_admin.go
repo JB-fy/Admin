@@ -7,8 +7,8 @@ import (
 	"github.com/IBM/sarama"
 )
 
-func InitClusterAdmin(ctx context.Context, saramaConfig *sarama.Config, config *model.Config) (clusterAdmin sarama.ClusterAdmin, err error) {
-	clusterAdmin, err = sarama.NewClusterAdmin(config.Hosts, saramaConfig)
+func InitClusterAdmin(ctx context.Context, adminConfig *model.AdminConfig) (clusterAdmin sarama.ClusterAdmin, err error) {
+	clusterAdmin, err = sarama.NewClusterAdmin(adminConfig.Hosts, adminConfig.SaramaConfig)
 	// defer clusterAdmin.Close()
 	return
 }
