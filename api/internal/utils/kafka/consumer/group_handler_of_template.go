@@ -1,6 +1,7 @@
 package consumer
 
 import (
+	cacheCommon "api/internal/cache/common"
 	"api/internal/utils/kafka/model"
 	"context"
 	"errors"
@@ -31,17 +32,28 @@ func (handlerThis *GroupHandlerOfTemplate) Cleanup(session sarama.ConsumerGroupS
 }
 
 func (handlerThis *GroupHandlerOfTemplate) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) (err error) {
+	chLimit := cacheCommon.IsLimitLocal.GetChan(`kafkaTemplateLimit`, handlerThis.ConsumerConfig.Number+10) //允许多出一定数量的协程执行超时任务（防止超时导致协程数量爆增导致崩溃）
 	for msg := range claim.Messages() {
 		// handlerThis.handle(ctx, msg)执行时间超过handlerThis.SaramaConfig.Consumer.Group.Session.Timeout配置时，会造成kafka消费组假死（不消费消息，但可接收消息）
-		ctx, cancel := context.WithTimeout(handlerThis.Ctx, handlerThis.ConsumerConfig.MaxProcessingTime)
+		ctxCancel, cancel := context.WithTimeout(handlerThis.Ctx, handlerThis.ConsumerConfig.MaxProcessingTime)
 		ch := make(chan error, 1)
 		go func() {
-			ch <- handlerThis.handle(ctx, msg)
-			// close(ch)
+			var err error
+			defer func() {
+				ch <- err
+				// close(ch)
+			}()
+			err = cacheCommon.IsLimitLocal.Acquire(handlerThis.Ctx, chLimit, 0)
+			if err != nil {
+				//排队超时处理
+				return
+			}
+			defer cacheCommon.IsLimitLocal.Release(handlerThis.Ctx, chLimit)
+			err = handlerThis.handle(handlerThis.Ctx, msg)
 		}()
 		select {
 		case /* err = */ <-ch:
-		case <-ctx.Done(): //超时处理
+		case <-ctxCancel.Done(): //超时处理
 		}
 		session.MarkMessage(msg, ``) // 标记消息为已处理
 		if !handlerThis.ConsumerConfig.SaramaConfig.Consumer.Offsets.AutoCommit.Enable {
