@@ -32,7 +32,7 @@ func (handlerThis *GroupHandlerOfTemplate) Cleanup(session sarama.ConsumerGroupS
 }
 
 func (handlerThis *GroupHandlerOfTemplate) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) (err error) {
-	chLimit := cacheCommon.IsLimitLocal.GetChan(`kafkaTemplateLimit`, handlerThis.ConsumerConfig.Number+10) //允许多出一定数量的协程执行超时任务（防止超时导致协程数量爆增导致崩溃）
+	chLimit := cacheCommon.IsLimitLocal.GetChan(`kafkaTemplateLimit`, handlerThis.ConsumerConfig.Number+10) //限制超时任务数量
 	for msg := range claim.Messages() {
 		// handlerThis.handle(ctx, msg)执行时间超过handlerThis.SaramaConfig.Consumer.Group.Session.Timeout配置时，会造成kafka消费组假死（不消费消息，但可接收消息）
 		ctxCancel, cancel := context.WithTimeout(handlerThis.Ctx, handlerThis.ConsumerConfig.MaxProcessingTime)
