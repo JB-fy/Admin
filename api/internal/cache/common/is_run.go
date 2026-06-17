@@ -23,23 +23,24 @@ func (cacheThis *isRun) key(key string) string {
 	return fmt.Sprintf(consts.CACHE_IS_RUN, key)
 }
 
-func (cacheThis *isRun) IsRun(ctx context.Context, key string, ttl time.Duration) (isRun bool, runEndFunc func(isDel bool), err error) {
+func (cacheThis *isRun) IsRun(ctx context.Context, key string, ttl time.Duration) (isRun bool, runEndFunc func(isDel bool) (int64, error), err error) {
 	// return cacheThis.cache().SetNX(ctx, cacheThis.key(key), ``, ttl).Result()
 	isRunKey := cacheThis.key(key)
 	isRun, err = cacheThis.cache().SetNX(ctx, isRunKey, ``, ttl).Result()
 	if !isRun || err != nil {
 		return
 	}
-	runEndFunc = func(isDel bool) {
+	runEndFunc = func(isDel bool) (int64, error) {
 		if isDel {
-			cacheThis.cache().Del(ctx, isRunKey)
+			return cacheThis.cache().Del(ctx, isRunKey).Result()
 		}
+		return 0, nil
 	}
 	return
 }
 
 // 运行耗时任务，需定时刷新缓存时间，防止运行期间，锁过期失效
-func (cacheThis *isRun) IsRunAndRefreshTTL(ctx context.Context, key string, ttl time.Duration, checkRunResultFuncOpt ...func(ctx context.Context) (isResult bool, err error)) (isRun, isResult bool, runEndFunc func(isDel bool), err error) {
+func (cacheThis *isRun) IsRunAndRefreshTTL(ctx context.Context, key string, ttl time.Duration, checkRunResultFuncOpt ...func(ctx context.Context) (isResult bool, err error)) (isRun, isResult bool, runEndFunc func(isDel bool) (int64, error), err error) {
 	if ttl == 0 {
 		ttl = 2 * cacheThis.advSecond
 	} else if ttl <= cacheThis.advSecond { //不能小于advSecond
@@ -64,11 +65,12 @@ func (cacheThis *isRun) IsRunAndRefreshTTL(ctx context.Context, key string, ttl 
 	timer := gtimer.AddSingleton(ctx, ttl-cacheThis.advSecond, func(ctx context.Context) {
 		cacheThis.cache().PExpire(ctx, isRunKey, ttl)
 	})
-	runEndFunc = func(isDel bool) {
+	runEndFunc = func(isDel bool) (int64, error) {
 		timer.Close()
 		if isDel {
-			cacheThis.cache().Del(ctx, isRunKey)
+			return cacheThis.cache().Del(ctx, isRunKey).Result()
 		}
+		return 0, nil
 	}
 	return
 }
