@@ -79,7 +79,7 @@ func GetServerNetworkIp() string {
 	for _, v := range []string{`http://ip.3322.net`, `http://ip.qaros.com`, `ifconfig.me`, `https://ipinfo.io/ip`, `https://checkip.amazonaws.com`, `https://icanhazip.com`, `https://api.ipify.org`} {
 		cmd := exec.Command(`/bin/bash`, `-c`, `curl -s --max-time 3 `+v)
 		output, _ := cmd.Output()
-		if ip := string(output); ip != `` {
+		if ip := strings.TrimSpace(string(output)); ip != `` {
 			return ip
 		}
 	}
@@ -90,7 +90,7 @@ func GetServerNetworkIp() string {
 func GetServerLocalIp() string {
 	cmd := exec.Command(`/bin/bash`, `-c`, `hostname -I | awk '{printf "%s", $1}'`)
 	output, _ := cmd.Output()
-	if ip := string(output); ip != `` {
+	if ip := strings.TrimSpace(string(output)); ip != `` {
 		return ip
 	}
 	panic(`获取内网IP失败`)
