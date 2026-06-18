@@ -40,14 +40,14 @@ func (cacheThis *isLimitLocal) Acquire(ctx context.Context, ch chan struct{}, wa
 		case <-timer.C:
 			err = utils.NewErrorCode(ctx, 99999998, ``)
 		case <-ctx.Done():
-			err = utils.NewErrorCode(ctx, 99999998, ctx.Err().Error())
+			err = utils.NewErrorCode(ctx, 99999997, ctx.Err().Error())
 		}
 		return
 	}
 	select {
 	case ch <- struct{}{}:
 	case <-ctx.Done():
-		err = utils.NewErrorCode(ctx, 99999998, ctx.Err().Error())
+		err = utils.NewErrorCode(ctx, 99999997, ctx.Err().Error())
 	default:
 		err = utils.NewErrorCode(ctx, 99999998, ``)
 	}

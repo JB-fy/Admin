@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/IBM/sarama"
 	"github.com/gogf/gf/v2/frame/g"
@@ -32,34 +33,26 @@ func (handlerThis *GroupHandlerOfTemplate) Cleanup(session sarama.ConsumerGroupS
 }
 
 func (handlerThis *GroupHandlerOfTemplate) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) (err error) {
-	chLimit := cacheCommon.IsLimitLocal.GetChan(`kafkaTemplateLimit`, handlerThis.ConsumerConfig.Number+10) //限制超时任务数量
+	chLimit := cacheCommon.IsLimitLocal.GetChan(`kafkaTemplateLimit`, handlerThis.ConsumerConfig.Number+5) //限制超时任务数量
 	for msg := range claim.Messages() {
-		// handlerThis.handle(ctx, msg)执行时间超过handlerThis.SaramaConfig.Consumer.Group.Session.Timeout配置时，会造成kafka消费组假死（不消费消息，但可接收消息）
-		ctxCancel, cancel := context.WithTimeout(handlerThis.Ctx, handlerThis.ConsumerConfig.MaxProcessingTime)
-		ch := make(chan error, 1)
-		go func() {
-			var err error
-			defer func() {
-				ch <- err
-				// close(ch)
-			}()
+		// handlerThis.handle(ctx, msg)执行时间超过handlerThis.ConsumerConfig.SaramaConfig.Consumer.Group.Session.Timeout配置时，会造成kafka消费组假死（不再消费消息，却还能接收消息）
+		isRunTimeout, _, _ /* result, err */ := cacheCommon.IsRunTimeout.IsRunTimeout(handlerThis.Ctx, handlerThis.ConsumerConfig.SaramaConfig.Consumer.Group.Session.Timeout-2*time.Second, func(ctx context.Context) (value any, err error) {
 			err = cacheCommon.IsLimitLocal.Acquire(handlerThis.Ctx, chLimit, 0)
-			if err != nil {
-				//排队超时处理
+			if err != nil { //排队超时处理
+				g.Log(`kafka`).Debug(handlerThis.Ctx, fmt.Sprintf(`任务(消息:%v)排队超时`, msg))
 				return
 			}
 			defer cacheCommon.IsLimitLocal.Release(handlerThis.Ctx, chLimit)
 			err = handlerThis.handle(handlerThis.Ctx, msg)
-		}()
-		select {
-		case /* err = */ <-ch:
-		case <-ctxCancel.Done(): //超时处理
+			return
+		})
+		if isRunTimeout { //超时处理
+			g.Log(`kafka`).Debug(handlerThis.Ctx, fmt.Sprintf(`任务(消息:%v)超时`, msg))
 		}
 		session.MarkMessage(msg, ``) // 标记消息为已处理
 		if !handlerThis.ConsumerConfig.SaramaConfig.Consumer.Offsets.AutoCommit.Enable {
 			session.Commit() // 马上提交到kafka
 		}
-		cancel()
 	}
 	return
 }

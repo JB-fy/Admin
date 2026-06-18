@@ -96,8 +96,8 @@ func (cacheThis *isRun) IsRunAndRefreshTTLWithRunFunc(ctx context.Context, key s
 		}()
 		return
 	}
-	ctxOfWait, cancel := context.WithTimeout(ctx, waitTimeGo)
-	defer cancel()
+	timer := time.NewTimer(waitTimeGo)
+	defer timer.Stop()
 	ch := make(chan error, 1)
 	go func() {
 		defer func() {
@@ -107,7 +107,7 @@ func (cacheThis *isRun) IsRunAndRefreshTTLWithRunFunc(ctx context.Context, key s
 	}()
 	select {
 	case err = <-ch:
-	case <-ctxOfWait.Done():
+	case <-timer.C:
 	}
 	return
 }
