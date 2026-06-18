@@ -36,7 +36,7 @@ func (handlerThis *GroupHandlerOfTemplate) ConsumeClaim(session sarama.ConsumerG
 	chLimit := cacheCommon.IsLimitLocal.GetChan(`kafkaTemplateLimit`, handlerThis.ConsumerConfig.Number+5) //限制超时任务数量
 	for msg := range claim.Messages() {
 		// handlerThis.handle(ctx, msg)执行时间超过handlerThis.ConsumerConfig.SaramaConfig.Consumer.Group.Session.Timeout配置时，会造成kafka消费组假死（不再消费消息，却还能接收消息）
-		isRunTimeout, _, _ /* result, err */ := cacheCommon.IsRunTimeout.IsRunTimeout(handlerThis.Ctx, handlerThis.ConsumerConfig.SaramaConfig.Consumer.Group.Session.Timeout-2*time.Second, func(ctx context.Context) (value any, err error) {
+		isRunTimeout, _, _ := cacheCommon.IsRunTimeout.IsRunTimeout(handlerThis.Ctx, handlerThis.ConsumerConfig.SaramaConfig.Consumer.Group.Session.Timeout-2*time.Second, func(ctx context.Context) (value any, err error) {
 			err = cacheCommon.IsLimitLocal.Acquire(handlerThis.Ctx, chLimit, 0)
 			if err != nil { //排队超时处理
 				g.Log(`kafka`).Debug(handlerThis.Ctx, fmt.Sprintf(`任务(消息:%v)排队超时`, msg))
