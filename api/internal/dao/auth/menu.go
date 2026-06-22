@@ -164,8 +164,8 @@ func (daoThis *menuDao) ParseField(field []string, fieldWithParam map[string]any
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().MenuIcon)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().MenuUrl)
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().ExtraData)
-				// m = m.Fields(fmt.Sprintf(`COALESCE(%s, %s) AS i18n`, daoModel.DbTable+`.`+daoThis.Columns().ExtraData+`->'$.i18n'`, `CONCAT('{"title": {"zh-cn": "', `+daoModel.DbTable+`.`+daoThis.Columns().MenuName+`, '"}}')`)) //mysql5.6不支持->'$.xx'语法。使用JSON_UNQUOTE(JSON_EXTRACT(`+daoModel.DbTable+`.`+daoThis.Columns().ExtraData+`, '$.i18n'))代替
-				// m = m.Fields(fmt.Sprintf(`COALESCE(%s, %s) AS i18n`, daoModel.DbTable+`.`+daoThis.Columns().ExtraData+`->'i18n'`, `CONCAT('{"title": {"zh-cn": "', `+daoModel.DbTable+`.`+daoThis.Columns().MenuName+`, '"}}')`))   //pgsql用
+				// m = m.Fields(fmt.Sprintf(`COALESCE(%s, %s) AS i18n`, daoModel.DbTable+`.`+daoThis.Columns().ExtraData+`->>'$.i18n'`, `CONCAT('{"title": {"zh-cn": "', `+daoModel.DbTable+`.`+daoThis.Columns().MenuName+`, '"}}')`)) //mysql5.6不支持->>'$.xx'语法。使用JSON_UNQUOTE(JSON_EXTRACT(`+daoModel.DbTable+`.`+daoThis.Columns().ExtraData+`, '$.i18n'))代替
+				// m = m.Fields(fmt.Sprintf(`COALESCE(%s, %s) AS i18n`, daoModel.DbTable+`.`+daoThis.Columns().ExtraData+`->>'i18n'`, `CONCAT('{"title": {"zh-cn": "', `+daoModel.DbTable+`.`+daoThis.Columns().MenuName+`, '"}}')`))   //pgsql用
 				// mysql和pgsql通用
 				daoModel.AfterField[v] = struct{}{}
 			default:
