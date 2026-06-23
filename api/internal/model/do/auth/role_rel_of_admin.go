@@ -2,20 +2,18 @@
 // Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
 // =================================================================================
 
-package org
+package auth
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// Org is the golang structure of table org for DAO operations like Where/Data.
-type Org struct {
-	g.Meta    `orm:"table:org, do:true"`
+// RoleRelOfAdmin is the golang structure of table auth_role_rel_of_admin for DAO operations like Where/Data.
+type RoleRelOfAdmin struct {
+	g.Meta    `orm:"table:auth_role_rel_of_admin, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
-	IsStop    any         // 停用：0否 1是
-	OrgId     any         // 机构ID
-	OrgName   any         // 名称
-	OrgType   any         // 类型：10默认
+	AdminId   any         // 管理员ID
+	RoleId    any         // 角色ID
 }

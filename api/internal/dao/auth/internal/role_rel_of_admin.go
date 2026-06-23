@@ -12,42 +12,38 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// OrgDao is the data access object for the table org.
-type OrgDao struct {
-	table     string              // table is the underlying table name of the DAO.
-	group     string              // group is the database configuration group name of the current DAO.
-	columns   OrgColumns          // columns contains all the column names of Table for convenient usage.
-	handlers  []gdb.ModelHandler  // handlers for customized model modification.
-	columnArr []string            // 字段数组
-	columnMap map[string]struct{} // 字段map
+// RoleRelOfAdminDao is the data access object for the table auth_role_rel_of_admin.
+type RoleRelOfAdminDao struct {
+	table     string                // table is the underlying table name of the DAO.
+	group     string                // group is the database configuration group name of the current DAO.
+	columns   RoleRelOfAdminColumns // columns contains all the column names of Table for convenient usage.
+	handlers  []gdb.ModelHandler    // handlers for customized model modification.
+	columnArr []string              // 字段数组
+	columnMap map[string]struct{}   // 字段map
 }
 
-// OrgColumns defines and stores column names for the table org.
-type OrgColumns struct {
+// RoleRelOfAdminColumns defines and stores column names for the table auth_role_rel_of_admin.
+type RoleRelOfAdminColumns struct {
 	CreatedAt string // 创建时间
 	UpdatedAt string // 更新时间
-	IsStop    string // 停用：0否 1是
-	OrgId     string // 机构ID
-	OrgName   string // 名称
-	OrgType   string // 类型：10默认
+	AdminId   string // 管理员ID
+	RoleId    string // 角色ID
 }
 
-// orgColumns holds the columns for the table org.
-var orgColumns = OrgColumns{
+// roleRelOfAdminColumns holds the columns for the table auth_role_rel_of_admin.
+var roleRelOfAdminColumns = RoleRelOfAdminColumns{
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
-	IsStop:    "is_stop",
-	OrgId:     "org_id",
-	OrgName:   "org_name",
-	OrgType:   "org_type",
+	AdminId:   "admin_id",
+	RoleId:    "role_id",
 }
 
-// NewOrgDao creates and returns a new DAO object for table data access.
-func NewOrgDao(handlers ...gdb.ModelHandler) *OrgDao {
-	dao := &OrgDao{
+// NewRoleRelOfAdminDao creates and returns a new DAO object for table data access.
+func NewRoleRelOfAdminDao(handlers ...gdb.ModelHandler) *RoleRelOfAdminDao {
+	dao := &RoleRelOfAdminDao{
 		group:    "default",
-		table:    "org",
-		columns:  orgColumns,
+		table:    "auth_role_rel_of_admin",
+		columns:  roleRelOfAdminColumns,
 		handlers: handlers,
 	}
 	v := reflect.ValueOf(dao.columns)
@@ -62,28 +58,28 @@ func NewOrgDao(handlers ...gdb.ModelHandler) *OrgDao {
 }
 
 // DB retrieves and returns the underlying raw database management object of the current DAO.
-func (dao *OrgDao) DB() gdb.DB {
+func (dao *RoleRelOfAdminDao) DB() gdb.DB {
 	return g.DB(dao.group)
 }
 
 // Table returns the table name of the current DAO.
-func (dao *OrgDao) Table() string {
+func (dao *RoleRelOfAdminDao) Table() string {
 	return dao.table
 }
 
 // Columns returns all column names of the current DAO.
 // 使用较为频繁。为优化内存考虑，改成返回指针更为合适，但切忌使用过程中不可修改，否则会污染全局
-func (dao *OrgDao) Columns() *OrgColumns {
+func (dao *RoleRelOfAdminDao) Columns() *RoleRelOfAdminColumns {
 	return &dao.columns
 }
 
 // Group returns the database configuration group name of the current DAO.
-func (dao *OrgDao) Group() string {
+func (dao *RoleRelOfAdminDao) Group() string {
 	return dao.group
 }
 
 // Ctx creates and returns a Model for the current DAO. It automatically sets the context for the current operation.
-func (dao *OrgDao) Ctx(ctx context.Context) *gdb.Model {
+func (dao *RoleRelOfAdminDao) Ctx(ctx context.Context) *gdb.Model {
 	model := dao.DB().Model(dao.table)
 	for _, handler := range dao.handlers {
 		model = handler(model)
@@ -97,22 +93,22 @@ func (dao *OrgDao) Ctx(ctx context.Context) *gdb.Model {
 //
 // Note: Do not commit or roll back the transaction in function f,
 // as it is automatically handled by this function.
-func (dao *OrgDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
+func (dao *RoleRelOfAdminDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return dao.Ctx(ctx).Transaction(ctx, f)
 }
 
 // 字段数组
-func (dao *OrgDao) ColumnArr() []string {
+func (dao *RoleRelOfAdminDao) ColumnArr() []string {
 	return dao.columnArr
 }
 
 // 字段map
-func (dao *OrgDao) ColumnMap() map[string]struct{} {
+func (dao *RoleRelOfAdminDao) ColumnMap() map[string]struct{} {
 	return dao.columnMap
 }
 
 // 判断字段是否存在
-func (dao *OrgDao) Contains(column string) (ok bool) {
+func (dao *RoleRelOfAdminDao) Contains(column string) (ok bool) {
 	_, ok = dao.columnMap[column]
 	return
 }

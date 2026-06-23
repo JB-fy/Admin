@@ -87,6 +87,15 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/auth/scene' },
             },
             {
+                path: '/admin/admin',
+                component: async () => {
+                    const component = await import('@/views/admin/admin/Index.vue')
+                    component.default.name = '/admin/admin'
+                    return component
+                },
+                meta: { isAuth: true, keepAlive: true, componentName: '/admin/admin' },
+            },
+            {
                 path: '/platform/admin',
                 component: async () => {
                     const component = await import('@/views/platform/admin/Index.vue')

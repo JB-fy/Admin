@@ -2,20 +2,26 @@
 // Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
 // =================================================================================
 
-package org
+package admin
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// Org is the golang structure of table org for DAO operations like Where/Data.
-type Org struct {
-	g.Meta    `orm:"table:org, do:true"`
+// Admin is the golang structure of table admin for DAO operations like Where/Data.
+type Admin struct {
+	g.Meta    `orm:"table:admin, do:true"`
 	CreatedAt *gtime.Time // 创建时间
 	UpdatedAt *gtime.Time // 更新时间
 	IsStop    any         // 停用：0否 1是
+	AdminId   any         // 管理员ID
+	AdminType any         // 类型：0平台 10机构
 	OrgId     any         // 机构ID
-	OrgName   any         // 名称
-	OrgType   any         // 类型：10默认
+	IsSuper   any         // 超管：0否 1是
+	Nickname  any         // 昵称
+	Avatar    any         // 头像
+	Phone     any         // 手机
+	Email     any         // 邮箱
+	Account   any         // 账号
 }

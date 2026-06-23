@@ -2,18 +2,16 @@
 // Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
 // =================================================================================
 
-package org
+package auth
 
 import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// Org is the golang structure for table org.
-type Org struct {
+// RoleRelOfAdmin is the golang structure for table role_rel_of_admin.
+type RoleRelOfAdmin struct {
 	CreatedAt *gtime.Time `json:"createdAt" orm:"created_at" ` // 创建时间
 	UpdatedAt *gtime.Time `json:"updatedAt" orm:"updated_at" ` // 更新时间
-	IsStop    uint        `json:"isStop"    orm:"is_stop"    ` // 停用：0否 1是
-	OrgId     uint        `json:"orgId"     orm:"org_id"     ` // 机构ID
-	OrgName   string      `json:"orgName"   orm:"org_name"   ` // 名称
-	OrgType   uint        `json:"orgType"   orm:"org_type"   ` // 类型：10默认
+	AdminId   uint        `json:"adminId"   orm:"admin_id"   ` // 管理员ID
+	RoleId    uint        `json:"roleId"    orm:"role_id"    ` // 角色ID
 }

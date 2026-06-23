@@ -12,42 +12,54 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// OrgDao is the data access object for the table org.
-type OrgDao struct {
+// AdminDao is the data access object for the table admin.
+type AdminDao struct {
 	table     string              // table is the underlying table name of the DAO.
 	group     string              // group is the database configuration group name of the current DAO.
-	columns   OrgColumns          // columns contains all the column names of Table for convenient usage.
+	columns   AdminColumns        // columns contains all the column names of Table for convenient usage.
 	handlers  []gdb.ModelHandler  // handlers for customized model modification.
 	columnArr []string            // 字段数组
 	columnMap map[string]struct{} // 字段map
 }
 
-// OrgColumns defines and stores column names for the table org.
-type OrgColumns struct {
+// AdminColumns defines and stores column names for the table admin.
+type AdminColumns struct {
 	CreatedAt string // 创建时间
 	UpdatedAt string // 更新时间
 	IsStop    string // 停用：0否 1是
+	AdminId   string // 管理员ID
+	AdminType string // 类型：0平台 10机构
 	OrgId     string // 机构ID
-	OrgName   string // 名称
-	OrgType   string // 类型：10默认
+	IsSuper   string // 超管：0否 1是
+	Nickname  string // 昵称
+	Avatar    string // 头像
+	Phone     string // 手机
+	Email     string // 邮箱
+	Account   string // 账号
 }
 
-// orgColumns holds the columns for the table org.
-var orgColumns = OrgColumns{
+// adminColumns holds the columns for the table admin.
+var adminColumns = AdminColumns{
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
 	IsStop:    "is_stop",
+	AdminId:   "admin_id",
+	AdminType: "admin_type",
 	OrgId:     "org_id",
-	OrgName:   "org_name",
-	OrgType:   "org_type",
+	IsSuper:   "is_super",
+	Nickname:  "nickname",
+	Avatar:    "avatar",
+	Phone:     "phone",
+	Email:     "email",
+	Account:   "account",
 }
 
-// NewOrgDao creates and returns a new DAO object for table data access.
-func NewOrgDao(handlers ...gdb.ModelHandler) *OrgDao {
-	dao := &OrgDao{
+// NewAdminDao creates and returns a new DAO object for table data access.
+func NewAdminDao(handlers ...gdb.ModelHandler) *AdminDao {
+	dao := &AdminDao{
 		group:    "default",
-		table:    "org",
-		columns:  orgColumns,
+		table:    "admin",
+		columns:  adminColumns,
 		handlers: handlers,
 	}
 	v := reflect.ValueOf(dao.columns)
@@ -62,28 +74,28 @@ func NewOrgDao(handlers ...gdb.ModelHandler) *OrgDao {
 }
 
 // DB retrieves and returns the underlying raw database management object of the current DAO.
-func (dao *OrgDao) DB() gdb.DB {
+func (dao *AdminDao) DB() gdb.DB {
 	return g.DB(dao.group)
 }
 
 // Table returns the table name of the current DAO.
-func (dao *OrgDao) Table() string {
+func (dao *AdminDao) Table() string {
 	return dao.table
 }
 
 // Columns returns all column names of the current DAO.
 // 使用较为频繁。为优化内存考虑，改成返回指针更为合适，但切忌使用过程中不可修改，否则会污染全局
-func (dao *OrgDao) Columns() *OrgColumns {
+func (dao *AdminDao) Columns() *AdminColumns {
 	return &dao.columns
 }
 
 // Group returns the database configuration group name of the current DAO.
-func (dao *OrgDao) Group() string {
+func (dao *AdminDao) Group() string {
 	return dao.group
 }
 
 // Ctx creates and returns a Model for the current DAO. It automatically sets the context for the current operation.
-func (dao *OrgDao) Ctx(ctx context.Context) *gdb.Model {
+func (dao *AdminDao) Ctx(ctx context.Context) *gdb.Model {
 	model := dao.DB().Model(dao.table)
 	for _, handler := range dao.handlers {
 		model = handler(model)
@@ -97,22 +109,22 @@ func (dao *OrgDao) Ctx(ctx context.Context) *gdb.Model {
 //
 // Note: Do not commit or roll back the transaction in function f,
 // as it is automatically handled by this function.
-func (dao *OrgDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
+func (dao *AdminDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return dao.Ctx(ctx).Transaction(ctx, f)
 }
 
 // 字段数组
-func (dao *OrgDao) ColumnArr() []string {
+func (dao *AdminDao) ColumnArr() []string {
 	return dao.columnArr
 }
 
 // 字段map
-func (dao *OrgDao) ColumnMap() map[string]struct{} {
+func (dao *AdminDao) ColumnMap() map[string]struct{} {
 	return dao.columnMap
 }
 
 // 判断字段是否存在
-func (dao *OrgDao) Contains(column string) (ok bool) {
+func (dao *AdminDao) Contains(column string) (ok bool) {
 	_, ok = dao.columnMap[column]
 	return
 }

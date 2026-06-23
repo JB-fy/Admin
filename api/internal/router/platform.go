@@ -3,6 +3,7 @@ package router
 import (
 	"api/internal/controller"
 	controllerIndex "api/internal/controller/platform"
+	"api/internal/controller/platform/admin"
 	"api/internal/controller/platform/app"
 	"api/internal/controller/platform/auth"
 	"api/internal/controller/platform/my"
@@ -57,6 +58,10 @@ func InitRouterPlatform(ctx context.Context, s *ghttp.Server) {
 				group.Bind(auth.NewMenu())
 				group.Bind(auth.NewRole())
 				group.Bind(auth.NewScene())
+			})
+
+			group.Group(`/admin`, func(group *ghttp.RouterGroup) {
+				group.Bind(admin.NewAdmin())
 			})
 
 			group.Group(`/platform`, func(group *ghttp.RouterGroup) {
