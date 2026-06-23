@@ -24,12 +24,16 @@ func init() {
 
 // 验证数据（create和update共用）
 func (logicThis *sAdmin) verifyData(ctx context.Context, data map[string]any) (err error) {
-	if _, ok := data[daoAdmin.Admin.Columns().OrgId]; ok && gconv.Uint(data[daoAdmin.Admin.Columns().OrgId]) > 0 {
-		if info, _ := /* daoOrg.Org.CacheGetInfo(ctx, gconv.Uint(data[daoAdmin.Admin.Columns().OrgId])) */ daoOrg.Org.CtxDaoModel(ctx).FilterPri(data[daoAdmin.Admin.Columns().OrgId]).One(); len(info) == 0 {
-			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.org.org`)}})
-			return
-		} else {
+	if _, ok := data[daoAdmin.Admin.Columns().OrgId]; ok {
+		if orgId := gconv.Uint(data[daoAdmin.Admin.Columns().OrgId]); orgId > 0 {
+			info, _ := daoOrg.Org.CtxDaoModel(ctx).FilterPri(data[daoAdmin.Admin.Columns().OrgId]).One() //daoOrg.Org.CacheGetInfo(ctx, gconv.Uint(data[daoAdmin.Admin.Columns().OrgId]))
+			if len(info) == 0 {
+				err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.org.org`)}})
+				return
+			}
 			data[daoAdmin.Admin.Columns().AdminType] = info[daoOrg.Org.Columns().OrgType]
+		} else {
+			data[daoAdmin.Admin.Columns().AdminType] = 0
 		}
 	}
 
