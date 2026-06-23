@@ -4,6 +4,7 @@ import (
 	"api/internal/cmd/my-gen/internal"
 	"context"
 	"slices"
+	"strings"
 
 	"github.com/gogf/gf/v2/container/garray"
 	"github.com/gogf/gf/v2/container/gvar"
@@ -96,7 +97,9 @@ func (viewSaveThis *myGenViewSave) Add(viewSaveField myGenViewSaveField, field s
 		case `<el-input-number`:
 			formContent = gstr.SubStr(formContent, 0, -2) + `style="width: 150px;" />` */
 		case `<my-upload`:
-			formContent = gstr.SubStr(formContent, 0, -2) + `size="small" />`
+			if !strings.Contains(formContent, `size="small"`) {
+				formContent = gstr.SubStr(formContent, 0, -2) + `size="small" />`
+			}
 		}
 		viewSaveThis.formContent = append(viewSaveThis.formContent, formContent)
 	default:
@@ -569,6 +572,9 @@ func getViewSaveField(tpl *myGenTpl, v myGenField, dataFieldPath string, i18nPat
 		case internal.TypeNameAudioSuffix:
 			attrOfAdd += ` accept="audio/*"`
 		}
+		if strings.HasSuffix(v.FieldCaseSnake, `icon`) || strings.HasSuffix(v.FieldCaseSnake, `avatar`) {
+			attrOfAdd += ` size="small"`
+		}
 		viewSaveField.formContent.Method = internal.ReturnTypeName
 		viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + dataFieldPath + `"` + attrOfAdd + ` />`
 	case internal.TypeNameArrSuffix: // list,arr等后缀；	类型：varchar或json或text；
@@ -698,9 +704,10 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 				} else {
 					viewSaveField.rule.Method = internal.ReturnTypeName
 					rule := `{ type: 'integer', min: ` + v.FieldLimitInt.Min + `, max: ` + v.FieldLimitInt.Max + `, message: t('validation.select') }`
-					if v.FieldType == internal.TypeVarchar {
+					switch v.FieldType {
+					case internal.TypeVarchar:
 						rule = `{ type: 'string', max: ` + v.FieldLimitStr + `, message: t('validation.select') }`
-					} else if v.FieldType == internal.TypeChar {
+					case internal.TypeChar:
 						rule = `{ type: 'string', len: ` + v.FieldLimitStr + `, message: t('validation.select') }`
 					}
 					viewSaveField.rule.DataTypeName = append(viewSaveField.rule.DataTypeName, `{ type: 'array', trigger: 'change', message: t('validation.select'), defaultField: `+rule+` },	// 限制数组数量时用：max: 10, message: t('validation.max.select', { max: 10 })`)
@@ -724,6 +731,9 @@ func getViewSaveExtendMiddleMany(tplEM handleExtendMiddle) (viewSave myGenViewSa
 					attrOfAdd += ` accept="video/*"`
 				case internal.TypeNameAudioSuffix:
 					attrOfAdd += ` accept="audio/*"`
+				}
+				if strings.HasSuffix(v.FieldCaseSnake, `icon`) || strings.HasSuffix(v.FieldCaseSnake, `avatar`) {
+					attrOfAdd += ` size="small"`
 				}
 				viewSaveField.formContent.Method = internal.ReturnTypeName
 				viewSaveField.formContent.DataTypeName = `<my-upload v-model="saveForm.data.` + tplEM.FieldVar + `"` + attrOfAdd + ` />`
