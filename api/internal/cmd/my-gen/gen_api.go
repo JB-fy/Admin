@@ -390,8 +390,8 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
 		if v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 			apiField.filterType.Method = internal.ReturnType
-			apiField.filterType.DataType = `string`
 		}
+		apiField.filterType.DataType = `string`
 		apiField.createType.Method = internal.ReturnType
 		apiField.createType.DataType = `*string`
 		apiField.updateType.Method = internal.ReturnType
@@ -568,11 +568,13 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 			apiField.isRequired = true
 		}
 	case internal.TypeNameCodeSuffix: // code后缀；	类型：varchar；
+		apiField.filterType.Method = internal.ReturnType
 		apiField.filterRule.Method = internal.ReturnUnion
 		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `regex:^[\\p{L}\\p{N}_-]+$`)
 		apiField.saveRule.Method = internal.ReturnUnion
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `regex:^[\\p{L}\\p{N}_-]+$`)
 	case internal.TypeNameAccountSuffix: // account后缀；	类型：varchar；
+		apiField.filterType.Method = internal.ReturnType
 		/* apiField.filterRule.Method = internal.ReturnUnion
 		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `passport`)
 		apiField.saveRule.Method = internal.ReturnUnion
@@ -582,11 +584,13 @@ func getApiField(tpl *myGenTpl, v myGenField) (apiField myGenApiField) {
 		apiField.saveRule.Method = internal.ReturnUnion
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$`)
 	case internal.TypeNamePhoneSuffix: // phone,mobile后缀；	类型：varchar；
+		apiField.filterType.Method = internal.ReturnType
 		apiField.filterRule.Method = internal.ReturnUnion
 		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `phone`)
 		apiField.saveRule.Method = internal.ReturnUnion
 		apiField.saveRule.DataTypeName = append(apiField.saveRule.DataTypeName, `phone`)
 	case internal.TypeNameEmailSuffix: // email后缀；	类型：varchar；
+		apiField.filterType.Method = internal.ReturnType
 		apiField.filterRule.Method = internal.ReturnUnion
 		apiField.filterRule.DataTypeName = append(apiField.filterRule.DataTypeName, `email`)
 		apiField.saveRule.Method = internal.ReturnUnion
