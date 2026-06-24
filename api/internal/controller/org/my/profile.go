@@ -149,6 +149,6 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	filter := map[string]any{`id`: loginInfo[`login_id`]}
 	/**--------参数处理 结束--------**/
 
-	_, err = service.OrgAdmin().Update(ctx, filter, data)
+	_, err = service.Admin().Update(ctx, filter, data)
 	return
 }

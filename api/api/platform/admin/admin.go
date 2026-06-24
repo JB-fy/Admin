@@ -92,7 +92,7 @@ type AdminCreateData struct {
 	Account  *string `json:"account,omitempty" v:"required-without-all:Phone,Email|max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	// IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
 	Password  *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
-	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"角色ID"`
+	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"角色ID"`
 	IsStop    *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 

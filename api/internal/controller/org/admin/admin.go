@@ -1,8 +1,8 @@
-package org
+package admin
 
 import (
 	"api/api"
-	apiOrg "api/api/org/org"
+	apiAdmin "api/api/org/admin"
 	daoAdmin "api/internal/dao/admin"
 	"api/internal/service"
 	"api/internal/utils"
@@ -34,7 +34,7 @@ func NewAdmin() *Admin {
 }
 
 // 列表
-func (controllerThis *Admin) List(ctx context.Context, req *apiOrg.AdminListReq) (res *apiOrg.AdminListRes, err error) {
+func (controllerThis *Admin) List(ctx context.Context, req *apiAdmin.AdminListReq) (res *apiAdmin.AdminListRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.Filter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if filter == nil {
@@ -54,7 +54,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiOrg.AdminListReq)
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `orgAdminRead`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `adminRead`)
 	if !isAuth {
 		field = controllerThis.noAuthField
 	}
@@ -70,13 +70,13 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiOrg.AdminListReq)
 		return
 	}
 
-	res = &apiOrg.AdminListRes{Count: count, List: []apiOrg.AdminInfo{}}
+	res = &apiAdmin.AdminListRes{Count: count, List: []apiAdmin.AdminInfo{}}
 	gconv.Structs(list.List(), &res.List)
 	return
 }
 
 // 详情
-func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq) (res *apiOrg.AdminInfoRes, err error) {
+func (controllerThis *Admin) Info(ctx context.Context, req *apiAdmin.AdminInfoReq) (res *apiAdmin.AdminInfoRes, err error) {
 	/**--------参数处理 开始--------**/
 	var field []string
 	if len(req.Field) > 0 {
@@ -92,7 +92,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq)
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `orgAdminRead`)
+	_, err = service.AuthAction().CheckAuth(ctx, `adminRead`)
 	if err != nil {
 		return
 	}
@@ -107,13 +107,13 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiOrg.AdminInfoReq)
 		return
 	}
 
-	res = &apiOrg.AdminInfoRes{}
+	res = &apiAdmin.AdminInfoRes{}
 	gconv.Struct(info.Map(), &res.Info)
 	return
 }
 
 // 新增
-func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreateReq) (res *api.CommonCreateRes, err error) {
+func (controllerThis *Admin) Create(ctx context.Context, req *apiAdmin.AdminCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	loginInfo := jbctx.GetLoginInfo(ctx)
 	orgId := loginInfo[daoAdmin.Admin.Columns().OrgId].Uint()
@@ -134,13 +134,13 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreate
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `orgAdminCreate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `adminCreate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	id, err := service.OrgAdmin().Create(ctx, data)
+	id, err := service.Admin().Create(ctx, data)
 	if err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiOrg.AdminCreate
 }
 
 // 修改
-func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdateReq) (res *api.CommonNoDataRes, err error) {
+func (controllerThis *Admin) Update(ctx context.Context, req *apiAdmin.AdminUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	loginInfo := jbctx.GetLoginInfo(ctx)
 	orgId := loginInfo[daoAdmin.Admin.Columns().OrgId].Uint()
@@ -175,18 +175,18 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiOrg.AdminUpdate
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `orgAdminUpdate`)
+	_, err = service.AuthAction().CheckAuth(ctx, `adminUpdate`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.OrgAdmin().Update(ctx, filter, data)
+	_, err = service.Admin().Update(ctx, filter, data)
 	return
 }
 
 // 删除
-func (controllerThis *Admin) Delete(ctx context.Context, req *apiOrg.AdminDeleteReq) (res *api.CommonNoDataRes, err error) {
+func (controllerThis *Admin) Delete(ctx context.Context, req *apiAdmin.AdminDeleteReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	filter := gconv.Map(req.AdminUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 
@@ -196,12 +196,12 @@ func (controllerThis *Admin) Delete(ctx context.Context, req *apiOrg.AdminDelete
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	_, err = service.AuthAction().CheckAuth(ctx, `orgAdminDelete`)
+	_, err = service.AuthAction().CheckAuth(ctx, `adminDelete`)
 	if err != nil {
 		return
 	}
 	/**--------权限验证 结束--------**/
 
-	_, err = service.OrgAdmin().Delete(ctx, filter)
+	_, err = service.Admin().Delete(ctx, filter)
 	return
 }

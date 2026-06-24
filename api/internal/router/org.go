@@ -3,6 +3,7 @@ package router
 import (
 	"api/internal/controller"
 	controllerIndex "api/internal/controller/org"
+	"api/internal/controller/org/admin"
 	"api/internal/controller/org/auth"
 	"api/internal/controller/org/my"
 	"api/internal/controller/org/org"
@@ -51,8 +52,11 @@ func InitRouterOrg(ctx context.Context, s *ghttp.Server) {
 				group.Bind(auth.NewRole())
 			})
 
+			group.Group(`/admin`, func(group *ghttp.RouterGroup) {
+				group.Bind(admin.NewAdmin())
+			})
+
 			group.Group(`/org`, func(group *ghttp.RouterGroup) {
-				group.Bind(org.NewAdmin())
 				group.Bind(org.NewConfig())
 			})
 

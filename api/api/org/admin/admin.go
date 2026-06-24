@@ -1,4 +1,4 @@
-package org
+package admin
 
 import (
 	"api/api"
@@ -12,6 +12,7 @@ type AdminInfo struct {
 	Id        *uint       `json:"id,omitempty" dc:"ID"`
 	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	AdminId   *uint       `json:"admin_id,omitempty" dc:"管理员ID"`
+	AdminType *uint       `json:"admin_type,omitempty" dc:"类型：0平台 10机构"`
 	OrgId     *uint       `json:"org_id,omitempty" dc:"机构ID"`
 	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
 	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
@@ -35,6 +36,7 @@ type AdminListFilter struct {
 	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	AdminId        *uint       `json:"admin_id,omitempty" v:"between:1,4294967295" dc:"管理员ID"`
+	AdminType      *uint       `json:"admin_type,omitempty" v:"in:0,10" dc:"类型：0平台 10机构"`
 	OrgId          *uint       `json:"org_id,omitempty" v:"between:1,4294967295" dc:"机构ID"`
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Phone          string      `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
@@ -81,6 +83,7 @@ type AdminInfoRes struct {
 
 /*--------新增 开始--------*/
 type AdminCreateData struct {
+	// AdminType *uint   `json:"admin_type,omitempty" v:"in:0,10" dc:"类型：0平台 10机构"`
 	// OrgId     *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
 	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
@@ -103,6 +106,7 @@ type AdminCreateReq struct {
 
 /*--------修改 开始--------*/
 type AdminUpdateData struct {
+	// AdminType *uint   `json:"admin_type,omitempty" v:"in:0,10" dc:"类型：0平台 10机构"`
 	// OrgId     *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
 	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`

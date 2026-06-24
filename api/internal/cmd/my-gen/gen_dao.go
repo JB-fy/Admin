@@ -575,7 +575,7 @@ func getDaoField(tpl *myGenTpl, v myGenField) (daoField myGenDaoField) {
 	case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
 	case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
-		if v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
+		if v.IsUnique || slices.Contains([]internal.MyGenFieldTypeName{internal.TypeNameCodeSuffix, internal.TypeNameAccountSuffix, internal.TypeNamePhoneSuffix, internal.TypeNameEmailSuffix}, v.FieldTypeName) || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 			daoField.filterParse.Method = internal.ReturnType
 		}
 		if v.IsNull /* && v.IsUnique */ {
@@ -1178,7 +1178,7 @@ func getDaoExtendMiddleOne(tplEM handleExtendMiddle) (dao myGenDao) {
 		case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
 		case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
 		case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
-			if v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
+			if v.IsUnique || slices.Contains([]internal.MyGenFieldTypeName{internal.TypeNameCodeSuffix, internal.TypeNameAccountSuffix, internal.TypeNamePhoneSuffix, internal.TypeNameEmailSuffix}, v.FieldTypeName) || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 				daoField.filterParse.Method = internal.ReturnType
 			}
 		case internal.TypeText: // `text类型`
@@ -1412,7 +1412,7 @@ func getDaoExtendMiddleMany(tplEM handleExtendMiddle) (dao myGenDao) {
 		case internal.TypeInt, internal.TypeIntU: // `int等类型` // `int等类型（unsigned）`
 		case internal.TypeFloat, internal.TypeFloatU: // `float等类型`  // `float等类型（unsigned）`
 		case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
-			if v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
+			if v.IsUnique || slices.Contains([]internal.MyGenFieldTypeName{internal.TypeNameCodeSuffix, internal.TypeNameAccountSuffix, internal.TypeNamePhoneSuffix, internal.TypeNameEmailSuffix}, v.FieldTypeName) || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter {
 				daoField.filterParse.Method = internal.ReturnType
 			}
 		case internal.TypeText: // `text类型`

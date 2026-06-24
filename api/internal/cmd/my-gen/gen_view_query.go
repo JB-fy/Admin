@@ -165,12 +165,12 @@ func getViewQueryField(tpl *myGenTpl, v myGenField, i18nPath string, i18nFieldPa
 		// viewQueryField.form.Method = internal.ReturnType
 		viewQueryField.form.DataType = `<el-input-number v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` :precision="` + gconv.String(v.FieldLimitFloat.Precision) + `" :controls="false" />`
 	case internal.TypeVarchar, internal.TypeChar: // `varchar类型`	// `char类型`
-		if (v.IsUnique || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) && !(len(tpl.Handle.Label.List) == 1 && tpl.Handle.Label.List[0].FieldRaw == v.FieldRaw) {
+		if (v.IsUnique || slices.Contains([]internal.MyGenFieldTypeName{internal.TypeNameCodeSuffix, internal.TypeNameAccountSuffix, internal.TypeNamePhoneSuffix, internal.TypeNameEmailSuffix}, v.FieldTypeName) || gconv.Uint(v.FieldLimitStr) <= internal.ConfigMaxLenOfStrFilter) && !(len(tpl.Handle.Label.List) == 1 && tpl.Handle.Label.List[0].FieldRaw == v.FieldRaw) {
+			viewQueryField.form.Method = internal.ReturnType
 			attrOfAdd := ``
 			if v.FieldType == internal.TypeChar /* && v.FieldTypeName != internal.TypeNameNameSuffix */ {
 				attrOfAdd = ` minlength="` + v.FieldLimitStr + `"`
 			}
-			viewQueryField.form.Method = internal.ReturnType
 			viewQueryField.form.DataType = `<el-input v-model="queryCommon.data.` + v.FieldRaw + `" :placeholder="t('` + i18nPath + `.name.` + i18nFieldPath + `')"` + attrOfAdd + ` maxlength="` + v.FieldLimitStr + `" :clearable="true" />`
 		}
 	case internal.TypeText: // `text类型`

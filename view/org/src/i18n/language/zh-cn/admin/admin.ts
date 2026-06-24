@@ -1,5 +1,6 @@
 export default {
     name: {
+        admin_type: '类型',
         org_id: '机构',
         nickname: '昵称',
         avatar: '头像',
@@ -11,7 +12,12 @@ export default {
         role_id_arr: '角色',
         is_stop: '停用',
     },
-    status: {},
+    status: {
+        admin_type: [
+            { value: 0, label: '平台' },
+            { value: 10, label: '机构' },
+        ],
+    },
     tip: {
         login_name_prefix: '。子账号使用时（如登录，密码找回）需包含前缀字符',
     },

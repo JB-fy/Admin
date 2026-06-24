@@ -30,22 +30,35 @@ const table = reactive({
             },
         },
         /* {
+            dataKey: 'admin_type',
+            title: t('admin.admin.name.admin_type'),
+            key: 'admin_type',
+            align: 'center',
+            width: 100,
+            cellRenderer: (props: any): any => {
+                let tagType = tm('config.const.tagType') as string[]
+                let statusList = tm('admin.admin.status.admin_type') as { value: any; label: string }[]
+                let statusIndex = statusList.findIndex((item) => item.value == props.rowData.admin_type)
+                return <el-tag type={tagType[statusIndex % tagType.length]}>{statusList[statusIndex]?.label}</el-tag>
+            },
+        },
+        {
             dataKey: 'org_name',
-            title: t('org.admin.name.org_id'),
+            title: t('admin.admin.name.org_id'),
             key: 'org_id',
             align: 'center',
             width: 150,
         }, */
         {
             dataKey: 'nickname',
-            title: t('org.admin.name.nickname'),
+            title: t('admin.admin.name.nickname'),
             key: 'nickname',
             align: 'center',
             width: 150,
         },
         {
             dataKey: 'avatar',
-            title: t('org.admin.name.avatar'),
+            title: t('admin.admin.name.avatar'),
             key: 'avatar',
             align: 'center',
             width: 100,
@@ -67,28 +80,28 @@ const table = reactive({
         },
         {
             dataKey: 'phone',
-            title: t('org.admin.name.phone'),
+            title: t('admin.admin.name.phone'),
             key: 'phone',
             align: 'center',
             width: 150,
         },
         {
             dataKey: 'email',
-            title: t('org.admin.name.email'),
+            title: t('admin.admin.name.email'),
             key: 'email',
             align: 'center',
             width: 150,
         },
         {
             dataKey: 'account',
-            title: t('org.admin.name.account'),
+            title: t('admin.admin.name.account'),
             key: 'account',
             align: 'center',
             width: 150,
         },
         {
             dataKey: 'is_super',
-            title: t('org.admin.name.is_super'),
+            title: t('admin.admin.name.is_super'),
             key: 'is_super',
             align: 'center',
             width: 100,
@@ -111,7 +124,7 @@ const table = reactive({
         },
         {
             dataKey: 'is_stop',
-            title: t('org.admin.name.is_stop'),
+            title: t('admin.admin.name.is_stop'),
             key: 'is_stop',
             align: 'center',
             width: 100,
@@ -213,7 +226,7 @@ const handleBatchDelete = () => {
 }
 //编辑|复制
 const handleEditCopy = (id: number, type: string = 'edit') => {
-    request(t('config.VITE_HTTP_API_PREFIX') + '/org/admin/info', { id: id }).then((res) => {
+    request(t('config.VITE_HTTP_API_PREFIX') + '/admin/admin/info', { id: id }).then((res) => {
         saveCommon.data = { ...res.data.info }
         saveCommon.title = t('common.' + type)
         if (type == 'copy') {
@@ -232,7 +245,7 @@ const handleDelete = (id: number | number[]) => {
         beforeClose: (action: Action, instance: MessageBoxState, done: Function) => {
             if (action == 'confirm') {
                 instance.confirmButtonLoading = true
-                request(t('config.VITE_HTTP_API_PREFIX') + '/org/admin/del', { [Array.isArray(id) ? 'id_arr' : 'id']: id }, true)
+                request(t('config.VITE_HTTP_API_PREFIX') + '/admin/admin/del', { [Array.isArray(id) ? 'id_arr' : 'id']: id }, true)
                     .then(() => (table.data = table.data.filter((rowData: any) => (Array.isArray(id) ? !id.includes(rowData.id) : rowData.id != id))) /* getList() */, done())
                     .finally(() => (instance.confirmButtonLoading = false))
             } else {
@@ -244,7 +257,7 @@ const handleDelete = (id: number | number[]) => {
 //更新
 const handleUpdate = async (id: number | number[], param: { [propName: string]: any }) => {
     param[Array.isArray(id) ? 'id_arr' : 'id'] = id
-    await request(t('config.VITE_HTTP_API_PREFIX') + '/org/admin/update', param, true)
+    await request(t('config.VITE_HTTP_API_PREFIX') + '/admin/admin/update', param, true)
 }
 
 //分页
@@ -272,7 +285,7 @@ const getList = async (resetPage: boolean = false) => {
     }
     table.loading = true
     try {
-        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/org/admin/list', param)
+        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/admin/admin/list', param)
         table.data = res.data.list?.length ? res.data.list : []
         pagination.total = res.data.count
     } finally {
@@ -295,7 +308,7 @@ defineExpose({ getList })
         </el-col>
         <el-col :span="8" style="text-align: right">
             <el-space :size="10" style="height: 100%; margin-right: 10px">
-                <my-export-button i18nPrefix="org.admin" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/org/admin/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
+                <my-export-button i18nPrefix="admin.admin" :headerList="table.columns" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/admin/admin/list', param: { filter: queryCommon.data, sort: table.sort.key + ' ' + table.sort.order } }" />
                 <el-dropdown max-height="300" :hide-on-click="false">
                     <el-button type="info" :circle="true"><autoicon-ep-hide /></el-button>
                     <template #dropdown>

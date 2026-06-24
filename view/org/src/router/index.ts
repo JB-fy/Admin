@@ -60,13 +60,13 @@ const initRouteList = [
                 meta: { isAuth: true, keepAlive: true, componentName: '/auth/role' },
             },
             {
-                path: '/org/admin',
+                path: '/admin/admin',
                 component: async () => {
-                    const component = await import('@/views/org/admin/Index.vue')
-                    component.default.name = '/org/admin'
+                    const component = await import('@/views/admin/admin/Index.vue')
+                    component.default.name = '/admin/admin'
                     return component
                 },
-                meta: { isAuth: true, keepAlive: true, componentName: '/org/admin' },
+                meta: { isAuth: true, keepAlive: true, componentName: '/admin/admin' },
             },
             {
                 path: '/org/config/app',

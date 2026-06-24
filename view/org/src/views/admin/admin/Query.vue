@@ -30,29 +30,32 @@ const queryForm = reactive({
         <el-form-item prop="label">
             <el-input v-model="queryCommon.data.label" :placeholder="t('common.name.label')" maxlength="30" :clearable="true" />
         </el-form-item>
-        <el-form-item prop="org_id">
-            <my-select v-model="queryCommon.data.org_id" :placeholder="t('org.admin.name.org_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/org/org/list' }" />
+        <!-- <el-form-item prop="admin_type">
+            <el-select-v2 v-model="queryCommon.data.admin_type" :options="tm('admin.admin.status.admin_type')" :placeholder="t('admin.admin.name.admin_type')" :clearable="true" style="width: 86px" />
         </el-form-item>
+        <el-form-item prop="org_id">
+            <my-select v-model="queryCommon.data.org_id" :placeholder="t('admin.admin.name.org_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/org/org/list' }" />
+        </el-form-item> -->
         <el-form-item prop="nickname">
-            <el-input v-model="queryCommon.data.nickname" :placeholder="t('org.admin.name.nickname')" maxlength="30" :clearable="true" />
+            <el-input v-model="queryCommon.data.nickname" :placeholder="t('admin.admin.name.nickname')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="phone">
-            <el-input v-model="queryCommon.data.phone" :placeholder="t('org.admin.name.phone')" maxlength="20" :clearable="true" />
+            <el-input v-model="queryCommon.data.phone" :placeholder="t('admin.admin.name.phone')" maxlength="20" :clearable="true" />
         </el-form-item>
         <el-form-item prop="email">
-            <el-input v-model="queryCommon.data.email" :placeholder="t('org.admin.name.email')" maxlength="60" :clearable="true" />
+            <el-input v-model="queryCommon.data.email" :placeholder="t('admin.admin.name.email')" maxlength="60" :clearable="true" />
         </el-form-item>
         <el-form-item prop="account">
-            <el-input v-model="queryCommon.data.account" :placeholder="t('org.admin.name.account')" maxlength="20" :clearable="true" />
+            <el-input v-model="queryCommon.data.account" :placeholder="t('admin.admin.name.account')" maxlength="20" :clearable="true" />
         </el-form-item>
         <el-form-item prop="is_super">
-            <el-select-v2 v-model="queryCommon.data.is_super" :options="tm('common.status.whether')" :placeholder="t('org.admin.name.is_super')" :clearable="true" style="width: 86px" />
+            <el-select-v2 v-model="queryCommon.data.is_super" :options="tm('common.status.whether')" :placeholder="t('admin.admin.name.is_super')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="role_id">
-            <my-select v-model="queryCommon.data.role_id" :placeholder="t('org.admin.name.role_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list' }" />
+            <my-select v-model="queryCommon.data.role_id" :placeholder="t('admin.admin.name.role_id_arr')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list' }" />
         </el-form-item>
         <el-form-item prop="is_stop">
-            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('org.admin.name.is_stop')" :clearable="true" style="width: 86px" />
+            <el-select-v2 v-model="queryCommon.data.is_stop" :options="tm('common.status.whether')" :placeholder="t('admin.admin.name.is_stop')" :clearable="true" style="width: 86px" />
         </el-form-item>
         <el-form-item prop="time_range">
             <el-date-picker
