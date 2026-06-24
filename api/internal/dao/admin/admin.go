@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"reflect"
 	"slices"
+	"strings"
 	"sync"
 
 	"github.com/gogf/gf/v2/container/gvar"
@@ -468,4 +469,22 @@ func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 func (daoThis *adminDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error) {
 	info, err = cache.DbData.GetOrSetInfoById(ctx, daoThis.CtxDaoModel(ctx), id, 0)
 	return
+}
+
+func (daoThis *adminDao) JoinLoginName(orgId uint, loginName string) string {
+	if loginName == `` {
+		return ``
+	}
+	if orgId == 0 {
+		return loginName
+	}
+	return fmt.Sprintf(`%d:%s`, orgId, loginName)
+}
+
+func (daoThis *adminDao) GetLoginName(loginName string) string {
+	_, after, found := strings.Cut(loginName, `:`)
+	if found {
+		return after
+	}
+	return loginName
 }

@@ -2,8 +2,8 @@ package my
 
 import (
 	apiMy "api/api/platform/my"
+	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
-	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils/jbctx"
 	"context"
 
@@ -23,7 +23,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 
 	/* // 表数据很小，无需这样做，且会导致数据修改无法立即生效。确实需要减轻数据库压力时可以使用
 	var list gdb.Result
-	if loginInfo[daoPlatform.Admin.Columns().IsSuper].Bool() {
+	if loginInfo[daoAdmin.Admin.Columns().IsSuper].Bool() {
 		list, err = daoAuth.Action.CacheGetListOfNoStop(ctx, sceneInfo[daoAuth.Scene.Columns().SceneId].String())
 	} else {
 		list, err = daoAuth.Action.CacheGetListOfSelf(ctx, sceneInfo[daoAuth.Scene.Columns().SceneId].String(), loginInfo[`login_id`])
@@ -33,7 +33,7 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 		`self_action`: map[string]any{
 			`scene_id`: sceneInfo[daoAuth.Scene.Columns().SceneId],
 			`login_id`: loginInfo[`login_id`],
-			`is_super`: loginInfo[daoPlatform.Admin.Columns().IsSuper].Uint8(),
+			`is_super`: loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(),
 		},
 	}
 	list, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Fields(field...).ListPri()

@@ -1,8 +1,8 @@
 package auth
 
 import (
+	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
-	daoPlatform "api/internal/dao/platform"
 	"api/internal/service"
 	"api/internal/utils"
 	"api/internal/utils/jbctx"
@@ -86,7 +86,7 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any)
 func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionIdArr ...string) (isAuth bool, err error) {
 	loginInfo := jbctx.GetLoginInfo(ctx)
 	sceneInfo := jbctx.GetSceneInfo(ctx)
-	if sceneInfo[daoAuth.Scene.Columns().SceneId].String() == `platform` && loginInfo[daoPlatform.Admin.Columns().IsSuper].Uint8() == 1 { //平台超级管理员，无权限限制
+	if loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8() == 0 && loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8() == 1 { //平台超级管理员，无权限限制
 		isAuth = true
 		return
 	}

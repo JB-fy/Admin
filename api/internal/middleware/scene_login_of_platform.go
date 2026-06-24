@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	daoPlatform "api/internal/dao/platform"
+	daoAdmin "api/internal/dao/admin"
 	"api/internal/utils"
 	"api/internal/utils/jbctx"
 	utilsToken "api/internal/utils/token"
@@ -37,7 +37,7 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 		/**--------验证token 结束--------**/
 
 		/**--------获取登录用户信息并验证 开始--------**/
-		info, _ := daoPlatform.Admin.CacheGetInfo(r.GetCtx(), gconv.Uint(tokenInfo.LoginId))
+		info, _ := daoAdmin.Admin.CacheGetInfo(r.GetCtx(), gconv.Uint(tokenInfo.LoginId))
 		if info.IsEmpty() {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994100, ``))
@@ -46,7 +46,7 @@ func SceneLoginOfPlatform(isForce bool) func(r *ghttp.Request) {
 			}
 			return
 		}
-		if info[daoPlatform.Admin.Columns().IsStop].Uint8() == 1 {
+		if info[daoAdmin.Admin.Columns().IsStop].Uint8() == 1 {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994101, ``))
 			} else {

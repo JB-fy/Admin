@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	daoAdmin "api/internal/dao/admin"
 	daoOrg "api/internal/dao/org"
 	"api/internal/utils"
 	"api/internal/utils/jbctx"
@@ -37,7 +38,7 @@ func SceneLoginOfOrg(isForce bool) func(r *ghttp.Request) {
 		/**--------验证token 结束--------**/
 
 		/**--------获取登录用户信息并验证 开始--------**/
-		info, _ := daoOrg.Admin.CacheGetInfo(r.GetCtx(), gconv.Uint(tokenInfo.LoginId))
+		info, _ := daoAdmin.Admin.CacheGetInfo(r.GetCtx(), gconv.Uint(tokenInfo.LoginId))
 		if info.IsEmpty() {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994100, ``))
@@ -46,13 +47,33 @@ func SceneLoginOfOrg(isForce bool) func(r *ghttp.Request) {
 			}
 			return
 		}
-		if info[daoOrg.Admin.Columns().IsStop].Uint8() == 1 {
+		if info[daoAdmin.Admin.Columns().IsStop].Uint8() == 1 {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994101, ``))
 			} else {
 				r.Middleware.Next()
 			}
 			return
+		}
+		if orgId := info[daoAdmin.Admin.Columns().OrgId].Uint(); orgId > 0 {
+			orgInfo, _ := daoOrg.Org.CacheGetInfo(r.GetCtx(), orgId)
+			if orgInfo.IsEmpty() {
+				if isForce {
+					r.SetError(utils.NewErrorCode(r.GetCtx(), 39994200, ``))
+				} else {
+					r.Middleware.Next()
+				}
+				return
+			}
+			if orgInfo[daoOrg.Org.Columns().IsStop].Uint8() == 1 {
+				if isForce {
+					r.SetError(utils.NewErrorCode(r.GetCtx(), 39994201, ``))
+				} else {
+					r.Middleware.Next()
+				}
+				return
+			}
+			info[`org_info`] = gvar.New(orgInfo.Map())
 		}
 
 		info[`login_id`] = gvar.New(tokenInfo.LoginId) //所有场景追加这个字段，方便统一调用

@@ -102,21 +102,13 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				val := gconv.Map(v)
 				var roleIdArr []*gvar.Var
 				switch gconv.String(val[`scene_id`]) {
-				case `platform`:
+				case `platform`, `org`:
 					// 方式1：非联表查询
-					roleIdArr, _ = RoleRelOfPlatformAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfPlatformAdmin.Columns().RoleId)
+					roleIdArr, _ = RoleRelOfAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfAdmin.Columns().RoleId)
 					/* // 方式2：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
-					tableRoleRelOfPlatformAdmin := RoleRelOfPlatformAdmin.ParseDbTable(m.GetCtx())
-					m = m.Where(tableRoleRelOfPlatformAdmin+`.`+RoleRelOfPlatformAdmin.Columns().AdminId, val[`login_id`])
-					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfPlatformAdmin, daoModel))
-					continue */
-				case `org`:
-					// 方式1：非联表查询
-					roleIdArr, _ = RoleRelOfOrgAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfOrgAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfOrgAdmin.Columns().RoleId)
-					/* // 方式2：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
-					tableRoleRelOfOrgAdmin := RoleRelOfOrgAdmin.ParseDbTable(m.GetCtx())
-					m = m.Where(tableRoleRelOfOrgAdmin+`.`+RoleRelOfOrgAdmin.Columns().AdminId, val[`login_id`])
-					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfOrgAdmin, daoModel))
+					tableRoleRelOfAdmin := RoleRelOfAdmin.ParseDbTable(m.GetCtx())
+					m = m.Where(tableRoleRelOfAdmin+`.`+RoleRelOfAdmin.Columns().AdminId, val[`login_id`])
+					m = m.Handler(daoThis.ParseJoin(tableRoleRelOfAdmin, daoModel))
 					continue */
 				}
 				if len(roleIdArr) == 0 {

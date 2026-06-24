@@ -38,6 +38,8 @@ app.mount('#app')
 //                 case 39994003:
 //                 case 39994100:
 //                 case 39994101:
+//                 case 39994200:
+//                 case 39994201:
 //                     /* ElMessageBox.alert(errMsg.msg, '确认登出', {
 //                         confirmButtonText: '重新登录',
 //                         type: 'warning'
