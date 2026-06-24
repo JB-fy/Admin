@@ -7,8 +7,7 @@
 ./main myGen -dbGroup=default -dbTable=auth_action -removePrefixCommon= -removePrefixAlone=auth_ -cacheType=1 -cacheTime=1 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/操作 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:auth_role_rel_to_action:action_id:true
 ./main myGen -dbGroup=default -dbTable=auth_role -removePrefixCommon= -removePrefixAlone=auth_ -cacheType=2 -cacheTime=0 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/角色 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-    其它关联表:auth_role_rel_of_org_admin:role_id:true
-    其它关联表:auth_role_rel_of_platform_admin:role_id:true
+    其它关联表:auth_role_rel_of_admin:role_id:true
 ./main myGen -dbGroup=default -dbTable=admin -removePrefixCommon= -removePrefixAlone= -cacheType=2 -cacheTime=0 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/管理员 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     扩展表(一对一):admin_privacy:admin_id:true
 ./main myGen -dbGroup=default -dbTable=upload -removePrefixCommon= -removePrefixAlone= -cacheType=1 -cacheTime=0 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/配置中心/上传配置 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
