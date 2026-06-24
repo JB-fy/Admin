@@ -3,8 +3,8 @@ package auth
 import (
 	"api/api"
 	apiAuth "api/api/org/auth"
+	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
-	daoOrg "api/internal/dao/org"
 	"api/internal/service"
 	"api/internal/utils"
 	"api/internal/utils/jbctx"
@@ -51,7 +51,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	}
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().OrgId]
 	sceneInfo := jbctx.GetSceneInfo(ctx)
 	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	/**--------参数处理 结束--------**/
@@ -91,7 +91,7 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	filter := map[string]any{`id`: req.Id}
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().OrgId]
 	sceneInfo := jbctx.GetSceneInfo(ctx)
 	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	/**--------参数处理 结束--------**/
@@ -123,7 +123,7 @@ func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateR
 	data := gconv.Map(req.RoleCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	data[daoAuth.Role.Columns().RelId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	data[daoAuth.Role.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().OrgId]
 	sceneInfo := jbctx.GetSceneInfo(ctx)
 	data[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	/**--------参数处理 结束--------**/
@@ -154,7 +154,7 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 	}
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().OrgId]
 	sceneInfo := jbctx.GetSceneInfo(ctx)
 	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	/**--------参数处理 结束--------**/
@@ -176,7 +176,7 @@ func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteR
 	filter := gconv.Map(req.RoleUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoOrg.Admin.Columns().OrgId]
+	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().OrgId]
 	sceneInfo := jbctx.GetSceneInfo(ctx)
 	filter[daoAuth.Role.Columns().SceneId] = sceneInfo[daoAuth.Scene.Columns().SceneId]
 	/**--------参数处理 结束--------**/

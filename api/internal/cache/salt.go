@@ -21,14 +21,14 @@ func (cacheThis *salt) cache() redis.UniversalClient {
 	return jbredis.DB()
 }
 
-func (cacheThis *salt) key(sceneId string, loginName string) string {
-	return fmt.Sprintf(consts.CACHE_SALT, sceneId, loginName)
+func (cacheThis *salt) key(sceneId string, loginName string, loginNameType uint8) string {
+	return fmt.Sprintf(consts.CACHE_SALT, sceneId, loginName, loginNameType)
 }
 
-func (cacheThis *salt) Set(ctx context.Context, sceneId string, loginName string, value string, ttl time.Duration) error {
-	return cacheThis.cache().SetEx(ctx, cacheThis.key(sceneId, loginName), value, ttl).Err()
+func (cacheThis *salt) Set(ctx context.Context, sceneId string, loginName string, loginNameType uint8, value string, ttl time.Duration) error {
+	return cacheThis.cache().SetEx(ctx, cacheThis.key(sceneId, loginName, loginNameType), value, ttl).Err()
 }
 
-func (cacheThis *salt) Get(ctx context.Context, sceneId string, loginName string) (string, error) {
-	return cacheThis.cache().Get(ctx, cacheThis.key(sceneId, loginName)).Result()
+func (cacheThis *salt) Get(ctx context.Context, sceneId string, loginName string, loginNameType uint8) (string, error) {
+	return cacheThis.cache().Get(ctx, cacheThis.key(sceneId, loginName, loginNameType)).Result()
 }

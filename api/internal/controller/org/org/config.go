@@ -3,6 +3,7 @@ package org
 import (
 	"api/api"
 	apiOrg "api/api/org/org"
+	daoAdmin "api/internal/dao/admin"
 	daoOrg "api/internal/dao/org"
 	"api/internal/service"
 	"api/internal/utils"
@@ -39,7 +40,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiOrg.ConfigGetReq)
 	/**--------权限验证 结束--------**/
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	config, err := daoOrg.Config.GetPluck(ctx, loginInfo[daoOrg.Admin.Columns().OrgId].String(), *req.ConfigKeyArr...)
+	config, err := daoOrg.Config.GetPluck(ctx, loginInfo[daoAdmin.Admin.Columns().OrgId].String(), *req.ConfigKeyArr...)
 	if err != nil {
 		return
 	}
@@ -77,6 +78,6 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiOrg.ConfigSaveRe
 	/**--------权限验证 结束--------**/
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	err = daoOrg.Config.Save(ctx, loginInfo[daoOrg.Admin.Columns().OrgId].String(), config)
+	err = daoOrg.Config.Save(ctx, loginInfo[daoAdmin.Admin.Columns().OrgId].String(), config)
 	return
 }

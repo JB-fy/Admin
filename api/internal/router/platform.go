@@ -65,7 +65,6 @@ func InitRouterPlatform(ctx context.Context, s *ghttp.Server) {
 			})
 
 			group.Group(`/platform`, func(group *ghttp.RouterGroup) {
-				group.Bind(platform.NewAdmin())
 				group.Bind(platform.NewConfig())
 			})
 
@@ -89,7 +88,6 @@ func InitRouterPlatform(ctx context.Context, s *ghttp.Server) {
 			})
 
 			group.Group(`/org`, func(group *ghttp.RouterGroup) {
-				group.Bind(org.NewAdmin())
 				group.Bind(org.NewOrg())
 			})
 

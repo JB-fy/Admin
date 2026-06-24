@@ -4,8 +4,8 @@ import (
 	"api/api"
 	apiCurrent "api/api/org"
 	"api/internal/cache"
+	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
-	daoOrg "api/internal/dao/org"
 	"api/internal/utils"
 	"api/internal/utils/email"
 	"api/internal/utils/jbctx"
@@ -25,7 +25,7 @@ func NewCode() *Code {
 
 // 发送验证码
 func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendReq) (res *api.CommonNoDataRes, err error) {
-	loginName := daoOrg.Admin.GetLoginName(req.To)
+	loginName := daoAdmin.Admin.GetLoginName(req.To)
 	switch req.Scene {
 	case 0, 1, 2, 4:
 		err = g.Validator().Rules(`phone`).Data(loginName).Run(ctx)
@@ -37,19 +37,20 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	}
 
 	to := req.To
+	adminType := req.AdminType
 	switch req.Scene {
 	case 0, 2: //登录(手机)，密码找回(手机)
-		info, _ := daoOrg.Admin.CtxDaoModel(ctx).Filter(daoOrg.Admin.Columns().Phone, to).One()
+		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Phone: to, daoAdmin.Admin.Columns().AdminType: adminType}).One()
 		if info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990000, ``)
 			return
 		}
-		if info[daoOrg.Admin.Columns().IsStop].Uint8() == 1 {
+		if info[daoAdmin.Admin.Columns().IsStop].Uint8() == 1 {
 			err = utils.NewErrorCode(ctx, 39990002, ``)
 			return
 		}
 	case 1: //注册(手机)
-		info, _ := daoOrg.Admin.CtxDaoModel(ctx).Filter(daoOrg.Admin.Columns().Phone, to).One()
+		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Phone: to, daoAdmin.Admin.Columns().AdminType: adminType}).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39991000, ``)
 			return
@@ -60,26 +61,28 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		/* if loginInfo[daoOrg.Admin.Columns().Phone].String() != `` {
+		/* if loginInfo[daoAdmin.Admin.Columns().Phone].String() != `` {
 			err = utils.NewErrorCode(ctx, 39991001, ``)
 			return
 		} */
-		to = loginInfo[daoOrg.Admin.Columns().Phone].String()
+		to = loginInfo[daoAdmin.Admin.Columns().Phone].String()
 		if to != `` {
 			err = utils.NewErrorCode(ctx, 39991003, ``)
 			return
 		}
-		loginName = daoOrg.Admin.GetLoginName(to)
+		loginName = daoAdmin.Admin.GetLoginName(to)
+		adminType = loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8()
 	case 4: //绑定(手机)
 		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		if loginInfo[daoOrg.Admin.Columns().IsSuper].Uint8() == 0 {
-			to = daoOrg.Admin.JoinLoginName(loginInfo[daoOrg.Admin.Columns().OrgId].Uint(), to)
+		if loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8() == 0 {
+			to = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().OrgId].Uint(), to)
 		}
-		info, _ := daoOrg.Admin.CtxDaoModel(ctx).Filter(daoOrg.Admin.Columns().Phone, to).One()
+		adminType = loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8()
+		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Phone: to, daoAdmin.Admin.Columns().AdminType: adminType}).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39991002, ``)
 			return
@@ -90,24 +93,25 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		to = loginInfo[daoOrg.Admin.Columns().Phone].String()
+		to = loginInfo[daoAdmin.Admin.Columns().Phone].String()
 		if to == `` {
 			err = utils.NewErrorCode(ctx, 39991003, ``)
 			return
 		}
-		loginName = daoOrg.Admin.GetLoginName(to)
+		loginName = daoAdmin.Admin.GetLoginName(to)
+		adminType = loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8()
 	case 10, 12: //登录(邮箱)，密码找回(邮箱)
-		info, _ := daoOrg.Admin.CtxDaoModel(ctx).Filter(daoOrg.Admin.Columns().Email, to).One()
+		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Email: to, daoAdmin.Admin.Columns().AdminType: adminType}).One()
 		if info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39990000, ``)
 			return
 		}
-		if info[daoOrg.Admin.Columns().IsStop].Uint8() == 1 {
+		if info[daoAdmin.Admin.Columns().IsStop].Uint8() == 1 {
 			err = utils.NewErrorCode(ctx, 39990002, ``)
 			return
 		}
 	case 11: //注册(邮箱)
-		info, _ := daoOrg.Admin.CtxDaoModel(ctx).Filter(daoOrg.Admin.Columns().Email, to).One()
+		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Email: to, daoAdmin.Admin.Columns().AdminType: adminType}).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39991010, ``)
 			return
@@ -118,26 +122,28 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		to = loginInfo[daoOrg.Admin.Columns().Email].String()
+		to = loginInfo[daoAdmin.Admin.Columns().Email].String()
 		if to != `` {
 			err = utils.NewErrorCode(ctx, 39991013, ``)
 			return
 		}
-		loginName = daoOrg.Admin.GetLoginName(to)
+		loginName = daoAdmin.Admin.GetLoginName(to)
+		adminType = loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8()
 	case 14: //绑定(邮箱)
 		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		/* if loginInfo[daoOrg.Admin.Columns().Email].String() != `` {
+		/* if loginInfo[daoAdmin.Admin.Columns().Email].String() != `` {
 			err = utils.NewErrorCode(ctx, 39991011, ``)
 			return
 		} */
-		if loginInfo[daoOrg.Admin.Columns().IsSuper].Uint8() == 0 {
-			to = daoOrg.Admin.JoinLoginName(loginInfo[daoOrg.Admin.Columns().OrgId].Uint(), to)
+		if loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8() == 0 {
+			to = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().OrgId].Uint(), to)
 		}
-		info, _ := daoOrg.Admin.CtxDaoModel(ctx).Filter(daoOrg.Admin.Columns().Email, to).One()
+		adminType = loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8()
+		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Email: to, daoAdmin.Admin.Columns().AdminType: adminType}).One()
 		if !info.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39991012, ``)
 			return
@@ -148,12 +154,13 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		to = loginInfo[daoOrg.Admin.Columns().Email].String()
+		to = loginInfo[daoAdmin.Admin.Columns().Email].String()
 		if to == `` {
 			err = utils.NewErrorCode(ctx, 39991013, ``)
 			return
 		}
-		loginName = daoOrg.Admin.GetLoginName(to)
+		loginName = daoAdmin.Admin.GetLoginName(to)
+		adminType = loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8()
 	}
 
 	code := grand.Digits(4)
@@ -166,6 +173,6 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	if err != nil {
 		return
 	}
-	err = cache.Code.Set(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), to, req.Scene, code, 5*time.Minute)
+	err = cache.Code.Set(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), to, adminType, req.Scene, code, 5*time.Minute)
 	return
 }

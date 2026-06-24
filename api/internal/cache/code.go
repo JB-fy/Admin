@@ -25,14 +25,14 @@ func (cacheThis *code) cache() redis.UniversalClient {
 	return jbredis.DB()
 }
 
-func (cacheThis *code) key(sceneId string, to string, scene uint) string {
-	return fmt.Sprintf(consts.CACHE_CODE, sceneId, to, scene)
+func (cacheThis *code) key(sceneId string, to string, toType, scene uint8) string {
+	return fmt.Sprintf(consts.CACHE_CODE, sceneId, to, toType, scene)
 }
 
-func (cacheThis *code) Set(ctx context.Context, sceneId string, to string, scene uint, value string, ttl time.Duration) error {
-	return cacheThis.cache().SetEx(ctx, cacheThis.key(sceneId, to, scene), value, ttl).Err()
+func (cacheThis *code) Set(ctx context.Context, sceneId string, to string, toType, scene uint8, value string, ttl time.Duration) error {
+	return cacheThis.cache().SetEx(ctx, cacheThis.key(sceneId, to, toType, scene), value, ttl).Err()
 }
 
-func (cacheThis *code) Get(ctx context.Context, sceneId string, to string, scene uint) (string, error) {
-	return cacheThis.cache().Get(ctx, cacheThis.key(sceneId, to, scene)).Result()
+func (cacheThis *code) Get(ctx context.Context, sceneId string, to string, toType, scene uint8) (string, error) {
+	return cacheThis.cache().Get(ctx, cacheThis.key(sceneId, to, toType, scene)).Result()
 }
