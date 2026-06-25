@@ -30,6 +30,20 @@ const table = reactive({
             },
         },
         /* {
+            dataKey: 'scene_name',
+            title: t('admin.admin.name.scene_id'),
+            key: 'scene_id',
+            align: 'center',
+            width: 150,
+        },
+        {
+            dataKey: 'rel_id',
+            title: t('admin.admin.name.rel_id'),
+            key: 'rel_id',
+            align: 'center',
+            width: 150,
+        },
+        {
             dataKey: 'admin_type',
             title: t('admin.admin.name.admin_type'),
             key: 'admin_type',
@@ -41,14 +55,28 @@ const table = reactive({
                 let statusIndex = statusList.findIndex((item) => item.value == props.rowData.admin_type)
                 return <el-tag type={tagType[statusIndex % tagType.length]}>{statusList[statusIndex]?.label}</el-tag>
             },
-        },
+        }, */
         {
-            dataKey: 'org_name',
-            title: t('admin.admin.name.org_id'),
-            key: 'org_id',
+            dataKey: 'account',
+            title: t('admin.admin.name.account'),
+            key: 'account',
             align: 'center',
             width: 150,
-        }, */
+        },
+        {
+            dataKey: 'phone',
+            title: t('admin.admin.name.phone'),
+            key: 'phone',
+            align: 'center',
+            width: 150,
+        },
+        {
+            dataKey: 'email',
+            title: t('admin.admin.name.email'),
+            key: 'email',
+            align: 'center',
+            width: 150,
+        },
         {
             dataKey: 'nickname',
             title: t('admin.admin.name.nickname'),
@@ -77,27 +105,6 @@ const table = reactive({
                     </el-scrollbar>,
                 ]
             },
-        },
-        {
-            dataKey: 'phone',
-            title: t('admin.admin.name.phone'),
-            key: 'phone',
-            align: 'center',
-            width: 150,
-        },
-        {
-            dataKey: 'email',
-            title: t('admin.admin.name.email'),
-            key: 'email',
-            align: 'center',
-            width: 150,
-        },
-        {
-            dataKey: 'account',
-            title: t('admin.admin.name.account'),
-            key: 'account',
-            align: 'center',
-            width: 150,
         },
         {
             dataKey: 'is_super',

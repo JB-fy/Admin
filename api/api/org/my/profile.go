@@ -4,6 +4,7 @@ import (
 	"api/api"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 )
 
 /*--------个人信息 开始--------*/
@@ -17,14 +18,19 @@ type ProfileInfoRes struct {
 }
 
 type ProfileInfo struct {
-	AdminId  uint   `json:"admin_id" dc:"管理员ID"`
-	OrgId    uint   `json:"org_id" dc:"机构ID"`
-	Nickname string `json:"nickname" dc:"昵称"`
-	Avatar   string `json:"avatar" dc:"头像"`
-	Phone    string `json:"phone" dc:"手机"`
-	Email    string `json:"email" dc:"邮箱"`
-	Account  string `json:"account" dc:"账号"`
-	IsSuper  uint   `json:"is_super" dc:"超管：0否 1是"`
+	AdminId   *uint       `json:"admin_id,omitempty" dc:"管理员ID"`
+	SceneId   *string     `json:"scene_id,omitempty" dc:"场景ID"`
+	RelId     *uint       `json:"rel_id,omitempty" dc:"关联ID。根据scene_id对应不同表"`
+	AdminType *uint       `json:"admin_type,omitempty" dc:"类型：0平台 10机构"`
+	Account   *string     `json:"account,omitempty" dc:"账号"`
+	Phone     *string     `json:"phone,omitempty" dc:"手机"`
+	Email     *string     `json:"email,omitempty" dc:"邮箱"`
+	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
+	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
+	IsSuper   *uint       `json:"is_super,omitempty" dc:"超管：0否 1是"`
+	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
+	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
+	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
 }
 
 /*--------个人信息 结束--------*/

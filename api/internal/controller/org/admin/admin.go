@@ -23,7 +23,7 @@ type Admin struct {
 
 func NewAdmin() *Admin {
 	field := slices.Clone(append(daoAdmin.Admin.ColumnArr(), `id`, `label`))
-	appendFieldOfList := []string{ /* daoOrg.Org.Columns().OrgName */ }
+	appendFieldOfList := []string{ /* daoAuth.Scene.Columns().SceneName */ }
 	appendFieldOfInfo := []string{`role_id_arr`}
 	return &Admin{
 		defaultFieldOfList: slices.Clone(append(field, appendFieldOfList...)),
