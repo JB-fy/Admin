@@ -16,8 +16,9 @@ func SetSceneInfo(r *ghttp.Request, info gdb.Record) {
 }
 
 // 获取场景信息
-func GetSceneInfo(ctx context.Context) gdb.Record {
-	return ctx.Value(consts.CTX_SCENE_INFO_NAME).(gdb.Record)
+func GetSceneInfo(ctx context.Context) (info gdb.Record) {
+	info, _ = ctx.Value(consts.CTX_SCENE_INFO_NAME).(gdb.Record)
+	return
 }
 
 // 获取场景ID
@@ -31,8 +32,9 @@ func SetLoginInfo(r *ghttp.Request, info gdb.Record) {
 }
 
 // 获取登录身份信息
-func GetLoginInfo(ctx context.Context) gdb.Record {
-	return ctx.Value(consts.CTX_LOGIN_INFO_NAME).(gdb.Record)
+func GetLoginInfo(ctx context.Context) (info gdb.Record) {
+	info, _ = ctx.Value(consts.CTX_LOGIN_INFO_NAME).(gdb.Record)
+	return
 }
 
 // 获取登录ID

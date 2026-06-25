@@ -20,13 +20,13 @@ const table = reactive({
                 return [
                     //阻止冒泡
                     <div class="id-checkbox" onClick={(event: any) => event.stopPropagation()}>
-                        <el-checkbox model-value={table.data.length ? allChecked : false} indeterminate={someChecked && !allChecked} onChange={(val: boolean) => table.data.forEach((item: any) => (item.checked = val))} />
+                        <el-checkbox model-value={table.data.length ? allChecked : false} indeterminate={someChecked && !allChecked} onChange={(val: boolean) => table.data.forEach((item: any) => (item.scene_id == `platform` && item.is_super == 1) || (item.scene_id == `org` && item.is_super == 0) || (item.checked = val))} />
                     </div>,
                     <div>{t('common.name.id')}</div>,
                 ]
             },
             cellRenderer: (props: any): any => {
-                return [<el-checkbox class="id-checkbox" model-value={props.rowData.checked ? true : false} onChange={(val: boolean) => (props.rowData.checked = val)} />, <div>{props.rowData.id}</div>]
+                return [<el-checkbox class="id-checkbox" model-value={props.rowData.checked ? true : false} disabled={(props.rowData.scene_id == `platform` && props.rowData.is_super == 1) || (props.rowData.scene_id == `org` && props.rowData.is_super == 0)} onChange={(val: boolean) => (props.rowData.checked = val)} />, <div>{props.rowData.id}</div>]
             },
         },
         {
@@ -37,7 +37,7 @@ const table = reactive({
             width: 150,
         },
         {
-            dataKey: 'rel_id',
+            dataKey: 'rel_name',
             title: t('admin.admin.name.rel_id'),
             key: 'rel_id',
             align: 'center',
@@ -122,7 +122,7 @@ const table = reactive({
                         active-text={statusList[1].label}
                         inactive-text={statusList[0].label}
                         inline-prompt={true}
-                        disabled={!authAction.isUpdate}
+                        disabled={true}
                         onChange={(val: any) => handleUpdate(props.rowData.id, { is_super: val }).then(() => (props.rowData.is_super = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
@@ -145,7 +145,7 @@ const table = reactive({
                         active-text={statusList[1].label}
                         inactive-text={statusList[0].label}
                         inline-prompt={true}
-                        disabled={!authAction.isUpdate}
+                        disabled={!authAction.isUpdate || (props.rowData.scene_id == `platform` && props.rowData.is_super == 1) || (props.rowData.scene_id == `org` && props.rowData.is_super == 0)}
                         onChange={(val: any) => handleUpdate(props.rowData.id, { is_stop: val }).then(() => (props.rowData.is_stop = val))}
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success);"
                     />,
@@ -176,6 +176,9 @@ const table = reactive({
             fixed: 'right',
             hidden: !(authAction.isCreate || authAction.isUpdate || authAction.isDelete),
             cellRenderer: (props: any): any => {
+                if ((props.rowData.scene_id == `platform` && props.rowData.is_super == 1) || (props.rowData.scene_id == `org` && props.rowData.is_super == 0)) {
+                    return
+                }
                 let vNode: any = []
                 if (authAction.isUpdate) {
                     vNode.push(
