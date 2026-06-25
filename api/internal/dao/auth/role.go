@@ -100,8 +100,10 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 			case `self_role`: //获取当前登录身份可用的角色。参数：map[string]any{`scene_id`: `场景ID`, `login_id`: 登录身份id}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
+				sceneId := gconv.String(val[`scene_id`])
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
 				var roleIdArr []*gvar.Var
-				switch gconv.String(val[`scene_id`]) {
+				switch sceneId {
 				case `platform`, `org`:
 					// 方式1：非联表查询
 					roleIdArr, _ = RoleRelOfAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfAdmin.Columns().RoleId)
