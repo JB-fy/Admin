@@ -28,14 +28,15 @@ type AdminColumns struct {
 	UpdatedAt string // 更新时间
 	IsStop    string // 停用：0否 1是
 	AdminId   string // 管理员ID
+	SceneId   string // 场景ID
+	RelId     string // 关联ID。根据scene_id对应不同表
 	AdminType string // 类型：0平台 10机构
-	OrgId     string // 机构ID
-	IsSuper   string // 超管：0否 1是
-	Nickname  string // 昵称
-	Avatar    string // 头像
+	Account   string // 账号
 	Phone     string // 手机
 	Email     string // 邮箱
-	Account   string // 账号
+	Nickname  string // 昵称
+	Avatar    string // 头像
+	IsSuper   string // 超管：0否 1是
 }
 
 // adminColumns holds the columns for the table admin.
@@ -44,14 +45,15 @@ var adminColumns = AdminColumns{
 	UpdatedAt: "updated_at",
 	IsStop:    "is_stop",
 	AdminId:   "admin_id",
+	SceneId:   "scene_id",
+	RelId:     "rel_id",
 	AdminType: "admin_type",
-	OrgId:     "org_id",
-	IsSuper:   "is_super",
-	Nickname:  "nickname",
-	Avatar:    "avatar",
+	Account:   "account",
 	Phone:     "phone",
 	Email:     "email",
-	Account:   "account",
+	Nickname:  "nickname",
+	Avatar:    "avatar",
+	IsSuper:   "is_super",
 }
 
 // NewAdminDao creates and returns a new DAO object for table data access.

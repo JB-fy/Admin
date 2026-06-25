@@ -6,6 +6,7 @@ package admin
 
 import (
 	"api/internal/cache"
+	"api/internal/consts"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/admin/internal"
 	daoAuth "api/internal/dao/auth"
@@ -97,8 +98,8 @@ func (daoThis *adminDao) ParseFilter(filter map[string]any, daoModel *daoIndex.D
 			case `time_range_end`:
 				m = m.WhereLTE(daoModel.DbTable+`.`+daoThis.Columns().CreatedAt, v)
 			case `platform_update_delete`:
-				m = m.Where(m.Builder().Where(m.Builder().Where(daoModel.DbTable+`.`+daoThis.Columns().AdminType, 0).Where(daoModel.DbTable+`.`+daoThis.Columns().IsSuper, 0)).
-					WhereOr(m.Builder().WhereNot(daoModel.DbTable+`.`+daoThis.Columns().AdminType, 0).Where(daoModel.DbTable+`.`+daoThis.Columns().IsSuper, 1)))
+				m = m.Where(m.Builder().Where(m.Builder().Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, consts.SCENE_ID_PLATFORM).Where(daoModel.DbTable+`.`+daoThis.Columns().IsSuper, 0)).
+					WhereOr(m.Builder().Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, consts.SCENE_ID_ORG).Where(daoModel.DbTable+`.`+daoThis.Columns().IsSuper, 1)))
 			default:
 				if daoThis.Contains(k) {
 					m = m.Where(daoModel.DbTable+`.`+k, v)
@@ -125,16 +126,20 @@ func (daoThis *adminDao) ParseField(field []string, fieldWithParam map[string]an
 				m = m.Fields(daoThis.ParseId(daoModel) + ` AS ` + v)
 			case `label`:
 				m = m.Fields(daoThis.ParseLabel(daoModel) + ` AS ` + v)
-			case daoOrg.Org.Columns().OrgName:
-				tableOrg := daoOrg.Org.ParseDbTable(m.GetCtx())
-				m = m.Fields(tableOrg + `.` + v)
-				m = m.Handler(daoThis.ParseJoin(tableOrg, daoModel))
+			case daoAuth.Scene.Columns().SceneName:
+				tableAuthScene := daoAuth.Scene.ParseDbTable(m.GetCtx())
+				m = m.Fields(tableAuthScene + `.` + v)
+				m = m.Handler(daoThis.ParseJoin(tableAuthScene, daoModel))
 			case Privacy.Columns().Password, Privacy.Columns().Salt:
 				tablePrivacy := Privacy.ParseDbTable(m.GetCtx())
 				m = m.Fields(tablePrivacy + `.` + v)
 				m = m.Handler(daoThis.ParseJoin(tablePrivacy, daoModel))
 			case `role_id_arr`:
 				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().AdminId)
+				daoModel.AfterField[v] = struct{}{}
+			case `rel_name`:
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().SceneId)
+				m = m.Fields(daoModel.DbTable + `.` + daoThis.Columns().RelId)
 				daoModel.AfterField[v] = struct{}{}
 			default:
 				if daoThis.Contains(v) {
@@ -164,6 +169,20 @@ func (daoThis *adminDao) HandleAfterField(ctx context.Context, record gdb.Record
 		case `role_id_arr`:
 			roleIdArr, _ := daoAuth.RoleRelOfAdmin.CtxDaoModel(ctx).Filter(daoAuth.RoleRelOfAdmin.Columns().AdminId, record[daoThis.Columns().AdminId]).Array(daoAuth.RoleRelOfAdmin.Columns().RoleId)
 			record[k] = gvar.New(roleIdArr.Interfaces())
+		case `rel_name`:
+			relName := ``
+			if record[daoThis.Columns().RelId].Uint() == 0 {
+				relName = `平台`
+			} else {
+				switch record[daoThis.Columns().SceneId].String() {
+				// case consts.SCENE_ID_PLATFORM:	// 平台都是0
+				case consts.SCENE_ID_ORG:
+					// relName, _ = daoOrg.Org.CtxDaoModel(ctx).FilterPri(record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)
+					info, _ := daoOrg.Org.CacheGetInfo(ctx, record[daoThis.Columns().RelId].Uint())
+					relName = info[daoOrg.Org.Columns().OrgName].String()
+				}
+			}
+			record[k] = gvar.New(relName)
 		default:
 			if v == struct{}{} {
 				record[k] = gvar.New(nil)
@@ -202,17 +221,17 @@ func (daoThis *adminDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range insert {
 			switch k {
+			case daoThis.Columns().Account:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().Phone:
 				if gconv.String(v) == `` {
 					v = nil
 				}
 				daoModel.SaveData[k] = v
 			case daoThis.Columns().Email:
-				if gconv.String(v) == `` {
-					v = nil
-				}
-				daoModel.SaveData[k] = v
-			case daoThis.Columns().Account:
 				if gconv.String(v) == `` {
 					v = nil
 				}
@@ -278,17 +297,17 @@ func (daoThis *adminDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range update {
 			switch k {
+			case daoThis.Columns().Account:
+				if gconv.String(v) == `` {
+					v = nil
+				}
+				daoModel.SaveData[k] = v
 			case daoThis.Columns().Phone:
 				if gconv.String(v) == `` {
 					v = nil
 				}
 				daoModel.SaveData[k] = v
 			case daoThis.Columns().Email:
-				if gconv.String(v) == `` {
-					v = nil
-				}
-				daoModel.SaveData[k] = v
-			case daoThis.Columns().Account:
 				if gconv.String(v) == `` {
 					v = nil
 				}
@@ -451,8 +470,8 @@ func (daoThis *adminDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoModel
 		/* case Xxxx.ParseDbTable(m.GetCtx()):
 		m = m.LeftJoin(joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId)
 		// m = m.LeftJoin(Xxxx.ParseDbTable(m.GetCtx())+` AS `+joinTable, joinTable+`.`+Xxxx.Columns().XxxxId+` = `+daoModel.DbTable+`.`+daoThis.Columns().XxxxId) */
-		case daoOrg.Org.ParseDbTable(m.GetCtx()):
-			m = m.LeftJoin(joinTable, joinTable+`.`+daoOrg.Org.Columns().OrgId+` = `+daoModel.DbTable+`.`+daoThis.Columns().OrgId)
+		case daoAuth.Scene.ParseDbTable(m.GetCtx()):
+			m = m.LeftJoin(joinTable, joinTable+`.`+daoAuth.Scene.Columns().SceneId+` = `+daoModel.DbTable+`.`+daoThis.Columns().SceneId)
 		case Privacy.ParseDbTable(m.GetCtx()):
 			m = m.LeftJoin(joinTable, joinTable+`.`+Privacy.Columns().AdminId+` = `+daoModel.DbTable+`.`+daoThis.Columns().AdminId)
 		case daoAuth.RoleRelOfAdmin.ParseDbTable(m.GetCtx()):

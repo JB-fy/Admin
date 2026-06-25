@@ -16,12 +16,13 @@ type Admin struct {
 	UpdatedAt *gtime.Time // 更新时间
 	IsStop    any         // 停用：0否 1是
 	AdminId   any         // 管理员ID
+	SceneId   any         // 场景ID
+	RelId     any         // 关联ID。根据scene_id对应不同表
 	AdminType any         // 类型：0平台 10机构
-	OrgId     any         // 机构ID
-	IsSuper   any         // 超管：0否 1是
-	Nickname  any         // 昵称
-	Avatar    any         // 头像
+	Account   any         // 账号
 	Phone     any         // 手机
 	Email     any         // 邮箱
-	Account   any         // 账号
+	Nickname  any         // 昵称
+	Avatar    any         // 头像
+	IsSuper   any         // 超管：0否 1是
 }

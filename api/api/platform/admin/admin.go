@@ -12,19 +12,21 @@ type AdminInfo struct {
 	Id        *uint       `json:"id,omitempty" dc:"ID"`
 	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	AdminId   *uint       `json:"admin_id,omitempty" dc:"管理员ID"`
+	SceneId   *string     `json:"scene_id,omitempty" dc:"场景ID"`
+	RelId     *uint       `json:"rel_id,omitempty" dc:"关联ID。根据scene_id对应不同表"`
 	AdminType *uint       `json:"admin_type,omitempty" dc:"类型：0平台 10机构"`
-	OrgId     *uint       `json:"org_id,omitempty" dc:"机构ID"`
-	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
-	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
+	Account   *string     `json:"account,omitempty" dc:"账号"`
 	Phone     *string     `json:"phone,omitempty" dc:"手机"`
 	Email     *string     `json:"email,omitempty" dc:"邮箱"`
-	Account   *string     `json:"account,omitempty" dc:"账号"`
+	Nickname  *string     `json:"nickname,omitempty" dc:"昵称"`
+	Avatar    *string     `json:"avatar,omitempty" dc:"头像"`
 	IsSuper   *uint       `json:"is_super,omitempty" dc:"超管：0否 1是"`
 	RoleIdArr []uint      `json:"role_id_arr,omitempty" dc:"角色ID"`
 	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
-	OrgName   *string     `json:"org_name,omitempty" dc:"机构"`
+	SceneName *string     `json:"scene_name,omitempty" dc:"场景"`
+	RelName   *string     `json:"rel_name,omitempty" dc:"关联"`
 }
 
 type AdminListFilter struct {
@@ -36,12 +38,13 @@ type AdminListFilter struct {
 	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	AdminId        *uint       `json:"admin_id,omitempty" v:"between:1,4294967295" dc:"管理员ID"`
+	SceneId        string      `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
+	RelId          *uint       `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。根据scene_id对应不同表"`
 	AdminType      *uint       `json:"admin_type,omitempty" v:"in:0,10" dc:"类型：0平台 10机构"`
-	OrgId          *uint       `json:"org_id,omitempty" v:"between:1,4294967295" dc:"机构ID"`
-	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
+	Account        string      `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Phone          string      `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
 	Email          string      `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	Account        string      `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	IsSuper        *uint       `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
 	RoleId         *uint       `json:"role_id,omitempty" v:"between:1,4294967295" dc:"角色ID"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
@@ -83,13 +86,14 @@ type AdminInfoRes struct {
 
 /*--------新增 开始--------*/
 type AdminCreateData struct {
+	SceneId *string `json:"scene_id,omitempty" v:"required|max-length:15" dc:"场景ID"`
+	RelId   *uint   `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。根据scene_id对应不同表"`
 	// AdminType *uint   `json:"admin_type,omitempty" v:"in:0,10" dc:"类型：0平台 10机构"`
-	OrgId    *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
-	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
-	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	Phone    *string `json:"phone,omitempty" v:"required-without-all:Email,Account|max-length:20|phone" dc:"手机"`
 	Email    *string `json:"email,omitempty" v:"required-without-all:Phone,Account|max-length:60|email" dc:"邮箱"`
 	Account  *string `json:"account,omitempty" v:"required-without-all:Phone,Email|max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
+	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	// IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
 	Password  *string `json:"password,omitempty" v:"required|size:32" dc:"密码。md5保存"`
 	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"required|distinct|foreach|between:1,4294967295" dc:"角色ID"`
@@ -106,13 +110,14 @@ type AdminCreateReq struct {
 
 /*--------修改 开始--------*/
 type AdminUpdateData struct {
+	SceneId *string `json:"scene_id,omitempty" v:"max-length:15" dc:"场景ID"`
+	RelId   *uint   `json:"rel_id,omitempty" v:"between:0,4294967295" dc:"关联ID。根据scene_id对应不同表"`
 	// AdminType *uint   `json:"admin_type,omitempty" v:"in:0,10" dc:"类型：0平台 10机构"`
-	OrgId    *uint   `json:"org_id,omitempty" v:"between:0,4294967295" dc:"机构ID"`
-	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
-	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
+	Account  *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	Phone    *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
 	Email    *string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	Account  *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	Nickname *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
+	Avatar   *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	// IsSuper   *uint   `json:"is_super,omitempty" v:"in:0,1" dc:"超管：0否 1是"`
 	Password  *string `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`
 	RoleIdArr *[]uint `json:"role_id_arr,omitempty" v:"distinct|foreach|between:1,4294967295" dc:"角色ID"`

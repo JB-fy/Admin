@@ -35,15 +35,15 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	/**--------参数处理 开始--------**/
 	loginInfo := jbctx.GetLoginInfo(ctx)
 	if loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8() == 0 {
-		orgId := loginInfo[daoAdmin.Admin.Columns().OrgId].Uint()
+		relId := loginInfo[daoAdmin.Admin.Columns().RelId].Uint()
 		if req.Phone != nil {
-			*req.Phone = daoAdmin.Admin.JoinLoginName(orgId, *req.Phone)
+			*req.Phone = daoAdmin.Admin.JoinLoginName(relId, *req.Phone)
 		}
 		if req.Email != nil {
-			*req.Email = daoAdmin.Admin.JoinLoginName(orgId, *req.Email)
+			*req.Email = daoAdmin.Admin.JoinLoginName(relId, *req.Email)
 		}
 		if req.Account != nil {
-			*req.Account = daoAdmin.Admin.JoinLoginName(orgId, *req.Account)
+			*req.Account = daoAdmin.Admin.JoinLoginName(relId, *req.Account)
 		}
 	}
 	data := gconv.Map(req.ProfileUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	daoOrg "api/internal/dao/org"
 	"api/internal/utils"
@@ -55,9 +56,11 @@ func SceneLoginOfOrg(isForce bool) func(r *ghttp.Request) {
 			}
 			return
 		}
-		if orgId := info[daoAdmin.Admin.Columns().OrgId].Uint(); orgId > 0 {
-			orgInfo, _ := daoOrg.Org.CacheGetInfo(r.GetCtx(), orgId)
-			if orgInfo.IsEmpty() {
+		switch info[daoAdmin.Admin.Columns().SceneId].String() {
+		// case consts.SCENE_ID_PLATFORM:
+		case consts.SCENE_ID_ORG:
+			relInfo, _ := daoOrg.Org.CacheGetInfo(r.GetCtx(), info[daoAdmin.Admin.Columns().RelId].Uint())
+			if relInfo.IsEmpty() {
 				if isForce {
 					r.SetError(utils.NewErrorCode(r.GetCtx(), 39994200, ``))
 				} else {
@@ -65,7 +68,7 @@ func SceneLoginOfOrg(isForce bool) func(r *ghttp.Request) {
 				}
 				return
 			}
-			if orgInfo[daoOrg.Org.Columns().IsStop].Uint8() == 1 {
+			if relInfo[daoOrg.Org.Columns().IsStop].Uint8() == 1 {
 				if isForce {
 					r.SetError(utils.NewErrorCode(r.GetCtx(), 39994201, ``))
 				} else {
@@ -73,7 +76,7 @@ func SceneLoginOfOrg(isForce bool) func(r *ghttp.Request) {
 				}
 				return
 			}
-			info[`org_info`] = gvar.New(orgInfo.Map())
+			info[`rel_info`] = gvar.New(relInfo.Map())
 		}
 
 		info[`login_id`] = gvar.New(tokenInfo.LoginId) //所有场景追加这个字段，方便统一调用

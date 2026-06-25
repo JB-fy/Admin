@@ -2,6 +2,8 @@ package consts
 
 import "time"
 
+type SceneId string
+
 const (
 	CTX_SCENE_INFO_NAME = `sceneInfo`
 	CTX_LOGIN_INFO_NAME = `loginInfo`
@@ -25,4 +27,7 @@ const (
 	CACHE_TOKEN_IS_UNIQUE = `tokenIsUnique:%s:%s` //判断Token唯一缓存key。参数：场景ID，登录用户ID
 
 	CACHE_WX_GZH_ACCESS_TOKEN = `wxGzhAccessToken:%s` //微信公众号授权Token缓存key。参数：微信公众号AppId
+
+	SCENE_ID_PLATFORM = `platform`
+	SCENE_ID_ORG      = `org`
 )

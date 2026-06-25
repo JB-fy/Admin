@@ -4,6 +4,7 @@ import (
 	"api/api"
 	apiCurrent "api/api/org"
 	"api/internal/cache"
+	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
 	daoOrg "api/internal/dao/org"
@@ -190,6 +191,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	switch req.AdminType {
 	// case 10:	//机构
 	default:
+		data[daoAdmin.Admin.Columns().SceneId] = consts.SCENE_ID_ORG
 		data[`role_id_arr`] = daoPlatform.Config.Get(ctx, `role_id_arr_of_org_def`).Slice() //默认角色
 	}
 	var adminId int64
@@ -203,7 +205,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		if err != nil {
 			return
 		}
-		_, err = orgAdminDaoModel.ResetNew().TX(tx).SetIdArr(adminId).HookUpdateOne(daoAdmin.Admin.Columns().OrgId, orgId).Update() //更新管理员所属机构ID
+		_, err = orgAdminDaoModel.ResetNew().TX(tx).SetIdArr(adminId).HookUpdateOne(daoAdmin.Admin.Columns().RelId, orgId).Update() //更新管理员所属机构ID
 		return
 	})
 	if err != nil {

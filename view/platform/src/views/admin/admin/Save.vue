@@ -11,18 +11,26 @@ const saveForm = reactive({
     data: {
         admin_type: 0,
         ...saveCommon.data,
-        org_id: saveCommon.data.org_id ? saveCommon.data.org_id : undefined,
+        scene_id: saveCommon.data.scene_id ? saveCommon.data.scene_id : `platform`,
+        rel_id: saveCommon.data.rel_id ? saveCommon.data.rel_id : undefined,
     } as { [propName: string]: any },
     rules: {
-        admin_type: [{ type: 'enum', trigger: 'change', enum: (tm('admin.admin.status.admin_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
-        org_id: [
-            { required: computed((): boolean => saveForm.data.admin_type != 0), message: t('validation.required') },
-            { type: 'integer', trigger: 'change', min: 1, max: 4294967295, message: t('validation.select') },
+        scene_id: [
+            { required: true, message: t('validation.required') },
+            { type: 'string', trigger: 'change', max: 15, message: t('validation.select') },
         ],
-        nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
-        avatar: [
-            { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
-            { type: 'url', trigger: 'change', message: t('validation.upload') },
+        rel_id: [
+            { required: computed((): boolean => [`org`].includes(saveForm.data.scene_id)), message: t('validation.required') },
+            { type: 'integer', trigger: 'change', min: 0, max: 4294967295, message: t('validation.select') },
+        ],
+        admin_type: [{ type: 'enum', trigger: 'change', enum: (tm('admin.admin.status.admin_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
+        account: [
+            {
+                required: computed((): boolean => (saveForm.data.phone || saveForm.data.email ? false : true)),
+                message: t('validation.required'),
+            },
+            { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
+            { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
         ],
         phone: [
             {
@@ -40,13 +48,10 @@ const saveForm = reactive({
             { type: 'string', trigger: 'blur', max: 60, message: t('validation.max.string', { max: 60 }) },
             { type: 'email', trigger: 'blur', message: t('validation.email') },
         ],
-        account: [
-            {
-                required: computed((): boolean => (saveForm.data.phone || saveForm.data.email ? false : true)),
-                message: t('validation.required'),
-            },
-            { type: 'string', trigger: 'blur', max: 20, message: t('validation.max.string', { max: 20 }) },
-            { type: 'string', trigger: 'blur', pattern: /^[\p{L}][\p{L}\p{N}_]{3,}$/u, message: t('validation.account') },
+        nickname: [{ type: 'string', trigger: 'blur', max: 30, message: t('validation.max.string', { max: 30 }) }],
+        avatar: [
+            { type: 'string', trigger: 'blur', max: 200, message: t('validation.max.string', { max: 200 }) },
+            { type: 'url', trigger: 'change', message: t('validation.upload') },
         ],
         is_super: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         password: [
@@ -66,7 +71,8 @@ const saveForm = reactive({
             }
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
-            param.org_id === undefined && (param.org_id = 0)
+            param.scene_id === undefined && (param.scene_id = '')
+            param.rel_id === undefined && (param.rel_id = 0)
             param.password ? (param.password = md5(param.password)) : delete param.password
             try {
                 if (param?.id) {
@@ -106,30 +112,44 @@ const saveDrawer = reactive({
     <el-drawer class="save-drawer" :ref="(el: any) => saveDrawer.ref = el" v-model="saveCommon.visible" :title="saveCommon.title" :size="saveDrawer.size" :before-close="saveDrawer.beforeClose">
         <el-scrollbar>
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
-                <el-form-item :label="t('admin.admin.name.admin_type')" prop="admin_type">
-                    <el-radio-group v-model="saveForm.data.admin_type" @change="() => ((saveForm.data.org_id = undefined), (saveForm.data.role_id_arr = undefined))">
+                <el-form-item :label="t('admin.admin.name.scene_id')" prop="scene_id">
+                    <my-select v-model="saveForm.data.scene_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => ((saveForm.data.rel_id = undefined), (saveForm.data.role_id_arr = undefined))" />
+                </el-form-item>
+                <el-form-item v-if="[`org`].includes(saveForm.data.scene_id)" :label="t('admin.admin.name.rel_id')" prop="rel_id">
+                    <!-- 可选择组件<my-select>或<my-cascader>使用，但需手动确认关联表，并修改接口路径 -->
+                    <!-- <el-input-number v-model="saveForm.data.rel_id" :placeholder="t('admin.admin.name.rel_id')" :min="0" :max="4294967295" :precision="0" :controls="false" :value-on-clear="0" /> -->
+                    <!-- <my-select v-model="saveForm.data.rel_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/admin/rel/list' }" /> -->
+                    <!-- <my-cascader v-model="saveForm.data.rel_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/admin/rel/tree' }" :props="{ emitPath: false }" /> -->
+                    <my-select v-model="saveForm.data.rel_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/org/org/list' }" />
+                </el-form-item>
+                <!-- <el-form-item :label="t('admin.admin.name.admin_type')" prop="admin_type">
+                    <el-radio-group v-model="saveForm.data.admin_type">
                         <el-radio v-for="(item, index) in (tm('admin.admin.status.admin_type') as any)" :key="index" :value="item.value">
                             {{ item.label }}
                         </el-radio>
                     </el-radio-group>
+                </el-form-item> -->
+                <el-form-item :label="t('admin.admin.name.account')" prop="account">
+                    <el-input v-model="saveForm.data.account" :placeholder="t('admin.admin.name.account')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
-                <el-form-item v-if="saveForm.data.admin_type != 0" :label="t('admin.admin.name.org_id')" prop="org_id">
-                    <my-select v-model="saveForm.data.org_id" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/org/org/list' }" />
+                <el-form-item :label="t('admin.admin.name.phone')" prop="phone">
+                    <el-input v-model="saveForm.data.phone" :placeholder="t('admin.admin.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
+                <el-form-item :label="t('admin.admin.name.email')" prop="email">
+                    <el-input v-model="saveForm.data.email" :placeholder="t('admin.admin.name.email')" maxlength="60" :show-word-limit="true" :clearable="true" style="max-width: 250px" />
+                    <el-alert :title="t('common.tip.notDuplicate')" type="info" :show-icon="true" :closable="false" />
+                </el-form-item>
+                <el-form-item :label="t('admin.admin.name.password')" prop="password">
+                    <el-input v-model="saveForm.data.password" :placeholder="t('admin.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
+                    <el-alert v-if="saveForm.data.id" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
                 </el-form-item>
                 <el-form-item :label="t('admin.admin.name.nickname')" prop="nickname">
                     <el-input v-model="saveForm.data.nickname" :placeholder="t('admin.admin.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('admin.admin.name.avatar')" prop="avatar">
                     <my-upload v-model="saveForm.data.avatar" accept="image/*" size="small" />
-                </el-form-item>
-                <el-form-item :label="t('admin.admin.name.phone')" prop="phone">
-                    <el-input v-model="saveForm.data.phone" :placeholder="t('admin.admin.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true" />
-                </el-form-item>
-                <el-form-item :label="t('admin.admin.name.email')" prop="email">
-                    <el-input v-model="saveForm.data.email" :placeholder="t('admin.admin.name.email')" maxlength="60" :show-word-limit="true" :clearable="true" />
-                </el-form-item>
-                <el-form-item :label="t('admin.admin.name.account')" prop="account">
-                    <el-input v-model="saveForm.data.account" :placeholder="t('admin.admin.name.account')" maxlength="20" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <!-- <el-form-item :label="t('admin.admin.name.is_super')" prop="is_super">
                     <el-switch
@@ -141,17 +161,17 @@ const saveDrawer = reactive({
                         :inline-prompt="true"
                         style="--el-switch-on-color: var(--el-color-danger); --el-switch-off-color: var(--el-color-success)"
                     />
-                </el-form-item> -->
+                </el-form-item>
                 <el-form-item :label="t('admin.admin.name.password')" prop="password">
                     <el-input v-model="saveForm.data.password" :placeholder="t('admin.admin.name.password')" minlength="6" maxlength="20" :show-word-limit="true" :clearable="true" :show-password="true" style="max-width: 250px" />
                     <el-alert v-if="saveForm.data.id" :title="t('common.tip.notRequired')" type="info" :show-icon="true" :closable="false" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item :label="t('admin.admin.name.role_id_arr')" prop="role_id_arr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
-                    <!-- <my-select v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: saveForm.data.admin_type == 0 ? { scene_id: `platform` } : { scene_id: `org`, rel_id: 0 } } }" :multiple="true" /> -->
+                    <!-- <my-select v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { rel_id: 0, scene_id: saveForm.data.scene_id } } }" :multiple="true" /> -->
                     <my-transfer
                         v-model="saveForm.data.role_id_arr"
-                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: saveForm.data.admin_type == 0 ? { scene_id: `platform` } : { scene_id: `org`, rel_id: 0 } } }"
+                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { rel_id: 0, scene_id: saveForm.data.scene_id } } }"
                     />
                 </el-form-item>
                 <el-form-item :label="t('admin.admin.name.is_stop')" prop="is_stop">

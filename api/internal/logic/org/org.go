@@ -1,6 +1,7 @@
 package org
 
 import (
+	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	daoOrg "api/internal/dao/org"
 	"api/internal/service"
@@ -52,7 +53,7 @@ func (logicThis *sOrg) Delete(ctx context.Context, filter map[string]any) (row i
 		return
 	}
 
-	if count, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filter(daoAdmin.Admin.Columns().OrgId, daoModelThis.IdArr).Count(); count > 0 {
+	if count, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filter(daoAdmin.Admin.Columns().SceneId, consts.SCENE_ID_ORG).Filter(daoAdmin.Admin.Columns().RelId, daoModelThis.IdArr).Count(); count > 0 {
 		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.org.org`), count, g.I18n().T(ctx, `name.org.admin`)}})
 		return
 	}

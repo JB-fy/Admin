@@ -3,8 +3,9 @@ package admin
 import (
 	"api/api"
 	apiAdmin "api/api/platform/admin"
+	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
-	daoOrg "api/internal/dao/org"
+	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
@@ -23,7 +24,7 @@ type Admin struct {
 
 func NewAdmin() *Admin {
 	field := slices.Clone(append(daoAdmin.Admin.ColumnArr(), `id`, `label`))
-	appendFieldOfList := []string{daoOrg.Org.Columns().OrgName}
+	appendFieldOfList := []string{daoAuth.Scene.Columns().SceneName, `rel_name`}
 	appendFieldOfInfo := []string{`role_id_arr`}
 	return &Admin{
 		defaultFieldOfList: slices.Clone(append(field, appendFieldOfList...)),
@@ -110,8 +111,10 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiAdmin.AdminInfoRe
 func (controllerThis *Admin) Create(ctx context.Context, req *apiAdmin.AdminCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req.AdminCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
-	data[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许创建平台超级管理员
-	if req.OrgId != nil && *req.OrgId > 0 {
+	switch *req.SceneId {
+	case consts.SCENE_ID_PLATFORM:
+		data[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许创建平台超级管理员
+	case consts.SCENE_ID_ORG:
 		data[daoAdmin.Admin.Columns().IsSuper] = 1 //只允许创建机构超级管理员
 	}
 	/**--------参数处理 结束--------**/

@@ -50,7 +50,8 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiAdmin.AdminListRe
 	}
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAdmin.Admin.Columns().OrgId] = loginInfo[daoAdmin.Admin.Columns().OrgId]
+	filter[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -88,7 +89,8 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiAdmin.AdminInfoRe
 	filter := map[string]any{`id`: req.Id}
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAdmin.Admin.Columns().OrgId] = loginInfo[daoAdmin.Admin.Columns().OrgId]
+	filter[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -116,20 +118,21 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiAdmin.AdminInfoRe
 func (controllerThis *Admin) Create(ctx context.Context, req *apiAdmin.AdminCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	orgId := loginInfo[daoAdmin.Admin.Columns().OrgId].Uint()
+	relId := loginInfo[daoAdmin.Admin.Columns().RelId].Uint()
 	if req.Phone != nil {
-		*req.Phone = daoAdmin.Admin.JoinLoginName(orgId, *req.Phone)
+		*req.Phone = daoAdmin.Admin.JoinLoginName(relId, *req.Phone)
 	}
 	if req.Email != nil {
-		*req.Email = daoAdmin.Admin.JoinLoginName(orgId, *req.Email)
+		*req.Email = daoAdmin.Admin.JoinLoginName(relId, *req.Email)
 	}
 	if req.Account != nil {
-		*req.Account = daoAdmin.Admin.JoinLoginName(orgId, *req.Account)
+		*req.Account = daoAdmin.Admin.JoinLoginName(relId, *req.Account)
 	}
 	data := gconv.Map(req.AdminCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	// loginInfo := jbctx.GetLoginInfo(ctx)
-	data[daoAdmin.Admin.Columns().OrgId] = loginInfo[daoAdmin.Admin.Columns().OrgId]
+	data[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	data[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	data[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许创建机构超级管理员
 	/**--------参数处理 结束--------**/
 
@@ -152,15 +155,15 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiAdmin.AdminCrea
 func (controllerThis *Admin) Update(ctx context.Context, req *apiAdmin.AdminUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	orgId := loginInfo[daoAdmin.Admin.Columns().OrgId].Uint()
+	relId := loginInfo[daoAdmin.Admin.Columns().RelId].Uint()
 	if req.Phone != nil {
-		*req.Phone = daoAdmin.Admin.JoinLoginName(orgId, *req.Phone)
+		*req.Phone = daoAdmin.Admin.JoinLoginName(relId, *req.Phone)
 	}
 	if req.Email != nil {
-		*req.Email = daoAdmin.Admin.JoinLoginName(orgId, *req.Email)
+		*req.Email = daoAdmin.Admin.JoinLoginName(relId, *req.Email)
 	}
 	if req.Account != nil {
-		*req.Account = daoAdmin.Admin.JoinLoginName(orgId, *req.Account)
+		*req.Account = daoAdmin.Admin.JoinLoginName(relId, *req.Account)
 	}
 	filter := gconv.Map(req.AdminUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 	data := gconv.Map(req.AdminUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
@@ -170,7 +173,8 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiAdmin.AdminUpda
 	}
 
 	// loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAdmin.Admin.Columns().OrgId] = loginInfo[daoAdmin.Admin.Columns().OrgId]
+	filter[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	filter[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许修改机构超级管理员
 	/**--------参数处理 结束--------**/
 
@@ -191,7 +195,8 @@ func (controllerThis *Admin) Delete(ctx context.Context, req *apiAdmin.AdminDele
 	filter := gconv.Map(req.AdminUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAdmin.Admin.Columns().OrgId] = loginInfo[daoAdmin.Admin.Columns().OrgId]
+	filter[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	filter[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许删除机构超级管理员
 	/**--------参数处理 结束--------**/
 

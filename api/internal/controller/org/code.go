@@ -79,7 +79,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		}
 		if loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8() == 0 {
-			to = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().OrgId].Uint(), to)
+			to = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), to)
 		}
 		adminType = loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8()
 		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Phone: to, daoAdmin.Admin.Columns().AdminType: adminType}).One()
@@ -140,7 +140,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			return
 		} */
 		if loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8() == 0 {
-			to = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().OrgId].Uint(), to)
+			to = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), to)
 		}
 		adminType = loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8()
 		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Email: to, daoAdmin.Admin.Columns().AdminType: adminType}).One()

@@ -173,7 +173,13 @@ func (daoModelThis *DaoModel) SetIdArr(idOrFilterOpt ...any) *DaoModel {
 		daoModelThis.Filters(filter)
 		if len(filter) == 1 {
 			if id, ok := filter[`id`]; ok {
-				daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+				if idVar := gvar.New(id); idVar.IsSlice() {
+					for _, id := range idVar.Slice() {
+						daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+					}
+				} else {
+					daoModelThis.IdArr = append(daoModelThis.IdArr, idVar)
+				}
 			} else if idArr, ok := filter[`id_arr`]; ok {
 				for _, id := range gconv.SliceAny(idArr) {
 					daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
@@ -184,12 +190,20 @@ func (daoModelThis *DaoModel) SetIdArr(idOrFilterOpt ...any) *DaoModel {
 				}
 			} else {
 				idField := daoModelThis.dao.ParseId(daoModelThis)
-				if id, ok := filter[idField]; ok {
-					daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
-				} else if strings.Index(idField, daoModelThis.DbTable+`.`) == 0 {
-					idField = strings.Replace(idField, daoModelThis.DbTable+`.`, ``, 1)
-					if id, ok := filter[idField]; ok {
-						daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+				id, ok := filter[idField]
+				if !ok {
+					if strings.Index(idField, daoModelThis.DbTable+`.`) == 0 {
+						idField = strings.Replace(idField, daoModelThis.DbTable+`.`, ``, 1)
+						id, ok = filter[idField]
+					}
+				}
+				if ok {
+					if idVar := gvar.New(id); idVar.IsSlice() {
+						for _, id := range idVar.Slice() {
+							daoModelThis.IdArr = append(daoModelThis.IdArr, gvar.New(id))
+						}
+					} else {
+						daoModelThis.IdArr = append(daoModelThis.IdArr, idVar)
 					}
 				}
 			}

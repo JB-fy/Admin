@@ -40,7 +40,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiOrg.ConfigGetReq)
 	/**--------权限验证 结束--------**/
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	config, err := daoOrg.Config.GetPluck(ctx, loginInfo[daoAdmin.Admin.Columns().OrgId].String(), *req.ConfigKeyArr...)
+	config, err := daoOrg.Config.GetPluck(ctx, loginInfo[daoAdmin.Admin.Columns().RelId].String(), *req.ConfigKeyArr...)
 	if err != nil {
 		return
 	}
@@ -78,6 +78,6 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiOrg.ConfigSaveRe
 	/**--------权限验证 结束--------**/
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	err = daoOrg.Config.Save(ctx, loginInfo[daoAdmin.Admin.Columns().OrgId].String(), config)
+	err = daoOrg.Config.Save(ctx, loginInfo[daoAdmin.Admin.Columns().RelId].String(), config)
 	return
 }
