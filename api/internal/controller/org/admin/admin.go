@@ -133,7 +133,8 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiAdmin.AdminCrea
 	// loginInfo := jbctx.GetLoginInfo(ctx)
 	data[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
 	data[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
-	data[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许创建机构超级管理员
+	data[daoAdmin.Admin.Columns().IsSuper] = 0                         //不允许创建机构超级管理员
+	data[`rel_id_of_role`] = loginInfo[daoAdmin.Admin.Columns().RelId] //logic层用于验证role_id_arr是否合法
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -175,7 +176,8 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiAdmin.AdminUpda
 	// loginInfo := jbctx.GetLoginInfo(ctx)
 	filter[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
 	filter[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
-	filter[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许修改机构超级管理员
+	filter[daoAdmin.Admin.Columns().IsSuper] = 0                       //不允许修改机构超级管理员
+	data[`rel_id_of_role`] = loginInfo[daoAdmin.Admin.Columns().RelId] //logic层用于验证role_id_arr是否合法
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/

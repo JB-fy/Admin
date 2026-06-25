@@ -117,6 +117,7 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiAdmin.AdminCrea
 	case consts.SCENE_ID_ORG:
 		data[daoAdmin.Admin.Columns().IsSuper] = 1 //只允许创建机构超级管理员
 	}
+	data[`rel_id_of_role`] = 0 //logic层用于验证role_id_arr是否合法
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
@@ -145,6 +146,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiAdmin.AdminUpda
 	}
 
 	filter[`platform_update_delete`] = `` //不允许修改平台超级管理员 或 只允许修改机构超级管理员
+	data[`rel_id_of_role`] = 0            //logic层用于验证role_id_arr是否合法
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
