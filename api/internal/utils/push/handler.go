@@ -1,7 +1,8 @@
 package push
 
 import (
-	daoPlatform "api/internal/dao/platform"
+	"api/internal/consts"
+	daoConfig "api/internal/dao/config"
 	"api/internal/utils/push/model"
 	"context"
 )
@@ -20,12 +21,12 @@ func NewHandler(ctx context.Context, deviceType uint, pushTypeOpt ...string) mod
 	if len(pushTypeOpt) > 0 {
 		pushType = pushTypeOpt[0]
 	} else {
-		pushType = daoPlatform.Config.Get(ctx, `push_type`).String()
+		pushType = daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, `push_type`).String()
 	}
 	if _, ok := pushFuncMap[pushType]; !ok {
 		pushType = pushTypeDef
 	}
-	config := daoPlatform.Config.Get(ctx, pushType).Map()
+	config := daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, pushType).Map()
 	switch pushType {
 	case `push_of_tx`:
 		deviceTypeStr, ok := deviceTypeMap[deviceType]

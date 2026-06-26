@@ -29,7 +29,7 @@ const notReadAll = !authAction.isCommonRead
     <el-container v-else class="common-container">
         <el-main>
             <el-tabs type="border-card" tab-position="top">
-                <el-tab-pane v-if="authAction.isCommonRead" :label="t('org.config.app.label.common')" :lazy="true"><common /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isCommonRead" :label="t('config.config.app.label.common')" :lazy="true"><common /></el-tab-pane>
             </el-tabs>
         </el-main>
     </el-container>

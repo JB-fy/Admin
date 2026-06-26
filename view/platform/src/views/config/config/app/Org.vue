@@ -8,7 +8,7 @@ const saveForm = reactive({
     loading: false,
     data: {
         //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
-        role_id_arr_of_org_def: [],
+        role_id_arr_of_org_def: undefined,
     } as { [propName: string]: any },
     rules: {
         role_id_arr_of_org_def: [
@@ -49,7 +49,7 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('platform.config.app.name.role_id_arr_of_org_def')" prop="role_id_arr_of_org_def">
+        <el-form-item :label="t('config.config.app.name.role_id_arr_of_org_def')" prop="role_id_arr_of_org_def">
             <my-transfer v-model="saveForm.data.role_id_arr_of_org_def" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { scene_id: `org`, rel_id: 0 } } }" />
         </el-form-item>
         <el-form-item>

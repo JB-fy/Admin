@@ -1,7 +1,8 @@
 package vod
 
 import (
-	daoPlatform "api/internal/dao/platform"
+	"api/internal/consts"
+	daoConfig "api/internal/dao/config"
 	"api/internal/utils/vod/model"
 	"context"
 )
@@ -21,12 +22,12 @@ func NewHandler(ctx context.Context, scene string, vodTypeOpt ...string) model.H
 	if len(vodTypeOpt) > 0 {
 		vodType = vodTypeOpt[0]
 	} else {
-		vodType = daoPlatform.Config.Get(ctx, `vod_type`).String()
+		vodType = daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, `vod_type`).String()
 	}
 	if _, ok := vodFuncMap[vodType]; !ok {
 		vodType = vodTypeDef
 	}
-	config := daoPlatform.Config.Get(ctx, vodType).Map()
+	config := daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, vodType).Map()
 	handlerObj.vod = NewVod(ctx, vodType, config)
 	return handlerObj
 }

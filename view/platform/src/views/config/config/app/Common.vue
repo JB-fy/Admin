@@ -8,9 +8,9 @@ const saveForm = reactive({
     loading: false,
     data: {
         //此处必须列出全部需要设置的配置键，用于向服务器获取对应的配置值
-        hot_search: [],
-        user_agreement: '',
-        privacy_agreement: '',
+        hot_search: undefined,
+        user_agreement: undefined,
+        privacy_agreement: undefined,
     } as { [propName: string]: any },
     rules: {
         hot_search: [
@@ -68,18 +68,18 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('platform.config.app.name.hot_search')" prop="hot_search">
+        <el-form-item :label="t('config.config.app.name.hot_search')" prop="hot_search">
             <template v-for="(_, index) in saveForm.data.hot_search" :key="index">
                 <el-tag type="info" :closable="true" @close="hotSearchHandle.del(index)" size="large" style="padding-left: 0; margin: 3px 10px 3px 0">
-                    <el-input :ref="(el: any) => hotSearchHandle.ref[index] = el" v-model="saveForm.data.hot_search[index]" @blur="hotSearchHandle.del(index, true)" :placeholder="t('platform.config.app.name.hot_search')" style="width: 150px" />
+                    <el-input :ref="(el: any) => hotSearchHandle.ref[index] = el" v-model="saveForm.data.hot_search[index]" @blur="hotSearchHandle.del(index, true)" :placeholder="t('config.config.app.name.hot_search')" style="width: 150px" />
                 </el-tag>
             </template>
             <el-button type="primary" @click="hotSearchHandle.add" style="margin: 3px 0"> <autoicon-ep-plus />{{ t('common.add') }} </el-button>
         </el-form-item>
-        <el-form-item :label="t('platform.config.app.name.user_agreement')" prop="user_agreement">
+        <el-form-item :label="t('config.config.app.name.user_agreement')" prop="user_agreement">
             <my-editor v-model="saveForm.data.user_agreement" />
         </el-form-item>
-        <el-form-item :label="t('platform.config.app.name.privacy_agreement')" prop="privacy_agreement">
+        <el-form-item :label="t('config.config.app.name.privacy_agreement')" prop="privacy_agreement">
             <my-editor v-model="saveForm.data.privacy_agreement" />
         </el-form-item>
         <el-form-item>

@@ -53,32 +53,32 @@ saveForm.initData()
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
         <el-tabs tab-position="left">
-            <el-tab-pane :label="t('platform.config.plugin.label.one_click_of_wx')" :lazy="true">
-                <el-form-item :label="t('platform.config.plugin.name.one_click_of_wx.host')" prop="one_click_of_wx.host">
-                    <el-input v-model="saveForm.data.one_click_of_wx.host" :placeholder="t('platform.config.plugin.name.one_click_of_wx.host')" :clearable="true" style="max-width: 500px" />
+            <el-tab-pane :label="t('config.config.plugin.label.one_click_of_wx')" :lazy="true">
+                <el-form-item :label="t('config.config.plugin.name.one_click_of_wx.host')" prop="one_click_of_wx.host">
+                    <el-input v-model="saveForm.data.one_click_of_wx.host" :placeholder="t('config.config.plugin.name.one_click_of_wx.host')" :clearable="true" style="max-width: 500px" />
                     <el-alert type="info" :show-icon="true" :closable="false">
                         <template #title>
-                            <span v-html="t('platform.config.plugin.tip.wx.host')"></span>
+                            <span v-html="t('config.config.plugin.tip.wx.host')"></span>
                         </template>
                     </el-alert>
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.one_click_of_wx.app_id')" prop="one_click_of_wx.app_id">
-                    <el-input v-model="saveForm.data.one_click_of_wx.app_id" :placeholder="t('platform.config.plugin.name.one_click_of_wx.app_id')" :clearable="true" />
+                <el-form-item :label="t('config.config.plugin.name.one_click_of_wx.app_id')" prop="one_click_of_wx.app_id">
+                    <el-input v-model="saveForm.data.one_click_of_wx.app_id" :placeholder="t('config.config.plugin.name.one_click_of_wx.app_id')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.one_click_of_wx.secret')" prop="one_click_of_wx.secret">
-                    <el-input v-model="saveForm.data.one_click_of_wx.secret" :placeholder="t('platform.config.plugin.name.one_click_of_wx.secret')" :clearable="true" />
+                <el-form-item :label="t('config.config.plugin.name.one_click_of_wx.secret')" prop="one_click_of_wx.secret">
+                    <el-input v-model="saveForm.data.one_click_of_wx.secret" :placeholder="t('config.config.plugin.name.one_click_of_wx.secret')" :clearable="true" />
                 </el-form-item>
             </el-tab-pane>
 
-            <el-tab-pane :label="t('platform.config.plugin.label.one_click_of_yidun')" :lazy="true">
-                <el-form-item :label="t('platform.config.plugin.name.one_click_of_yidun.secret_id')" prop="one_click_of_yidun.secret_id">
-                    <el-input v-model="saveForm.data.one_click_of_yidun.secret_id" :placeholder="t('platform.config.plugin.name.one_click_of_yidun.secret_id')" :clearable="true" />
+            <el-tab-pane :label="t('config.config.plugin.label.one_click_of_yidun')" :lazy="true">
+                <el-form-item :label="t('config.config.plugin.name.one_click_of_yidun.secret_id')" prop="one_click_of_yidun.secret_id">
+                    <el-input v-model="saveForm.data.one_click_of_yidun.secret_id" :placeholder="t('config.config.plugin.name.one_click_of_yidun.secret_id')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.one_click_of_yidun.secret_key')" prop="one_click_of_yidun.secret_key">
-                    <el-input v-model="saveForm.data.one_click_of_yidun.secret_key" :placeholder="t('platform.config.plugin.name.one_click_of_yidun.secret_key')" :clearable="true" />
+                <el-form-item :label="t('config.config.plugin.name.one_click_of_yidun.secret_key')" prop="one_click_of_yidun.secret_key">
+                    <el-input v-model="saveForm.data.one_click_of_yidun.secret_key" :placeholder="t('config.config.plugin.name.one_click_of_yidun.secret_key')" :clearable="true" />
                 </el-form-item>
-                <el-form-item :label="t('platform.config.plugin.name.one_click_of_yidun.business_id')" prop="one_click_of_yidun.business_id">
-                    <el-input v-model="saveForm.data.one_click_of_yidun.business_id" :placeholder="t('platform.config.plugin.name.one_click_of_yidun.business_id')" :clearable="true" />
+                <el-form-item :label="t('config.config.plugin.name.one_click_of_yidun.business_id')" prop="one_click_of_yidun.business_id">
+                    <el-input v-model="saveForm.data.one_click_of_yidun.business_id" :placeholder="t('config.config.plugin.name.one_click_of_yidun.business_id')" :clearable="true" />
                 </el-form-item>
             </el-tab-pane>
         </el-tabs>

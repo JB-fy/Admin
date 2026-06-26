@@ -14,7 +14,7 @@ const saveForm = reactive({
     rules: {
         id_card_type: [
             { required: true, message: t('validation.required') },
-            { type: 'enum', trigger: 'change', enum: (tm('platform.config.plugin.status.id_card_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
+            { type: 'enum', trigger: 'change', enum: (tm('config.config.plugin.status.id_card_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
         ],
         'id_card_of_aliyun.url': [
             { required: computed((): boolean => (saveForm.data.id_card_type == `id_card_of_aliyun` ? true : false)), message: t('validation.required') },
@@ -58,25 +58,25 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('platform.config.plugin.name.id_card_type')" prop="id_card_type">
+        <el-form-item :label="t('config.config.plugin.name.id_card_type')" prop="id_card_type">
             <el-radio-group v-model="saveForm.data.id_card_type">
-                <el-radio v-for="(item, index) in tm('platform.config.plugin.status.id_card_type') as any" :key="index" :value="item.value">
+                <el-radio v-for="(item, index) in tm('config.config.plugin.status.id_card_type') as any" :key="index" :value="item.value">
                     {{ item.label }}
                 </el-radio>
             </el-radio-group>
         </el-form-item>
 
         <template v-if="saveForm.data.id_card_type == 'id_card_of_aliyun'">
-            <el-form-item :label="t('platform.config.plugin.name.id_card_of_aliyun.url')" prop="id_card_of_aliyun.url">
-                <el-input v-model="saveForm.data.id_card_of_aliyun.url" :placeholder="t('platform.config.plugin.name.id_card_of_aliyun.url')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('config.config.plugin.name.id_card_of_aliyun.url')" prop="id_card_of_aliyun.url">
+                <el-input v-model="saveForm.data.id_card_of_aliyun.url" :placeholder="t('config.config.plugin.name.id_card_of_aliyun.url')" :clearable="true" style="max-width: 500px" />
                 <el-alert type="info" :show-icon="true" :closable="false">
                     <template #title>
-                        <span v-html="t('platform.config.plugin.tip.id_card_of_aliyun.url')"></span>
+                        <span v-html="t('config.config.plugin.tip.id_card_of_aliyun.url')"></span>
                     </template>
                 </el-alert>
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.id_card_of_aliyun.appcode')" prop="id_card_of_aliyun.appcode">
-                <el-input v-model="saveForm.data.id_card_of_aliyun.appcode" :placeholder="t('platform.config.plugin.name.id_card_of_aliyun.appcode')" :clearable="true" />
+            <el-form-item :label="t('config.config.plugin.name.id_card_of_aliyun.appcode')" prop="id_card_of_aliyun.appcode">
+                <el-input v-model="saveForm.data.id_card_of_aliyun.appcode" :placeholder="t('config.config.plugin.name.id_card_of_aliyun.appcode')" :clearable="true" />
             </el-form-item>
         </template>
 

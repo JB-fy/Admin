@@ -35,9 +35,9 @@ const notReadAll = !(authAction.isCommonRead || authAction.isPlatformRead || aut
     <el-container v-else class="common-container">
         <el-main>
             <el-tabs type="border-card" tab-position="top">
-                <el-tab-pane v-if="authAction.isCommonRead" :label="t('platform.config.app.label.common')" :lazy="true"><common /></el-tab-pane>
-                <el-tab-pane v-if="authAction.isPlatformRead" :label="t('platform.config.app.label.platform')" :lazy="true"><platform /></el-tab-pane>
-                <el-tab-pane v-if="authAction.isOrgRead" :label="t('platform.config.app.label.org')" :lazy="true"><org /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isCommonRead" :label="t('config.config.app.label.common')" :lazy="true"><common /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isPlatformRead" :label="t('config.config.app.label.platform')" :lazy="true"><platform /></el-tab-pane>
+                <el-tab-pane v-if="authAction.isOrgRead" :label="t('config.config.app.label.org')" :lazy="true"><org /></el-tab-pane>
             </el-tabs>
         </el-main>
     </el-container>

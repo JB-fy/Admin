@@ -23,7 +23,7 @@ const saveForm = reactive({
         ],
         email_type: [
             { required: true, message: t('validation.required') },
-            { type: 'enum', trigger: 'change', enum: (tm('platform.config.plugin.status.email_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
+            { type: 'enum', trigger: 'change', enum: (tm('config.config.plugin.status.email_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
         ],
         'email_of_common.smtp_host': [
             { required: computed((): boolean => (saveForm.data.email_type == `email_of_common` ? true : false)), message: t('validation.required') },
@@ -76,34 +76,34 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('platform.config.plugin.name.email_code.subject')" prop="email_code.subject">
-            <el-input v-model="saveForm.data.email_code.subject" :placeholder="t('platform.config.plugin.name.email_code.subject')" :clearable="true" />
+        <el-form-item :label="t('config.config.plugin.name.email_code.subject')" prop="email_code.subject">
+            <el-input v-model="saveForm.data.email_code.subject" :placeholder="t('config.config.plugin.name.email_code.subject')" :clearable="true" />
         </el-form-item>
-        <el-form-item :label="t('platform.config.plugin.name.email_code.template')" prop="email_code.template">
-            <el-alert :title="t('platform.config.plugin.tip.email_code.template')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
+        <el-form-item :label="t('config.config.plugin.name.email_code.template')" prop="email_code.template">
+            <el-alert :title="t('config.config.plugin.tip.email_code.template')" type="info" :show-icon="true" :closable="false" style="width: 100%" />
             <el-input v-model="saveForm.data.email_code.template" type="textarea" :autosize="{ minRows: 3 }" />
         </el-form-item>
-        <el-form-item :label="t('platform.config.plugin.name.email_type')" prop="email_type">
+        <el-form-item :label="t('config.config.plugin.name.email_type')" prop="email_type">
             <el-radio-group v-model="saveForm.data.email_type">
-                <el-radio v-for="(item, index) in tm('platform.config.plugin.status.email_type') as any" :key="index" :value="item.value">
+                <el-radio v-for="(item, index) in tm('config.config.plugin.status.email_type') as any" :key="index" :value="item.value">
                     {{ item.label }}
                 </el-radio>
             </el-radio-group>
         </el-form-item>
 
         <template v-if="saveForm.data.email_type == 'email_of_common'">
-            <el-form-item :label="t('platform.config.plugin.name.email_of_common.smtp_host')" prop="email_of_common.smtp_host">
-                <el-input v-model="saveForm.data.email_of_common.smtp_host" :placeholder="t('platform.config.plugin.name.email_of_common.smtp_host')" :clearable="true" />
+            <el-form-item :label="t('config.config.plugin.name.email_of_common.smtp_host')" prop="email_of_common.smtp_host">
+                <el-input v-model="saveForm.data.email_of_common.smtp_host" :placeholder="t('config.config.plugin.name.email_of_common.smtp_host')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.email_of_common.smtp_port')" prop="email_of_common.smtp_port">
-                <el-input v-model="saveForm.data.email_of_common.smtp_port" :placeholder="t('platform.config.plugin.name.email_of_common.smtp_port')" :clearable="true" />
+            <el-form-item :label="t('config.config.plugin.name.email_of_common.smtp_port')" prop="email_of_common.smtp_port">
+                <el-input v-model="saveForm.data.email_of_common.smtp_port" :placeholder="t('config.config.plugin.name.email_of_common.smtp_port')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.email_of_common.from_email')" prop="email_of_common.from_email">
-                <el-input v-model="saveForm.data.email_of_common.from_email" :placeholder="t('platform.config.plugin.name.email_of_common.from_email')" :clearable="true" />
+            <el-form-item :label="t('config.config.plugin.name.email_of_common.from_email')" prop="email_of_common.from_email">
+                <el-input v-model="saveForm.data.email_of_common.from_email" :placeholder="t('config.config.plugin.name.email_of_common.from_email')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.email_of_common.password')" prop="email_of_common.password">
-                <el-input v-model="saveForm.data.email_of_common.password" :placeholder="t('platform.config.plugin.name.email_of_common.password')" :clearable="true" style="max-width: 500px" />
-                <el-alert :title="t('platform.config.plugin.tip.email_of_common.password')" type="info" :show-icon="true" :closable="false" />
+            <el-form-item :label="t('config.config.plugin.name.email_of_common.password')" prop="email_of_common.password">
+                <el-input v-model="saveForm.data.email_of_common.password" :placeholder="t('config.config.plugin.name.email_of_common.password')" :clearable="true" style="max-width: 500px" />
+                <el-alert :title="t('config.config.plugin.tip.email_of_common.password')" type="info" :show-icon="true" :closable="false" />
             </el-form-item>
         </template>
 

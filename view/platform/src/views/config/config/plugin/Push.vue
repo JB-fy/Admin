@@ -14,7 +14,7 @@ const saveForm = reactive({
     rules: {
         push_type: [
             { required: true, message: t('validation.required') },
-            { type: 'enum', trigger: 'change', enum: (tm('platform.config.plugin.status.push_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
+            { type: 'enum', trigger: 'change', enum: (tm('config.config.plugin.status.push_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') },
         ],
         'push_of_tx.host': [
             { required: computed((): boolean => (saveForm.data.push_type == `push_of_tx` ? true : false)), message: t('validation.required') },
@@ -60,40 +60,40 @@ saveForm.initData()
 
 <template>
     <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="false">
-        <el-form-item :label="t('platform.config.plugin.name.push_type')" prop="push_type">
+        <el-form-item :label="t('config.config.plugin.name.push_type')" prop="push_type">
             <el-radio-group v-model="saveForm.data.push_type">
-                <el-radio v-for="(item, index) in tm('platform.config.plugin.status.push_type') as any" :key="index" :value="item.value">
+                <el-radio v-for="(item, index) in tm('config.config.plugin.status.push_type') as any" :key="index" :value="item.value">
                     {{ item.label }}
                 </el-radio>
             </el-radio-group>
         </el-form-item>
 
         <template v-if="saveForm.data.push_type == 'push_of_tx'">
-            <el-form-item :label="t('platform.config.plugin.name.push_of_tx.host')" prop="push_of_tx.host">
-                <el-input v-model="saveForm.data.push_of_tx.host" :placeholder="t('platform.config.plugin.name.push_of_tx.host')" :clearable="true" style="max-width: 500px" />
+            <el-form-item :label="t('config.config.plugin.name.push_of_tx.host')" prop="push_of_tx.host">
+                <el-input v-model="saveForm.data.push_of_tx.host" :placeholder="t('config.config.plugin.name.push_of_tx.host')" :clearable="true" style="max-width: 500px" />
                 <el-alert type="info" :show-icon="true" :closable="false">
                     <template #title>
-                        <span v-html="t('platform.config.plugin.tip.push_of_tx.host')"></span>
+                        <span v-html="t('config.config.plugin.tip.push_of_tx.host')"></span>
                     </template>
                 </el-alert>
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.push_of_tx.access_id_of_android')" prop="push_of_tx.access_id_of_android">
-                <el-input v-model="saveForm.data.push_of_tx.access_id_of_android" :placeholder="t('platform.config.plugin.name.push_of_tx.access_id_of_android')" :clearable="true" />
+            <el-form-item :label="t('config.config.plugin.name.push_of_tx.access_id_of_android')" prop="push_of_tx.access_id_of_android">
+                <el-input v-model="saveForm.data.push_of_tx.access_id_of_android" :placeholder="t('config.config.plugin.name.push_of_tx.access_id_of_android')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.push_of_tx.secret_key_of_android')" prop="push_of_tx.secret_key_of_android">
-                <el-input v-model="saveForm.data.push_of_tx.secret_key_of_android" :placeholder="t('platform.config.plugin.name.push_of_tx.secret_key_of_android')" :clearable="true" />
+            <el-form-item :label="t('config.config.plugin.name.push_of_tx.secret_key_of_android')" prop="push_of_tx.secret_key_of_android">
+                <el-input v-model="saveForm.data.push_of_tx.secret_key_of_android" :placeholder="t('config.config.plugin.name.push_of_tx.secret_key_of_android')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.push_of_tx.access_id_of_ios')" prop="push_of_tx.access_id_of_ios">
-                <el-input v-model="saveForm.data.push_of_tx.access_id_of_ios" :placeholder="t('platform.config.plugin.name.push_of_tx.access_id_of_ios')" :clearable="true" />
+            <el-form-item :label="t('config.config.plugin.name.push_of_tx.access_id_of_ios')" prop="push_of_tx.access_id_of_ios">
+                <el-input v-model="saveForm.data.push_of_tx.access_id_of_ios" :placeholder="t('config.config.plugin.name.push_of_tx.access_id_of_ios')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.push_of_tx.secret_key_of_ios')" prop="push_of_tx.secret_key_of_ios">
-                <el-input v-model="saveForm.data.push_of_tx.secret_key_of_ios" :placeholder="t('platform.config.plugin.name.push_of_tx.secret_key_of_ios')" :clearable="true" />
+            <el-form-item :label="t('config.config.plugin.name.push_of_tx.secret_key_of_ios')" prop="push_of_tx.secret_key_of_ios">
+                <el-input v-model="saveForm.data.push_of_tx.secret_key_of_ios" :placeholder="t('config.config.plugin.name.push_of_tx.secret_key_of_ios')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.push_of_tx.access_id_of_mac_os')" prop="push_of_tx.access_id_of_mac_os">
-                <el-input v-model="saveForm.data.push_of_tx.access_id_of_mac_os" :placeholder="t('platform.config.plugin.name.push_of_tx.access_id_of_mac_os')" :clearable="true" />
+            <el-form-item :label="t('config.config.plugin.name.push_of_tx.access_id_of_mac_os')" prop="push_of_tx.access_id_of_mac_os">
+                <el-input v-model="saveForm.data.push_of_tx.access_id_of_mac_os" :placeholder="t('config.config.plugin.name.push_of_tx.access_id_of_mac_os')" :clearable="true" />
             </el-form-item>
-            <el-form-item :label="t('platform.config.plugin.name.push_of_tx.secret_key_of_mac_os')" prop="push_of_tx.secret_key_of_mac_os">
-                <el-input v-model="saveForm.data.push_of_tx.secret_key_of_mac_os" :placeholder="t('platform.config.plugin.name.push_of_tx.secret_key_of_mac_os')" :clearable="true" />
+            <el-form-item :label="t('config.config.plugin.name.push_of_tx.secret_key_of_mac_os')" prop="push_of_tx.secret_key_of_mac_os">
+                <el-input v-model="saveForm.data.push_of_tx.secret_key_of_mac_os" :placeholder="t('config.config.plugin.name.push_of_tx.secret_key_of_mac_os')" :clearable="true" />
             </el-form-item>
         </template>
 
