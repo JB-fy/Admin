@@ -16,14 +16,14 @@ type Users struct {
 	UpdatedAt *gtime.Time // 更新时间
 	IsStop    any         // 停用：0否 1是
 	UserId    any         // 用户ID
+	Account   any         // 账号
+	Phone     any         // 手机
+	Email     any         // 邮箱
 	Nickname  any         // 昵称
 	Avatar    any         // 头像
 	Gender    any         // 性别：0未设置 1男 2女
 	Birthday  *gtime.Time // 生日
 	Address   any         // 地址
-	Phone     any         // 手机
-	Email     any         // 邮箱
-	Account   any         // 账号
 	WxOpenid  any         // 微信openid
 	WxUnionid any         // 微信unionid
 }

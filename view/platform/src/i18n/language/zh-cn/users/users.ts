@@ -1,13 +1,13 @@
 export default {
     name: {
+        account: '账号',
+        phone: '手机',
+        email: '邮箱',
         nickname: '昵称',
         avatar: '头像',
         gender: '性别',
         birthday: '生日',
         address: '地址',
-        phone: '手机',
-        email: '邮箱',
-        account: '账号',
         wx_openid: '微信openid',
         wx_unionid: '微信unionid',
         password: '密码',

@@ -1,7 +1,9 @@
 package auth
 
 import (
+	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
+	daoConfig "api/internal/dao/config"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
@@ -52,6 +54,11 @@ func (logicThis *sAuthScene) Delete(ctx context.Context, filter map[string]any) 
 		return
 	}
 
+	if count, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filter(daoAdmin.Admin.Columns().SceneId, daoModelThis.IdArr).Count(); count > 0 {
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`), count, g.I18n().T(ctx, `name.admin.admin`)}})
+		return
+	}
+
 	if count, _ := daoAuth.ActionRelToScene.CtxDaoModel(ctx).Filter(daoAuth.ActionRelToScene.Columns().SceneId, daoModelThis.IdArr).Count(); count > 0 {
 		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`), count, g.I18n().T(ctx, `name.auth.actionRelToScene`)}})
 		return
@@ -64,6 +71,11 @@ func (logicThis *sAuthScene) Delete(ctx context.Context, filter map[string]any) 
 
 	if count, _ := daoAuth.Role.CtxDaoModel(ctx).Filter(daoAuth.Role.Columns().SceneId, daoModelThis.IdArr).Count(); count > 0 {
 		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`), count, g.I18n().T(ctx, `name.auth.role`)}})
+		return
+	}
+
+	if count, _ := daoConfig.Config.CtxDaoModel(ctx).Filter(daoConfig.Config.Columns().SceneId, daoModelThis.IdArr).Count(); count > 0 {
+		err = utils.NewErrorCode(ctx, 30009999, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.auth.scene`), count, g.I18n().T(ctx, `name.config.config`)}})
 		return
 	}
 

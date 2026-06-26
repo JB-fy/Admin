@@ -28,14 +28,14 @@ type UsersColumns struct {
 	UpdatedAt string // 更新时间
 	IsStop    string // 停用：0否 1是
 	UserId    string // 用户ID
+	Account   string // 账号
+	Phone     string // 手机
+	Email     string // 邮箱
 	Nickname  string // 昵称
 	Avatar    string // 头像
 	Gender    string // 性别：0未设置 1男 2女
 	Birthday  string // 生日
 	Address   string // 地址
-	Phone     string // 手机
-	Email     string // 邮箱
-	Account   string // 账号
 	WxOpenid  string // 微信openid
 	WxUnionid string // 微信unionid
 }
@@ -46,14 +46,14 @@ var usersColumns = UsersColumns{
 	UpdatedAt: "updated_at",
 	IsStop:    "is_stop",
 	UserId:    "user_id",
+	Account:   "account",
+	Phone:     "phone",
+	Email:     "email",
 	Nickname:  "nickname",
 	Avatar:    "avatar",
 	Gender:    "gender",
 	Birthday:  "birthday",
 	Address:   "address",
-	Phone:     "phone",
-	Email:     "email",
-	Account:   "account",
 	WxOpenid:  "wx_openid",
 	WxUnionid: "wx_unionid",
 }

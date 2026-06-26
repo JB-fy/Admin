@@ -30,6 +30,15 @@ const queryForm = reactive({
         <el-form-item prop="label">
             <el-input v-model="queryCommon.data.label" :placeholder="t('common.name.label')" maxlength="30" :clearable="true" />
         </el-form-item>
+        <el-form-item prop="account">
+            <el-input v-model="queryCommon.data.account" :placeholder="t('users.users.name.account')" maxlength="20" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="phone">
+            <el-input v-model="queryCommon.data.phone" :placeholder="t('users.users.name.phone')" maxlength="20" :clearable="true" />
+        </el-form-item>
+        <el-form-item prop="email">
+            <el-input v-model="queryCommon.data.email" :placeholder="t('users.users.name.email')" maxlength="60" :clearable="true" />
+        </el-form-item>
         <el-form-item prop="nickname">
             <el-input v-model="queryCommon.data.nickname" :placeholder="t('users.users.name.nickname')" maxlength="30" :clearable="true" />
         </el-form-item>
@@ -38,15 +47,6 @@ const queryForm = reactive({
         </el-form-item>
         <el-form-item prop="birthday">
             <el-date-picker v-model="queryCommon.data.birthday" type="date" :placeholder="t('users.users.name.birthday')" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 160px" />
-        </el-form-item>
-        <el-form-item prop="phone">
-            <el-input v-model="queryCommon.data.phone" :placeholder="t('users.users.name.phone')" maxlength="20" :clearable="true" />
-        </el-form-item>
-        <el-form-item prop="email">
-            <el-input v-model="queryCommon.data.email" :placeholder="t('users.users.name.email')" maxlength="60" :clearable="true" />
-        </el-form-item>
-        <el-form-item prop="account">
-            <el-input v-model="queryCommon.data.account" :placeholder="t('users.users.name.account')" maxlength="20" :clearable="true" />
         </el-form-item>
         <el-form-item prop="wx_openid">
             <el-input v-model="queryCommon.data.wx_openid" :placeholder="t('users.users.name.wx_openid')" maxlength="128" :clearable="true" />

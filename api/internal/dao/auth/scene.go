@@ -307,9 +307,11 @@ func (daoThis *sceneDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler
 				2、菜单表做外键约束（不推荐）
 			*/
 			// 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
+			// daoAdmin.Admin.CtxDaoModel(ctx).Filter(daoAdmin.Admin.Columns().SceneId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			// ActionRelToScene.CtxDaoModel(ctx).Filter(ActionRelToScene.Columns().SceneId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			// Menu.CtxDaoModel(ctx).Filter(Menu.Columns().SceneId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			// Role.CtxDaoModel(ctx).Filter(Role.Columns().SceneId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
+			// daoConfig.Config.CtxDaoModel(ctx).Filter(daoConfig.Config.Columns().SceneId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			return
 		},
 	}

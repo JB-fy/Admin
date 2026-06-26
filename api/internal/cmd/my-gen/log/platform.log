@@ -1,7 +1,9 @@
 ./main myGen -dbGroup=default -dbTable=auth_scene -removePrefixCommon= -removePrefixAlone=auth_ -cacheType=1 -cacheTime=0 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/场景 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
+    其它关联表:admin:scene_id:true
     其它关联表:auth_action_rel_to_scene:scene_id:true
     其它关联表:auth_menu:scene_id:true
     其它关联表:auth_role:scene_id:true
+    其它关联表:config:scene_id:true
 ./main myGen -dbGroup=default -dbTable=auth_menu -removePrefixCommon= -removePrefixAlone=auth_ -cacheType=1 -cacheTime=1 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/菜单 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
     其它关联表:auth_role_rel_to_menu:menu_id:true
 ./main myGen -dbGroup=default -dbTable=auth_action -removePrefixCommon= -removePrefixAlone=auth_ -cacheType=1 -cacheTime=1 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=权限管理/操作 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
@@ -23,5 +25,5 @@
 ./main myGen -dbGroup=default -dbTable=app_pkg -removePrefixCommon= -removePrefixAlone=app_ -cacheType=0 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=系统管理/APP管理/安装包 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
 ./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -cacheType=2 -cacheTime=0 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=用户管理/用户 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=0 -isUpdate=1 -isDelete=0
     扩展表(一对一):users_privacy:user_id:true
+    继续查找其它关联表:true
 ./main myGen -dbGroup=default -dbTable=org -removePrefixCommon= -removePrefixAlone= -cacheType=2 -cacheTime=0 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=机构管理/机构 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-    其它关联表:org_config:org_id:true

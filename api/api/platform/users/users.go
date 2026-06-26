@@ -12,14 +12,14 @@ type UsersInfo struct {
 	Id             *uint       `json:"id,omitempty" dc:"ID"`
 	Label          *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	UserId         *uint       `json:"user_id,omitempty" dc:"用户ID"`
+	Account        *string     `json:"account,omitempty" dc:"账号"`
+	Phone          *string     `json:"phone,omitempty" dc:"手机"`
+	Email          *string     `json:"email,omitempty" dc:"邮箱"`
 	Nickname       *string     `json:"nickname,omitempty" dc:"昵称"`
 	Avatar         *string     `json:"avatar,omitempty" dc:"头像"`
 	Gender         *uint       `json:"gender,omitempty" dc:"性别：0未设置 1男 2女"`
 	Birthday       *string     `json:"birthday,omitempty" dc:"生日"`
 	Address        *string     `json:"address,omitempty" dc:"地址"`
-	Phone          *string     `json:"phone,omitempty" dc:"手机"`
-	Email          *string     `json:"email,omitempty" dc:"邮箱"`
-	Account        *string     `json:"account,omitempty" dc:"账号"`
 	WxOpenid       *string     `json:"wx_openid,omitempty" dc:"微信openid"`
 	WxUnionid      *string     `json:"wx_unionid,omitempty" dc:"微信unionid"`
 	IdCardNo       *string     `json:"id_card_no,omitempty" dc:"身份证号码"`
@@ -41,12 +41,12 @@ type UsersListFilter struct {
 	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	UserId         *uint       `json:"user_id,omitempty" v:"between:1,4294967295" dc:"用户ID"`
+	Account        string      `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	Phone          string      `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
+	Email          string      `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
 	Nickname       string      `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	Gender         *uint       `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	Birthday       *gtime.Time `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
-	Phone          string      `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
-	Email          string      `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	Account        string      `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	WxOpenid       string      `json:"wx_openid,omitempty" v:"max-length:128" dc:"微信openid"`
 	WxUnionid      string      `json:"wx_unionid,omitempty" v:"max-length:64" dc:"微信unionid"`
 	IdCardNo       string      `json:"id_card_no,omitempty" v:"max-length:30" dc:"身份证号码"`
@@ -92,14 +92,14 @@ type UsersInfoRes struct {
 
 /*--------修改 开始--------*/
 type UsersUpdateData struct {
+	// Account        *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
+	// Phone          *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
+	// Email          *string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
 	// Nickname       *string `json:"nickname,omitempty" v:"max-length:30" dc:"昵称"`
 	// Avatar         *string `json:"avatar,omitempty" v:"max-length:200|url" dc:"头像"`
 	// Gender         *uint   `json:"gender,omitempty" v:"in:0,1,2" dc:"性别：0未设置 1男 2女"`
 	// Birthday       *string `json:"birthday,omitempty" v:"date-format:Y-m-d" dc:"生日"`
 	// Address        *string `json:"address,omitempty" v:"max-length:120" dc:"地址"`
-	// Phone          *string `json:"phone,omitempty" v:"max-length:20|phone" dc:"手机"`
-	// Email          *string `json:"email,omitempty" v:"max-length:60|email" dc:"邮箱"`
-	// Account        *string `json:"account,omitempty" v:"max-length:20|regex:^[\\p{L}][\\p{L}\\p{N}_]{3,}$" dc:"账号"`
 	// WxOpenid       *string `json:"wx_openid,omitempty" v:"max-length:128" dc:"微信openid"`
 	// WxUnionid      *string `json:"wx_unionid,omitempty" v:"max-length:64" dc:"微信unionid"`
 	// Password       *string `json:"password,omitempty" v:"size:32" dc:"密码。md5保存"`

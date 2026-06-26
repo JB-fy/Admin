@@ -7,7 +7,6 @@ package users
 import (
 	"api/internal/cache"
 	daoIndex "api/internal/dao"
-	"api/internal/dao/users/allow"
 	"api/internal/dao/users/internal"
 	"context"
 	"database/sql"
@@ -22,10 +21,6 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
-
-func init() {
-	allow.RegisterUsers(&Users)
-}
 
 // usersDao is the data access object for the table users.
 // You can define custom methods on it to extend its functionality as needed.
@@ -191,7 +186,7 @@ func (daoThis *usersDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range insert {
 			switch k {
-			case daoThis.Columns().Birthday:
+			case daoThis.Columns().Account:
 				if gconv.String(v) == `` {
 					v = nil
 				}
@@ -206,7 +201,7 @@ func (daoThis *usersDao) ParseInsert(insert map[string]any, daoModel *daoIndex.D
 					v = nil
 				}
 				daoModel.SaveData[k] = v
-			case daoThis.Columns().Account:
+			case daoThis.Columns().Birthday:
 				if gconv.String(v) == `` {
 					v = nil
 				}
@@ -273,7 +268,7 @@ func (daoThis *usersDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 	return func(m *gdb.Model) *gdb.Model {
 		for k, v := range update {
 			switch k {
-			case daoThis.Columns().Birthday:
+			case daoThis.Columns().Account:
 				if gconv.String(v) == `` {
 					v = nil
 				}
@@ -288,7 +283,7 @@ func (daoThis *usersDao) ParseUpdate(update map[string]any, daoModel *daoIndex.D
 					v = nil
 				}
 				daoModel.SaveData[k] = v
-			case daoThis.Columns().Account:
+			case daoThis.Columns().Birthday:
 				if gconv.String(v) == `` {
 					v = nil
 				}
