@@ -12,7 +12,7 @@
  Target Server Version : 180003 (180003)
  File Encoding         : 65001
 
- Date: 26/06/2026 18:05:46
+ Date: 26/06/2026 21:34:14
 */
 
 
@@ -535,9 +535,6 @@ COMMENT ON TABLE "public"."auth_menu" IS '权限菜单';
 -- ----------------------------
 -- Records of auth_menu
 -- ----------------------------
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '主页', 'platform', 0, 1, 1, '0-1', '-主页', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, '权限管理', 'platform', 0, 0, 1, '0-2', '-权限管理', 'autoicon-ep-lock', '', '{"i18n": {"title": {"en": "Auth Manage", "zh-cn": "权限管理"}}}', 10);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, '场景', 'platform', 2, 1, 2, '0-2-3', '-权限管理-场景', 'autoicon-ep-flag', '/auth/scene', '{"i18n": {"title": {"en": "Scene", "zh-cn": "场景"}}}', 0);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 4, '操作', 'platform', 2, 1, 2, '0-2-4', '-权限管理-操作', 'autoicon-ep-coordinate', '/auth/action', '{"i18n": {"title": {"en": "Action", "zh-cn": "操作"}}}', 10);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 5, '菜单', 'platform', 2, 1, 2, '0-2-5', '-权限管理-菜单', 'autoicon-ep-menu', '/auth/menu', '{"i18n": {"title": {"en": "Menu", "zh-cn": "菜单"}}}', 30);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 6, '角色', 'platform', 2, 1, 2, '0-2-6', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
@@ -560,10 +557,13 @@ INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:0
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 23, '机构', 'platform', 22, 1, 2, '0-22-23', '-机构管理-机构', 'autoicon-ep-school', '/org/org', '{"i18n": {"title": {"en": "Org", "zh-cn": "机构"}}}', 100);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 101, '主页', 'org', 0, 1, 1, '0-101', '-主页', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 102, '权限管理', 'org', 0, 0, 1, '0-102', '-权限管理', 'autoicon-ep-menu', '', '{"i18n": {"title": {"en": "Auth Manage", "zh-cn": "权限管理"}}}', 10);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 103, '角色', 'org', 26, 1, 2, '0-102-103', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 104, '管理员', 'org', 26, 1, 2, '0-102-104', '-权限管理-管理员', 'autoicon-ep-avatar', '/admin/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "管理员"}}}', 100);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 103, '角色', 'org', 102, 1, 2, '0-102-103', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{"i18n": {"title": {"en": "Role", "zh-cn": "角色"}}}', 40);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 104, '管理员', 'org', 102, 1, 2, '0-102-104', '-权限管理-管理员', 'autoicon-ep-avatar', '/admin/admin', '{"i18n": {"title": {"en": "Admin", "zh-cn": "管理员"}}}', 100);
 INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 105, '配置中心', 'org', 0, 0, 1, '0-105', '-配置中心', 'autoicon-ep-setting', '', '{"i18n": {"title": {"en": "Config Center", "zh-cn": "配置中心"}}}', 20);
-INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 106, '应用配置', 'org', 29, 1, 2, '0-105-106', '-配置中心-应用配置', 'autoicon-ep-set-up', '/config/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 106, '应用配置', 'org', 105, 1, 2, '0-105-106', '-配置中心-应用配置', 'autoicon-ep-set-up', '/config/config/app', '{"i18n": {"title": {"en": "APP Config", "zh-cn": "应用配置"}}}', 200);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, '主页', 'platform', 0, 1, 1, '0-1', '-主页', 'autoicon-ep-home-filled', '/', '{"i18n": {"title": {"en": "Homepage", "zh-cn": "主页"}}}', 255);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 2, '权限管理', 'platform', 0, 0, 1, '0-2', '-权限管理', 'autoicon-ep-lock', '', '{"i18n": {"title": {"en": "Auth Manage", "zh-cn": "权限管理"}}}', 10);
+INSERT INTO "public"."auth_menu" VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 3, '场景', 'platform', 2, 1, 2, '0-2-3', '-权限管理-场景', 'autoicon-ep-flag', '/auth/scene', '{"i18n": {"title": {"en": "Scene", "zh-cn": "场景"}}}', 0);
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -1010,7 +1010,7 @@ COMMENT ON TABLE "public"."users_privacy" IS '用户隐私';
 -- ----------------------------
 ALTER SEQUENCE "public"."admin_admin_id_seq"
 OWNED BY "public"."admin"."admin_id";
-SELECT setval('"public"."admin_admin_id_seq"', 1, false);
+SELECT setval('"public"."admin_admin_id_seq"', 1, true);
 
 -- ----------------------------
 -- Alter sequences owned by
@@ -1031,7 +1031,7 @@ SELECT setval('"public"."auth_action_action_id_seq"', 1, false);
 -- ----------------------------
 ALTER SEQUENCE "public"."auth_menu_menu_id_seq"
 OWNED BY "public"."auth_menu"."menu_id";
-SELECT setval('"public"."auth_menu_menu_id_seq"', 28, true);
+SELECT setval('"public"."auth_menu_menu_id_seq"', 106, true);
 
 -- ----------------------------
 -- Alter sequences owned by
