@@ -8,6 +8,7 @@ import (
 	"api/internal/cache"
 	"api/internal/consts"
 	daoIndex "api/internal/dao"
+	daoAuth "api/internal/dao/auth"
 	daoConfig "api/internal/dao/config"
 	"api/internal/dao/org/allow"
 	"api/internal/dao/org/internal"
@@ -287,6 +288,7 @@ func (daoThis *orgDao) HookDelete(daoModel *daoIndex.DaoModel) gdb.HookHandler {
 			}
 
 			// 对并发有要求时，可使用以下代码解决情形1。并发说明请参考：api/internal/dao/auth/scene.go中HookDelete方法内的注释
+			daoAuth.Role.CtxDaoModel(ctx).Filter(daoAuth.Role.Columns().SceneId, consts.SCENE_ID_ORG).Filter(daoAuth.Role.Columns().RelId, daoModel.IdArr).SetIdArr().HookDelete().Delete()
 			daoConfig.Config.CtxDaoModel(ctx).Filter(daoConfig.Config.Columns().SceneId, consts.SCENE_ID_ORG).Filter(daoConfig.Config.Columns().RelId, daoModel.IdArr). /* SetIdArr(). */ HookDelete().Delete()
 			cache.DbData.DelInfoById(ctx, daoModel, gconv.SliceAny(daoModel.IdArr)...)
 			return
