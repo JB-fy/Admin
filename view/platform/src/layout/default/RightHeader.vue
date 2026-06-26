@@ -57,7 +57,7 @@ const menuTab = reactive({
     <el-row>
         <el-col :span="12">
             <el-space :size="20" style="height: 100%; margin-left: 20px">
-                <el-link :underline="false" @click="leftMenuFold">
+                <el-link underline="never" @click="leftMenuFold">
                     <autoicon-ep-fold :class="{ 'fold-icon': true, 'is-fold': settingStore.leftMenuFold }" />
                 </el-link>
                 <el-breadcrumb separator=">">
@@ -72,12 +72,12 @@ const menuTab = reactive({
         </el-col>
         <el-col :span="12" style="text-align: right">
             <el-space :size="20" style="height: 100%; margin-right: 20px">
-                <el-link :underline="false" @click="keepAliveStore.refreshMenuTab(route.meta.componentName)">
+                <el-link underline="never" @click="keepAliveStore.refreshMenuTab(route.meta.componentName)">
                     <autoicon-ep-refresh />
                 </el-link>
 
                 <el-dropdown>
-                    <el-link :underline="false">
+                    <el-link underline="never">
                         <autoicon-material-symbols-language />
                     </el-link>
                     <template #dropdown>
@@ -89,12 +89,12 @@ const menuTab = reactive({
                     </template>
                 </el-dropdown>
 
-                <el-link :underline="false">
+                <el-link underline="never">
                     <full-screen-icon />
                 </el-link>
 
                 <el-dropdown @visible-change="userDropdown.visibleChange">
-                    <el-link :underline="false">
+                    <el-link underline="never">
                         <el-avatar :src="adminStore.info.avatar" :size="40">
                             <autoicon-ep-avatar />
                         </el-avatar>
@@ -105,7 +105,7 @@ const menuTab = reactive({
                         <el-dropdown-menu>
                             <el-dropdown-item>
                                 <router-link to="/profile" :custom="true" v-slot="{ href, navigate, route }">
-                                    <el-link :href="href" @click="navigate" :underline="false">
+                                    <el-link :href="href" @click="navigate" underline="never">
                                         {{ languageStore.getMenuTitle(route?.meta?.menu) }}
                                     </el-link>
                                 </router-link>
@@ -155,7 +155,7 @@ const menuTab = reactive({
             </el-tabs>
 
             <el-dropdown class="menu-tabs-button" @visible-change="menuTab.buttonDropdown.visibleChange">
-                <el-link :underline="false">
+                <el-link underline="never">
                     <autoicon-ep-menu :class="{ 'dropdown-icon': true, 'is-dropdown': menuTab.buttonDropdown.status }" />
                 </el-link>
                 <template #dropdown>
