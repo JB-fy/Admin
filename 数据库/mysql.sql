@@ -3,19 +3,69 @@
 
  Source Server         : Mysql
  Source Server Type    : MySQL
- Source Server Version : 90600 (9.6.0)
+ Source Server Version : 90700 (9.7.0)
  Source Host           : 192.168.0.200:3306
  Source Schema         : admin_bak
 
  Target Server Type    : MySQL
- Target Server Version : 90600 (9.6.0)
+ Target Server Version : 90700 (9.7.0)
  File Encoding         : 65001
 
- Date: 08/04/2026 11:36:48
+ Date: 26/06/2026 18:05:36
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for admin
+-- ----------------------------
+DROP TABLE IF EXISTS `admin`;
+CREATE TABLE `admin`  (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
+  `admin_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
+  `scene_id` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL COMMENT '场景ID',
+  `rel_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联ID。根据scene_id对应不同表',
+  `admin_type` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '类型：0平台 10机构',
+  `account` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '账号',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '手机',
+  `email` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '邮箱',
+  `nickname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '昵称',
+  `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '头像',
+  `is_super` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '超管：0否 1是',
+  PRIMARY KEY (`admin_id`) USING BTREE,
+  UNIQUE INDEX `account`(`account` ASC, `admin_type` ASC) USING BTREE,
+  UNIQUE INDEX `phone`(`phone` ASC, `admin_type` ASC) USING BTREE,
+  UNIQUE INDEX `email`(`email` ASC, `admin_type` ASC) USING BTREE,
+  INDEX `scene_id`(`scene_id` ASC, `rel_id` ASC) USING BTREE,
+  INDEX `rel_id`(`rel_id` ASC) USING BTREE,
+  INDEX `admin_type`(`admin_type` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '管理员' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of admin
+-- ----------------------------
+INSERT INTO `admin` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, 'platform', 0, 0, 'admin', NULL, NULL, '超级管理员', '', 1);
+
+-- ----------------------------
+-- Table structure for admin_privacy
+-- ----------------------------
+DROP TABLE IF EXISTS `admin_privacy`;
+CREATE TABLE `admin_privacy`  (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `admin_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '管理员ID',
+  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '密码。md5保存',
+  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '密码盐',
+  PRIMARY KEY (`admin_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '管理员隐私' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of admin_privacy
+-- ----------------------------
+INSERT INTO `admin_privacy` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB');
 
 -- ----------------------------
 -- Table structure for app
@@ -30,7 +80,7 @@ CREATE TABLE `app`  (
   `app_config` json NULL COMMENT '配置。JSON格式，需要时设置',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`app_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = 'APP表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = 'APP' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app
@@ -57,7 +107,7 @@ CREATE TABLE `app_pkg`  (
   `is_force_prev` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '强制更新：0否 1是。注意：只根据前一个版本来设置，与更早之前的版本无关',
   PRIMARY KEY (`pkg_id`) USING BTREE,
   INDEX `app_id`(`app_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = 'APP安装包表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = 'APP安装包' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app_pkg
@@ -75,11 +125,15 @@ CREATE TABLE `auth_action`  (
   `action_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '名称',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`action_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限操作表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限操作' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_action
 -- ----------------------------
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'adminCreate', '权限管理-管理员-新增', '');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'adminDelete', '权限管理-管理员-删除', '');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'adminRead', '权限管理-管理员-查看', '');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'adminUpdate', '权限管理-管理员-编辑', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appCreate', '系统管理-APP-新增', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appDelete', '系统管理-APP-删除', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'appPkgCreate', '系统管理-APP管理-安装包-新增', '');
@@ -104,14 +158,28 @@ INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'authSceneDelete', '权限管理-场景-删除', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'authSceneRead', '权限管理-场景-查看', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'authSceneUpdate', '权限管理-场景-编辑', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgAdminCreate', '权限管理-机构管理员-新增', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgAdminDelete', '权限管理-机构管理员-删除', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgAdminRead', '权限管理-机构管理员-查看', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgAdminUpdate', '权限管理-机构管理员-编辑', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgCfgCommonRead', '应用配置-常用-查看', '只能读取机构配置表中的某些配置。对应前端页面：配置中心-应用配置-常用');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgCfgCommonSave', '应用配置-常用-保存', '只能保存机构配置表中的某些配置。对应前端页面：配置中心-应用配置-常用');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgCfgRead', '配置中心-查看', '可任意读取机构配置表');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgCfgSave', '配置中心-保存', '可任意保存机构配置表');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configCommonRead', '应用配置-常用-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-应用配置-常用');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configCommonSave', '应用配置-常用-保存', '只能保存配置表中的某些配置。对应前端页面：系统管理-应用配置-常用');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configEmailRead', '插件配置-邮箱-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configEmailSave', '插件配置-邮箱-保存', '只能保存配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configIdCardRead', '插件配置-实名认证-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-插件配置-实名认证');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configIdCardSave', '插件配置-实名认证-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-插件配置-实名认证');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configOneClickRead', '插件配置-一键登录-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-插件配置-一键登录');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configOneClickSave', '插件配置-一键登录-保存', '只能保存配置表中的某些配置。对应前端页面：系统管理-插件配置-一键登录');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configOrgRead', '应用配置-机构-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-应用配置-机构');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configOrgSave', '应用配置-机构-保存', '只能保存配置表中的某些配置。对应前端页面：系统管理-应用配置-机构');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configPlatformRead', '应用配置-平台-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-应用配置-平台');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configPlatformSave', '应用配置-平台-保存', '只能保存配置表中的某些配置。对应前端页面：系统管理-应用配置-平台');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configPushRead', '插件配置-推送-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-插件配置-推送');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configPushSave', '插件配置-推送-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-插件配置-推送');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configRead', '配置-查看', '可任意读取配置表');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configSave', '配置-保存', '可任意保存配置表');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configSmsRead', '插件配置-短信-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-插件配置-短信');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configSmsSave', '插件配置-短信-保存', '只能保存配置表中的某些配置。对应前端页面：系统管理-插件配置-短信');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configVodRead', '插件配置-视频点播-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-插件配置-视频点播');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configVodSave', '插件配置-视频点播-保存', '只能保存配置表中的某些配置。对应前端页面：系统管理-插件配置-视频点播');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configWxRead', '插件配置-微信-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-插件配置-微信');
+INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'configWxSave', '插件配置-微信-查看', '只能读取配置表中的某些配置。对应前端页面：系统管理-插件配置-微信');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgCreate', '机构管理-机构-新增', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgDelete', '机构管理-机构-删除', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'orgRead', '机构管理-机构-查看', '');
@@ -128,32 +196,6 @@ INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'paySceneRead', '系统管理-配置中心-支付管理-支付场景-查看', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'paySceneUpdate', '系统管理-配置中心-支付管理-支付场景-编辑', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'payUpdate', '系统管理-配置中心-支付管理-支付配置-编辑', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'platformAdminCreate', '权限管理-平台管理员-新增', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'platformAdminDelete', '权限管理-平台管理员-删除', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'platformAdminRead', '权限管理-平台管理员-查看', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'platformAdminUpdate', '权限管理-平台管理员-编辑', '');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgCommonRead', '应用配置-常用-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-应用配置-常用');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgCommonSave', '应用配置-常用-保存', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-应用配置-常用');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgEmailRead', '插件配置-邮箱-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgEmailSave', '插件配置-邮箱-保存', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-邮箱');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgIdCardRead', '插件配置-实名认证-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-实名认证');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgIdCardSave', '插件配置-实名认证-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-实名认证');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgOneClickRead', '插件配置-一键登录-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-一键登录');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgOneClickSave', '插件配置-一键登录-保存', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-一键登录');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgOrgRead', '应用配置-机构-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-应用配置-机构');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgOrgSave', '应用配置-机构-保存', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-应用配置-机构');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgPlatformRead', '应用配置-平台-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-应用配置-平台');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgPlatformSave', '应用配置-平台-保存', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-应用配置-平台');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgPushRead', '插件配置-推送-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-推送');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgPushSave', '插件配置-推送-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-推送');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgRead', '平台配置-查看', '可任意读取平台配置表');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgSave', '平台配置-保存', '可任意保存平台配置表');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgSmsRead', '插件配置-短信-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-短信');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgSmsSave', '插件配置-短信-保存', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-短信');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgVodRead', '插件配置-视频点播-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-视频点播');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgVodSave', '插件配置-视频点播-保存', '只能保存平台配置表中的某些配置。对应前端页面：系统管理-插件配置-视频点播');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgWxRead', '插件配置-微信-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-微信');
-INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'pltCfgWxSave', '插件配置-微信-查看', '只能读取平台配置表中的某些配置。对应前端页面：系统管理-插件配置-微信');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'uploadCreate', '系统管理-配置中心-上传配置-新增', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'uploadDelete', '系统管理-配置中心-上传配置-删除', '');
 INSERT INTO `auth_action` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'uploadRead', '系统管理-配置中心-上传配置-查看', '');
@@ -173,11 +215,19 @@ CREATE TABLE `auth_action_rel_to_scene`  (
   PRIMARY KEY (`action_id`, `scene_id`) USING BTREE,
   INDEX `action_id`(`action_id` ASC) USING BTREE,
   INDEX `scene_id`(`scene_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限操作，权限场景关联表（操作可用在哪些场景）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限操作，权限场景关联（操作可用在哪些场景）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_action_rel_to_scene
 -- ----------------------------
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'adminCreate', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'adminCreate', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'adminDelete', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'adminDelete', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'adminRead', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'adminRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'adminUpdate', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'adminUpdate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appCreate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appDelete', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'appPkgCreate', 'platform');
@@ -206,18 +256,32 @@ INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-0
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneDelete', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneRead', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'authSceneUpdate', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminCreate', 'org');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminCreate', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminDelete', 'org');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminDelete', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminRead', 'org');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminUpdate', 'org');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgAdminUpdate', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgCommonRead', 'org');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgCommonSave', 'org');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgRead', 'org');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCfgSave', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configCommonRead', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configCommonRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configCommonSave', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configCommonSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configEmailRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configEmailSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configIdCardRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configIdCardSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configOneClickRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configOneClickSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configOrgRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configOrgSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configPlatformRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configPlatformSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configPushRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configPushSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configRead', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configSave', 'org');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configSmsRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configSmsSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configVodRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configVodSave', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configWxRead', 'platform');
+INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'configWxSave', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgCreate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgDelete', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'orgRead', 'platform');
@@ -234,32 +298,6 @@ INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-0
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'paySceneRead', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'paySceneUpdate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'payUpdate', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'platformAdminCreate', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'platformAdminDelete', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'platformAdminRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'platformAdminUpdate', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgCommonRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgCommonSave', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgEmailRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgEmailSave', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgIdCardRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgIdCardSave', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgOneClickRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgOneClickSave', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgOrgRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgOrgSave', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgPlatformRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgPlatformSave', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgPushRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgPushSave', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgSave', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgSmsRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgSmsSave', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgVodRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgVodSave', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgWxRead', 'platform');
-INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'pltCfgWxSave', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'uploadCreate', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'uploadDelete', 'platform');
 INSERT INTO `auth_action_rel_to_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'uploadRead', 'platform');
@@ -290,7 +328,7 @@ CREATE TABLE `auth_menu`  (
   PRIMARY KEY (`menu_id`) USING BTREE,
   INDEX `pid`(`pid` ASC) USING BTREE,
   INDEX `scene_id`(`scene_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限菜单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_menu
@@ -301,7 +339,7 @@ INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0,
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 4, '操作', 'platform', 2, 1, 2, '0-2-4', '-权限管理-操作', 'autoicon-ep-coordinate', '/auth/action', '{\"i18n\": {\"title\": {\"en\": \"Action\", \"zh-cn\": \"操作\"}}}', 10);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 5, '菜单', 'platform', 2, 1, 2, '0-2-5', '-权限管理-菜单', 'autoicon-ep-menu', '/auth/menu', '{\"i18n\": {\"title\": {\"en\": \"Menu\", \"zh-cn\": \"菜单\"}}}', 30);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 6, '角色', 'platform', 2, 1, 2, '0-2-6', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{\"i18n\": {\"title\": {\"en\": \"Role\", \"zh-cn\": \"角色\"}}}', 40);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 7, '平台管理员', 'platform', 2, 1, 2, '0-2-7', '-权限管理-平台管理员', 'autoicon-ep-avatar', '/platform/admin', '{\"i18n\": {\"title\": {\"en\": \"Platform Admin\", \"zh-cn\": \"平台管理员\"}}}', 50);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 7, '管理员', 'platform', 2, 1, 2, '0-2-7', '-权限管理-管理员', 'autoicon-ep-avatar', '/admin/admin', '{\"i18n\": {\"title\": {\"en\": \"Admin\", \"zh-cn\": \"管理员\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 8, '系统管理', 'platform', 0, 0, 1, '0-8', '-系统管理', 'autoicon-ep-platform', '', '{\"i18n\": {\"title\": {\"en\": \"System Manage\", \"zh-cn\": \"系统管理\"}}}', 20);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 9, '配置中心', 'platform', 8, 0, 2, '0-8-9', '-系统管理-配置中心', 'autoicon-ep-setting', '', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 0);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 10, '上传配置', 'platform', 9, 1, 3, '0-8-9-10', '-系统管理-配置中心-上传配置', 'autoicon-ep-upload', '/upload/upload', '{\"i18n\": {\"title\": {\"en\": \"Upload\", \"zh-cn\": \"上传配置\"}}}', 100);
@@ -309,8 +347,8 @@ INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0,
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 12, '支付配置', 'platform', 11, 1, 4, '0-8-9-11-12', '-系统管理-配置中心-支付管理-支付配置', 'autoicon-ep-money', '/pay/pay', '{\"i18n\": {\"title\": {\"en\": \"Pay\", \"zh-cn\": \"支付配置\"}}}', 50);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 13, '支付场景', 'platform', 11, 1, 4, '0-8-9-11-13', '-系统管理-配置中心-支付管理-支付场景', 'autoicon-ep-guide', '/pay/scene', '{\"i18n\": {\"title\": {\"en\": \"Scene\", \"zh-cn\": \"支付场景\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 14, '支付通道', 'platform', 11, 1, 4, '0-8-9-11-14', '-系统管理-配置中心-支付管理-支付通道', 'autoicon-ep-connection', '/pay/channel', '{\"i18n\": {\"title\": {\"en\": \"Channel\", \"zh-cn\": \"支付通道\"}}}', 150);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 15, '插件配置', 'platform', 9, 1, 3, '0-8-9-15', '-系统管理-配置中心-插件配置', 'autoicon-ep-ticket', '/platform/config/plugin', '{\"i18n\": {\"title\": {\"en\": \"Plugin Config\", \"zh-cn\": \"插件配置\"}}}', 150);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '应用配置', 'platform', 9, 1, 3, '0-8-9-16', '-系统管理-配置中心-应用配置', 'autoicon-ep-set-up', '/platform/config/app', '{\"i18n\": {\"title\": {\"en\": \"APP Config\", \"zh-cn\": \"应用配置\"}}}', 200);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 15, '插件配置', 'platform', 9, 1, 3, '0-8-9-15', '-系统管理-配置中心-插件配置', 'autoicon-ep-ticket', '/config/config/plugin', '{\"i18n\": {\"title\": {\"en\": \"Plugin Config\", \"zh-cn\": \"插件配置\"}}}', 150);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 16, '应用配置', 'platform', 9, 1, 3, '0-8-9-16', '-系统管理-配置中心-应用配置', 'autoicon-ep-set-up', '/config/config/app', '{\"i18n\": {\"title\": {\"en\": \"APP Config\", \"zh-cn\": \"应用配置\"}}}', 200);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 17, 'APP管理', 'platform', 8, 0, 2, '0-8-17', '-系统管理-APP管理', 'autoicon-ep-suitcase-line', '', '{\"i18n\": {\"title\": {\"en\": \"APP Manage\", \"zh-cn\": \"APP管理\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 18, 'APP', 'platform', 17, 1, 3, '0-8-17-18', '-系统管理-APP管理-APP', 'autoicon-ep-apple', '/app/app', '{\"i18n\": {\"title\": {\"en\": \"App\", \"zh-cn\": \"APP\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 19, '安装包', 'platform', 17, 1, 3, '0-8-17-19', '-系统管理-APP管理-安装包', 'autoicon-ep-box', '/app/pkg', '{\"i18n\": {\"title\": {\"en\": \"Pkg\", \"zh-cn\": \"安装包\"}}}', 100);
@@ -318,13 +356,12 @@ INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0,
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 21, '用户', 'platform', 20, 1, 2, '0-20-21', '-用户管理-用户', 'autoicon-ep-user', '/users/users', '{\"i18n\": {\"title\": {\"en\": \"Users\", \"zh-cn\": \"用户\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 22, '机构管理', 'platform', 0, 0, 1, '0-22', '-机构管理', 'autoicon-ep-office-building', '', '{\"i18n\": {\"title\": {\"en\": \"Org Manage\", \"zh-cn\": \"机构管理\"}}}', 100);
 INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 23, '机构', 'platform', 22, 1, 2, '0-22-23', '-机构管理-机构', 'autoicon-ep-school', '/org/org', '{\"i18n\": {\"title\": {\"en\": \"Org\", \"zh-cn\": \"机构\"}}}', 100);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 24, '机构管理员', 'platform', 2, 1, 2, '0-2-24', '-权限管理-机构管理员', 'autoicon-ep-avatar', '/org/admin', '{\"i18n\": {\"title\": {\"en\": \"Org Admin\", \"zh-cn\": \"机构管理员\"}}}', 100);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 25, '主页', 'org', 0, 1, 1, '0-25', '-主页', 'autoicon-ep-home-filled', '/', '{\"i18n\": {\"title\": {\"en\": \"Homepage\", \"zh-cn\": \"主页\"}}}', 255);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 26, '权限管理', 'org', 0, 0, 1, '0-26', '-权限管理', 'autoicon-ep-menu', '', '{\"i18n\": {\"title\": {\"en\": \"Auth Manage\", \"zh-cn\": \"权限管理\"}}}', 10);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 27, '角色', 'org', 26, 1, 2, '0-26-27', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{\"i18n\": {\"title\": {\"en\": \"Role\", \"zh-cn\": \"角色\"}}}', 40);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 28, '管理员', 'org', 26, 1, 2, '0-26-28', '-权限管理-管理员', 'autoicon-ep-avatar', '/org/admin', '{\"i18n\": {\"title\": {\"en\": \"Admin\", \"zh-cn\": \"管理员\"}}}', 100);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 29, '配置中心', 'org', 0, 0, 1, '0-29', '-配置中心', 'autoicon-ep-setting', '', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 20);
-INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 30, '应用配置', 'org', 29, 1, 2, '0-29-30', '-配置中心-应用配置', 'autoicon-ep-set-up', '/org/config/app', '{\"i18n\": {\"title\": {\"en\": \"APP Config\", \"zh-cn\": \"应用配置\"}}}', 200);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 101, '主页', 'org', 0, 1, 1, '0-101', '-主页', 'autoicon-ep-home-filled', '/', '{\"i18n\": {\"title\": {\"en\": \"Homepage\", \"zh-cn\": \"主页\"}}}', 255);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 102, '权限管理', 'org', 0, 0, 1, '0-102', '-权限管理', 'autoicon-ep-menu', '', '{\"i18n\": {\"title\": {\"en\": \"Auth Manage\", \"zh-cn\": \"权限管理\"}}}', 10);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 103, '角色', 'org', 26, 1, 2, '0-102-103', '-权限管理-角色', 'autoicon-ep-view', '/auth/role', '{\"i18n\": {\"title\": {\"en\": \"Role\", \"zh-cn\": \"角色\"}}}', 40);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 104, '管理员', 'org', 26, 1, 2, '0-102-104', '-权限管理-管理员', 'autoicon-ep-avatar', '/admin/admin', '{\"i18n\": {\"title\": {\"en\": \"Admin\", \"zh-cn\": \"管理员\"}}}', 100);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 105, '配置中心', 'org', 0, 0, 1, '0-105', '-配置中心', 'autoicon-ep-setting', '', '{\"i18n\": {\"title\": {\"en\": \"Config Center\", \"zh-cn\": \"配置中心\"}}}', 20);
+INSERT INTO `auth_menu` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 106, '应用配置', 'org', 29, 1, 2, '0-105-106', '-配置中心-应用配置', 'autoicon-ep-set-up', '/config/config/app', '{\"i18n\": {\"title\": {\"en\": \"APP Config\", \"zh-cn\": \"应用配置\"}}}', 200);
 
 -- ----------------------------
 -- Table structure for auth_role
@@ -341,17 +378,17 @@ CREATE TABLE `auth_role`  (
   PRIMARY KEY (`role_id`) USING BTREE,
   INDEX `scene_id`(`scene_id` ASC) USING BTREE,
   INDEX `rel_id`(`rel_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限角色表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限角色' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_role
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for auth_role_rel_of_org_admin
+-- Table structure for auth_role_rel_of_admin
 -- ----------------------------
-DROP TABLE IF EXISTS `auth_role_rel_of_org_admin`;
-CREATE TABLE `auth_role_rel_of_org_admin`  (
+DROP TABLE IF EXISTS `auth_role_rel_of_admin`;
+CREATE TABLE `auth_role_rel_of_admin`  (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `admin_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '管理员ID',
@@ -359,28 +396,10 @@ CREATE TABLE `auth_role_rel_of_org_admin`  (
   PRIMARY KEY (`admin_id`, `role_id`) USING BTREE,
   INDEX `admin_id`(`admin_id` ASC) USING BTREE,
   INDEX `role_id`(`role_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '机构管理员，权限角色关联表（机构管理员包含哪些角色）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '管理员，权限角色关联（管理员包含哪些角色）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of auth_role_rel_of_org_admin
--- ----------------------------
-
--- ----------------------------
--- Table structure for auth_role_rel_of_platform_admin
--- ----------------------------
-DROP TABLE IF EXISTS `auth_role_rel_of_platform_admin`;
-CREATE TABLE `auth_role_rel_of_platform_admin`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `admin_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '管理员ID',
-  `role_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '角色ID',
-  PRIMARY KEY (`admin_id`, `role_id`) USING BTREE,
-  INDEX `admin_id`(`admin_id` ASC) USING BTREE,
-  INDEX `role_id`(`role_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '平台管理员，权限角色关联表（平台管理员包含哪些角色）' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of auth_role_rel_of_platform_admin
+-- Records of auth_role_rel_of_admin
 -- ----------------------------
 
 -- ----------------------------
@@ -395,7 +414,7 @@ CREATE TABLE `auth_role_rel_to_action`  (
   PRIMARY KEY (`role_id`, `action_id`) USING BTREE,
   INDEX `role_id`(`role_id` ASC) USING BTREE,
   INDEX `action_id`(`action_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限角色，权限操作关联表（角色包含哪些操作）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限角色，权限操作关联（角色包含哪些操作）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_role_rel_to_action
@@ -413,7 +432,7 @@ CREATE TABLE `auth_role_rel_to_menu`  (
   PRIMARY KEY (`role_id`, `menu_id`) USING BTREE,
   INDEX `role_id`(`role_id` ASC) USING BTREE,
   INDEX `menu_id`(`menu_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限角色，权限菜单关联表（角色包含哪些菜单）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限角色，权限菜单关联（角色包含哪些菜单）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_role_rel_to_menu
@@ -432,7 +451,7 @@ CREATE TABLE `auth_scene`  (
   `scene_config` json NULL COMMENT '配置。JSON格式，根据场景设置',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`scene_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限场景表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '权限场景' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_scene
@@ -440,6 +459,29 @@ CREATE TABLE `auth_scene`  (
 INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'app', 'APP', '{\"token_config\": {\"is_ip\": 0, \"is_unique\": 0, \"sign_type\": \"HS256\", \"token_type\": 0, \"active_time\": 0, \"expire_time\": 604800, \"private_key\": \"任意字符串\"}}', '');
 INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'org', '机构后台', '{\"token_config\": {\"is_ip\": 1, \"is_unique\": 1, \"sign_type\": \"RS256\", \"public_key\": \"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0nT4zSS2O+2yib+gdBm0\\nW0kU2AL6felZFp5U6B/ySeJnM8UE+fZwytgPuND5Z07khxtHR/YYH7huPGZ/fAgh\\nZHmNE5K5phMI5eETwPjk3RDeyYAyOosrKr3SAjjEQxJBISvBEillH4bKjaa4WF5/\\n+nGcp7f4e49caW/CfwuC2ZVrvySCPf1lR8o7/4Zz/hWUwgsEd/crR7ojgt+rbPeE\\n7+Cz11sZUZaMipTqsU3RVhbwtMyLdkos6KsYW7TZEK0VYt94/1XJQBUEjtCdDpS7\\n0XNF8ENpQPtuQdYE6/y+Jku8T9pqQQq/SOL6uPgsn6zJQ41u/l2AhG0i5GxYD86C\\n5wIDAQAB\\n-----END PUBLIC KEY-----\", \"token_type\": 0, \"active_time\": 3600, \"expire_time\": 14400, \"private_key\": \"-----BEGIN PRIVATE KEY-----\\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDSdPjNJLY77bKJ\\nv6B0GbRbSRTYAvp96VkWnlToH/JJ4mczxQT59nDK2A+40PlnTuSHG0dH9hgfuG48\\nZn98CCFkeY0TkrmmEwjl4RPA+OTdEN7JgDI6iysqvdICOMRDEkEhK8ESKWUfhsqN\\nprhYXn/6cZynt/h7j1xpb8J/C4LZlWu/JII9/WVHyjv/hnP+FZTCCwR39ytHuiOC\\n36ts94Tv4LPXWxlRloyKlOqxTdFWFvC0zIt2SizoqxhbtNkQrRVi33j/VclAFQSO\\n0J0OlLvRc0XwQ2lA+25B1gTr/L4mS7xP2mpBCr9I4vq4+CyfrMlDjW7+XYCEbSLk\\nbFgPzoLnAgMBAAECggEAGolMO9WmsrzAd9T1Pt5k2uPGoIwTmJ+9L3hsXU515vII\\nsELl4zy7MSB4LwYOhIOylgSPAthZZ1qCb9Q+u91slHYtHywvg2zAAPhV3M2lUeiI\\nJuEmtDILEdsYaVZODOT22F9je05D5WtCDAVbFi1oNqRvq8grKS1E6jiAzjMd3yBY\\n5AgUUP8sbS7BDdPus2t3mCAXqdtFkxn8wo/4WdMV6vG4p9p+a8dIoiRYHNBIw4sU\\nCYPiE7q52tVqVl10ShrJQlvoyDvmJam4inbl8ZWtbQLUsQxfzoEUfuuC0mYc2pES\\n1kp1pWfJNc5JtAXXZ/k9F4jLvjMp9KJximOG+E5tmQKBgQD5RwG8xu7s2JcocogD\\nuJjWfLz/4ab7Zs2NReCX6jmb522d1TqyiU9ilc0XBz8gDNeMwnOfWIyGR3Vtuub+\\nU56Y9/q+IMZ0ewdrUTR2NADZdqLH1ViVGacnnmJXJ+30Z8eUO0GCU7++DSQ1u8xh\\ng0mmrj6++xHsYJM3bCxBstNzGQKBgQDYIfOUIK+JKvYZ5idUrFWZnnVSdLu8IJHi\\nA0osaMB9VNtAdqrPVIA3L9AbIR1/la3gb3ILP0hIM7glt4i78WTwVrh0qkaz/8dw\\nX3EL5u9OAMecVFn4+gZon4RqbzjdtHso87v2GrIZ88eVOWjXRq93gWAe17G+noyS\\n44PgB7Zl/wKBgC3bOh6YGevIDEaMiyjkFHmgiMQppqYoyzdp218W33ImqKuYRiwB\\nxnDETe4mjx4+PojOXKa7i15IVvnQoB25FDvfomjHbrqOx1aeoZ/9AQsAIAHS5XDI\\nP0+yezS9S7DiRnymSe7HqUY09KxN19M4a5wWAcTwOuPZADv50kpjszJBAoGAS0io\\nO7SW8ESSrLrKgGf2+SeE3k/jBMijiAJ1V7q1MfLY3D95h/Z7Ir340zpZuBM/Gao4\\nI0rLtrqtLhYb/rs62aybW6fkMNarda0JB4hNWvJSlVWccWlFyjOmQBy1xiQTslQT\\n6Mmrt/Z+UrBIoJPyksHx5UxkkW1QsemmCecl1akCgYAys4PNRhdToxS5WDF7Tddg\\n8ghhobuwUCP2pxNYakX9HeHZsAjwwQhx6vGJqZPs5hh8HRinGWSvKyVXaUGVN+5b\\nFjMz/rhO9vTCZJS3aJSXxr0PFTbpP/AZSXwCBxjp+uEFTD8GJRX7/6+wlTk7+uTj\\nl7klp31noFtzz+onGSmqvA==\\n-----END PRIVATE KEY-----\"}}', '');
 INSERT INTO `auth_scene` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 'platform', '平台后台', '{\"token_config\": {\"is_ip\": 1, \"is_unique\": 1, \"sign_type\": \"ES256\", \"public_key\": \"-----BEGIN PUBLIC KEY-----\\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvqHRsI0W+SABR4hYOXrbXR4EiC42\\nhF5PnYenbWprk1MQIzT2+V4rRJc7nyXQ/ntRK7B/rN9mpc3Vot02bwp02w==\\n-----END PUBLIC KEY-----\", \"token_type\": 0, \"active_time\": 3600, \"expire_time\": 604800, \"private_key\": \"-----BEGIN EC PRIVATE KEY-----\\nMHcCAQEEIKvYPRtCqy9MI/yhx4L4+Sog/5lntHbuwxPg/JI0qW6LoAoGCCqGSM49\\nAwEHoUQDQgAEvqHRsI0W+SABR4hYOXrbXR4EiC42hF5PnYenbWprk1MQIzT2+V4r\\nRJc7nyXQ/ntRK7B/rN9mpc3Vot02bwp02w==\\n-----END EC PRIVATE KEY-----\"}}', '');
+
+-- ----------------------------
+-- Table structure for config
+-- ----------------------------
+DROP TABLE IF EXISTS `config`;
+CREATE TABLE `config`  (
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `scene_id` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL COMMENT '场景ID',
+  `rel_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联ID。根据scene_id对应不同表',
+  `config_key` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '配置键',
+  `config_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL COMMENT '配置值',
+  PRIMARY KEY (`scene_id`, `rel_id`, `config_key`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '配置' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of config
+-- ----------------------------
+INSERT INTO `config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'platform', 0, 'email_code', '{\"subject\":\"您的验证码\",\"template\":\"验证码：{code}\\n说明：\\n1. 验证码在发送后的5分钟内有效。如果验证码过期，请重新请求一个新的验证码。\\n2. 出于安全考虑，请不要将此验证码分享给任何人。\"}');
+INSERT INTO `config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'platform', 0, 'email_of_common', '{\"from_email\":\"xxxxxxxx@qq.com\",\"password\":\"xxxxxxxx\",\"smtp_host\":\"smtp.qq.com\",\"smtp_port\":\"465\"}');
+INSERT INTO `config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'platform', 0, 'email_type', 'email_of_common');
+INSERT INTO `config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'platform', 0, 'id_card_of_aliyun', '{\"appcode\":\"appcode\",\"url\":\"http://idcard.market.alicloudapi.com/lianzhuo/idcard\"}');
+INSERT INTO `config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'platform', 0, 'id_card_type', 'id_card_of_aliyun');
 
 -- ----------------------------
 -- Table structure for org
@@ -450,73 +492,13 @@ CREATE TABLE `org`  (
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
   `org_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '机构ID',
-  `org_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '机构名称',
+  `org_name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '名称',
+  `org_type` tinyint UNSIGNED NOT NULL DEFAULT 10 COMMENT '类型：10默认',
   PRIMARY KEY (`org_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '机构表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '机构' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of org
--- ----------------------------
-
--- ----------------------------
--- Table structure for org_admin
--- ----------------------------
-DROP TABLE IF EXISTS `org_admin`;
-CREATE TABLE `org_admin`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
-  `admin_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
-  `org_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '机构ID',
-  `is_super` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '超管：0否 1是',
-  `nickname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '昵称',
-  `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '头像',
-  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '手机',
-  `email` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '邮箱',
-  `account` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '账号',
-  PRIMARY KEY (`admin_id`) USING BTREE,
-  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
-  UNIQUE INDEX `email`(`email` ASC) USING BTREE,
-  UNIQUE INDEX `account`(`account` ASC) USING BTREE,
-  INDEX `org_id`(`org_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '机构管理员表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of org_admin
--- ----------------------------
-
--- ----------------------------
--- Table structure for org_admin_privacy
--- ----------------------------
-DROP TABLE IF EXISTS `org_admin_privacy`;
-CREATE TABLE `org_admin_privacy`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `admin_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '管理员ID',
-  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '密码。md5保存',
-  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '密码盐',
-  PRIMARY KEY (`admin_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '机构管理员隐私表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of org_admin_privacy
--- ----------------------------
-
--- ----------------------------
--- Table structure for org_config
--- ----------------------------
-DROP TABLE IF EXISTS `org_config`;
-CREATE TABLE `org_config`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `org_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '机构ID',
-  `config_key` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '配置键',
-  `config_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL COMMENT '配置值',
-  PRIMARY KEY (`org_id`, `config_key`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '机构配置表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of org_config
 -- ----------------------------
 
 -- ----------------------------
@@ -535,7 +517,7 @@ CREATE TABLE `pay`  (
   `balance` decimal(18, 6) UNSIGNED NOT NULL DEFAULT 0.000000 COMMENT '余额',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`pay_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '支付表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '支付' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay
@@ -560,7 +542,7 @@ CREATE TABLE `pay_channel`  (
   PRIMARY KEY (`channel_id`) USING BTREE,
   INDEX `scene_id`(`scene_id` ASC) USING BTREE,
   INDEX `pay_id`(`pay_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '支付通道表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '支付通道' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay_channel
@@ -593,7 +575,7 @@ CREATE TABLE `pay_order`  (
   INDEX `channel_id`(`channel_id` ASC) USING BTREE,
   INDEX `rel_id`(`rel_id` ASC) USING BTREE,
   INDEX `third_order_no`(`third_order_no` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '支付订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '支付订单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay_order
@@ -611,82 +593,17 @@ CREATE TABLE `pay_scene`  (
   `scene_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '名称',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`scene_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '支付场景表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '支付场景' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of pay_scene
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for platform_admin
+-- Table structure for server
 -- ----------------------------
-DROP TABLE IF EXISTS `platform_admin`;
-CREATE TABLE `platform_admin`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
-  `admin_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID',
-  `is_super` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '超管：0否 1是',
-  `nickname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '昵称',
-  `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '头像',
-  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '手机',
-  `email` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '邮箱',
-  `account` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '账号',
-  PRIMARY KEY (`admin_id`) USING BTREE,
-  UNIQUE INDEX `phone`(`phone` ASC) USING BTREE,
-  UNIQUE INDEX `email`(`email` ASC) USING BTREE,
-  UNIQUE INDEX `account`(`account` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '平台管理员表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of platform_admin
--- ----------------------------
-INSERT INTO `platform_admin` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 0, 1, 1, '超级管理员', '', NULL, NULL, 'admin');
-
--- ----------------------------
--- Table structure for platform_admin_privacy
--- ----------------------------
-DROP TABLE IF EXISTS `platform_admin_privacy`;
-CREATE TABLE `platform_admin_privacy`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `admin_id` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '管理员ID',
-  `password` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '密码。md5保存',
-  `salt` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '密码盐',
-  PRIMARY KEY (`admin_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '平台管理员隐私表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of platform_admin_privacy
--- ----------------------------
-INSERT INTO `platform_admin_privacy` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 1, '0930b03ed8d217f1c5756b1a2e898e50', 'u74XLJAB');
-
--- ----------------------------
--- Table structure for platform_config
--- ----------------------------
-DROP TABLE IF EXISTS `platform_config`;
-CREATE TABLE `platform_config`  (
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `config_key` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '配置键',
-  `config_value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL COMMENT '配置值',
-  PRIMARY KEY (`config_key`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '平台配置表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of platform_config
--- ----------------------------
-INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'email_code', '{\"subject\":\"您的验证码\",\"template\":\"验证码：{code}\\n说明：\\n1. 验证码在发送后的5分钟内有效。如果验证码过期，请重新请求一个新的验证码。\\n2. 出于安全考虑，请不要将此验证码分享给任何人。\"}');
-INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'email_of_common', '{\"from_email\":\"xxxxxxxx@qq.com\",\"password\":\"xxxxxxxx\",\"smtp_host\":\"smtp.qq.com\",\"smtp_port\":\"465\"}');
-INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'email_type', 'email_of_common');
-INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'id_card_of_aliyun', '{\"appcode\":\"appcode\",\"url\":\"http://idcard.market.alicloudapi.com/lianzhuo/idcard\"}');
-INSERT INTO `platform_config` VALUES ('2024-01-01 00:00:00', '2024-01-01 00:00:00', 'id_card_type', 'id_card_of_aliyun');
-
--- ----------------------------
--- Table structure for platform_server
--- ----------------------------
-DROP TABLE IF EXISTS `platform_server`;
-CREATE TABLE `platform_server`  (
+DROP TABLE IF EXISTS `server`;
+CREATE TABLE `server`  (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
@@ -695,10 +612,10 @@ CREATE TABLE `platform_server`  (
   `local_ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '内网IP',
   PRIMARY KEY (`server_id`) USING BTREE,
   UNIQUE INDEX `network_ip`(`network_ip` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '平台服务器表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '服务器' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of platform_server
+-- Records of server
 -- ----------------------------
 
 -- ----------------------------
@@ -714,7 +631,7 @@ CREATE TABLE `upload`  (
   `is_default` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '默认：0否 1是',
   `remark` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`upload_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '上传表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_as_cs COMMENT = '上传' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of upload
@@ -730,14 +647,14 @@ CREATE TABLE `users`  (
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `is_stop` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '停用：0否 1是',
   `user_id` int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `account` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '账号',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '手机',
+  `email` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '邮箱',
   `nickname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '昵称',
   `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '头像',
   `gender` tinyint UNSIGNED NOT NULL DEFAULT 0 COMMENT '性别：0未设置 1男 2女',
   `birthday` date NULL DEFAULT NULL COMMENT '生日',
   `address` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '地址',
-  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '手机',
-  `email` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '邮箱',
-  `account` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NULL DEFAULT NULL COMMENT '账号',
   `wx_openid` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信openid',
   `wx_unionid` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '微信unionid',
   PRIMARY KEY (`user_id`) USING BTREE,
@@ -746,7 +663,7 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `account`(`account` ASC) USING BTREE,
   UNIQUE INDEX `wx_openid`(`wx_openid` ASC) USING BTREE,
   UNIQUE INDEX `wx_unionid`(`wx_unionid` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表（postgresql中user是关键字，使用需要加双引号。程序中考虑与mysql通用，故命名成users）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户（postgresql中user是关键字，使用需要加双引号。程序中考虑与mysql通用，故命名成users）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
@@ -768,7 +685,7 @@ CREATE TABLE `users_privacy`  (
   `id_card_birthday` date NULL DEFAULT NULL COMMENT '身份证生日',
   `id_card_address` varchar(120) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '身份证地址',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户隐私表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户隐私' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users_privacy
