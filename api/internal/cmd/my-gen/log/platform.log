@@ -24,5 +24,4 @@
 ./main myGen -dbGroup=default -dbTable=users -removePrefixCommon= -removePrefixAlone= -cacheType=2 -cacheTime=0 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=用户管理/用户 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=0 -isUpdate=1 -isDelete=0
     扩展表(一对一):users_privacy:user_id:true
 ./main myGen -dbGroup=default -dbTable=org -removePrefixCommon= -removePrefixAlone= -cacheType=2 -cacheTime=0 -isApi=1 -isResetLogic=1 -isAuthAction=1 -commonName=机构管理/机构 -loginRelId= -loginIdStr="" -filterIsStop=0 -isView=1 -sceneId=platform -isList=1 -isCount=1 -isInfo=1 -isCreate=1 -isUpdate=1 -isDelete=1
-    其它关联表:org_admin:org_id:true
     其它关联表:org_config:org_id:true

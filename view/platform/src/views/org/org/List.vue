@@ -75,6 +75,19 @@ const table = reactive({
             },
         },
         {
+            dataKey: 'org_type',
+            title: t('org.org.name.org_type'),
+            key: 'org_type',
+            align: 'center',
+            width: 100,
+            cellRenderer: (props: any): any => {
+                let tagType = tm('config.const.tagType') as string[]
+                let statusList = tm('org.org.status.org_type') as { value: any; label: string }[]
+                let statusIndex = statusList.findIndex((item) => item.value == props.rowData.org_type)
+                return <el-tag type={tagType[statusIndex % tagType.length]}>{statusList[statusIndex]?.label}</el-tag>
+            },
+        },
+        {
             dataKey: 'is_stop',
             title: t('org.org.name.is_stop'),
             key: 'is_stop',

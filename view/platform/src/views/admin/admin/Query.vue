@@ -31,7 +31,12 @@ const queryForm = reactive({
             <el-input v-model="queryCommon.data.label" :placeholder="t('common.name.label')" maxlength="30" :clearable="true" />
         </el-form-item>
         <el-form-item prop="scene_id">
-            <my-select v-model="queryCommon.data.scene_id" :placeholder="t('admin.admin.name.scene_id')" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }" @change="() => ((queryCommon.data.rel_id = undefined), (queryCommon.data.role_id = undefined))" />
+            <my-select
+                v-model="queryCommon.data.scene_id"
+                :placeholder="t('admin.admin.name.scene_id')"
+                :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/scene/list' }"
+                @change="() => ((queryCommon.data.rel_id = undefined), (queryCommon.data.role_id = undefined))"
+            />
         </el-form-item>
         <el-form-item prop="rel_id">
             <!-- 可选择组件<my-select>或<my-cascader>使用，但需手动确认关联表，并修改接口路径 -->

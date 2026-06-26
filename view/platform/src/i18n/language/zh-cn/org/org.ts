@@ -1,8 +1,11 @@
 export default {
     name: {
-        org_name: '机构名称',
+        org_name: '名称',
+        org_type: '类型',
         is_stop: '停用',
     },
-    status: {},
+    status: {
+        org_type: [{ value: 10, label: '默认' }],
+    },
     tip: {},
 }

@@ -8,6 +8,7 @@ const saveForm = reactive({
     ref: null as any,
     loading: false,
     data: {
+        org_type: 10,
         ...saveCommon.data,
     } as { [propName: string]: any },
     rules: {
@@ -15,6 +16,7 @@ const saveForm = reactive({
             { required: true, message: t('validation.required') },
             { type: 'string', trigger: 'blur', max: 60, message: t('validation.max.string', { max: 60 }) },
         ],
+        org_type: [{ type: 'enum', trigger: 'change', enum: (tm('org.org.status.org_type') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
         is_stop: [{ type: 'enum', trigger: 'change', enum: (tm('common.status.whether') as { value: any; label: string }[]).map((item) => item.value), message: t('validation.select') }],
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     submit: () => {
@@ -64,6 +66,13 @@ const saveDrawer = reactive({
             <el-form :ref="(el: any) => saveForm.ref = el" :model="saveForm.data" :rules="saveForm.rules" label-width="auto" :status-icon="true" :scroll-to-error="true">
                 <el-form-item :label="t('org.org.name.org_name')" prop="org_name">
                     <el-input v-model="saveForm.data.org_name" :placeholder="t('org.org.name.org_name')" maxlength="60" :show-word-limit="true" :clearable="true" />
+                </el-form-item>
+                <el-form-item :label="t('org.org.name.org_type')" prop="org_type">
+                    <el-radio-group v-model="saveForm.data.org_type">
+                        <el-radio v-for="(item, index) in (tm('org.org.status.org_type') as any)" :key="index" :value="item.value">
+                            {{ item.label }}
+                        </el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item :label="t('org.org.name.is_stop')" prop="is_stop">
                     <el-switch

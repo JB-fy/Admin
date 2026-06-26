@@ -20,13 +20,25 @@ const table = reactive({
                 return [
                     //阻止冒泡
                     <div class="id-checkbox" onClick={(event: any) => event.stopPropagation()}>
-                        <el-checkbox model-value={table.data.length ? allChecked : false} indeterminate={someChecked && !allChecked} onChange={(val: boolean) => table.data.forEach((item: any) => (item.scene_id == `platform` && item.is_super == 1) || (item.scene_id == `org` && item.is_super == 0) || (item.checked = val))} />
+                        <el-checkbox
+                            model-value={table.data.length ? allChecked : false}
+                            indeterminate={someChecked && !allChecked}
+                            onChange={(val: boolean) => table.data.forEach((item: any) => (item.scene_id == `platform` && item.is_super == 1) || (item.scene_id == `org` && item.is_super == 0) || (item.checked = val))}
+                        />
                     </div>,
                     <div>{t('common.name.id')}</div>,
                 ]
             },
             cellRenderer: (props: any): any => {
-                return [<el-checkbox class="id-checkbox" model-value={props.rowData.checked ? true : false} disabled={(props.rowData.scene_id == `platform` && props.rowData.is_super == 1) || (props.rowData.scene_id == `org` && props.rowData.is_super == 0)} onChange={(val: boolean) => (props.rowData.checked = val)} />, <div>{props.rowData.id}</div>]
+                return [
+                    <el-checkbox
+                        class="id-checkbox"
+                        model-value={props.rowData.checked ? true : false}
+                        disabled={(props.rowData.scene_id == `platform` && props.rowData.is_super == 1) || (props.rowData.scene_id == `org` && props.rowData.is_super == 0)}
+                        onChange={(val: boolean) => (props.rowData.checked = val)}
+                    />,
+                    <div>{props.rowData.id}</div>,
+                ]
             },
         },
         {

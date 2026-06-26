@@ -169,10 +169,7 @@ const saveDrawer = reactive({
                 <el-form-item :label="t('admin.admin.name.role_id_arr')" prop="role_id_arr">
                     <!-- 建议：大表用<my-select>（滚动分页），小表用<my-transfer>（无分页） -->
                     <!-- <my-select v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { rel_id: 0, scene_id: saveForm.data.scene_id } } }" :multiple="true" /> -->
-                    <my-transfer
-                        v-model="saveForm.data.role_id_arr"
-                        :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { rel_id: 0, scene_id: saveForm.data.scene_id } } }"
-                    />
+                    <my-transfer v-model="saveForm.data.role_id_arr" :api="{ code: t('config.VITE_HTTP_API_PREFIX') + '/auth/role/list', param: { filter: { rel_id: 0, scene_id: saveForm.data.scene_id } } }" />
                 </el-form-item>
                 <el-form-item :label="t('admin.admin.name.is_stop')" prop="is_stop">
                     <el-switch

@@ -12,7 +12,8 @@ type OrgInfo struct {
 	Id        *uint       `json:"id,omitempty" dc:"ID"`
 	Label     *string     `json:"label,omitempty" dc:"标签。常用于前端组件"`
 	OrgId     *uint       `json:"org_id,omitempty" dc:"机构ID"`
-	OrgName   *string     `json:"org_name,omitempty" dc:"机构名称"`
+	OrgName   *string     `json:"org_name,omitempty" dc:"名称"`
+	OrgType   *uint       `json:"org_type,omitempty" dc:"类型：10默认"`
 	IsStop    *uint       `json:"is_stop,omitempty" dc:"停用：0否 1是"`
 	UpdatedAt *gtime.Time `json:"updated_at,omitempty" dc:"更新时间"`
 	CreatedAt *gtime.Time `json:"created_at,omitempty" dc:"创建时间"`
@@ -27,6 +28,7 @@ type OrgListFilter struct {
 	TimeRangeStart *gtime.Time `json:"time_range_start,omitempty" v:"date-format:Y-m-d H:i:s" dc:"开始时间：YYYY-mm-dd HH:ii:ss"`
 	TimeRangeEnd   *gtime.Time `json:"time_range_end,omitempty" v:"date-format:Y-m-d H:i:s|after-equal:TimeRangeStart" dc:"结束时间：YYYY-mm-dd HH:ii:ss"`
 	OrgId          *uint       `json:"org_id,omitempty" v:"between:1,4294967295" dc:"机构ID"`
+	OrgType        *uint       `json:"org_type,omitempty" v:"in:10" dc:"类型：10默认"`
 	IsStop         *uint       `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
@@ -66,7 +68,8 @@ type OrgInfoRes struct {
 
 /*--------新增 开始--------*/
 type OrgCreateData struct {
-	OrgName *string `json:"org_name,omitempty" v:"required|max-length:60" dc:"机构名称"`
+	OrgName *string `json:"org_name,omitempty" v:"required|max-length:60" dc:"名称"`
+	OrgType *uint   `json:"org_type,omitempty" v:"in:10" dc:"类型：10默认"`
 	IsStop  *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
@@ -80,7 +83,8 @@ type OrgCreateReq struct {
 
 /*--------修改 开始--------*/
 type OrgUpdateData struct {
-	OrgName *string `json:"org_name,omitempty" v:"max-length:60" dc:"机构名称"`
+	OrgName *string `json:"org_name,omitempty" v:"max-length:60" dc:"名称"`
+	OrgType *uint   `json:"org_type,omitempty" v:"in:10" dc:"类型：10默认"`
 	IsStop  *uint   `json:"is_stop,omitempty" v:"in:0,1" dc:"停用：0否 1是"`
 }
 
