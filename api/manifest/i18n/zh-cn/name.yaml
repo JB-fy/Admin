@@ -1,7 +1,6 @@
 test: "测试" # 第一个字段不能带.号，否则整个文件配置都不会被读取到
 
 name.pid: "父级"
-
 name.auth.scene: "场景"
 name.admin.admin: "管理员"
 name.auth.actionRelToScene: "操作"
