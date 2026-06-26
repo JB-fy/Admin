@@ -6,7 +6,6 @@ package config
 
 import (
 	"api/internal/cache"
-	"api/internal/consts"
 	daoIndex "api/internal/dao"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/dao/config/internal"
@@ -388,13 +387,13 @@ func (daoThis *configDao) ParseJoin(joinTable string, daoModel *daoIndex.DaoMode
 // Add your custom methods and functionality below.
 
 // 获取单个配置
-func (daoThis *configDao) Get(ctx context.Context, sceneId consts.SceneId, relId uint, configKey string) (configValue *gvar.Var) {
+func (daoThis *configDao) Get(ctx context.Context, sceneId string, relId uint, configKey string) (configValue *gvar.Var) {
 	configValue, _ = cache.DbData.GetOrSetById(ctx, daoThis.CtxDaoModel(ctx), fmt.Sprintf(`%s|%d|%s`, sceneId, relId, configKey), 0, daoThis.Columns().ConfigValue)
 	return
 }
 
 // 获取配置
-func (daoThis *configDao) GetPluck(ctx context.Context, sceneId consts.SceneId, relId uint, configKeyArr ...string) (config gdb.Record, err error) {
+func (daoThis *configDao) GetPluck(ctx context.Context, sceneId string, relId uint, configKeyArr ...string) (config gdb.Record, err error) {
 	idArr := make([]any, len(configKeyArr))
 	for index := range configKeyArr {
 		idArr[index] = fmt.Sprintf(`%s|%d|%s`, sceneId, relId, configKeyArr[index])
@@ -411,7 +410,7 @@ func (daoThis *configDao) GetPluck(ctx context.Context, sceneId consts.SceneId, 
 }
 
 // 保存配置
-func (daoThis *configDao) Save(ctx context.Context, sceneId consts.SceneId, relId uint, config map[string]any) (err error) {
+func (daoThis *configDao) Save(ctx context.Context, sceneId string, relId uint, config map[string]any) (err error) {
 	idArr := make([]any, 0, len(config))
 	saveList := make([]map[string]any, 0, len(config))
 	for k, v := range config {

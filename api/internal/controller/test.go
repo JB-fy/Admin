@@ -21,7 +21,7 @@ func (c *Test) Test(ctx context.Context, req *api.TestReq) (res *api.TestRes, er
 	// tcpAddr := ctx.Value(http.LocalAddrContextKey).(*net.TCPAddr) // 获取当前tcp信息
 
 	/* //生成登录token（测试用）
-	token, err := token.NewHandler(ctx, `platform`).Create(`1`)
+	token, err := token.NewHandler(ctx, consts.SCENE_ID_PLATFORM).Create(`1`)
 	fmt.Println(token) */
 
 	/*--------数据库使用示例 开始--------*/

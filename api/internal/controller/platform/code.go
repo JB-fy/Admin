@@ -5,7 +5,6 @@ import (
 	apiCurrent "api/api/platform"
 	"api/internal/cache"
 	daoAdmin "api/internal/dao/admin"
-	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
 	"api/internal/utils/email"
 	"api/internal/utils/jbctx"
@@ -167,6 +166,6 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	if err != nil {
 		return
 	}
-	err = cache.Code.Set(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), to, adminType, req.Scene, code, 5*time.Minute)
+	err = cache.Code.Set(ctx, jbctx.GetSceneId(ctx).String(), to, adminType, req.Scene, code, 5*time.Minute)
 	return
 }

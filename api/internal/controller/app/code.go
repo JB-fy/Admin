@@ -4,7 +4,6 @@ import (
 	"api/api"
 	apiCurrent "api/api/app"
 	"api/internal/cache"
-	daoAuth "api/internal/dao/auth"
 	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
 	"api/internal/utils/email"
@@ -155,6 +154,6 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 	if err != nil {
 		return
 	}
-	err = cache.Code.Set(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), to, 0, req.Scene, code, 5*time.Minute)
+	err = cache.Code.Set(ctx, jbctx.GetSceneId(ctx).String(), to, 0, req.Scene, code, 5*time.Minute)
 	return
 }

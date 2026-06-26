@@ -5,7 +5,6 @@ import (
 	apiMy "api/api/platform/my"
 	"api/internal/cache"
 	daoAdmin "api/internal/dao/admin"
-	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
 	"api/internal/utils"
 	"api/internal/utils/jbctx"
@@ -64,7 +63,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39991003, ``)
 				return
 			}
-			code, _ := cache.Code.Get(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), phone, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 3) //场景：3密码修改(手机)
+			code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), phone, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 3) //场景：3密码修改(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -74,7 +73,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			if req.Phone == nil {
 				continue
 			}
-			code, _ := cache.Code.Get(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), *req.Phone, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 4) //场景：4绑定(手机)
+			code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), *req.Phone, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 4) //场景：4绑定(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -86,7 +85,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39991003, ``)
 				return
 			}
-			code, _ := cache.Code.Get(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), phone, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 5) //场景：5解绑(手机)
+			code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), phone, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 5) //场景：5解绑(手机)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -99,7 +98,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39991013, ``)
 				return
 			}
-			code, _ := cache.Code.Get(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), email, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 13) //场景：13密码修改(邮箱)
+			code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), email, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 13) //场景：13密码修改(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -109,7 +108,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 			if req.Email == nil {
 				continue
 			}
-			code, _ := cache.Code.Get(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), *req.Email, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 14) //场景：14绑定(邮箱)
+			code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), *req.Email, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 14) //场景：14绑定(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return
@@ -121,7 +120,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 				err = utils.NewErrorCode(ctx, 39991013, ``)
 				return
 			}
-			code, _ := cache.Code.Get(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), email, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 15) //场景：15解绑(邮箱)
+			code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), email, loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8(), 15) //场景：15解绑(邮箱)
 			if code == `` || code != gconv.String(v) {
 				err = utils.NewErrorCode(ctx, 39991999, ``)
 				return

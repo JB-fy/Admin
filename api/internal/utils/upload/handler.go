@@ -78,10 +78,10 @@ func (handlerThis *Handler) createUploadParam() (param model.UploadParam) {
 	loginInfo := jbctx.GetLoginInfo(handlerThis.Ctx)
 	loginId := loginInfo[`login_id`]
 	switch sceneId {
-	case `platform`:
-	case `org`:
+	case consts.SCENE_ID_PLATFORM:
+	case consts.SCENE_ID_ORG:
 		orgId := loginInfo[daoOrg.Admin.Columns().OrgId]
-	case `app`:
+	case consts.SCENE_ID_APP:
 	default:
 	} */
 	return

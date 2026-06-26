@@ -6,6 +6,7 @@ package auth
 
 import (
 	"api/internal/cache"
+	"api/internal/consts"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/auth/internal"
 	daoOrg "api/internal/dao/org/allow"
@@ -104,7 +105,7 @@ func (daoThis *roleDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
 				var roleIdArr []*gvar.Var
 				switch sceneId {
-				case `platform`, `org`:
+				case consts.SCENE_ID_PLATFORM, consts.SCENE_ID_ORG:
 					// 方式1：非联表查询
 					roleIdArr, _ = RoleRelOfAdmin.CtxDaoModel(m.GetCtx()).Filter(RoleRelOfAdmin.Columns().AdminId, val[`login_id`]).Array(RoleRelOfAdmin.Columns().RoleId)
 					/* // 方式2：联表查询（不推荐。原因：auth_role及其关联表，后期表数据只会越来越大，故不建议联表）
@@ -195,8 +196,8 @@ func (daoThis *roleDao) HandleAfterField(ctx context.Context, record gdb.Record,
 				relName = `平台`
 			} else {
 				switch record[Scene.Columns().SceneId].String() {
-				// case `platform`:	// 平台都是0
-				case `org`:
+				// case consts.SCENE_ID_PLATFORM:	// 平台都是0
+				case consts.SCENE_ID_ORG:
 					// relName, _ = daoOrg.Org.CtxDaoModel(ctx).FilterPri(record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)
 					info, _ := daoOrg.Org.CacheGetInfo(ctx, record[daoThis.Columns().RelId].Uint())
 					relName = info[daoOrg.Org.Columns().OrgName].String()

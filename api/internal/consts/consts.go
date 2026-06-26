@@ -30,4 +30,5 @@ const (
 
 	SCENE_ID_PLATFORM = `platform`
 	SCENE_ID_ORG      = `org`
+	SCENE_ID_APP      = `app`
 )

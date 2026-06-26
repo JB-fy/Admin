@@ -2,7 +2,7 @@ package controller
 
 import (
 	"api/api"
-	daoAuth "api/internal/dao/auth"
+	"api/internal/consts"
 	daoPay "api/internal/dao/pay"
 	daoUsers "api/internal/dao/users"
 	"api/internal/utils"
@@ -37,10 +37,8 @@ func (controllerThis *Pay) List(ctx context.Context, req *api.PayChannelListReq)
 		return
 	}
 
-	/* sceneInfo := jbctx.GetSceneInfo(ctx)
-	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
-	switch sceneId {
-	case `app`:
+	/* switch jbctx.GetSceneId(ctx).String() {
+	case consts.SCENE_ID_APP:
 	default:
 		err = utils.NewErrorCode(ctx, 39999998, ``)
 		return
@@ -63,8 +61,8 @@ func (controllerThis *Pay) Create(ctx context.Context, req *api.PayCreateReq) (r
 	data[daoPay.Order.Columns().OrderNo] = strconv.FormatInt(gtime.Now().UnixNano(), 36) + grand.S(4)
 	data[daoPay.Order.Columns().OrderType] = req.OrderType
 	data[daoPay.Order.Columns().OrderIp] = g.RequestFromCtx(ctx).GetClientIp()
-	switch jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String() {
-	case `app`:
+	switch jbctx.GetSceneId(ctx).String() {
+	case consts.SCENE_ID_APP:
 		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)
@@ -123,8 +121,8 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 	}
 
 	var payReq payModel.PayReq
-	switch jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String() {
-	case `app`:
+	switch jbctx.GetSceneId(ctx).String() {
+	case consts.SCENE_ID_APP:
 		loginInfo := jbctx.GetLoginInfo(ctx)
 		if loginInfo.IsEmpty() {
 			err = utils.NewErrorCode(ctx, 39994000, ``)

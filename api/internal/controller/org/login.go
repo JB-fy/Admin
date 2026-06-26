@@ -6,7 +6,6 @@ import (
 	"api/internal/cache"
 	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
-	daoAuth "api/internal/dao/auth"
 	daoConfig "api/internal/dao/config"
 	daoOrg "api/internal/dao/org"
 	"api/internal/utils"
@@ -60,7 +59,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 	saltDynamic := grand.S(8)
-	err = cache.Salt.Set(ctx, jbctx.GetSceneInfo(ctx)[daoAuth.Scene.Columns().SceneId].String(), req.LoginName, req.AdminType, saltDynamic, 5*time.Second)
+	err = cache.Salt.Set(ctx, jbctx.GetSceneId(ctx).String(), req.LoginName, req.AdminType, saltDynamic, 5*time.Second)
 	if err != nil {
 		return
 	}
@@ -93,15 +92,13 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 		return
 	}
 
-	sceneInfo := jbctx.GetSceneInfo(ctx)
-	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	if req.Password != `` { //密码
 		password, _ := daoAdmin.Privacy.CtxDaoModel(ctx).FilterPri(info[daoAdmin.Privacy.Columns().AdminId]).ValueStr(daoAdmin.Privacy.Columns().Password)
 		if password == `` {
 			err = utils.NewErrorCode(ctx, 39990004, ``)
 			return
 		}
-		salt, _ := cache.Salt.Get(ctx, sceneId, req.LoginName, req.AdminType)
+		salt, _ := cache.Salt.Get(ctx, jbctx.GetSceneId(ctx).String(), req.LoginName, req.AdminType)
 		if salt == `` || gmd5.MustEncrypt(password+salt) != req.Password {
 			err = utils.NewErrorCode(ctx, 39990001, ``)
 			return
@@ -112,7 +109,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			err = utils.NewErrorCode(ctx, 39991003, ``)
 			return
 		}
-		code, _ := cache.Code.Get(ctx, sceneId, phone, req.AdminType, 0) //场景：0登录(手机)
+		code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), phone, req.AdminType, 0) //场景：0登录(手机)
 		if code == `` || code != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
@@ -123,7 +120,7 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 			err = utils.NewErrorCode(ctx, 39991013, ``)
 			return
 		}
-		code, _ := cache.Code.Get(ctx, sceneId, email, req.AdminType, 10) //场景：10登录(邮箱)
+		code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), email, req.AdminType, 10) //场景：10登录(邮箱)
 		if code == `` || code != req.EmailCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
@@ -142,10 +139,8 @@ func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLog
 // 注册
 func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.LoginRegisterReq) (res *api.CommonTokenRes, err error) {
 	data := g.Map{daoAdmin.Admin.Columns().AdminType: req.AdminType}
-	sceneInfo := jbctx.GetSceneInfo(ctx)
-	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	if req.Phone != `` {
-		code, _ := cache.Code.Get(ctx, sceneId, req.Phone, req.AdminType, 1) //场景：1注册(手机)
+		code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), req.Phone, req.AdminType, 1) //场景：1注册(手机)
 		if code == `` || code != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
@@ -159,7 +154,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[daoAdmin.Admin.Columns().Nickname] = req.Phone[:3] + gstr.Repeat(`*`, len(req.Phone)-7) + req.Phone[len(req.Phone)-4:]
 	}
 	if req.Email != `` {
-		code, _ := cache.Code.Get(ctx, sceneId, req.Email, req.AdminType, 11) //场景：11注册(邮箱)
+		code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), req.Email, req.AdminType, 11) //场景：11注册(邮箱)
 		if code == `` || code != req.EmailCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
@@ -223,15 +218,13 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 
 // 密码找回
 func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurrent.LoginPasswordRecoveryReq) (res *api.CommonNoDataRes, err error) {
-	sceneInfo := jbctx.GetSceneInfo(ctx)
-	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
 	filter := g.Map{daoAdmin.Admin.Columns().AdminType: req.AdminType}
 	if req.Phone != `` {
 		if g.Validator().Rules(`phone`).Data(daoAdmin.Admin.GetLoginName(req.Phone)).Run(ctx) != nil {
 			err = utils.NewErrorCode(ctx, 89990000, ``)
 			return
 		}
-		code, _ := cache.Code.Get(ctx, sceneId, req.Phone, req.AdminType, 2) //场景：2密码找回(手机)
+		code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), req.Phone, req.AdminType, 2) //场景：2密码找回(手机)
 		if code == `` || code != req.SmsCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return
@@ -242,7 +235,7 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 			err = utils.NewErrorCode(ctx, 89990000, ``)
 			return
 		}
-		code, _ := cache.Code.Get(ctx, sceneId, req.Email, req.AdminType, 12) //场景：12密码找回(邮箱)
+		code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), req.Email, req.AdminType, 12) //场景：12密码找回(邮箱)
 		if code == `` || code != req.EmailCode {
 			err = utils.NewErrorCode(ctx, 39991999, ``)
 			return

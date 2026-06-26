@@ -3,7 +3,6 @@ package config
 import (
 	"api/api"
 	apiConfig "api/api/org/config"
-	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	daoConfig "api/internal/dao/config"
 	"api/internal/service"
@@ -41,7 +40,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiConfig.ConfigGetR
 	/**--------权限验证 结束--------**/
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	config, err := daoConfig.Config.GetPluck(ctx, consts.SceneId(loginInfo[daoAdmin.Admin.Columns().SceneId].String()), loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), *req.ConfigKeyArr...)
+	config, err := daoConfig.Config.GetPluck(ctx, loginInfo[daoAdmin.Admin.Columns().SceneId].String(), loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), *req.ConfigKeyArr...)
 	if err != nil {
 		return
 	}
@@ -79,6 +78,6 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiConfig.ConfigSav
 	/**--------权限验证 结束--------**/
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	err = daoConfig.Config.Save(ctx, consts.SceneId(loginInfo[daoAdmin.Admin.Columns().SceneId].String()), loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), config)
+	err = daoConfig.Config.Save(ctx, loginInfo[daoAdmin.Admin.Columns().SceneId].String(), loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), config)
 	return
 }

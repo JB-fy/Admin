@@ -6,6 +6,7 @@ package auth
 
 import (
 	"api/internal/cache"
+	"api/internal/consts"
 	daoIndex "api/internal/dao"
 	"api/internal/dao/auth/internal"
 	"context"
@@ -98,7 +99,7 @@ func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 			case `self_menu`: //获取当前登录身份可用的菜单。参数：map[string]any{`scene_id`: `场景ID`, `login_id`: 登录身份id, `is_super`: 是否超管（平台超级管理员用）}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
-				if gconv.String(val[`scene_id`]) == `platform` && gconv.Uint(val[`is_super`]) == 1 { //平台超级管理员
+				if gconv.String(val[`scene_id`]) == consts.SCENE_ID_PLATFORM && gconv.Uint(val[`is_super`]) == 1 { //平台超级管理员
 					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, val[`scene_id`])
 					continue
 				}
