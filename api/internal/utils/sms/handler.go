@@ -1,7 +1,8 @@
 package sms
 
 import (
-	daoPlatform "api/internal/dao/platform"
+	"api/internal/consts"
+	daoConfig "api/internal/dao/config"
 	"api/internal/utils/sms/model"
 	"context"
 )
@@ -17,12 +18,12 @@ func NewHandler(ctx context.Context, smsTypeOpt ...string) model.Handler {
 	if len(smsTypeOpt) > 0 {
 		smsType = smsTypeOpt[0]
 	} else {
-		smsType = daoPlatform.Config.Get(ctx, `sms_type`).String()
+		smsType = daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, `sms_type`).String()
 	}
 	if _, ok := smsFuncMap[smsType]; !ok {
 		smsType = smsTypeDef
 	}
-	config := daoPlatform.Config.Get(ctx, smsType).Map()
+	config := daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, smsType).Map()
 	handlerObj.sms = NewSms(ctx, smsType, config)
 	return handlerObj
 }

@@ -7,8 +7,8 @@ import (
 	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
+	daoConfig "api/internal/dao/config"
 	daoOrg "api/internal/dao/org"
-	daoPlatform "api/internal/dao/platform"
 	"api/internal/utils"
 	"api/internal/utils/jbctx"
 	"api/internal/utils/token"
@@ -192,7 +192,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	// case 10:	//机构
 	default:
 		data[daoAdmin.Admin.Columns().SceneId] = consts.SCENE_ID_ORG
-		data[`role_id_arr`] = daoPlatform.Config.Get(ctx, `role_id_arr_of_org_def`).Slice() //默认角色
+		data[`role_id_arr`] = daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, `role_id_arr_of_org_def`).Slice() //默认角色
 	}
 	var adminId int64
 	orgAdminDaoModel := daoAdmin.Admin.CtxDaoModel(ctx)

@@ -1,9 +1,10 @@
-package platform
+package config
 
 import (
 	"api/api"
-	apiPlatform "api/api/platform/platform"
-	daoPlatform "api/internal/dao/platform"
+	apiConfig "api/api/platform/config"
+	"api/internal/consts"
+	daoConfig "api/internal/dao/config"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
@@ -19,7 +20,7 @@ func NewConfig() *Config {
 }
 
 // 获取
-func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGetReq) (res *apiPlatform.ConfigGetRes, err error) {
+func (controllerThis *Config) Get(ctx context.Context, req *apiConfig.ConfigGetReq) (res *apiConfig.ConfigGetRes, err error) {
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `pltCfgRead`)
 	if !isAuth {
@@ -55,18 +56,18 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGe
 	}
 	/**--------权限验证 结束--------**/
 
-	config, err := daoPlatform.Config.GetPluck(ctx, *req.ConfigKeyArr...)
+	config, err := daoConfig.Config.GetPluck(ctx, consts.SCENE_ID_PLATFORM, 0, *req.ConfigKeyArr...)
 	if err != nil {
 		return
 	}
 
-	res = &apiPlatform.ConfigGetRes{}
+	res = &apiConfig.ConfigGetRes{}
 	gconv.Struct(config.Map(), &res.Config)
 	return
 }
 
 // 保存
-func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigSaveReq) (res *api.CommonNoDataRes, err error) {
+func (controllerThis *Config) Save(ctx context.Context, req *apiConfig.ConfigSaveReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	config := gconv.Map(req.ConfigSaveData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if len(config) == 0 {
@@ -110,6 +111,6 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiPlatform.ConfigS
 	}
 	/**--------权限验证 结束--------**/
 
-	err = daoPlatform.Config.Save(ctx, config)
+	err = daoConfig.Config.Save(ctx, consts.SCENE_ID_PLATFORM, 0, config)
 	return
 }

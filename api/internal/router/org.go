@@ -5,8 +5,8 @@ import (
 	controllerIndex "api/internal/controller/org"
 	"api/internal/controller/org/admin"
 	"api/internal/controller/org/auth"
+	"api/internal/controller/org/config"
 	"api/internal/controller/org/my"
-	"api/internal/controller/org/org"
 	"api/internal/middleware"
 	"context"
 
@@ -56,8 +56,8 @@ func InitRouterOrg(ctx context.Context, s *ghttp.Server) {
 				group.Bind(admin.NewAdmin())
 			})
 
-			group.Group(`/org`, func(group *ghttp.RouterGroup) {
-				group.Bind(org.NewConfig())
+			group.Group(`/config`, func(group *ghttp.RouterGroup) {
+				group.Bind(config.NewConfig())
 			})
 
 			/*--------后端路由自动代码生成锚点（不允许修改和删除，否则将不能自动生成路由）--------*/

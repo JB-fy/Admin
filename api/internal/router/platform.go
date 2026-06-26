@@ -6,10 +6,10 @@ import (
 	"api/internal/controller/platform/admin"
 	"api/internal/controller/platform/app"
 	"api/internal/controller/platform/auth"
+	"api/internal/controller/platform/config"
 	"api/internal/controller/platform/my"
 	"api/internal/controller/platform/org"
 	"api/internal/controller/platform/pay"
-	"api/internal/controller/platform/platform"
 	"api/internal/controller/platform/upload"
 	"api/internal/controller/platform/users"
 	"api/internal/middleware"
@@ -64,8 +64,8 @@ func InitRouterPlatform(ctx context.Context, s *ghttp.Server) {
 				group.Bind(admin.NewAdmin())
 			})
 
-			group.Group(`/platform`, func(group *ghttp.RouterGroup) {
-				group.Bind(platform.NewConfig())
+			group.Group(`/config`, func(group *ghttp.RouterGroup) {
+				group.Bind(config.NewConfig())
 			})
 
 			group.Group(`/upload`, func(group *ghttp.RouterGroup) {

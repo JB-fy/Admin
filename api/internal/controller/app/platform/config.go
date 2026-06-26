@@ -2,7 +2,8 @@ package platform
 
 import (
 	apiPlatform "api/api/app/platform"
-	daoPlatform "api/internal/dao/platform"
+	"api/internal/consts"
+	daoConfig "api/internal/dao/config"
 	"context"
 
 	"github.com/gogf/gf/v2/util/gconv"
@@ -16,7 +17,7 @@ func NewConfig() *Config {
 
 // 获取
 func (controllerThis *Config) Get(ctx context.Context, req *apiPlatform.ConfigGetReq) (res *apiPlatform.ConfigGetRes, err error) {
-	config, err := daoPlatform.Config.GetPluck(ctx, *req.ConfigKeyArr...)
+	config, err := daoConfig.Config.GetPluck(ctx, consts.SCENE_ID_PLATFORM, 0, *req.ConfigKeyArr...)
 	if err != nil {
 		return
 	}

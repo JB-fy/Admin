@@ -4,9 +4,10 @@ import (
 	"api/api"
 	apiCurrent "api/api/platform"
 	"api/internal/cache"
+	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
-	daoPlatform "api/internal/dao/platform"
+	daoConfig "api/internal/dao/config"
 	"api/internal/utils"
 	"api/internal/utils/jbctx"
 	"api/internal/utils/token"
@@ -187,7 +188,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	// case 0:	//平台
 	// case 10:	//机构
 	default:
-		data[`role_id_arr`] = daoPlatform.Config.Get(ctx, `role_id_arr_of_platform_def`).Slice() //默认角色
+		data[`role_id_arr`] = daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, `role_id_arr_of_platform_def`).Slice() //默认角色
 	}
 	adminId, err := daoAdmin.Admin.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
 	if err != nil {

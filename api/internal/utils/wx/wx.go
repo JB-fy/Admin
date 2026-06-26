@@ -1,7 +1,8 @@
 package wx
 
 import (
-	daoPlatform "api/internal/dao/platform"
+	"api/internal/consts"
+	daoConfig "api/internal/dao/config"
 	"api/internal/utils/wx/gzh"
 	"context"
 	"sync"
@@ -16,7 +17,7 @@ var (
 )
 
 func NewWxGzh(ctx context.Context) (obj *gzh.Wx) {
-	config := daoPlatform.Config.Get(ctx, `wx_gzh`).Map()
+	config := daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, `wx_gzh`).Map()
 	key := gmd5.MustEncrypt(config)
 	objTmp, ok := wxGzhMap.Load(key)
 	if !ok {

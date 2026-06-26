@@ -1,10 +1,11 @@
-package org
+package config
 
 import (
 	"api/api"
-	apiOrg "api/api/org/org"
+	apiConfig "api/api/org/config"
+	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
-	daoOrg "api/internal/dao/org"
+	daoConfig "api/internal/dao/config"
 	"api/internal/service"
 	"api/internal/utils"
 	"api/internal/utils/jbctx"
@@ -21,7 +22,7 @@ func NewConfig() *Config {
 }
 
 // 获取
-func (controllerThis *Config) Get(ctx context.Context, req *apiOrg.ConfigGetReq) (res *apiOrg.ConfigGetRes, err error) {
+func (controllerThis *Config) Get(ctx context.Context, req *apiConfig.ConfigGetReq) (res *apiConfig.ConfigGetRes, err error) {
 	/**--------权限验证 开始--------**/
 	isAuth, _ := service.AuthAction().CheckAuth(ctx, `orgCfgRead`)
 	if !isAuth {
@@ -40,18 +41,18 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiOrg.ConfigGetReq)
 	/**--------权限验证 结束--------**/
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	config, err := daoOrg.Config.GetPluck(ctx, loginInfo[daoAdmin.Admin.Columns().RelId].String(), *req.ConfigKeyArr...)
+	config, err := daoConfig.Config.GetPluck(ctx, consts.SceneId(loginInfo[daoAdmin.Admin.Columns().SceneId].String()), loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), *req.ConfigKeyArr...)
 	if err != nil {
 		return
 	}
 
-	res = &apiOrg.ConfigGetRes{}
+	res = &apiConfig.ConfigGetRes{}
 	gconv.Struct(config.Map(), &res.Config)
 	return
 }
 
 // 保存
-func (controllerThis *Config) Save(ctx context.Context, req *apiOrg.ConfigSaveReq) (res *api.CommonNoDataRes, err error) {
+func (controllerThis *Config) Save(ctx context.Context, req *apiConfig.ConfigSaveReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
 	config := gconv.Map(req.ConfigSaveData, gconv.MapOption{Deep: true, OmitEmpty: true})
 	if len(config) == 0 {
@@ -78,6 +79,6 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiOrg.ConfigSaveRe
 	/**--------权限验证 结束--------**/
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	err = daoOrg.Config.Save(ctx, loginInfo[daoAdmin.Admin.Columns().RelId].String(), config)
+	err = daoConfig.Config.Save(ctx, consts.SceneId(loginInfo[daoAdmin.Admin.Columns().SceneId].String()), loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), config)
 	return
 }

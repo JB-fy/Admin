@@ -29,7 +29,7 @@ const saveForm = reactive({
     } as { [propName: string]: { [propName: string]: any } | { [propName: string]: any }[] },
     initData: async () => {
         const param = { config_key_arr: Object.keys(saveForm.data) }
-        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/get', param)
+        const res = await request(t('config.VITE_HTTP_API_PREFIX') + '/config/config/get', param)
         saveForm.data = {
             ...saveForm.data,
             ...res.data.config,
@@ -43,7 +43,7 @@ const saveForm = reactive({
             saveForm.loading = true
             const param = removeEmptyOfObj(saveForm.data)
             try {
-                await request(t('config.VITE_HTTP_API_PREFIX') + '/platform/config/save', param, true)
+                await request(t('config.VITE_HTTP_API_PREFIX') + '/config/config/save', param, true)
             } finally {
                 saveForm.loading = false
             }

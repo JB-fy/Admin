@@ -12,7 +12,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// ConfigDao is the data access object for the table platform_config.
+// ConfigDao is the data access object for the table config.
 type ConfigDao struct {
 	table     string              // table is the underlying table name of the DAO.
 	group     string              // group is the database configuration group name of the current DAO.
@@ -22,18 +22,22 @@ type ConfigDao struct {
 	columnMap map[string]struct{} // 字段map
 }
 
-// ConfigColumns defines and stores column names for the table platform_config.
+// ConfigColumns defines and stores column names for the table config.
 type ConfigColumns struct {
 	CreatedAt   string // 创建时间
 	UpdatedAt   string // 更新时间
+	SceneId     string // 场景ID
+	RelId       string // 关联ID。根据scene_id对应不同表
 	ConfigKey   string // 配置键
 	ConfigValue string // 配置值
 }
 
-// configColumns holds the columns for the table platform_config.
+// configColumns holds the columns for the table config.
 var configColumns = ConfigColumns{
 	CreatedAt:   "created_at",
 	UpdatedAt:   "updated_at",
+	SceneId:     "scene_id",
+	RelId:       "rel_id",
 	ConfigKey:   "config_key",
 	ConfigValue: "config_value",
 }
@@ -42,7 +46,7 @@ var configColumns = ConfigColumns{
 func NewConfigDao(handlers ...gdb.ModelHandler) *ConfigDao {
 	dao := &ConfigDao{
 		group:    "default",
-		table:    "platform_config",
+		table:    "config",
 		columns:  configColumns,
 		handlers: handlers,
 	}

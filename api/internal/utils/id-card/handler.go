@@ -1,7 +1,8 @@
 package id_card
 
 import (
-	daoPlatform "api/internal/dao/platform"
+	"api/internal/consts"
+	daoConfig "api/internal/dao/config"
 	"api/internal/utils/id-card/model"
 	"context"
 )
@@ -17,12 +18,12 @@ func NewHandler(ctx context.Context, idCardTypeOpt ...string) model.Handler {
 	if len(idCardTypeOpt) > 0 {
 		idCardType = idCardTypeOpt[0]
 	} else {
-		idCardType = daoPlatform.Config.Get(ctx, `id_card_type`).String()
+		idCardType = daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, `id_card_type`).String()
 	}
 	if _, ok := idCardFuncMap[idCardType]; !ok {
 		idCardType = idCardTypeDef
 	}
-	config := daoPlatform.Config.Get(ctx, idCardType).Map()
+	config := daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, idCardType).Map()
 	handlerObj.idCard = NewIdCard(ctx, idCardType, config)
 	return handlerObj
 }

@@ -1,7 +1,8 @@
 package email
 
 import (
-	daoPlatform "api/internal/dao/platform"
+	"api/internal/consts"
+	daoConfig "api/internal/dao/config"
 	"api/internal/utils/email/model"
 	"context"
 	"errors"
@@ -21,12 +22,12 @@ func NewHandler(ctx context.Context, emailTypeOpt ...string) model.Handler {
 	if len(emailTypeOpt) > 0 {
 		emailType = emailTypeOpt[0]
 	} else {
-		emailType = daoPlatform.Config.Get(ctx, `email_type`).String()
+		emailType = daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, `email_type`).String()
 	}
 	if _, ok := emailFuncMap[emailType]; !ok {
 		emailType = emailTypeDef
 	}
-	config := daoPlatform.Config.Get(ctx, emailType).Map()
+	config := daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, emailType).Map()
 	handlerObj.email = NewEmail(ctx, emailType, config)
 	return handlerObj
 }
@@ -36,7 +37,7 @@ func (handlerThis *Handler) SendEmail(message string, toEmailArr ...string) (err
 }
 
 func (handlerThis *Handler) SendCode(toEmail string, code string) (err error) {
-	codeData := daoPlatform.Config.Get(handlerThis.Ctx, `email_code`).Map()
+	codeData := daoConfig.Config.Get(handlerThis.Ctx, consts.SCENE_ID_PLATFORM, 0, `email_code`).Map()
 	subject := gconv.String(codeData[`subject`])
 	template := gconv.String(codeData[`template`])
 	if subject == `` || template == `` {
