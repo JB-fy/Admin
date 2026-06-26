@@ -20,13 +20,10 @@ func Log(r *ghttp.Request) {
 		`res_status`: r.Response.Status,
 		`run_time`:   float64(endTime-startTime) / 1000,
 		`client_ip`:  r.GetClientIp(),
+		`login_info`: jbctx.GetLoginInfo(r.GetCtx()),
 	}
 	if maxResBufferLength := g.Cfg().MustGet(r.GetCtx(), `logger.http.maxResBufferLength`).Int(); maxResBufferLength > 0 && r.Response.BufferLength() <= maxResBufferLength {
 		data[`res_data`] = r.Response.BufferString()
-	}
-	loginInfo := jbctx.GetLoginInfo(r.GetCtx())
-	if !loginInfo.IsEmpty() {
-		data[`login_id`] = loginInfo[`login_id`]
 	}
 
 	g.Log(`http`).Info(r.GetCtx(), data)

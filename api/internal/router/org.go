@@ -26,7 +26,7 @@ func InitRouterOrg(ctx context.Context, s *ghttp.Server) {
 
 		// 无需验证登录身份（但存在token时，会做解析，且忽视错误）
 		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.SceneLoginOfOrg(false))
+			group.Middleware(middleware.SceneLoginOfAdmin(false, `OrgToken`))
 
 			group.Group(`/code`, func(group *ghttp.RouterGroup) {
 				group.Bind(controllerIndex.NewCode())
@@ -35,7 +35,7 @@ func InitRouterOrg(ctx context.Context, s *ghttp.Server) {
 
 		// 需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.SceneLoginOfOrg(true))
+			group.Middleware(middleware.SceneLoginOfAdmin(true, `OrgToken`))
 
 			group.Group(`/upload`, func(group *ghttp.RouterGroup) {
 				controllerThis := controller.NewUpload()

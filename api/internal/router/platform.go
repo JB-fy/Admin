@@ -31,7 +31,7 @@ func InitRouterPlatform(ctx context.Context, s *ghttp.Server) {
 
 		// 无需验证登录身份（但存在token时，会做解析，且忽视错误）
 		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.SceneLoginOfPlatform(false))
+			group.Middleware(middleware.SceneLoginOfAdmin(false, `PlatformToken`))
 
 			group.Group(`/code`, func(group *ghttp.RouterGroup) {
 				group.Bind(controllerIndex.NewCode())
@@ -40,7 +40,7 @@ func InitRouterPlatform(ctx context.Context, s *ghttp.Server) {
 
 		// 需验证登录身份
 		group.Group(``, func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.SceneLoginOfPlatform(true))
+			group.Middleware(middleware.SceneLoginOfAdmin(true, `PlatformToken`))
 
 			group.Group(`/upload`, func(group *ghttp.RouterGroup) {
 				controllerThis := controller.NewUpload()

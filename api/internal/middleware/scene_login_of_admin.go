@@ -1,7 +1,9 @@
 package middleware
 
 import (
-	daoUsers "api/internal/dao/users"
+	"api/internal/consts"
+	daoAdmin "api/internal/dao/admin"
+	daoOrg "api/internal/dao/org"
 	"api/internal/utils"
 	"api/internal/utils/jbctx"
 	utilsToken "api/internal/utils/token"
@@ -12,10 +14,16 @@ import (
 )
 
 // isForce 是否强制验证登录
-func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
+func SceneLoginOfAdmin(isForce bool, tokenNameArr ...string) func(r *ghttp.Request) {
 	return func(r *ghttp.Request) {
 		/**--------验证token 开始--------**/
-		token := r.Header.Get(`AppToken`)
+		token := ``
+		for _, tokenName := range tokenNameArr {
+			token = r.Header.Get(tokenName)
+			if token != `` {
+				break
+			}
+		}
 		if token == `` {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994000, ``))
@@ -37,7 +45,7 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 		/**--------验证token 结束--------**/
 
 		/**--------获取登录用户信息并验证 开始--------**/
-		info, _ := daoUsers.Users.CacheGetInfo(r.GetCtx(), gconv.Uint(tokenInfo.LoginId))
+		info, _ := daoAdmin.Admin.CacheGetInfo(r.GetCtx(), gconv.Uint(tokenInfo.LoginId))
 		if info.IsEmpty() {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994100, ``))
@@ -46,13 +54,35 @@ func SceneLoginOfApp(isForce bool) func(r *ghttp.Request) {
 			}
 			return
 		}
-		if info[daoUsers.Users.Columns().IsStop].Uint8() == 1 {
+		if info[daoAdmin.Admin.Columns().IsStop].Uint8() == 1 {
 			if isForce {
 				r.SetError(utils.NewErrorCode(r.GetCtx(), 39994101, ``))
 			} else {
 				r.Middleware.Next()
 			}
 			return
+		}
+		switch info[daoAdmin.Admin.Columns().SceneId].String() {
+		// case consts.SCENE_ID_PLATFORM:
+		case consts.SCENE_ID_ORG:
+			relInfo, _ := daoOrg.Org.CacheGetInfo(r.GetCtx(), info[daoAdmin.Admin.Columns().RelId].Uint())
+			if relInfo.IsEmpty() {
+				if isForce {
+					r.SetError(utils.NewErrorCode(r.GetCtx(), 39994200, ``))
+				} else {
+					r.Middleware.Next()
+				}
+				return
+			}
+			if relInfo[daoOrg.Org.Columns().IsStop].Uint8() == 1 {
+				if isForce {
+					r.SetError(utils.NewErrorCode(r.GetCtx(), 39994201, ``))
+				} else {
+					r.Middleware.Next()
+				}
+				return
+			}
+			info[`rel_info`] = gvar.New(relInfo.Map())
 		}
 
 		info[`login_id`] = gvar.New(tokenInfo.LoginId) //所有场景追加这个字段，方便统一调用
