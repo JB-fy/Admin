@@ -8,7 +8,9 @@ import (
 	"api/internal/cache"
 	"api/internal/consts"
 	daoIndex "api/internal/dao"
+	daoAdmin "api/internal/dao/admin/allow"
 	"api/internal/dao/auth/internal"
+	"api/internal/utils"
 	"context"
 	"database/sql"
 	"database/sql/driver"
@@ -97,10 +99,11 @@ func (daoThis *actionDao) ParseFilter(filter map[string]any, daoModel *daoIndex.
 			case `self_action`: //获取当前登录身份可用的操作。参数：map[string]any{`scene_id`: `场景ID`, `login_id`: 登录身份id, `is_super`: 是否超管（平台超级管理员用）, `check_action_id_arr`: []string{判断操作权限时传入}}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
-				if gconv.String(val[`scene_id`]) == consts.SCENE_ID_PLATFORM && gconv.Uint(val[`is_super`]) == 1 { //平台超级管理员
-					tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
-					m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, val[`scene_id`])
-					m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
+				sceneId := gconv.String(val[`scene_id`])
+				tableActionRelToScene := ActionRelToScene.ParseDbTable(m.GetCtx())
+				m = m.Where(tableActionRelToScene+`.`+ActionRelToScene.Columns().SceneId, sceneId)
+				m = m.Handler(daoThis.ParseJoin(tableActionRelToScene, daoModel))
+				if sceneId == consts.SCENE_ID_PLATFORM && gconv.Uint(val[`is_super`]) == 1 { //平台超级管理员
 					continue
 				}
 				roleIdArr, _ := Role.CtxDaoModel(m.GetCtx()).Filter(`self_role`, val).Array(Role.Columns().RoleId)
@@ -490,5 +493,45 @@ func (daoThis *actionDao) CacheGetActionIdArrOfSelf(ctx context.Context, sceneId
 	for index, info := range list {
 		actionIdArr[index] = info[daoThis.Columns().ActionId].String()
 	}
+	return
+}
+
+func (daoThis *actionDao) CheckAuth(ctx context.Context, sceneId string, loginInfo gdb.Record, actionIdArr ...string) (isAuth bool, err error) {
+	if sceneId == consts.SCENE_ID_PLATFORM && loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8() == 1 { //平台超级管理员，无权限限制
+		isAuth = true
+		return
+	}
+
+	if len(actionIdArr) == 0 {
+		err = utils.NewErrorCode(ctx, 39999996, ``)
+		return
+	}
+
+	/* // 表数据很小，无需这样做，且会导致数据修改无法立即生效。确实需要减轻数据库压力时可以使用
+	actionIdArrOfSelf, err := daoThis.CacheGetActionIdArrOfSelf(ctx, sceneId, loginInfo[consts.CTX_LOGIN_ID_NAME])
+	if err != nil {
+		return
+	}
+	actionIdArrOfSelf = gset.NewStrSetFrom(actionIdArrOfSelf).Intersect(gset.NewStrSetFrom(actionIdArr)).Slice() //交集
+	if actionIdArrLen := len(actionIdArr); actionIdArrLen == 0 || actionIdArrLen != len(actionIdArrOfSelf) {     //因为是判断操作权限，所以actionIdArr和actionIdArrOfSelf必须一样，否则必定缺少权限
+		err = utils.NewErrorCode(ctx, 39999996, ``)
+		return
+	} */
+	filter := map[string]any{
+		`self_action`: map[string]any{
+			`scene_id`:            sceneId,
+			`login_id`:            loginInfo[consts.CTX_LOGIN_ID_NAME],
+			`check_action_id_arr`: actionIdArr,
+		},
+	}
+	count, err := daoThis.CtxDaoModel(ctx).Filters(filter).Count()
+	if err != nil {
+		return
+	}
+	if count != len(actionIdArr) {
+		err = utils.NewErrorCode(ctx, 39999996, ``)
+		return
+	}
+	isAuth = true
 	return
 }

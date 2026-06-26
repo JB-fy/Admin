@@ -1,8 +1,6 @@
 package auth
 
 import (
-	"api/internal/consts"
-	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
 	"api/internal/utils"
@@ -85,40 +83,6 @@ func (logicThis *sAuthAction) Delete(ctx context.Context, filter map[string]any)
 
 // 判断操作权限
 func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionIdArr ...string) (isAuth bool, err error) {
-	loginInfo := jbctx.GetLoginInfo(ctx)
-	sceneInfo := jbctx.GetSceneInfo(ctx)
-	if loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8() == 0 && loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8() == 1 { //平台超级管理员，无权限限制
-		isAuth = true
-		return
-	}
-
-	if len(actionIdArr) == 0 {
-		err = utils.NewErrorCode(ctx, 39999996, ``)
-		return
-	}
-
-	/* // 表数据很小，无需这样做，且会导致数据修改无法立即生效。确实需要减轻数据库压力时可以使用
-	actionIdArrOfSelf, err := daoAuth.Action.CacheGetActionIdArrOfSelf(ctx, sceneInfo[daoAuth.Scene.Columns().SceneId].String(), loginInfo[consts.CTX_LOGIN_ID_NAME])
-	if err != nil {
-		return
-	}
-	actionIdArrOfSelf = gset.NewStrSetFrom(actionIdArrOfSelf).Intersect(gset.NewStrSetFrom(actionIdArr)).Slice() //交集
-	if actionIdArrLen := len(actionIdArr); actionIdArrLen == 0 || actionIdArrLen != len(actionIdArrOfSelf) {     //因为是判断操作权限，所以actionIdArr和actionIdArrOfSelf必须一样，否则必定缺少权限
-		err = utils.NewErrorCode(ctx, 39999996, ``)
-		return
-	} */
-	filter := map[string]any{
-		`self_action`: map[string]any{
-			`scene_id`:            sceneInfo[daoAuth.Scene.Columns().SceneId],
-			`login_id`:            loginInfo[consts.CTX_LOGIN_ID_NAME],
-			`check_action_id_arr`: actionIdArr,
-		},
-	}
-	count, err := daoAuth.Action.CtxDaoModel(ctx).Filters(filter).Count()
-	if count != len(actionIdArr) {
-		err = utils.NewErrorCode(ctx, 39999996, ``)
-		return
-	}
-	isAuth = true
+	isAuth, err = daoAuth.Action.CheckAuth(ctx, jbctx.GetSceneId(ctx).String(), jbctx.GetLoginInfo(ctx), actionIdArr...)
 	return
 }

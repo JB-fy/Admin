@@ -99,8 +99,9 @@ func (daoThis *menuDao) ParseFilter(filter map[string]any, daoModel *daoIndex.Da
 			case `self_menu`: //获取当前登录身份可用的菜单。参数：map[string]any{`scene_id`: `场景ID`, `login_id`: 登录身份id, `is_super`: 是否超管（平台超级管理员用）}
 				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().IsStop, 0)
 				val := gconv.Map(v)
-				if gconv.String(val[`scene_id`]) == consts.SCENE_ID_PLATFORM && gconv.Uint(val[`is_super`]) == 1 { //平台超级管理员
-					m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, val[`scene_id`])
+				sceneId := gconv.String(val[`scene_id`])
+				m = m.Where(daoModel.DbTable+`.`+daoThis.Columns().SceneId, sceneId)
+				if sceneId == consts.SCENE_ID_PLATFORM && gconv.Uint(val[`is_super`]) == 1 { //平台超级管理员
 					continue
 				}
 				roleIdArr, _ := Role.CtxDaoModel(m.GetCtx()).Filter(`self_role`, val).Array(Role.Columns().RoleId)
