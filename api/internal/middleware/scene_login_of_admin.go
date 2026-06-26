@@ -85,8 +85,8 @@ func SceneLoginOfAdmin(isForce bool, tokenNameArr ...string) func(r *ghttp.Reque
 			info[`rel_info`] = gvar.New(relInfo.Map())
 		}
 
-		info[`login_id`] = gvar.New(tokenInfo.LoginId) //所有场景追加这个字段，方便统一调用
-		jbctx.SetLoginInfo(r, info)                    //用户信息保存在协程上下文
+		info[consts.CTX_LOGIN_ID_NAME] = gvar.New(tokenInfo.LoginId) //所有场景追加这个字段，方便统一调用
+		jbctx.SetLoginInfo(r, info)                                  //用户信息保存在协程上下文
 		/**--------获取用户信息并验证 结束--------**/
 
 		r.Middleware.Next()

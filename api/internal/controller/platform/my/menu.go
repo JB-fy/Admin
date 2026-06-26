@@ -2,6 +2,7 @@ package my
 
 import (
 	apiMy "api/api/platform/my"
+	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils"
@@ -26,13 +27,13 @@ func (controllerThis *Menu) Tree(ctx context.Context, req *apiMy.MenuTreeReq) (r
 	if loginInfo[daoAdmin.Admin.Columns().IsSuper].Bool() {
 		list, err = daoAuth.Menu.CacheGetListOfNoStop(ctx, jbctx.GetSceneId(ctx).String())
 	} else {
-		list, err = daoAuth.Menu.CacheGetListOfSelf(ctx, jbctx.GetSceneId(ctx).String(), loginInfo[`login_id`])
+		list, err = daoAuth.Menu.CacheGetListOfSelf(ctx, jbctx.GetSceneId(ctx).String(), loginInfo[consts.CTX_LOGIN_ID_NAME])
 	} */
 	field := []string{`id`, `label`, `tree`, `show_menu`}
 	filter := map[string]any{
 		`self_menu`: map[string]any{
 			`scene_id`: jbctx.GetSceneId(ctx),
-			`login_id`: loginInfo[`login_id`],
+			`login_id`: loginInfo[consts.CTX_LOGIN_ID_NAME],
 			`is_super`: loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(),
 		},
 	}

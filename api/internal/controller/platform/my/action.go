@@ -2,6 +2,7 @@ package my
 
 import (
 	apiMy "api/api/platform/my"
+	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/utils/jbctx"
@@ -25,13 +26,13 @@ func (controllerThis *Action) List(ctx context.Context, req *apiMy.ActionListReq
 	if loginInfo[daoAdmin.Admin.Columns().IsSuper].Bool() {
 		list, err = daoAuth.Action.CacheGetListOfNoStop(ctx, jbctx.GetSceneId(ctx).String())
 	} else {
-		list, err = daoAuth.Action.CacheGetListOfSelf(ctx, jbctx.GetSceneId(ctx).String(), loginInfo[`login_id`])
+		list, err = daoAuth.Action.CacheGetListOfSelf(ctx, jbctx.GetSceneId(ctx).String(), loginInfo[consts.CTX_LOGIN_ID_NAME])
 	} */
 	field := []string{`id`, `label`}
 	filter := map[string]any{
 		`self_action`: map[string]any{
 			`scene_id`: jbctx.GetSceneId(ctx),
-			`login_id`: loginInfo[`login_id`],
+			`login_id`: loginInfo[consts.CTX_LOGIN_ID_NAME],
 			`is_super`: loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(),
 		},
 	}

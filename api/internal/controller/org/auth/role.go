@@ -51,7 +51,7 @@ func (controllerThis *Role) List(ctx context.Context, req *apiAuth.RoleListReq) 
 	}
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAuth.Role.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAuth.Role.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	/**--------参数处理 结束--------**/
 
@@ -90,7 +90,7 @@ func (controllerThis *Role) Info(ctx context.Context, req *apiAuth.RoleInfoReq) 
 	filter := map[string]any{`id`: req.Id}
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAuth.Role.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAuth.Role.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	/**--------参数处理 结束--------**/
 
@@ -121,7 +121,7 @@ func (controllerThis *Role) Create(ctx context.Context, req *apiAuth.RoleCreateR
 	data := gconv.Map(req.RoleCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	data[daoAuth.Role.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	data[daoAuth.Role.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	data[daoAuth.Role.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	/**--------参数处理 结束--------**/
 
@@ -151,7 +151,7 @@ func (controllerThis *Role) Update(ctx context.Context, req *apiAuth.RoleUpdateR
 	}
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAuth.Role.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAuth.Role.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	/**--------参数处理 结束--------**/
 
@@ -172,7 +172,7 @@ func (controllerThis *Role) Delete(ctx context.Context, req *apiAuth.RoleDeleteR
 	filter := gconv.Map(req.RoleUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAuth.Role.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAuth.Role.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	filter[daoAuth.Role.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	/**--------参数处理 结束--------**/
 

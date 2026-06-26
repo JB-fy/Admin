@@ -23,13 +23,13 @@ func NewConfig() *Config {
 // 获取
 func (controllerThis *Config) Get(ctx context.Context, req *apiConfig.ConfigGetReq) (res *apiConfig.ConfigGetRes, err error) {
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `orgCfgRead`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `configRead`)
 	if !isAuth {
 		actionIdSet := gset.NewStrSet()
 		for _, configKey := range *req.ConfigKeyArr {
 			switch configKey {
 			case `hot_search`:
-				actionIdSet.Add(`orgCfgCommonRead`)
+				actionIdSet.Add(`configCommonRead`)
 			}
 		}
 		_, err = service.AuthAction().CheckAuth(ctx, actionIdSet.Slice()...)
@@ -40,7 +40,7 @@ func (controllerThis *Config) Get(ctx context.Context, req *apiConfig.ConfigGetR
 	/**--------权限验证 结束--------**/
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	config, err := daoConfig.Config.GetPluck(ctx, loginInfo[daoAdmin.Admin.Columns().SceneId].String(), loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), *req.ConfigKeyArr...)
+	config, err := daoConfig.Config.GetPluck(ctx, jbctx.GetSceneId(ctx).String(), loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), *req.ConfigKeyArr...)
 	if err != nil {
 		return
 	}
@@ -61,13 +61,13 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiConfig.ConfigSav
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `orgCfgSave`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `configSave`)
 	if !isAuth {
 		actionIdSet := gset.NewStrSet()
 		for configKey := range config {
 			switch configKey {
 			case `hot_search`:
-				actionIdSet.Add(`orgCfgCommonSave`)
+				actionIdSet.Add(`configCommonSave`)
 			}
 		}
 		_, err = service.AuthAction().CheckAuth(ctx, actionIdSet.Slice()...)
@@ -78,6 +78,6 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiConfig.ConfigSav
 	/**--------权限验证 结束--------**/
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	err = daoConfig.Config.Save(ctx, loginInfo[daoAdmin.Admin.Columns().SceneId].String(), loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), config)
+	err = daoConfig.Config.Save(ctx, jbctx.GetSceneId(ctx).String(), loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), config)
 	return
 }

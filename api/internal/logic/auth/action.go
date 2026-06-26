@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
 	"api/internal/service"
@@ -97,7 +98,7 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionIdArr ...stri
 	}
 
 	/* // 表数据很小，无需这样做，且会导致数据修改无法立即生效。确实需要减轻数据库压力时可以使用
-	actionIdArrOfSelf, err := daoAuth.Action.CacheGetActionIdArrOfSelf(ctx, sceneInfo[daoAuth.Scene.Columns().SceneId].String(), loginInfo[`login_id`])
+	actionIdArrOfSelf, err := daoAuth.Action.CacheGetActionIdArrOfSelf(ctx, sceneInfo[daoAuth.Scene.Columns().SceneId].String(), loginInfo[consts.CTX_LOGIN_ID_NAME])
 	if err != nil {
 		return
 	}
@@ -109,7 +110,7 @@ func (logicThis *sAuthAction) CheckAuth(ctx context.Context, actionIdArr ...stri
 	filter := map[string]any{
 		`self_action`: map[string]any{
 			`scene_id`:            sceneInfo[daoAuth.Scene.Columns().SceneId],
-			`login_id`:            loginInfo[`login_id`],
+			`login_id`:            loginInfo[consts.CTX_LOGIN_ID_NAME],
 			`check_action_id_arr`: actionIdArr,
 		},
 	}

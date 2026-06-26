@@ -14,11 +14,11 @@ const Common = defineAsyncComponent(() => import('./app/Common.vue'))
 const { t } = useI18n()
 const adminStore = useAdminStore()
 
-const isRead = adminStore.isAction('orgCfgRead')
-const isSave = adminStore.isAction('orgCfgSave')
+const isRead = adminStore.isAction('configRead')
+const isSave = adminStore.isAction('configSave')
 const authAction: { [propName: string]: boolean } = {
-    isCommonRead: isRead || adminStore.isAction('orgCfgCommonRead'),
-    isCommonSave: isSave || adminStore.isAction('orgCfgCommonSave'),
+    isCommonRead: isRead || adminStore.isAction('configCommonRead'),
+    isCommonSave: isSave || adminStore.isAction('configCommonSave'),
 }
 provide('authAction', authAction)
 const notReadAll = !authAction.isCommonRead

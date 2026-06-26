@@ -50,7 +50,7 @@ func (controllerThis *Admin) List(ctx context.Context, req *apiAdmin.AdminListRe
 	}
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAdmin.Admin.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	filter[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	/**--------参数处理 结束--------**/
 
@@ -89,7 +89,7 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiAdmin.AdminInfoRe
 	filter := map[string]any{`id`: req.Id}
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAdmin.Admin.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	filter[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	/**--------参数处理 结束--------**/
 
@@ -131,7 +131,7 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiAdmin.AdminCrea
 	data := gconv.Map(req.AdminCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	// loginInfo := jbctx.GetLoginInfo(ctx)
-	data[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	data[daoAdmin.Admin.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	data[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	data[daoAdmin.Admin.Columns().IsSuper] = 0                         //不允许创建机构超级管理员
 	data[`rel_id_of_role`] = loginInfo[daoAdmin.Admin.Columns().RelId] //logic层用于验证role_id_arr是否合法
@@ -174,7 +174,7 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiAdmin.AdminUpda
 	}
 
 	// loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAdmin.Admin.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	filter[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	filter[daoAdmin.Admin.Columns().IsSuper] = 0                       //不允许修改机构超级管理员
 	data[`rel_id_of_role`] = loginInfo[daoAdmin.Admin.Columns().RelId] //logic层用于验证role_id_arr是否合法
@@ -197,7 +197,7 @@ func (controllerThis *Admin) Delete(ctx context.Context, req *apiAdmin.AdminDele
 	filter := gconv.Map(req.AdminUpdateDeleteFilter, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
-	filter[daoAdmin.Admin.Columns().SceneId] = loginInfo[daoAdmin.Admin.Columns().SceneId]
+	filter[daoAdmin.Admin.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	filter[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
 	filter[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许删除机构超级管理员
 	/**--------参数处理 结束--------**/

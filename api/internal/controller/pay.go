@@ -68,7 +68,7 @@ func (controllerThis *Pay) Create(ctx context.Context, req *api.PayCreateReq) (r
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
-		data[daoPay.Order.Columns().RelId] = loginInfo[`login_id`]
+		data[daoPay.Order.Columns().RelId] = loginInfo[consts.CTX_LOGIN_ID_NAME]
 		switch *req.OrderType {
 		case 0:
 			data[daoPay.Order.Columns().Amount] = req.Param0.Amount
@@ -132,11 +132,11 @@ func (controllerThis *Pay) Pay(ctx context.Context, req *api.PayPayReq) (res *ap
 			err = utils.NewErrorCode(ctx, 30013001, ``)
 			return
 		}
-		if orderInfo[daoPay.Order.Columns().RelId].Uint() != loginInfo[`login_id`].Uint() {
+		if orderInfo[daoPay.Order.Columns().RelId].Uint() != loginInfo[consts.CTX_LOGIN_ID_NAME].Uint() {
 			err = utils.NewErrorCode(ctx, 30013000, ``)
 			return
 		} */
-		orderFilter[daoPay.Order.Columns().RelId] = loginInfo[`login_id`]
+		orderFilter[daoPay.Order.Columns().RelId] = loginInfo[consts.CTX_LOGIN_ID_NAME]
 		orderFilter[daoPay.Order.Columns().OrderType] = []uint{0}
 		if channelInfo[daoPay.Channel.Columns().PayMethod].Uint8() == 3 { //小程序支付
 			switch payInfo[daoPay.Pay.Columns().PayType].Uint8() {

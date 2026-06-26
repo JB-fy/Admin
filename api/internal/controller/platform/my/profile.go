@@ -4,6 +4,7 @@ import (
 	"api/api"
 	apiMy "api/api/platform/my"
 	"api/internal/cache"
+	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	"api/internal/service"
 	"api/internal/utils"
@@ -40,7 +41,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	initPrivacyInfo := func() {
 		if !isGetPrivacy {
 			isGetPrivacy = true
-			privacyInfo, _ = daoAdmin.Privacy.CtxDaoModel(ctx).FilterPri(loginInfo[`login_id`]).Fields(daoAdmin.Privacy.Columns().Password, daoAdmin.Privacy.Columns().Salt).One()
+			privacyInfo, _ = daoAdmin.Privacy.CtxDaoModel(ctx).FilterPri(loginInfo[consts.CTX_LOGIN_ID_NAME]).Fields(daoAdmin.Privacy.Columns().Password, daoAdmin.Privacy.Columns().Salt).One()
 		}
 	}
 	for k, v := range data {
@@ -133,7 +134,7 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 		return
 	}
 
-	filter := map[string]any{`id`: loginInfo[`login_id`]}
+	filter := map[string]any{`id`: loginInfo[consts.CTX_LOGIN_ID_NAME]}
 	/**--------参数处理 结束--------**/
 
 	_, err = service.Admin().Update(ctx, filter, data)

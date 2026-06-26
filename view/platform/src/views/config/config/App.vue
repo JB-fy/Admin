@@ -16,15 +16,15 @@ const Org = defineAsyncComponent(() => import('./app/Org.vue'))
 const { t } = useI18n()
 const adminStore = useAdminStore()
 
-const isRead = adminStore.isAction('pltCfgRead')
-const isSave = adminStore.isAction('pltCfgSave')
+const isRead = adminStore.isAction('configRead')
+const isSave = adminStore.isAction('configSave')
 const authAction: { [propName: string]: boolean } = {
-    isCommonRead: isRead || adminStore.isAction('pltCfgCommonRead'),
-    isCommonSave: isSave || adminStore.isAction('pltCfgCommonSave'),
-    isPlatformRead: isRead || adminStore.isAction('pltCfgPlatformRead'),
-    isPlatformSave: isSave || adminStore.isAction('pltCfgPlatformSave'),
-    isOrgRead: isRead || adminStore.isAction('pltCfgOrgRead'),
-    isOrgSave: isSave || adminStore.isAction('pltCfgOrgSave'),
+    isCommonRead: isRead || adminStore.isAction('configCommonRead'),
+    isCommonSave: isSave || adminStore.isAction('configCommonSave'),
+    isPlatformRead: isRead || adminStore.isAction('configPlatformRead'),
+    isPlatformSave: isSave || adminStore.isAction('configPlatformSave'),
+    isOrgRead: isRead || adminStore.isAction('configOrgRead'),
+    isOrgSave: isSave || adminStore.isAction('configOrgSave'),
 }
 provide('authAction', authAction)
 const notReadAll = !(authAction.isCommonRead || authAction.isPlatformRead || authAction.isOrgRead)

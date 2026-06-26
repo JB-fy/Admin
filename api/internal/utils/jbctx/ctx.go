@@ -39,5 +39,5 @@ func GetLoginInfo(ctx context.Context) (info gdb.Record) {
 
 // 获取登录ID
 func GetLoginId(ctx context.Context) *gvar.Var {
-	return GetLoginInfo(ctx)[`login_id`]
+	return GetLoginInfo(ctx)[consts.CTX_LOGIN_ID_NAME]
 }

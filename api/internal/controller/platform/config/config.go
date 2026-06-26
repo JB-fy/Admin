@@ -22,31 +22,31 @@ func NewConfig() *Config {
 // 获取
 func (controllerThis *Config) Get(ctx context.Context, req *apiConfig.ConfigGetReq) (res *apiConfig.ConfigGetRes, err error) {
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `pltCfgRead`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `configRead`)
 	if !isAuth {
 		actionIdSet := gset.NewStrSet()
 		for _, configKey := range *req.ConfigKeyArr {
 			switch configKey {
 			case `hot_search`, `user_agreement`, `privacy_agreement`:
-				actionIdSet.Add(`pltCfgCommonRead`)
+				actionIdSet.Add(`configCommonRead`)
 			case `role_id_arr_of_platform_def`:
-				actionIdSet.Add(`pltCfgPlatformRead`)
+				actionIdSet.Add(`configPlatformRead`)
 			case `role_id_arr_of_org_def`:
-				actionIdSet.Add(`pltCfgOrgRead`)
+				actionIdSet.Add(`configOrgRead`)
 			case `sms_type`, `sms_of_aliyun`:
-				actionIdSet.Add(`pltCfgSmsRead`)
+				actionIdSet.Add(`configSmsRead`)
 			case `email_code`, `email_type`, `email_of_common`:
-				actionIdSet.Add(`pltCfgEmailRead`)
+				actionIdSet.Add(`configEmailRead`)
 			case `id_card_type`, `id_card_of_aliyun`:
-				actionIdSet.Add(`pltCfgIdCardRead`)
+				actionIdSet.Add(`configIdCardRead`)
 			case `one_click_of_wx`, `one_click_of_yidun`:
-				actionIdSet.Add(`pltCfgOneClickRead`)
+				actionIdSet.Add(`configOneClickRead`)
 			case `push_type`, `push_of_tx`:
-				actionIdSet.Add(`pltCfgPushRead`)
+				actionIdSet.Add(`configPushRead`)
 			case `vod_type`, `vod_of_aliyun`:
-				actionIdSet.Add(`pltCfgVodRead`)
+				actionIdSet.Add(`configVodRead`)
 			case `wx_gzh`:
-				actionIdSet.Add(`pltCfgWxRead`)
+				actionIdSet.Add(`configWxRead`)
 			}
 		}
 		_, err = service.AuthAction().CheckAuth(ctx, actionIdSet.Slice()...)
@@ -77,31 +77,31 @@ func (controllerThis *Config) Save(ctx context.Context, req *apiConfig.ConfigSav
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
-	isAuth, _ := service.AuthAction().CheckAuth(ctx, `pltCfgSave`)
+	isAuth, _ := service.AuthAction().CheckAuth(ctx, `configSave`)
 	if !isAuth {
 		actionIdSet := gset.NewStrSet()
 		for configKey := range config {
 			switch configKey {
 			case `hot_search`, `user_agreement`, `privacy_agreement`:
-				actionIdSet.Add(`pltCfgCommonSave`)
+				actionIdSet.Add(`configCommonSave`)
 			case `role_id_arr_of_platform_def`:
-				actionIdSet.Add(`pltCfgPlatformSave`)
+				actionIdSet.Add(`configPlatformSave`)
 			case `role_id_arr_of_org_def`:
-				actionIdSet.Add(`pltCfgOrgSave`)
+				actionIdSet.Add(`configOrgSave`)
 			case `sms_type`, `sms_of_aliyun`:
-				actionIdSet.Add(`pltCfgSmsSave`)
+				actionIdSet.Add(`configSmsSave`)
 			case `email_code`, `email_type`, `email_of_common`:
-				actionIdSet.Add(`pltCfgEmailSave`)
+				actionIdSet.Add(`configEmailSave`)
 			case `id_card_type`, `id_card_of_aliyun`:
-				actionIdSet.Add(`pltCfgIdCardSave`)
+				actionIdSet.Add(`configIdCardSave`)
 			case `one_click_of_wx`, `one_click_of_yidun`:
-				actionIdSet.Add(`pltCfgOneClickSave`)
+				actionIdSet.Add(`configOneClickSave`)
 			case `push_type`, `push_of_tx`:
-				actionIdSet.Add(`pltCfgPushSave`)
+				actionIdSet.Add(`configPushSave`)
 			case `vod_type`, `vod_of_aliyun`:
-				actionIdSet.Add(`pltCfgVodSave`)
+				actionIdSet.Add(`configVodSave`)
 			case `wx_gzh`:
-				actionIdSet.Add(`pltCfgWxSave`)
+				actionIdSet.Add(`configWxSave`)
 			}
 		}
 		_, err = service.AuthAction().CheckAuth(ctx, actionIdSet.Slice()...)

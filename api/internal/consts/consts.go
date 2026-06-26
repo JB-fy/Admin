@@ -5,8 +5,9 @@ import "time"
 type SceneId string
 
 const (
-	CTX_SCENE_INFO_NAME = `sceneInfo`
-	CTX_LOGIN_INFO_NAME = `loginInfo`
+	CTX_SCENE_INFO_NAME = `scene_info`
+	CTX_LOGIN_INFO_NAME = `login_info`
+	CTX_LOGIN_ID_NAME   = `login_id`
 
 	ENV_SERVER_NETWORK_IP = `SERVER_NETWORK_IP` //外网ip
 	ENV_SERVER_LOCAL_IP   = `SERVER_LOCAL_IP`   //内网ip

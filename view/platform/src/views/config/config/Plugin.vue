@@ -10,23 +10,23 @@ const Wx = defineAsyncComponent(() => import('./plugin/Wx.vue'))
 const { t } = useI18n()
 const adminStore = useAdminStore()
 
-const isRead = adminStore.isAction('pltCfgRead')
-const isSave = adminStore.isAction('pltCfgSave')
+const isRead = adminStore.isAction('configRead')
+const isSave = adminStore.isAction('configSave')
 const authAction: { [propName: string]: boolean } = {
-    isSmsRead: isRead || adminStore.isAction('pltCfgSmsRead'),
-    isSmsSave: isSave || adminStore.isAction('pltCfgSmsSave'),
-    isEmailRead: isRead || adminStore.isAction('pltCfgEmailRead'),
-    isEmailSave: isSave || adminStore.isAction('pltCfgEmailSave'),
-    isIdCardRead: isRead || adminStore.isAction('pltCfgIdCardRead'),
-    isIdCardSave: isSave || adminStore.isAction('pltCfgIdCardSave'),
-    isOneClickRead: isRead || adminStore.isAction('pltCfgOneClickRead'),
-    isOneClickSave: isSave || adminStore.isAction('pltCfgOneClickSave'),
-    isPushRead: isRead || adminStore.isAction('pltCfgPushRead'),
-    isPushSave: isSave || adminStore.isAction('pltCfgPushSave'),
-    isVodRead: isRead || adminStore.isAction('pltCfgVodRead'),
-    isVodSave: isSave || adminStore.isAction('pltCfgVodSave'),
-    isWxRead: isRead || adminStore.isAction('pltCfgWxRead'),
-    isWxSave: isSave || adminStore.isAction('pltCfgWxSave'),
+    isSmsRead: isRead || adminStore.isAction('configSmsRead'),
+    isSmsSave: isSave || adminStore.isAction('configSmsSave'),
+    isEmailRead: isRead || adminStore.isAction('configEmailRead'),
+    isEmailSave: isSave || adminStore.isAction('configEmailSave'),
+    isIdCardRead: isRead || adminStore.isAction('configIdCardRead'),
+    isIdCardSave: isSave || adminStore.isAction('configIdCardSave'),
+    isOneClickRead: isRead || adminStore.isAction('configOneClickRead'),
+    isOneClickSave: isSave || adminStore.isAction('configOneClickSave'),
+    isPushRead: isRead || adminStore.isAction('configPushRead'),
+    isPushSave: isSave || adminStore.isAction('configPushSave'),
+    isVodRead: isRead || adminStore.isAction('configVodRead'),
+    isVodSave: isSave || adminStore.isAction('configVodSave'),
+    isWxRead: isRead || adminStore.isAction('configWxRead'),
+    isWxSave: isSave || adminStore.isAction('configWxSave'),
 }
 provide('authAction', authAction)
 const notReadAll = !(authAction.isSmsRead || authAction.isEmailRead || authAction.isIdCardRead || authAction.isOneClickRead || authAction.isPushRead || authAction.isVodRead || authAction.isWxRead)
