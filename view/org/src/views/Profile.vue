@@ -137,7 +137,7 @@ const emailCountdown = reactive({
                     <el-input v-model="saveForm.data.nickname" :placeholder="t('profile.name.nickname')" maxlength="30" :show-word-limit="true" :clearable="true" />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.avatar')" prop="avatar">
-                    <my-upload v-model="saveForm.data.avatar" accept="image/*" />
+                    <my-upload v-model="saveForm.data.avatar" accept="image/*" size="small" />
                 </el-form-item>
                 <el-form-item :label="t('profile.name.phone')" prop="phone">
                     <el-input v-model="saveForm.data.phone" :placeholder="t('profile.name.phone')" maxlength="20" :show-word-limit="true" :clearable="true" style="max-width: 250px">
