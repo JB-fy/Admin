@@ -12,6 +12,7 @@ import (
 	"api/internal/dao/admin/internal"
 	daoAuth "api/internal/dao/auth"
 	daoOrg "api/internal/dao/org"
+	"api/internal/utils"
 	"context"
 	"database/sql"
 	"database/sql/driver"
@@ -23,6 +24,7 @@ import (
 
 	"github.com/gogf/gf/v2/container/gvar"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 )
@@ -495,20 +497,43 @@ func (daoThis *adminDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Re
 	return
 }
 
-func (daoThis *adminDao) JoinLoginName(orgId uint, loginName string) string {
-	if loginName == `` {
-		return ``
-	}
-	if orgId == 0 {
+func (daoThis *adminDao) JoinLoginName(relId uint, loginName string) string {
+	if relId == 0 {
 		return loginName
 	}
-	return fmt.Sprintf(`%d:%s`, orgId, loginName)
+	return fmt.Sprintf(`%d:%s`, relId, loginName)
 }
 
 func (daoThis *adminDao) GetLoginName(loginName string) string {
 	_, after, found := strings.Cut(loginName, `:`)
-	if found {
+	if !found {
 		return after
 	}
 	return loginName
+}
+
+func (daoThis *adminDao) GetAdminType(ctx context.Context, sceneId string, relId uint) (adminType uint8, err error) {
+	switch sceneId {
+	case consts.SCENE_ID_PLATFORM:
+		if relId > 0 {
+			err = utils.NewErrorCode(ctx, 89999998, ``)
+			return
+		}
+		adminType = 0
+	case consts.SCENE_ID_ORG:
+		if relId == 0 {
+			err = utils.NewErrorCode(ctx, 89999998, ``)
+			return
+		}
+		orgInfo, _ := daoOrg.Org.CacheGetInfo(ctx, relId)
+		if orgInfo.IsEmpty() {
+			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.org.org`)}})
+			return
+		}
+		adminType = orgInfo[daoOrg.Org.Columns().OrgType].Uint8()
+	default:
+		err = utils.NewErrorCode(ctx, 39999998, ``)
+		return
+	}
+	return
 }

@@ -1,10 +1,8 @@
 package admin
 
 import (
-	"api/internal/consts"
 	daoAdmin "api/internal/dao/admin"
 	daoAuth "api/internal/dao/auth"
-	daoOrg "api/internal/dao/org"
 	"api/internal/service"
 	"api/internal/utils"
 	"context"
@@ -52,25 +50,9 @@ func (logicThis *sAdmin) Create(ctx context.Context, data map[string]any) (id an
 	}
 	daoModelThis := daoAdmin.Admin.CtxDaoModel(ctx)
 
-	relId := gconv.Uint(data[daoAdmin.Admin.Columns().RelId])
-	switch gconv.String(data[daoAdmin.Admin.Columns().SceneId]) {
-	case consts.SCENE_ID_PLATFORM:
-		if relId > 0 {
-			err = utils.NewErrorCode(ctx, 89999998, ``)
-			return
-		}
-		data[daoAdmin.Admin.Columns().AdminType] = 0
-	case consts.SCENE_ID_ORG:
-		if relId == 0 {
-			err = utils.NewErrorCode(ctx, 89999998, ``)
-			return
-		}
-		orgInfo, _ := daoOrg.Org.CacheGetInfo(ctx, relId)
-		if orgInfo.IsEmpty() {
-			err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.org.org`)}})
-			return
-		}
-		data[daoAdmin.Admin.Columns().AdminType] = orgInfo[daoOrg.Org.Columns().OrgType]
+	data[daoAdmin.Admin.Columns().AdminType], err = daoAdmin.Admin.GetAdminType(ctx, gconv.String(data[daoAdmin.Admin.Columns().SceneId]), gconv.Uint(data[daoAdmin.Admin.Columns().RelId]))
+	if err != nil {
+		return
 	}
 
 	if _, ok := data[`role_id_arr`]; ok && len(gconv.Uints(data[`role_id_arr`])) > 0 {
@@ -119,25 +101,9 @@ func (logicThis *sAdmin) Update(ctx context.Context, filter map[string]any, data
 				sceneId = list[0][daoAuth.Role.Columns().SceneId].String()
 			}
 		}
-		relId := gconv.Uint(data[daoAdmin.Admin.Columns().RelId])
-		switch sceneId {
-		case consts.SCENE_ID_PLATFORM:
-			if relId > 0 {
-				err = utils.NewErrorCode(ctx, 89999998, ``)
-				return
-			}
-			data[daoAdmin.Admin.Columns().AdminType] = 0
-		case consts.SCENE_ID_ORG:
-			if relId == 0 {
-				err = utils.NewErrorCode(ctx, 89999998, ``)
-				return
-			}
-			orgInfo, _ := daoOrg.Org.CacheGetInfo(ctx, relId)
-			if orgInfo.IsEmpty() {
-				err = utils.NewErrorCode(ctx, 29999997, ``, g.Map{`i18nValues`: []any{g.I18n().T(ctx, `name.org.org`)}})
-				return
-			}
-			data[daoAdmin.Admin.Columns().AdminType] = orgInfo[daoOrg.Org.Columns().OrgType]
+		data[daoAdmin.Admin.Columns().AdminType], err = daoAdmin.Admin.GetAdminType(ctx, sceneId, gconv.Uint(data[daoAdmin.Admin.Columns().RelId]))
+		if err != nil {
+			return
 		}
 	}
 
