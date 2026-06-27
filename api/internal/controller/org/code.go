@@ -168,6 +168,9 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 		err = sms.NewHandler(ctx).SendCode(loginName, code)
 	case 10, 11, 12, 13, 14, 15:
 		err = email.NewHandler(ctx).SendCode(loginName, code)
+	default:
+		err = utils.NewErrorCode(ctx, 39999995, ``)
+		return
 	}
 	if err != nil {
 		return
