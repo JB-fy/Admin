@@ -1,7 +1,7 @@
 const storage = import.meta.env.VITE_ACCESS_TOKEN_STORAGE === 'localStorage' ? localStorage : sessionStorage
 const accessTokenName = import.meta.env.VITE_ACCESS_TOKEN_NAME
 const activeTimeName = import.meta.env.VITE_ACCESS_TOKEN_ACTIVE_TIME_NAME
-const activeTimeout = parseInt(import.meta.env.VITE_ACCESS_TOKEN_ACTIVE_TIMEOUT)
+const activeTimeout = Number(import.meta.env.VITE_ACCESS_TOKEN_ACTIVE_TIMEOUT)
 
 //获取accessToken
 export const getAccessToken = (): string | false => {

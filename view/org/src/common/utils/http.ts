@@ -9,7 +9,7 @@ const option = {
         }
         return import.meta.env.VITE_HTTP_HOST
     })(),
-    timeout: parseInt(import.meta.env.VITE_HTTP_TIMEOUT),
+    timeout: Number(import.meta.env.VITE_HTTP_TIMEOUT),
 }
 
 const http = axios.create({

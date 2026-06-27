@@ -11,7 +11,7 @@ type LoginSaltReq struct {
 	g.Meta `path:"/salt" method:"post" tags:"平台后台/登录" sm:"获取密码盐"`
 	api.CommonHeaderReq
 	LoginName string `json:"login_name,omitempty" v:"required|max-length:60" dc:"手机/邮箱/账号"`
-	AdminType uint8  `json:"admin_type" v:"in:0" d:"0" dc:"类型：0平台"`
+	AdminType uint8  `json:"admin_type" v:"required|in:0" dc:"类型：0平台"`
 }
 
 /*--------获取密码盐 结束--------*/
@@ -24,7 +24,7 @@ type LoginLoginReq struct {
 	Password  string `json:"password,omitempty" v:"required-without-all:SmsCode,EmailCode|size:32" dc:"密码。加密后发送，公式：md5(md5(md5(密码)+静态密码盐)+动态密码盐)"`
 	SmsCode   string `json:"sms_code,omitempty" v:"required-without-all:EmailCode,Password|size:4" dc:"短信验证码"`
 	EmailCode string `json:"email_code,omitempty" v:"required-without-all:SmsCode,Password|size:4" dc:"邮箱验证码"`
-	AdminType uint8  `json:"admin_type" v:"in:0" d:"0" dc:"类型：0平台"`
+	AdminType uint8  `json:"admin_type" v:"required|in:0" dc:"类型：0平台"`
 }
 
 /*--------登录 结束--------*/
@@ -39,7 +39,7 @@ type LoginRegisterReq struct {
 	SmsCode   string `json:"sms_code,omitempty" v:"required-with:Phone|size:4" dc:"短信验证码"`
 	EmailCode string `json:"email_code,omitempty" v:"required-with:Email|size:4" dc:"邮箱验证码"`
 	Password  string `json:"password,omitempty" v:"required|size:32" dc:"密码。加密后发送，公式：md5(密码)"`
-	AdminType uint8  `json:"admin_type" v:"in:0" d:"0" dc:"类型：0平台"`
+	AdminType uint8  `json:"admin_type" v:"required|in:0" dc:"类型：0平台"`
 }
 
 /*--------注册 结束--------*/
@@ -53,7 +53,7 @@ type LoginPasswordRecoveryReq struct {
 	SmsCode   string `json:"sms_code,omitempty" v:"required-with:Phone|size:4" dc:"短信验证码"`
 	EmailCode string `json:"email_code,omitempty" v:"required-with:Email|size:4" dc:"邮箱验证码"`
 	Password  string `json:"password,omitempty" v:"required|size:32" dc:"密码。加密后发送，公式：md5(密码)"`
-	AdminType uint8  `json:"admin_type" v:"in:0" d:"0" dc:"类型：0平台"`
+	AdminType uint8  `json:"admin_type" v:"required|in:0" dc:"类型：0平台"`
 }
 
 /*--------密码找回 结束--------*/
