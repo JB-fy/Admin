@@ -178,16 +178,13 @@ func (daoThis *adminDao) HandleAfterField(ctx context.Context, record gdb.Record
 			record[k] = gvar.New(roleIdArr.Interfaces())
 		case `rel_name`:
 			relName := ``
-			if record[daoThis.Columns().RelId].Uint() == 0 {
+			switch record[daoThis.Columns().SceneId].String() {
+			case consts.SCENE_ID_PLATFORM:
 				relName = `平台`
-			} else {
-				switch record[daoThis.Columns().SceneId].String() {
-				// case consts.SCENE_ID_PLATFORM:	// 平台都是0
-				case consts.SCENE_ID_ORG:
-					// relName, _ = daoOrg.Org.CtxDaoModel(ctx).FilterPri(record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)
-					info, _ := daoOrg.Org.CacheGetInfo(ctx, record[daoThis.Columns().RelId].Uint())
-					relName = info[daoOrg.Org.Columns().OrgName].String()
-				}
+			case consts.SCENE_ID_ORG:
+				// relName, _ = daoOrg.Org.CtxDaoModel(ctx).FilterPri(record[daoThis.Columns().RelId]).ValueStr(daoOrg.Org.Columns().OrgName)
+				info, _ := daoOrg.Org.CacheGetInfo(ctx, record[daoThis.Columns().RelId].Uint())
+				relName = info[daoOrg.Org.Columns().OrgName].String()
 			}
 			record[k] = gvar.New(relName)
 		default:

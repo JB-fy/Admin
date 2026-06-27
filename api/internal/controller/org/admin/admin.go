@@ -122,15 +122,16 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiAdmin.AdminCrea
 	loginInfo := jbctx.GetLoginInfo(ctx)
 	data[daoAdmin.Admin.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	data[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
-	data[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许创建机构超级管理员
+	isSuper := uint8(0) //不允许创建机构超级管理员
+	data[daoAdmin.Admin.Columns().IsSuper] = isSuper
 	if req.Phone != nil && *req.Phone != `` {
-		data[daoAdmin.Admin.Columns().Phone] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), 0, *req.Phone)
+		data[daoAdmin.Admin.Columns().Phone] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Phone)
 	}
 	if req.Email != nil && *req.Email != `` {
-		data[daoAdmin.Admin.Columns().Email] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), 0, *req.Email)
+		data[daoAdmin.Admin.Columns().Email] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Email)
 	}
 	if req.Account != nil && *req.Account != `` {
-		data[daoAdmin.Admin.Columns().Account] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), 0, *req.Account)
+		data[daoAdmin.Admin.Columns().Account] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Account)
 	}
 	data[`rel_id_of_role`] = loginInfo[daoAdmin.Admin.Columns().RelId] //logic层用于验证role_id_arr是否合法
 	/**--------参数处理 结束--------**/
@@ -163,15 +164,16 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiAdmin.AdminUpda
 	loginInfo := jbctx.GetLoginInfo(ctx)
 	filter[daoAdmin.Admin.Columns().SceneId] = jbctx.GetSceneId(ctx) //loginInfo[daoAdmin.Admin.Columns().SceneId]
 	filter[daoAdmin.Admin.Columns().RelId] = loginInfo[daoAdmin.Admin.Columns().RelId]
-	filter[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许修改机构超级管理员
+	isSuper := uint8(0) //不允许修改机构超级管理员
+	filter[daoAdmin.Admin.Columns().IsSuper] = isSuper
 	if req.Phone != nil && *req.Phone != `` {
-		data[daoAdmin.Admin.Columns().Phone] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), 0, *req.Phone)
+		data[daoAdmin.Admin.Columns().Phone] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Phone)
 	}
 	if req.Email != nil && *req.Email != `` {
-		data[daoAdmin.Admin.Columns().Email] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), 0, *req.Email)
+		data[daoAdmin.Admin.Columns().Email] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Email)
 	}
 	if req.Account != nil && *req.Account != `` {
-		data[daoAdmin.Admin.Columns().Account] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), 0, *req.Account)
+		data[daoAdmin.Admin.Columns().Account] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Account)
 	}
 	data[`rel_id_of_role`] = loginInfo[daoAdmin.Admin.Columns().RelId] //logic层用于验证role_id_arr是否合法
 	/**--------参数处理 结束--------**/

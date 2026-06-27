@@ -63,7 +63,7 @@ func SceneLoginOfAdmin(isForce bool, tokenNameArr ...string) func(r *ghttp.Reque
 			return
 		}
 		switch info[daoAdmin.Admin.Columns().SceneId].String() {
-		// case consts.SCENE_ID_PLATFORM:
+		case consts.SCENE_ID_PLATFORM:
 		case consts.SCENE_ID_ORG:
 			relInfo, _ := daoOrg.Org.CacheGetInfo(r.GetCtx(), info[daoAdmin.Admin.Columns().RelId].Uint())
 			if relInfo.IsEmpty() {
@@ -83,6 +83,9 @@ func SceneLoginOfAdmin(isForce bool, tokenNameArr ...string) func(r *ghttp.Reque
 				return
 			}
 			info[`rel_info`] = gvar.New(relInfo.Map())
+		default:
+			err = utils.NewErrorCode(r.GetCtx(), 39999998, ``)
+			return
 		}
 
 		info[consts.CTX_LOGIN_ID_NAME] = gvar.New(tokenInfo.LoginId) //所有场景追加这个字段，方便统一调用

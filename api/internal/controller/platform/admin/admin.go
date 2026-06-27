@@ -111,11 +111,15 @@ func (controllerThis *Admin) Info(ctx context.Context, req *apiAdmin.AdminInfoRe
 func (controllerThis *Admin) Create(ctx context.Context, req *apiAdmin.AdminCreateReq) (res *api.CommonCreateRes, err error) {
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req.AdminCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
+
 	switch *req.SceneId {
 	case consts.SCENE_ID_PLATFORM:
 		data[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许创建平台超级管理员
 	case consts.SCENE_ID_ORG:
 		data[daoAdmin.Admin.Columns().IsSuper] = 1 //只允许创建机构超级管理员
+	default:
+		err = utils.NewErrorCode(ctx, 39999998, ``)
+		return
 	}
 	data[`rel_id_of_role`] = 0 //logic层用于验证role_id_arr是否合法
 	/**--------参数处理 结束--------**/

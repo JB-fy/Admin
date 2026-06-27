@@ -73,16 +73,14 @@ func (handlerThis *Handler) createUploadParam() (param model.UploadParam) {
 			MaxSize:    1024 * 1024 * 1024,
 		}
 	}
-	/* sceneInfo := jbctx.GetSceneInfo(handlerThis.Ctx)
-	sceneId := sceneInfo[daoAuth.Scene.Columns().SceneId].String()
-	loginInfo := jbctx.GetLoginInfo(handlerThis.Ctx)
-	loginId := loginInfo[consts.CTX_LOGIN_ID_NAME]
-	switch sceneId {
+	/* loginInfo := jbctx.GetLoginInfo(handlerThis.Ctx)
+	switch jbctx.GetSceneId(handlerThis.Ctx).String() {
 	case consts.SCENE_ID_PLATFORM:
 	case consts.SCENE_ID_ORG:
-		orgId := loginInfo[daoOrg.Admin.Columns().OrgId]
+		relId := loginInfo[daoAdmin.Admin.Columns().RelId]
 	case consts.SCENE_ID_APP:
 	default:
+		panic(utils.NewErrorCode(handlerThis.Ctx, 39999998, ``).Error())
 	} */
 	return
 }
