@@ -36,6 +36,15 @@ func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpd
 	data := gconv.Map(req.ProfileUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
 	loginInfo := jbctx.GetLoginInfo(ctx)
+	if req.Phone != nil && *req.Phone != `` {
+		data[daoAdmin.Admin.Columns().Phone] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(), *req.Phone)
+	}
+	if req.Email != nil && *req.Email != `` {
+		data[daoAdmin.Admin.Columns().Email] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(), *req.Email)
+	}
+	if req.Account != nil && *req.Account != `` {
+		data[daoAdmin.Admin.Columns().Account] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(), *req.Account)
+	}
 	var isGetPrivacy bool
 	var privacyInfo gdb.Record
 	initPrivacyInfo := func() {
