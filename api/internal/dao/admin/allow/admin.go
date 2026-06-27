@@ -23,7 +23,7 @@ type DaoAdmin interface {
 	dao.DaoInterface
 	Columns() *internal.AdminColumns
 	CacheGetInfo(ctx context.Context, id uint) (info gdb.Record, err error)
-	JoinLoginName(orgId uint, loginName string) string
+	JoinLoginName(orgId uint, isSuper uint8, loginName string) string
 	GetLoginName(loginName string) string
 }
 

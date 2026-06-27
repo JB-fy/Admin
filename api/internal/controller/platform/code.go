@@ -77,6 +77,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			err = utils.NewErrorCode(ctx, 39994000, ``)
 			return
 		}
+		to = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(), to)
 		adminType = loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8()
 		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Phone: to, daoAdmin.Admin.Columns().AdminType: adminType}).One()
 		if !info.IsEmpty() {
@@ -135,6 +136,7 @@ func (controllerThis *Code) Send(ctx context.Context, req *apiCurrent.CodeSendRe
 			err = utils.NewErrorCode(ctx, 39991011, ``)
 			return
 		} */
+		to = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(), to)
 		adminType = loginInfo[daoAdmin.Admin.Columns().AdminType].Uint8()
 		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Email: to, daoAdmin.Admin.Columns().AdminType: adminType}).One()
 		if !info.IsEmpty() {

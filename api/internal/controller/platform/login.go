@@ -28,12 +28,13 @@ func NewLogin() *Login {
 
 // 获取密码盐
 func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSaltReq) (res *api.CommonSaltRes, err error) {
+	loginName := req.LoginName
 	filter := g.Map{daoAdmin.Admin.Columns().AdminType: req.AdminType}
-	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) == nil {
+	if g.Validator().Rules(`phone`).Data(loginName).Run(ctx) == nil {
 		filter[daoAdmin.Admin.Columns().Phone] = req.LoginName
-	} else if g.Validator().Rules(`email`).Data(req.LoginName).Run(ctx) == nil {
+	} else if g.Validator().Rules(`email`).Data(loginName).Run(ctx) == nil {
 		filter[daoAdmin.Admin.Columns().Email] = req.LoginName
-	} else if g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) == nil {
+	} else if g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(loginName).Run(ctx) == nil {
 		filter[daoAdmin.Admin.Columns().Account] = req.LoginName
 	} else {
 		err = utils.NewErrorCode(ctx, 89990000, ``)
@@ -66,12 +67,13 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 
 // 登录
 func (controllerThis *Login) Login(ctx context.Context, req *apiCurrent.LoginLoginReq) (res *api.CommonTokenRes, err error) {
+	loginName := daoAdmin.Admin.GetLoginName(req.LoginName)
 	filter := g.Map{daoAdmin.Admin.Columns().AdminType: req.AdminType}
-	if g.Validator().Rules(`phone`).Data(req.LoginName).Run(ctx) == nil {
+	if g.Validator().Rules(`phone`).Data(loginName).Run(ctx) == nil {
 		filter[daoAdmin.Admin.Columns().Phone] = req.LoginName
-	} else if g.Validator().Rules(`email`).Data(req.LoginName).Run(ctx) == nil {
+	} else if g.Validator().Rules(`email`).Data(loginName).Run(ctx) == nil {
 		filter[daoAdmin.Admin.Columns().Email] = req.LoginName
-	} else if g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(req.LoginName).Run(ctx) == nil {
+	} else if g.Validator().Rules(`regex:^[\p{L}][\p{L}\p{N}_]{3,}$`).Data(loginName).Run(ctx) == nil {
 		filter[daoAdmin.Admin.Columns().Account] = req.LoginName
 	} else {
 		err = utils.NewErrorCode(ctx, 89990000, ``)
@@ -205,7 +207,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurrent.LoginPasswordRecoveryReq) (res *api.CommonNoDataRes, err error) {
 	filter := g.Map{daoAdmin.Admin.Columns().AdminType: req.AdminType}
 	if req.Phone != `` {
-		if g.Validator().Rules(`phone`).Data(req.Phone).Run(ctx) != nil {
+		if g.Validator().Rules(`phone`).Data(daoAdmin.Admin.GetLoginName(req.Phone)).Run(ctx) != nil {
 			err = utils.NewErrorCode(ctx, 89990000, ``)
 			return
 		}
@@ -216,7 +218,7 @@ func (controllerThis *Login) PasswordRecovery(ctx context.Context, req *apiCurre
 		}
 		filter[daoAdmin.Admin.Columns().Phone] = req.Phone
 	} else if req.Email != `` {
-		if g.Validator().Rules(`email`).Data(req.Email).Run(ctx) != nil {
+		if g.Validator().Rules(`email`).Data(daoAdmin.Admin.GetLoginName(req.Email)).Run(ctx) != nil {
 			err = utils.NewErrorCode(ctx, 89990000, ``)
 			return
 		}

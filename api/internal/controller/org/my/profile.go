@@ -33,21 +33,18 @@ func (controllerThis *Profile) Info(ctx context.Context, req *apiMy.ProfileInfoR
 // 修改个人信息
 func (controllerThis *Profile) Update(ctx context.Context, req *apiMy.ProfileUpdateReq) (res *api.CommonNoDataRes, err error) {
 	/**--------参数处理 开始--------**/
-	loginInfo := jbctx.GetLoginInfo(ctx)
-	if loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8() == 0 {
-		relId := loginInfo[daoAdmin.Admin.Columns().RelId].Uint()
-		if req.Phone != nil {
-			*req.Phone = daoAdmin.Admin.JoinLoginName(relId, *req.Phone)
-		}
-		if req.Email != nil {
-			*req.Email = daoAdmin.Admin.JoinLoginName(relId, *req.Email)
-		}
-		if req.Account != nil {
-			*req.Account = daoAdmin.Admin.JoinLoginName(relId, *req.Account)
-		}
-	}
 	data := gconv.Map(req.ProfileUpdateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
+	loginInfo := jbctx.GetLoginInfo(ctx)
+	if req.Phone != nil && *req.Phone != `` {
+		data[daoAdmin.Admin.Columns().Phone] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(), *req.Phone)
+	}
+	if req.Email != nil && *req.Email != `` {
+		data[daoAdmin.Admin.Columns().Email] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(), *req.Email)
+	}
+	if req.Account != nil && *req.Account != `` {
+		data[daoAdmin.Admin.Columns().Account] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), loginInfo[daoAdmin.Admin.Columns().IsSuper].Uint8(), *req.Account)
+	}
 	var isGetPrivacy bool
 	var privacyInfo gdb.Record
 	initPrivacyInfo := func() {

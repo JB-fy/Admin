@@ -497,8 +497,8 @@ func (daoThis *adminDao) CacheGetInfo(ctx context.Context, id uint) (info gdb.Re
 	return
 }
 
-func (daoThis *adminDao) JoinLoginName(relId uint, loginName string) string {
-	if relId == 0 || loginName == `` {
+func (daoThis *adminDao) JoinLoginName(relId uint, isSuper uint8, loginName string) string {
+	if relId == 0 || isSuper == 1 || loginName == `` {
 		return loginName
 	}
 	return fmt.Sprintf(`%d:%s`, relId, loginName)
@@ -506,7 +506,7 @@ func (daoThis *adminDao) JoinLoginName(relId uint, loginName string) string {
 
 func (daoThis *adminDao) GetLoginName(loginName string) string {
 	_, after, found := strings.Cut(loginName, `:`)
-	if !found {
+	if found {
 		return after
 	}
 	return loginName
