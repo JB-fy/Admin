@@ -112,15 +112,28 @@ func (controllerThis *Admin) Create(ctx context.Context, req *apiAdmin.AdminCrea
 	/**--------参数处理 开始--------**/
 	data := gconv.Map(req.AdminCreateData, gconv.MapOption{Deep: true, OmitEmpty: true})
 
+	isSuper := uint8(0)
 	switch *req.SceneId {
 	case consts.SCENE_ID_PLATFORM:
-		data[daoAdmin.Admin.Columns().IsSuper] = 0 //不允许创建平台超级管理员
+		isSuper = 0 //不允许创建平台超级管理员
 	case consts.SCENE_ID_ORG:
-		data[daoAdmin.Admin.Columns().IsSuper] = 1 //只允许创建机构超级管理员
+		isSuper = 1 //只允许创建机构超级管理员
 	default:
 		err = utils.NewErrorCode(ctx, 39999998, ``)
 		return
 	}
+	data[daoAdmin.Admin.Columns().IsSuper] = isSuper
+	/* //目前无需调用JoinLoginName方法
+	loginInfo := jbctx.GetLoginInfo(ctx)
+	if req.Phone != nil && *req.Phone != `` {
+		data[daoAdmin.Admin.Columns().Phone] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Phone)
+	}
+	if req.Email != nil && *req.Email != `` {
+		data[daoAdmin.Admin.Columns().Email] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Email)
+	}
+	if req.Account != nil && *req.Account != `` {
+		data[daoAdmin.Admin.Columns().Account] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Account)
+	} */
 	data[`rel_id_of_role`] = 0 //logic层用于验证role_id_arr是否合法
 	/**--------参数处理 结束--------**/
 
@@ -150,7 +163,18 @@ func (controllerThis *Admin) Update(ctx context.Context, req *apiAdmin.AdminUpda
 	}
 
 	filter[`platform_update_delete`] = `` //不允许修改平台超级管理员 或 只允许修改机构超级管理员
-	data[`rel_id_of_role`] = 0            //logic层用于验证role_id_arr是否合法
+	/* isSuper := uint8(0)	//无法确定是0还是1。但目前无需调用JoinLoginName方法
+	loginInfo := jbctx.GetLoginInfo(ctx)
+	if req.Phone != nil && *req.Phone != `` {
+		data[daoAdmin.Admin.Columns().Phone] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Phone)
+	}
+	if req.Email != nil && *req.Email != `` {
+		data[daoAdmin.Admin.Columns().Email] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Email)
+	}
+	if req.Account != nil && *req.Account != `` {
+		data[daoAdmin.Admin.Columns().Account] = daoAdmin.Admin.JoinLoginName(loginInfo[daoAdmin.Admin.Columns().RelId].Uint(), isSuper, *req.Account)
+	} */
+	data[`rel_id_of_role`] = 0 //logic层用于验证role_id_arr是否合法
 	/**--------参数处理 结束--------**/
 
 	/**--------权限验证 开始--------**/
