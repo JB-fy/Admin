@@ -12,12 +12,12 @@ import (
 	"api/internal/utils/jbctx"
 	"api/internal/utils/token"
 	"context"
+	"strings"
 	"time"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"
 )
@@ -151,7 +151,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 		data[daoAdmin.Admin.Columns().Phone] = req.Phone
-		data[daoAdmin.Admin.Columns().Nickname] = req.Phone[:3] + gstr.Repeat(`*`, len(req.Phone)-7) + req.Phone[len(req.Phone)-4:]
+		data[daoAdmin.Admin.Columns().Nickname] = req.Phone[:3] + strings.Repeat(`*`, len(req.Phone)-7) + req.Phone[len(req.Phone)-4:]
 	}
 	if req.Email != `` {
 		code, _ := cache.Code.Get(ctx, jbctx.GetSceneId(ctx).String(), req.Email, req.AdminType, 11) //场景：11注册(邮箱)
@@ -165,7 +165,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 		data[daoAdmin.Admin.Columns().Email] = req.Email
-		data[daoAdmin.Admin.Columns().Nickname] = gstr.Split(req.Email, `@`)[0]
+		data[daoAdmin.Admin.Columns().Nickname], _, _ = strings.Cut(req.Email, `@`)
 	}
 	if req.Account != `` {
 		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Account: req.Account, daoAdmin.Admin.Columns().AdminType: req.AdminType}).One()
@@ -176,7 +176,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 		data[daoAdmin.Admin.Columns().Account] = req.Account
 		accountRune := []rune(req.Account)
 		accountRuneLen := len(accountRune)
-		data[daoAdmin.Admin.Columns().Nickname] = string(accountRune[:1]) + gstr.Repeat(`*`, accountRuneLen-2) + string(accountRune[accountRuneLen-1:])
+		data[daoAdmin.Admin.Columns().Nickname] = string(accountRune[:1]) + strings.Repeat(`*`, accountRuneLen-2) + string(accountRune[accountRuneLen-1:])
 	}
 	if req.Password != `` {
 		data[daoAdmin.Privacy.Columns().Password] = req.Password

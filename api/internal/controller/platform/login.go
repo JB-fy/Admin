@@ -50,7 +50,7 @@ func (controllerThis *Login) Salt(ctx context.Context, req *apiCurrent.LoginSalt
 		return
 	}
 
-	saltStatic, _ := daoAdmin.Privacy.CtxDaoModel(ctx).FilterPri(info[daoAdmin.Admin.Columns().AdminId]).ValueStr(daoAdmin.Privacy.Columns().Salt)
+	saltStatic, _ := daoAdmin.Privacy.CtxDaoModel(ctx).FilterPri(info[daoAdmin.Privacy.Columns().AdminId]).ValueStr(daoAdmin.Privacy.Columns().Salt)
 	if saltStatic == `` {
 		err = utils.NewErrorCode(ctx, 39990004, ``)
 		return
@@ -161,7 +161,7 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 			return
 		}
 		data[daoAdmin.Admin.Columns().Email] = req.Email
-		data[daoAdmin.Admin.Columns().Nickname] = strings.Split(req.Email, `@`)[0]
+		data[daoAdmin.Admin.Columns().Nickname], _, _ = strings.Cut(req.Email, `@`)
 	}
 	if req.Account != `` {
 		info, _ := daoAdmin.Admin.CtxDaoModel(ctx).Filters(map[string]any{daoAdmin.Admin.Columns().Account: req.Account, daoAdmin.Admin.Columns().AdminType: req.AdminType}).One()
