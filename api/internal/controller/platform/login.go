@@ -181,8 +181,8 @@ func (controllerThis *Login) Register(ctx context.Context, req *apiCurrent.Login
 	data[daoAdmin.Admin.Columns().IsSuper] = 1 //只允许注册超级管理员
 	switch req.AdminType {
 	// case 0:	//平台
-	// case 10:	//机构
 	default:
+		data[daoAdmin.Admin.Columns().SceneId] = consts.SCENE_ID_PLATFORM
 		data[`role_id_arr`] = daoConfig.Config.Get(ctx, consts.SCENE_ID_PLATFORM, 0, `role_id_arr_of_platform_def`).Slice() //默认角色
 	}
 	adminId, err := daoAdmin.Admin.CtxDaoModel(ctx).HookInsert(data).InsertAndGetId()
